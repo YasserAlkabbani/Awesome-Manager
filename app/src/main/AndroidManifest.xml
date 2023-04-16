@@ -10,12 +10,12 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BusinessManager"
+        android:theme="@style/Theme.AwesomeManager"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.awesome.manager.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.BusinessManager">
+            android:theme="@style/Theme.AwesomeManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

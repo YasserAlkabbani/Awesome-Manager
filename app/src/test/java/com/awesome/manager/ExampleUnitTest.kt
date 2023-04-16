@@ -1,4 +1,4 @@
-package com.modernera.businessmanager
+package com.awesome.manager
 
 import org.junit.Test
 

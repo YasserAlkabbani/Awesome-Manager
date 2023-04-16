@@ -1,4 +1,4 @@
-package com.modernera.businessmanager.ui.theme
+package com.awesome.manager.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

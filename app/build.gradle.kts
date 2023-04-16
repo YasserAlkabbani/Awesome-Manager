@@ -1,19 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.google.devtools.ksp)
-    alias(libs.plugins.google.dagger.hilt.android)
+//    alias(libs.plugins.android.application)
+//    alias(libs.plugins.jetbrains.kotlin.android)
+//    alias(libs.plugins.google.devtools.ksp)
+//    alias(libs.plugins.google.dagger.hilt.android)
+    id("awesome.android.application.compose")
+    id("awesome.android.application")
 }
 
 @Suppress("UnstableApiUsage")
 android {
-    namespace = "com.modernera.businessmanager"
-    compileSdk = 33
+
+    namespace = "com.awesome.manager"
 
     defaultConfig {
-        applicationId = "com.modernera.businessmanager"
-        minSdk = 26
-        targetSdk = 33
+        applicationId = "com.awesome.manager"
         versionCode = 1
         versionName = "1.0"
 
@@ -33,20 +33,20 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
-    }
-    packagingOptions {
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_17
+//        targetCompatibility = JavaVersion.VERSION_17
+//    }
+//    kotlinOptions {
+//        jvmTarget = "17"
+//    }
+//    buildFeatures {
+//        compose = true
+//    }
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.4.5"
+//    }
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -86,10 +86,10 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     testImplementation (libs.lifecycle.runtime.testing)
 
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.room.paging)
-    ksp(libs.room.compiler)
+//    implementation(libs.room.runtime)
+//    implementation(libs.room.ktx)
+//    implementation(libs.room.paging)
+//    ksp(libs.room.compiler)
 
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
@@ -98,7 +98,7 @@ dependencies {
     implementation(libs.navigation.compose)
     androidTestImplementation(libs.navigation.testing)
 
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+//    implementation(libs.hilt.android)
+//    ksp(libs.hilt.android.compiler)
 
 }
