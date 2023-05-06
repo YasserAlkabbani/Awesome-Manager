@@ -22,10 +22,6 @@ internal fun Project.configureAndroidCompose(
                 libs.findVersion("androidxComposeCompiler").get().toString()
         }
 
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs// + buildComposeMetricsParameters()
-        }
-
         dependencies {
             val composeBom = libs.findLibrary("compose-bom").get()
             add("implementation" , platform(composeBom))

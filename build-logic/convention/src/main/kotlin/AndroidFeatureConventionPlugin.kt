@@ -18,11 +18,15 @@ class AndroidFeatureConventionPlugin:Plugin<Project>{
 
             dependencies{
 
-                add("implementation",libs.findLibrary("lifecycle.runtime.ktx").get())
-                add("implementation",libs.findLibrary("lifecycle.common.java8").get())
-                add("implementation",libs.findLibrary("lifecycle.viewmodel.ktx").get())
-                add("implementation",libs.findLibrary("lifecycle.viewmodel.savedstate").get())
+                add("implementation", project(":core:ui"))
+                add("implementation", project(":core:designsystem"))
+                add("implementation", project(":core:data"))
+
+                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+                add("implementation", libs.findLibrary("hilt.navigation.compose").get())
+                add("implementation",libs.findLibrary("lifecycle.runtime.compose").get())
                 add("implementation",libs.findLibrary("lifecycle.viewmodel.compose").get())
+
 
 //                add("testImplementation",libs.lifecycle.runtime.testing)
 //                add("androidTestImplementation",(libs.compose.ui.test.junit4)

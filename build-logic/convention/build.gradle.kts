@@ -1,12 +1,20 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `kotlin-dsl`
 }
 
-//group = "com.newera.buildSrc"
+group = "com.awesome.manager.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
 }
 
 dependencies {
@@ -32,6 +40,10 @@ gradlePlugin{
         register("androidLibrary"){
             id="awesome.android.library"
             implementationClass="AndroidLibraryConventionPlugin"
+        }
+        register("androidHilt"){
+            id="awesome.android.hilt"
+            implementationClass="AndroidHiltConventionPlugin"
         }
     }
 }
