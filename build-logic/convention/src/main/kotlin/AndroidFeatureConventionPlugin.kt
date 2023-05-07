@@ -8,13 +8,13 @@ class AndroidFeatureConventionPlugin:Plugin<Project>{
     override fun apply(target: Project) {
         with(target){
 
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             pluginManager.apply{
-                apply("nowinandroid.android.library")
-                apply("nowinandroid.android.hilt")
+                apply("awesome.android.library")
+                apply("awesome.android.hilt")
             }
 
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies{
 

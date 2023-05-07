@@ -9,7 +9,6 @@ class AndroidHiltConventionPlugin():Plugin<Project>{
     override fun apply(target: Project) {
         with(target){
             with(pluginManager){
-                apply("com.google.devtools.ksp")
                 apply("com.google.dagger.hilt.android")
                 apply("org.jetbrains.kotlin.kapt")
             }

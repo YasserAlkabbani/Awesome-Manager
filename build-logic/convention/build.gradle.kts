@@ -45,5 +45,9 @@ gradlePlugin{
             id="awesome.android.hilt"
             implementationClass="AndroidHiltConventionPlugin"
         }
+        register("androidFeature"){
+            id="awesome.android.feature"
+            implementationClass="AndroidFeatureConventionPlugin"
+        }
     }
 }
