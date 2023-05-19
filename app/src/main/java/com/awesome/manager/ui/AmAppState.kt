@@ -2,37 +2,72 @@ package com.awesome.manager.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.awesome.manager.navigation.MainDistination
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
+import com.awesome.manager.feature.accounts.navigation.accountRoute
+import com.awesome.manager.feature.home.navigation.homeRoute
+import com.awesome.manager.feature.transactions.navigation.transactionsRoute
+import com.awesome.manager.navigation.MainDestination
 import kotlinx.coroutines.CoroutineScope
+
+
+@Composable
+fun rememberAmAppState(
+    coroutineScope:CoroutineScope= rememberCoroutineScope(),
+    navHostController: NavHostController= rememberNavController()
+):AmAppState{
+    return remember(coroutineScope,navHostController) {
+        AmAppState(coroutineScope,navHostController)
+    }
+}
 
 @Stable
 class AmAppState(
-    val navHostController: NavHostController,
     val coroutineScope: CoroutineScope,
+    val navHostController: NavHostController,
 ) {
 
-    val currentDistanation: String?
-        @Composable get() = navHostController.currentBackStackEntryAsState().value?.destination?.route
+    val currentDistanation: NavDestination?
+        @Composable get() = navHostController.currentBackStackEntryAsState().value?.destination
 
 
-    val currentMainDistination
-        @Composable get() = when (currentDistanation) {
+    val currentMainDestination
+        @Composable get() = when (currentDistanation?.route) {
+            homeRoute -> MainDestination.Home
+            accountRoute -> MainDestination.Accounts
+            transactionsRoute -> MainDestination.Transactions
             else -> null
         }
 
-
     val shouldShowBottomBar
-        @Composable get() = currentDistanation != null
+        @Composable get() = currentMainDestination != null
 
-    val showShowTopBar
-        @Composable get() = currentDistanation == null
+    val shouldShowShowTopBar
+        @Composable get() = currentMainDestination == null
 
-    val mainDistination=MainDistination.values().toList()
+    val mainDestination = MainDestination.values().toList()
 
-    @Composable
-    fun navigateToMainDestination(mainDistination: MainDistination){
+    fun navigateToMainDestination(mainDestination: MainDestination) {
+
+        val MainDestinationNavOption = navOptions{
+            popUpTo(navHostController.graph.findStartDestination().id){
+                saveState=true
+            }
+            launchSingleTop=true
+            restoreState=true
+        }
+
+        when(mainDestination){
+            MainDestination.Home -> navHostController.navigate(homeRoute)
+            MainDestination.Accounts -> navHostController.navigate(accountRoute)
+            MainDestination.Transactions -> navHostController.navigate(transactionsRoute)
+        }
 
     }
 

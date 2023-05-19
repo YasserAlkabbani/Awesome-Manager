@@ -12,7 +12,7 @@ fun NavController.navigateToAccounts(navOptions: NavOptions?){
     navigate(route = accountRoute,navOptions=navOptions)
 }
 
-fun NavGraphBuilder.accountScreen(){
+fun NavGraphBuilder.accountsScreen(){
     composable(route= accountRoute){
         AccountsRoute()
     }
