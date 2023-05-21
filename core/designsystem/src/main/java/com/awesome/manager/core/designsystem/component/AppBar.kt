@@ -4,24 +4,26 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.awesome.manager.core.designsystem.icon.MaIconsType
+import com.awesome.manager.core.designsystem.icon.AmIconsType
+import com.awesome.manager.core.designsystem.text.AmText
+import com.awesome.manager.core.designsystem.text.asAmText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MaAppBar(
+fun AmAppBar(
     modifier: Modifier,
-    title:String,
-    navigationIcon:MaIconsType,
-    actionIcon:MaIconsType,
+    title:AmText,
+    navigationIcon:AmIconsType,
+    actionIcon:AmIconsType,
     onNavigationClick:()->Unit,
     onActionClick:()->Unit
 ){
 
     TopAppBar(
         modifier = modifier,
-        title = { MaText(text = title) },
-        navigationIcon = { MaIconButton(maIconsType = navigationIcon, onClick = onNavigationClick) },
-        actions = { MaIconButton(maIconsType = actionIcon, onClick = onActionClick) },
+        title = { AmText(amText = title) },
+        navigationIcon = { AmIconButton(amIconsType = navigationIcon, onClick = onNavigationClick) },
+        actions = { AmIconButton(amIconsType = actionIcon, onClick = onActionClick) },
     )
 
 }

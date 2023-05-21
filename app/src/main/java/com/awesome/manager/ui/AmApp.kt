@@ -8,10 +8,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.awesome.manager.core.designsystem.component.MaAppBar
-import com.awesome.manager.core.designsystem.component.MaNavigationBar
-import com.awesome.manager.core.designsystem.component.MaNavigationItem
-import com.awesome.manager.core.designsystem.icon.MaIcons
+import com.awesome.manager.core.designsystem.component.AmAppBar
+import com.awesome.manager.core.designsystem.component.AmNavigationBar
+import com.awesome.manager.core.designsystem.component.AmNavigationItem
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
 
@@ -25,24 +26,26 @@ fun AmApp(
     Surface(modifier = Modifier.fillMaxSize()) {
        Scaffold(
            topBar = {
-               if (maAppState.shouldShowShowTopBar)
-               MaAppBar(
-                   modifier = Modifier,
-                   title = "TEST_TOP_APPBAR_TITLE",
-                   navigationIcon = MaIcons.ArrowBack,
-                   actionIcon = MaIcons.ArrowBack,
-                   onNavigationClick = {  },
-                   onActionClick = {},
-               )
+               if (maAppState.shouldShowShowTopBar){
+                   AmAppBar(
+                       modifier = Modifier,
+                       title = "TEST_TOP_APPBAR_TITLE".asAmText(),
+                       navigationIcon = AmIcons.ArrowBack,
+                       actionIcon = AmIcons.ArrowBack,
+                       onNavigationClick = {  },
+                       onActionClick = {},
+                   )
+               }
            } ,
            bottomBar = {
-               if (maAppState.shouldShowBottomBar)
-               MaBottomBar(
-                   modifier = Modifier,
-                   mainDestinations = maAppState.mainDestination,
-                   onNavigationToDestination = maAppState::navigateToMainDestination,
-                   selectedMainDestination = maAppState.currentMainDestination
-               )
+               if (maAppState.shouldShowBottomBar){
+                   MaBottomBar(
+                       modifier = Modifier,
+                       mainDestinations = maAppState.mainDestination,
+                       onNavigationToDestination = maAppState::navigateToMainDestination,
+                       selectedMainDestination = maAppState.currentMainDestination
+                   )
+               }
            }
        ) {padding->
            AmNavHost(
@@ -61,16 +64,16 @@ fun MaBottomBar(
     onNavigationToDestination:(MainDestination)->Unit,
     selectedMainDestination: MainDestination?
 ){
-    MaNavigationBar(
+    AmNavigationBar(
         modifier=modifier,
         content = {
             mainDestinations.forEach {destination->
-                MaNavigationItem(
+                AmNavigationItem(
                     modifier = Modifier,
                     isSelected = destination==selectedMainDestination,
-                    selectedIcon = destination.selectedMaIconsType,
-                    unSelectedIcon = destination.unSelectedMaIconsType,
-                    label = stringResource(id = destination.titleTextId),
+                    selectedIcon = destination.selectedAmIconsType,
+                    unSelectedIcon = destination.unSelectedAmIconsType,
+                    label = destination.title,
                     onSelect = {onNavigationToDestination(destination)}
                 )
             }

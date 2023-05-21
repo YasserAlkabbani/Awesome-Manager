@@ -2,17 +2,14 @@ package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import com.awesome.manager.core.designsystem.icon.MaIcons
-import com.awesome.manager.core.designsystem.icon.MaIconsType
+import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
-fun MaIcon(maIconsType: MaIconsType){
-    when(maIconsType){
-        is MaIconsType.ImageVictorMaIconsType -> Icon(imageVector = maIconsType.imageVector, contentDescription = null)
-        is MaIconsType.DrawableResourceMaIconsType -> Icon(painter = painterResource(id = maIconsType.id), contentDescription = null)
-        is MaIconsType.PainterMaIconsType -> Icon(painter = maIconsType.painter, contentDescription = null)
+fun AmIcon(amIconsType: AmIconsType){
+    when(amIconsType){
+        is AmIconsType.ImageVictorAmIconsType -> Icon(imageVector = amIconsType.imageVector, contentDescription = null)
+        is AmIconsType.DrawableResourceAmIconsType -> Icon(painter = painterResource(id = amIconsType.id), contentDescription = null)
+        is AmIconsType.PainterAmIconsType -> Icon(painter = amIconsType.painter, contentDescription = null)
     }
 }

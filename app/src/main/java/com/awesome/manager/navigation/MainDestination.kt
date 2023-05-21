@@ -1,32 +1,34 @@
 package com.awesome.manager.navigation
 
-import com.awesome.manager.core.designsystem.icon.MaIconsType
-import com.awesome.manager.core.designsystem.icon.MaIcons
+import com.awesome.manager.core.designsystem.icon.AmIconsType
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.AmText
+import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.feature.home.R as homeR
 import com.awesome.manager.feature.accounts.R as accountsR
 import com.awesome.manager.feature.transactions.R as transactionsR
 
 
 enum class MainDestination(
-    val selectedMaIconsType:MaIconsType,
-    val unSelectedMaIconsType: MaIconsType,
-    val titleTextId:Int,
+    val selectedAmIconsType:AmIconsType,
+    val unSelectedAmIconsType: AmIconsType,
+    val title:AmText,
 ){
 
     Home(
-        selectedMaIconsType=MaIcons.HomeSelected,
-        unSelectedMaIconsType = MaIcons.HomeUnSelected,
-        titleTextId = homeR.string.home
+        selectedAmIconsType=AmIcons.HomeSelected,
+        unSelectedAmIconsType = AmIcons.HomeUnSelected,
+        title = homeR.string.home.asAmText()
     ),
     Accounts(
-        selectedMaIconsType=MaIcons.AccountsSelected,
-        unSelectedMaIconsType = MaIcons.AccountsUnSelected,
-        titleTextId = accountsR.string.accounts
+        selectedAmIconsType=AmIcons.AccountsSelected,
+        unSelectedAmIconsType = AmIcons.AccountsUnSelected,
+        title = accountsR.string.accounts.asAmText()
     ),
     Transactions(
-        selectedMaIconsType=MaIcons.TransactionsSelected,
-        unSelectedMaIconsType = MaIcons.TransactionsUnSelected,
-        titleTextId = transactionsR.string.transactions
+        selectedAmIconsType=AmIcons.TransactionsSelected,
+        unSelectedAmIconsType = AmIcons.TransactionsUnSelected,
+        title = transactionsR.string.transactions.asAmText()
     ),
 
 }

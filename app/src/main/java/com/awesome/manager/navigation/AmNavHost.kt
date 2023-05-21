@@ -7,6 +7,7 @@ import com.awesome.manager.feature.accounts.navigation.accountsScreen
 import com.awesome.manager.feature.auth.navigation.authRoute
 import com.awesome.manager.feature.auth.navigation.authScreen
 import com.awesome.manager.feature.home.navigation.homeScreen
+import com.awesome.manager.feature.home.navigation.navigateToHome
 import com.awesome.manager.feature.menu.navigation.menuScreen
 import com.awesome.manager.feature.transactions.navigation.transactionsScreen
 import com.awesome.manager.ui.AmAppState
