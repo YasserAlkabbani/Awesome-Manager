@@ -10,13 +10,14 @@ composeBom = "2023.05.01"
 lifecycle = "2.6.1"
 room = "2.5.1"
 paging = "3.1.1"
-pagingCompose = "1.0.0-alpha19"
+pagingCompose = "1.0.0-alpha20"
 navigation = "2.5.3"
 daggerHilt = "2.44.2"
 hiltNavigation = "1.0.0"
 ktor = "2.3.0"
 androidGradlePlugin = "8.0.0"
 serialization="1.5.0"
+datastore="1.0.0"
 
 androidApplicationPlugin = "8.0.0"
 androidLibraryPlugin = "8.0.0"
@@ -24,6 +25,8 @@ kotlinAndroidPlugin = "1.8.20"
 androidxComposeCompiler = "1.4.6"
 devtoolsKspPlugin = "1.8.20-1.0.11"
 daggerHiltPlugin = "2.44.2"
+appcompat = "1.6.1"
+material = "1.9.0"
 
 
 
@@ -63,6 +66,8 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
+datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
 paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
@@ -89,6 +94,8 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinAndroidPlugin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "devtoolsKspPlugin" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [plugins]

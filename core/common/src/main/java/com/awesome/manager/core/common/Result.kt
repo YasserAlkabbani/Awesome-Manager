@@ -1,8 +1,10 @@
 package com.awesome.manager.core.common
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
@@ -17,6 +19,7 @@ fun <T> Flow<T>.asAmResult(): Flow<AmResult<T>> =
     map<T, AmResult<T>> { AmResult.Success(it) }
         .onStart { emit(AmResult.Loading()) }
         .catch { throwable -> emit(AmResult.Error(throwable)) }
+        .flowOn(Dispatchers.Default)
 
 fun <T> amRequest(requestData: suspend () -> T?) = flow<AmResult<T>> {
     val data: T = requestData()!!
@@ -24,6 +27,7 @@ fun <T> amRequest(requestData: suspend () -> T?) = flow<AmResult<T>> {
 }
     .onStart { emit(AmResult.Loading()) }
     .catch { throwable -> emit(AmResult.Error(throwable)) }
+    .flowOn(Dispatchers.Default)
 
 fun <T> amRequest(
     requestCacheData: suspend () -> T?,requestFreshData: suspend () -> T?, refreshCacheData: suspend (T) -> Unit,  forceUpdate: Boolean
@@ -42,5 +46,5 @@ fun <T> amRequest(
 }
     .onStart { emit(AmResult.Loading()) }
     .catch { throwable -> emit(AmResult.Error(throwable)) }
-
+    .flowOn(Dispatchers.Default)
 

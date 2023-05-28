@@ -7,6 +7,7 @@ interface AuthRepository {
 
     suspend fun login(email:String,password:String): Flow<AmResult<String>>
 
-    suspend fun signUp(email: String,password: String): Flow<AmResult<Unit>>
+    suspend fun signUp(email: String,password: String): Flow<AmResult<String>>
 
+    fun isLogin(): Flow<Boolean>
 }

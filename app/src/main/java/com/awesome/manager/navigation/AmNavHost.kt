@@ -8,6 +8,8 @@ import com.awesome.manager.feature.auth.navigation.authRoute
 import com.awesome.manager.feature.auth.navigation.authScreen
 import com.awesome.manager.feature.home.navigation.homeScreen
 import com.awesome.manager.feature.home.navigation.navigateToHome
+import com.awesome.manager.feature.intro.navigation.introRoute
+import com.awesome.manager.feature.intro.navigation.introScreen
 import com.awesome.manager.feature.menu.navigation.menuScreen
 import com.awesome.manager.feature.transactions.navigation.transactionsScreen
 import com.awesome.manager.ui.AmAppState
@@ -16,7 +18,7 @@ import com.awesome.manager.ui.AmAppState
 fun AmNavHost(
     modifier: Modifier,
     amAppState: AmAppState,
-    startDistinction: String= authRoute
+    startDistinction: String= introRoute
 ){
 
     val navController=amAppState.navHostController
@@ -27,6 +29,7 @@ fun AmNavHost(
         startDestination = startDistinction
     ){
 
+        introScreen()
         authScreen()
         homeScreen()
         accountsScreen()

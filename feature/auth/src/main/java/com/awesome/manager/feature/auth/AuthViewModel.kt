@@ -23,12 +23,14 @@ class AuthViewModel @Inject constructor(
     )
 
     private fun login(){
+        val email=authScreenState.email.value
+        val password=authScreenState.password.value
         viewModelScope.launch {
-            authRepository.login(authScreenState.email.value,authScreenState.password.value).collectLatest {
+            authRepository.login(email,password).collectLatest {
                 when(it){
-                    is AmResult.Loading -> Timber.d("AUTH LOGIN LOADING")
-                    is AmResult.Success -> Timber.d("AUTH LOGIN ${it.data}")
-                    is AmResult.Error -> Timber.d("AUTH LOGIN ERROR ${it.throwable.message}")
+                    is AmResult.Loading -> Timber.d("TEST_AUTH LOGIN LOADING $email $password")
+                    is AmResult.Success -> Timber.d("TEST_AUTH LOGIN SUCCESS ${it.data}")
+                    is AmResult.Error -> Timber.d("TEST_AUTH LOGIN ERROR ${it.throwable.message}")
                 }
                 authScreenState.updateStateBasedOnResult(it,{})
             }

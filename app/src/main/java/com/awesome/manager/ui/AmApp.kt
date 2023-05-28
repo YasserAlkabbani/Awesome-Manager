@@ -6,8 +6,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
@@ -22,7 +25,17 @@ import com.awesome.manager.navigation.MainDestination
 fun AmApp(
     maAppState: AmAppState= rememberAmAppState()
 ) {
-    // A surface container using the 'background' color from the theme
+    val mainActivityViewModel:MainActivityViewModel= viewModel()
+
+    val loginState=mainActivityViewModel.mainActivityState.isLogin.collectAsStateWithLifecycle().value
+    val currentDestinationRoute=maAppState.currentDestination?.route
+
+    LaunchedEffect(key1 = loginState,key2=currentDestinationRoute, block = {
+        currentDestinationRoute?.let {
+            maAppState.navigateByAuthState(loginState,currentDestinationRoute)
+        }
+    })
+
     Surface(modifier = Modifier.fillMaxSize()) {
        Scaffold(
            topBar = {

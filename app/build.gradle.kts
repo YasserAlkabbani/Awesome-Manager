@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     androidTestImplementation(libs.navigation.testing)
 
+    implementation(project(":feature:intro"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:accounts"))
     implementation(project(":feature:menu"))
@@ -67,6 +68,7 @@ dependencies {
 
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:data"))
 
 
 }

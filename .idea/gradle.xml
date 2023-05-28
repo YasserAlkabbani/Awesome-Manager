@@ -41,6 +41,7 @@
             <option value="$PROJECT_DIR$/feature/accounts" />
             <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/intro" />
             <option value="$PROJECT_DIR$/feature/menu" />
             <option value="$PROJECT_DIR$/feature/transactions" />
             <option value="$PROJECT_DIR$/sync" />

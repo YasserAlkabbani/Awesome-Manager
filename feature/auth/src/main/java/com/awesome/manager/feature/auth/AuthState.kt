@@ -17,10 +17,10 @@ class AuthScreenState (
     val login:()->Unit, val signUp:()->Unit
 ){
 
-    val email:StateFlow<String> =savedStateHandle.getStateFlow(EMAIL_KEY,"")
+    val email:StateFlow<String> =savedStateHandle.getStateFlow(EMAIL_KEY,"yasseralkabbani1411989@gmail.com")
     fun updateEmail(newEmail:String)=savedStateHandle.set(EMAIL_KEY,newEmail)
 
-    val password:StateFlow<String> =savedStateHandle.getStateFlow(PASSWORD_KEY,"")
+    val password:StateFlow<String> =savedStateHandle.getStateFlow(PASSWORD_KEY,"123456")
     fun updatePassword(newPassword:String)=savedStateHandle.set(PASSWORD_KEY,newPassword)
 
     private val _navigateToHome:MutableStateFlow<Unit?> =MutableStateFlow(null)
