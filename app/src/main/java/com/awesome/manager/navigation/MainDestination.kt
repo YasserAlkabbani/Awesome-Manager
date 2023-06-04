@@ -12,22 +12,30 @@ import com.awesome.manager.feature.transactions.R as transactionsR
 enum class MainDestination(
     val selectedAmIconsType:AmIconsType,
     val unSelectedAmIconsType: AmIconsType,
+    val addIcon:AmIconsType,
+    val addTitle:AmText,
     val title:AmText,
 ){
 
     Home(
         selectedAmIconsType=AmIcons.HomeSelected,
         unSelectedAmIconsType = AmIcons.HomeUnSelected,
+        addIcon = AmIcons.HomeUnSelected,
+        addTitle = "ADD".asAmText(),
         title = homeR.string.home.asAmText()
     ),
     Accounts(
         selectedAmIconsType=AmIcons.AccountsSelected,
         unSelectedAmIconsType = AmIcons.AccountsUnSelected,
+        addIcon = AmIcons.AccountsUnSelected,
+        addTitle = "ADD".asAmText(),
         title = accountsR.string.accounts.asAmText()
     ),
     Transactions(
         selectedAmIconsType=AmIcons.TransactionsSelected,
         unSelectedAmIconsType = AmIcons.TransactionsUnSelected,
+        addIcon = AmIcons.TransactionsUnSelected,
+        addTitle = "ADD".asAmText(),
         title = transactionsR.string.transactions.asAmText()
     ),
 

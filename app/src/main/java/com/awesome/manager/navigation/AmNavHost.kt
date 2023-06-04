@@ -13,11 +13,14 @@ import com.awesome.manager.feature.intro.navigation.introScreen
 import com.awesome.manager.feature.menu.navigation.menuScreen
 import com.awesome.manager.feature.transactions.navigation.transactionsScreen
 import com.awesome.manager.ui.AmAppState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun AmNavHost(
     modifier: Modifier,
     amAppState: AmAppState,
+    clickFab:StateFlow<Unit?>,
+    doneClickFab:()->Unit,
     startDistinction: String= introRoute
 ){
 
@@ -32,8 +35,14 @@ fun AmNavHost(
         introScreen()
         authScreen()
         homeScreen()
-        accountsScreen()
-        transactionsScreen()
+        accountsScreen(
+            clickFab=clickFab,
+            doneClickFab=doneClickFab
+        )
+        transactionsScreen(
+            clickFab=clickFab,
+            doneClickFab=doneClickFab
+        )
         menuScreen()
 
     }

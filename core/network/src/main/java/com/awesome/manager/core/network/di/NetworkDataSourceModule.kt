@@ -1,6 +1,6 @@
 package com.awesome.manager.core.network.di
 
-import com.awesome.manager.core.network.AuthNetworkDataSource
+import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.ktor.KtorAuthNetworkDataSource
 import dagger.Binds
 import dagger.Module
@@ -13,6 +13,6 @@ import dagger.hilt.components.SingletonComponent
 interface NetworkDataSourceModule{
 
     @Binds
-    fun bindNetworkDataSource(authNetworkDataSource: KtorAuthNetworkDataSource):AuthNetworkDataSource
+    fun bindNetworkDataSource(authNetworkDataSource: KtorAuthNetworkDataSource): AuthNetworkDataSource
 
 }

@@ -1,6 +1,6 @@
 plugins {
-    id("awesome.android.library.compose")
-    id("awesome.android.feature")
+    id("awesomemanager.android.library.compose")
+    id("awesomemanager.android.feature")
 }
 android {
     namespace = "com.awesome.manager.feature.transactions"

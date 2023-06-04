@@ -10,8 +10,8 @@ class AndroidFeatureConventionPlugin:Plugin<Project>{
 
 
             pluginManager.apply{
-                apply("awesome.android.library")
-                apply("awesome.android.hilt")
+                apply("awesomemanager.android.library")
+                apply("awesomemanager.android.hilt")
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")

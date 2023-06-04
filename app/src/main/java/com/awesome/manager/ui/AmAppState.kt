@@ -50,8 +50,12 @@ class AmAppState(
     val shouldShowBottomBar
         @Composable get() = currentMainDestination != null
 
+    val shouldShowFloatingActionButton
+        @Composable get() = currentDestination?.route== accountRoute||currentDestination?.route== transactionsRoute
+
     val shouldShowShowTopBar
         @Composable get() = currentMainDestination == null && currentDestination?.route != authRoute
+
 
     val mainDestination = MainDestination.values().toList()
 

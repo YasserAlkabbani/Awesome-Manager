@@ -1,6 +1,6 @@
 plugins {
-    id("awesome.android.library.compose")
-    id("awesome.android.library")
+    id("awesomemanager.android.library.compose")
+    id("awesomemanager.android.library")
 }
 
 android {

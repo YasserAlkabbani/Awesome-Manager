@@ -3,8 +3,6 @@ package com.awesome.manager.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
@@ -15,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.component.AmAppBar
+import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -29,9 +28,11 @@ fun AmApp(
     maAppState: AmAppState= rememberAmAppState()
 ) {
     val mainActivityViewModel:MainActivityViewModel= viewModel()
+    val mainActivityState=mainActivityViewModel.mainActivityState
 
     val loginState=mainActivityViewModel.mainActivityState.isLogin.collectAsStateWithLifecycle().value
     val currentDestinationRoute=maAppState.currentDestination?.route
+    val currentMainDestination= maAppState.currentMainDestination
 
     LaunchedEffect(key1 = loginState,key2=currentDestinationRoute, block = {
         currentDestinationRoute?.let {
@@ -66,12 +67,22 @@ fun AmApp(
                }
            },
            floatingActionButton = {
-
+               if (maAppState.shouldShowFloatingActionButton&&currentMainDestination!=null){
+                   AmExtendedFloatingActionButton(
+                       modifier = Modifier,
+                       expanded = true,
+                       text = currentMainDestination.addTitle,
+                       icon = currentMainDestination.addIcon,
+                       onClick = mainActivityState::onClickFab
+                   )
+               }
            }
        ) {padding->
            AmNavHost(
                modifier = Modifier.padding(padding),
-               amAppState = maAppState
+               amAppState = maAppState,
+               clickFab = mainActivityState.clickFab,
+               doneClickFab = mainActivityState::doneClickFab
            )
        }
     }

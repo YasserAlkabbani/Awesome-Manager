@@ -1,13 +1,10 @@
-import com.android.build.api.dsl.ApplicationDefaultConfig
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import java.io.FileInputStream
-import java.io.InputStreamReader
 import java.util.Properties
 
 plugins {
-    id("awesome.android.library")
-    id("awesome.android.hilt")
+    id("awesomemanager.android.library")
+    id("awesomemanager.android.hilt")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 

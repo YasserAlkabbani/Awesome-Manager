@@ -1,4 +1,4 @@
-package com.awesome.manager.core.network
+package com.awesome.manager.core.network.datasource
 
 import com.awesome.manager.core.network.ktor.LoginResponse
 

@@ -3,6 +3,7 @@ package com.awesome.manager.core.designsystem.icon
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.HomeMax
 import androidx.compose.material.icons.filled.HomeMini
@@ -21,12 +22,15 @@ object AmIcons {
 
     val HomeSelected= AmIconsType.ImageVictorAmIconsType(Icons.Default.HomeMax)
     val HomeUnSelected= AmIconsType.ImageVictorAmIconsType(Icons.Default.HomeMini)
+    val HomeAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
     val AccountsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.AccountCircle)
     val AccountsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.ManageAccounts)
+    val Account=AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
     val TransactionsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Money)
     val TransactionsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.MoneyOff)
+    val TransactionAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
     val MenuSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
     val MenuUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)

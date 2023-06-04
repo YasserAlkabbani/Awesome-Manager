@@ -26,28 +26,32 @@ dependencies {
 gradlePlugin{
     plugins {
         register("androidApplicationCompose"){
-            id="awesome.android.application.compose"
+            id="awesomemanager.android.application.compose"
             implementationClass="AndroidApplicationConventionPlugin"
         }
         register("androidApplication"){
-            id="awesome.android.application"
+            id="awesomemanager.android.application"
             implementationClass="AndroidApplicationComposeConventionPlugin"
         }
         register("androidLibraryCompose"){
-            id="awesome.android.library.compose"
+            id="awesomemanager.android.library.compose"
             implementationClass="AndroidLibraryComposeConventionPlugin"
         }
         register("androidLibrary"){
-            id="awesome.android.library"
+            id="awesomemanager.android.library"
             implementationClass="AndroidLibraryConventionPlugin"
         }
         register("androidHilt"){
-            id="awesome.android.hilt"
+            id="awesomemanager.android.hilt"
             implementationClass="AndroidHiltConventionPlugin"
         }
         register("androidFeature"){
-            id="awesome.android.feature"
+            id="awesomemanager.android.feature"
             implementationClass="AndroidFeatureConventionPlugin"
+        }
+        register("androidRoom"){
+            id="awesomemanager.android.room"
+            implementationClass="AndroidRoomConventionPlugin"
         }
     }
 }

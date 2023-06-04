@@ -1,6 +1,6 @@
 plugins {
-    id("awesome.android.library")
-    id("awesome.android.hilt")
+    id("awesomemanager.android.library")
+    id("awesomemanager.android.hilt")
 }
 
 android {

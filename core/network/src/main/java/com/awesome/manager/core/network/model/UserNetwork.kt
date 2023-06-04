@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserNetwork(
-    val id:String,
-    val email:String,
+    @SerialName("id") val id:String,
+    @SerialName("email") val email:String,
     @SerialName("email_confirmed_at") val emailConfirmedAt:String,
     @SerialName("created_at") val createdAt:String,
     @SerialName("updated_at") val updatedAt:String,

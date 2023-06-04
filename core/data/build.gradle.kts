@@ -1,6 +1,6 @@
 plugins {
-    id("awesome.android.library")
-    id("awesome.android.hilt")
+    id("awesomemanager.android.library")
+    id("awesomemanager.android.hilt")
 }
 
 android {
@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:network"))
 
+    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.coroutines.android)
 
 }

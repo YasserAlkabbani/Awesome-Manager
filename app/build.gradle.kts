@@ -1,7 +1,7 @@
 plugins {
-    id("awesome.android.application.compose")
-    id("awesome.android.application")
-    id("awesome.android.hilt")
+    id("awesomemanager.android.application.compose")
+    id("awesomemanager.android.application")
+    id("awesomemanager.android.hilt")
 }
 
 @Suppress("UnstableApiUsage")

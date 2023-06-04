@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-const val EMAIL_KEY:String="EMAIL"
-const val PASSWORD_KEY:String="PASSWORD"
+private const val EMAIL_KEY:String="EMAIL"
+private const val PASSWORD_KEY:String="PASSWORD"
 
 class AuthScreenState (
     private val savedStateHandle: SavedStateHandle,

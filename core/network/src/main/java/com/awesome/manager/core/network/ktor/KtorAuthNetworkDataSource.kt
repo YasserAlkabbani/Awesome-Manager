@@ -1,7 +1,6 @@
 package com.awesome.manager.core.network.ktor
 
-import android.util.Log
-import com.awesome.manager.core.network.AuthNetworkDataSource
+import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.UserNetwork
 import com.awesome.manager.core.network.model.asResult
 import io.ktor.client.HttpClient
@@ -11,13 +10,9 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import io.ktor.resources.Resource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @Resource("auth/v1/")
