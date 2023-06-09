@@ -2,7 +2,7 @@ package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.UserNetwork
-import com.awesome.manager.core.network.model.asResult
+import com.awesome.manager.core.network.asResult
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth

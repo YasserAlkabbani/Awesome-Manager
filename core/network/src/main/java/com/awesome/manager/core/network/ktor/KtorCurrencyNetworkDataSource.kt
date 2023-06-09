@@ -2,7 +2,7 @@ package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.datasource.CurrencyNetworkDataSource
 import com.awesome.manager.core.network.model.CurrencyNetwork
-import com.awesome.manager.core.network.model.asResult
+import com.awesome.manager.core.network.asResult
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.post
 import io.ktor.resources.Resource

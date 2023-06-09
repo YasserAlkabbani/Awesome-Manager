@@ -2,10 +2,11 @@ package com.awesome.manager.core.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "transactions")
 data class TransactionEntity(
-    @ColumnInfo("transaction_id") val id: String,
+    @ColumnInfo("transaction_id") @PrimaryKey val id: String,
     @ColumnInfo("account_id") val accountId:String,
     @ColumnInfo("creator_id") val creatorId:String,
     @ColumnInfo("title") val title:String,

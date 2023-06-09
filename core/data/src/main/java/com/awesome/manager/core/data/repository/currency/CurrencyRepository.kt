@@ -1,11 +1,12 @@
 package com.awesome.manager.core.data.repository.currency
 
 import com.awesome.manager.core.model.AmCurrency
-import java.util.UUID
+import kotlinx.coroutines.flow.Flow
 
-class CurrencyRepository{
+interface  CurrencyRepository{
 
+    suspend fun refreshCurrency()
 
-
+    fun returnCurrencies():Flow<List<AmCurrency>>
 
 }

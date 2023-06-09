@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 
 sealed interface AmResult<out T> {
     data class Success<T>(val data: T, val freshData: Boolean = true) : AmResult<T>
@@ -21,13 +22,17 @@ fun <T> Flow<T>.asAmResult(): Flow<AmResult<T>> =
         .catch { throwable -> emit(AmResult.Error(throwable)) }
         .flowOn(Dispatchers.Default)
 
-fun <T> amRequest(requestData: suspend () -> T?) = flow<AmResult<T>> {
+suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmResult<T>> {
     val data: T = requestData()!!
     emit(AmResult.Success(data))
 }
     .onStart { emit(AmResult.Loading()) }
     .catch { throwable -> emit(AmResult.Error(throwable)) }
     .flowOn(Dispatchers.Default)
+
+suspend inline fun amInsert(crossinline insertTask:suspend ()->Unit){
+    withContext(Dispatchers.IO){ insertTask() }
+}
 
 fun <T> amRequest(
     requestCacheData: suspend () -> T?,requestFreshData: suspend () -> T?, refreshCacheData: suspend (T) -> Unit,  forceUpdate: Boolean

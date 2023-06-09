@@ -1,4 +1,4 @@
-package com.awesome.manager.core.network.model
+package com.awesome.manager.core.network
 
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
