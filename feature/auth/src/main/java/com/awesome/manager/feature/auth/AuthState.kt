@@ -2,7 +2,7 @@ package com.awesome.manager.feature.auth
 
 import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.common.AmResult
-import com.awesome.manager.core.designsystem.text.AmText
+import com.awesome.manager.core.designsystem.text.AmTextManager
 import com.awesome.manager.core.designsystem.text.asAmText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,5 +46,5 @@ class AuthScreenState (
 sealed class  AuthScreenMainState{
     object Idle: AuthScreenMainState()
     object Loading: AuthScreenMainState()
-    data class Error(val amText: AmText): AuthScreenMainState()
+    data class Error(val amTextManager: AmTextManager): AuthScreenMainState()
 }

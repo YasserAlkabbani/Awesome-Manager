@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,7 +17,8 @@ class AccountsViewModel @Inject constructor(
     val accountsState:AccountsState= AccountsState(
         savedStateHandle = savedStateHandle,
         coroutineScope = viewModelScope,
-        returnCurrencyByCurrencyId = {null}
+        returnCurrencyByCurrencyId = {null},
+        amAccountAsFlow = flow {  }
     )
 
 

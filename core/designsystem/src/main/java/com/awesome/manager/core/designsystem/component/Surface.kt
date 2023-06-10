@@ -7,13 +7,11 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun AmSurface(modifier: Modifier,onClick:()->Unit,content:@Composable ()->Unit) {
-
     Surface(
         modifier=modifier,
         content=content,
         onClick = onClick
     )
-
 }
 
 @Composable

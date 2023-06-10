@@ -3,7 +3,9 @@ package com.awesome.manager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.common.AmResult
+import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
+import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.feature.auth.AuthScreenMainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val authRepository:AuthRepository
+    private val authRepository:AuthRepository,
+    private val currencyRepository: CurrencyRepository,
+    private val accountRepository: AccountRepository
 ):ViewModel() {
 
     val mainActivityState=MainActivityState(
@@ -24,7 +28,7 @@ class MainActivityViewModel @Inject constructor(
 
     init {
         observeAuthTokenState()
-        refreshUserInfo()
+        refreshData()
     }
 
     private fun observeAuthTokenState(){
@@ -35,15 +39,11 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    private fun refreshUserInfo(){
+    private fun refreshData(){
         viewModelScope.launch {
-            authRepository.refreshUserInfo().collectLatest{
-                when(it){
-                    is AmResult.Loading -> Timber.d("TEST_AUTH REFRESH_USER LOADING")
-                    is AmResult.Success -> Timber.d("TEST_AUTH REFRESH_USER SUCCESS ${it.data}")
-                    is AmResult.Error -> Timber.d("TEST_AUTH REFRESH_USER ERROR ${it.throwable.message}")
-                }
-            }
+            launch { authRepository.refreshUserInfo() }
+            launch { currencyRepository.refreshCurrency() }
+            launch { accountRepository.refreshAccounts() }
         }
     }
 

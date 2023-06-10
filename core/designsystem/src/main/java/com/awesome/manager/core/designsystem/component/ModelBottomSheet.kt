@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class AmSheetState(
-    val sheetState: SheetState,
-    val isOpenButtonSheet: MutableState<Boolean>,
-    val coroutineScope:CoroutineScope,
+    internal val sheetState: SheetState,
+    internal val isOpenButtonSheet: MutableState<Boolean>,
+    internal val coroutineScope:CoroutineScope,
     internal val onDismiss:()->Unit,internal val onOpen:()->Unit
 ){
     fun close(){

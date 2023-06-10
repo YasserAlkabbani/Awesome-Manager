@@ -6,7 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.text.AmText
+import com.awesome.manager.core.designsystem.text.AmTextManager
 
 @Composable
 fun AmNavigationBar(
@@ -28,7 +28,7 @@ fun RowScope.AmNavigationItem(
     isSelected:Boolean,
     selectedIcon:AmIconsType,
     unSelectedIcon:AmIconsType,
-    label:AmText,
+    label:String,
     onSelect:()->Unit,
 ){
     NavigationBarItem(
@@ -36,6 +36,6 @@ fun RowScope.AmNavigationItem(
         selected=isSelected,
         icon = { AmIcon(if (isSelected)selectedIcon else unSelectedIcon) },
         onClick = onSelect,
-        label = { AmText(amText = label)}
+        label = { AmText(text = label)}
     )
 }

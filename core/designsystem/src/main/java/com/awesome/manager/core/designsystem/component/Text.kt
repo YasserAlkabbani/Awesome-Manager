@@ -2,9 +2,9 @@ package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.awesome.manager.core.designsystem.text.AmText
+import androidx.compose.ui.Modifier
 
 @Composable
-fun AmText(amText: AmText){
-    Text(text = amText.asText())
+fun AmText(modifier: Modifier=Modifier,text:String){
+    Text(modifier=modifier,text = text)
 }

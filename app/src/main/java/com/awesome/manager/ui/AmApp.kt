@@ -48,7 +48,7 @@ fun AmApp(
                if (maAppState.shouldShowShowTopBar){
                    AmAppBar(
                        modifier = Modifier,
-                       title = "TEST_TOP_APPBAR_TITLE".asAmText(),
+                       title = "TEST_TOP_APPBAR_TITLE",
                        navigationIcon = AmIcons.ArrowBack,
                        actionIcon = AmIcons.ArrowBack,
                        onNavigationClick = {  },
@@ -71,7 +71,7 @@ fun AmApp(
                    AmExtendedFloatingActionButton(
                        modifier = Modifier,
                        expanded = true,
-                       text = currentMainDestination.addTitle,
+                       text = currentMainDestination.addTitle.asText(),
                        icon = currentMainDestination.addIcon,
                        onClick = mainActivityState::onClickFab
                    )
@@ -105,7 +105,7 @@ fun MaBottomBar(
                     isSelected = destination==selectedMainDestination,
                     selectedIcon = destination.selectedAmIconsType,
                     unSelectedIcon = destination.unSelectedAmIconsType,
-                    label = destination.title,
+                    label = destination.title.asText(),
                     onSelect = {onNavigationToDestination(destination)}
                 )
             }

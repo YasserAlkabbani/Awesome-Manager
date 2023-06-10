@@ -2,7 +2,7 @@ package com.awesome.manager.navigation
 
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.AmText
+import com.awesome.manager.core.designsystem.text.AmTextManager
 import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.feature.home.R as homeR
 import com.awesome.manager.feature.accounts.R as accountsR
@@ -13,8 +13,8 @@ enum class MainDestination(
     val selectedAmIconsType:AmIconsType,
     val unSelectedAmIconsType: AmIconsType,
     val addIcon:AmIconsType,
-    val addTitle:AmText,
-    val title:AmText,
+    val addTitle:AmTextManager,
+    val title:AmTextManager,
 ){
 
     Home(

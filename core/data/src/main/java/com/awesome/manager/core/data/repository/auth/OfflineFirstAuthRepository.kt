@@ -5,6 +5,7 @@ import com.awesome.manager.core.common.amRequest
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -17,8 +18,10 @@ class OfflineFirstAuthRepository @Inject constructor(
     override fun isLogin(): Flow<Boolean> =
         authPreferencesDataStore.returnAccessToken().map { it.isNullOrBlank().not() }
 
-    override suspend fun refreshUserInfo(): Flow<AmResult<String>> = amRequest {
-        authNetworkDataSource.refreshUser().toString()
+    override suspend fun refreshUserInfo(){
+        amRequest {
+            authNetworkDataSource.refreshUser().toString()
+        }.collect()
     }
 
     override suspend fun login(email: String, password: String): Flow<AmResult<String>> =

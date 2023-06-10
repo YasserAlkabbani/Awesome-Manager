@@ -15,7 +15,6 @@ import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.asAmText
-import com.awesome.manager.core.ui.ScreenPlaceHolder
 
 @Composable
 fun AuthRoute(
@@ -39,14 +38,14 @@ fun AuthScreen(
             modifier = Modifier,
             content = {
                 Column (modifier = Modifier.fillMaxWidth()){
-                    AmText(amText = "TITLE".asAmText())
+                    AmText(text = "TITLE")
                     AmSurface(
                         modifier = Modifier,
                         content = {
                             Column (Modifier.fillMaxWidth()){
                                 AmTextField(text = email, onTextChange = authScreenState::updateEmail)
                                 AmTextField(text = password, onTextChange = authScreenState::updatePassword)
-                                AmButton(amText = "START ACCOUNTING".asAmText(), onClick = authScreenState.login)
+                                AmButton(text = "START ACCOUNTING", onClick = authScreenState.login)
                             }
                         }
                     )

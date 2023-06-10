@@ -2,11 +2,12 @@ package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import com.awesome.manager.core.designsystem.text.AmText
+import androidx.compose.ui.Modifier
+import com.awesome.manager.core.designsystem.text.AmTextManager
 
 @Composable
-fun AmTextButton(amText: AmText,onClick:()->Unit){
-    TextButton(onClick = onClick) {
-        AmText(amText = amText)
+fun AmTextButton(modifier:Modifier=Modifier,text:String, onClick:()->Unit){
+    TextButton(modifier=modifier,onClick = onClick) {
+        AmText(text=text)
     }
 }
