@@ -1,36 +1,43 @@
 package com.awesome.manager.core.network.di
 
 import android.util.Log
+import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
+import com.awesome.manager.core.network.asResult
+import com.awesome.manager.core.network.ktor.AuthRequest
+import com.awesome.manager.core.network.ktor.LoginResponse
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.ANDROID
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.plugins.resources.Resources
+import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.header
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
-import io.ktor.http.headers
-import io.ktor.http.set
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.first
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
+
+@Serializable
+data class RefreshTokenBody(val refresh_token:String)
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,7 +45,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideKtorClient() = HttpClient(OkHttp) {
+    fun provideKtorClient(authPreferencesDataStore: AuthPreferencesDataStore) = HttpClient(OkHttp) {
 
         engine {}
 
@@ -63,7 +70,23 @@ object NetworkModule {
 
         install(Auth) {
             bearer {
-
+                loadTokens {
+                    val authToken=authPreferencesDataStore.returnAccessToken().first().orEmpty()
+                    val refreshToken=authPreferencesDataStore.returnRefreshToken().first().orEmpty()
+                    Log.d("KTOR_SERVICE","TEST_AUTH LOAD_TOKEN AUTH_TOKEN $authToken")
+                    Log.d("KTOR_SERVICE","TEST_AUTH LOAD_TOKEN REFRESH_TOKEN $refreshToken")
+                    BearerTokens(authToken,refreshToken)
+                }
+                refreshTokens {
+                    Log.d("KTOR_SERVICE","TEST_AUTH REFRESH_TOKEN REFRESH:${oldTokens?.refreshToken} ACCESS:${oldTokens?.accessToken}")
+                    val refreshTokenResult=client.post(AuthRequest.RefreshToken()){
+                        setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
+                    }.asResult<LoginResponse>()
+                    val accessToken=refreshTokenResult.accessToken.orEmpty()
+                    val refreshToken=refreshTokenResult.refreshToken.orEmpty()
+                    authPreferencesDataStore.updateToken(accessToken,refreshToken)
+                    BearerTokens(accessToken,refreshToken)
+                }
             }
         }
 

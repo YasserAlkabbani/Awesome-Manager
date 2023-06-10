@@ -9,5 +9,7 @@ interface AuthRepository {
 
     suspend fun signUp(email: String,password: String): Flow<AmResult<String>>
 
+    suspend fun refreshUserInfo():Flow<AmResult<Any>>
+
     fun isLogin(): Flow<Boolean>
 }

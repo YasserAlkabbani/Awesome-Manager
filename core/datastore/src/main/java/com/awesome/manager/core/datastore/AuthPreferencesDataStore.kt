@@ -10,22 +10,28 @@ import javax.inject.Inject
 
 class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val authDataStore:DataStore<Preferences>){
 
-    private val AUTH_TOKEN_KEY = stringPreferencesKey("auth_token")
+    private val accessTokenKey = stringPreferencesKey("access_token")
+    private val refreshTokenKey = stringPreferencesKey("refresh_token")
 
-    suspend fun updateAuthToken(newToken:String){
+    suspend fun updateToken(accessToken:String, refreshToken:String){
         authDataStore.edit {
-            it[AUTH_TOKEN_KEY]=newToken
+            it[accessTokenKey]=accessToken
+            it[refreshTokenKey]=refreshToken
         }
     }
 
     suspend fun clearAuthToken(){
         authDataStore.edit {
-            it[AUTH_TOKEN_KEY]=""
+            it[accessTokenKey]=""
+            it[refreshTokenKey]=""
         }
     }
 
-    fun returnAuthToken()=authDataStore.data.map {
-        it[AUTH_TOKEN_KEY]
+    fun returnAccessToken()=authDataStore.data.map {
+        it[accessTokenKey]
+    }
+    fun returnRefreshToken()=authDataStore.data.map {
+        it[refreshTokenKey]
     }
 
 }

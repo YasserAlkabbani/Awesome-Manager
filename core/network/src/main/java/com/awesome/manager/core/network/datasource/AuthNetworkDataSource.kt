@@ -8,4 +8,6 @@ interface AuthNetworkDataSource {
 
     suspend fun signUp(email: String,password:String): String
 
+    suspend fun refreshUser(): Any
+
 }

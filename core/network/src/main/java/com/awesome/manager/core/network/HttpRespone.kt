@@ -12,11 +12,19 @@ data class ErrorResponse(
     @SerialName("error_description") val errorDescription:String
 )
 
+@Serializable
+data class UnauthorizedResponse(
+    @SerialName("msg") val msg:String
+)
+
 suspend inline fun <reified T> HttpResponse.asResult():T{
     return when(status){
         HttpStatusCode.OK , HttpStatusCode.Created , HttpStatusCode.Accepted->body()
         HttpStatusCode.BadRequest-> body<ErrorResponse>().let {
             throw Throwable(it.errorDescription)
+        }
+        HttpStatusCode.Unauthorized->body<UnauthorizedResponse>().let {
+            throw Throwable(it.msg)
         }
         else -> throw Throwable("UNKNOWN ERROR")
     }
