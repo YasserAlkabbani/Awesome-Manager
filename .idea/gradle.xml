@@ -38,12 +38,18 @@
             <option value="$PROJECT_DIR$/core/notification" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature" />
-            <option value="$PROJECT_DIR$/feature/accounts" />
+            <option value="$PROJECT_DIR$/feature/account" />
+            <option value="$PROJECT_DIR$/feature/account/create-update" />
+            <option value="$PROJECT_DIR$/feature/account/details" />
+            <option value="$PROJECT_DIR$/feature/account/search" />
             <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/intro" />
             <option value="$PROJECT_DIR$/feature/menu" />
-            <option value="$PROJECT_DIR$/feature/transactions" />
+            <option value="$PROJECT_DIR$/feature/transaction" />
+            <option value="$PROJECT_DIR$/feature/transaction/create-update" />
+            <option value="$PROJECT_DIR$/feature/transaction/details" />
+            <option value="$PROJECT_DIR$/feature/transaction/search" />
             <option value="$PROJECT_DIR$/sync" />
           </set>
         </option>

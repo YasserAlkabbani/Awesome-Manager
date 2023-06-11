@@ -6,7 +6,9 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.HomeMax
 import androidx.compose.material.icons.filled.HomeMini
@@ -44,6 +46,8 @@ object AmIcons {
     val MenuUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
     val ArrowBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
+    val Edit=AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
+    val Close=AmIconsType.ImageVictorAmIconsType(Icons.Default.Cancel)
 
 }
 

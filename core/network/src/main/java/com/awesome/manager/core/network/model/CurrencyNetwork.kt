@@ -1,7 +1,9 @@
 package com.awesome.manager.core.network.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CurrencyNetwork(
     @SerialName("id") val id:String,
     @SerialName("country_name") val countryName:String,

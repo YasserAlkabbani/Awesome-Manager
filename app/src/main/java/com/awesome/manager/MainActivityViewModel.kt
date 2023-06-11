@@ -41,7 +41,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun refreshData(){
         viewModelScope.launch {
-            launch { authRepository.refreshUserInfo() }
+//            launch { authRepository.refreshUserInfo() }
             launch { currencyRepository.refreshCurrency() }
             launch { accountRepository.refreshAccounts() }
         }

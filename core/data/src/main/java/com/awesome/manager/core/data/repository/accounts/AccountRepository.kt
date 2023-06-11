@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
 
-    suspend fun refreshAccounts(): Flow<AmResult<List<AccountEntity>>>
+    suspend fun refreshAccounts()
 
     suspend fun createAccount(account: AmAccount)
 

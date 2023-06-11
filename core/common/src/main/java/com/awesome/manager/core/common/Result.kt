@@ -27,7 +27,7 @@ suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = fl
     emit(AmResult.Success(data))
 }
     .onStart { emit(AmResult.Loading()) }
-    .catch { throwable -> emit(AmResult.Error(throwable)) }
+//    .catch { throwable -> emit(AmResult.Error(throwable)) }
     .flowOn(Dispatchers.Default)
 
 suspend inline fun amInsert(crossinline insertTask:suspend ()->Unit){

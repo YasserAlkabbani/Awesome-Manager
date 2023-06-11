@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface CurrencyDao {
 
     @Upsert
-    fun upsertCurrency(vararg currencyEntity: CurrencyEntity)
+    fun upsertCurrency(currencyEntity: CurrencyEntity)
+
+    @Upsert
+    fun upsertCurrency(currencyEntity: List<CurrencyEntity>)
 
     @Query("SELECT * FROM currencies")
     fun returnCurrencies():Flow<List<CurrencyEntity>>

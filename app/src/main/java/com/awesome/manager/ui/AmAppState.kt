@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.awesome.manager.feature.accounts.navigation.accountRoute
+import com.awesome.manager.feature.account.search_filter.navigation.accountRoute
 import com.awesome.manager.feature.auth.navigation.authRoute
 import com.awesome.manager.feature.home.navigation.homeRoute
 import com.awesome.manager.feature.intro.navigation.introRoute
@@ -42,7 +42,7 @@ class AmAppState(
     val currentMainDestination
         @Composable get() = when (currentDestination?.route) {
             homeRoute -> MainDestination.Home
-            accountRoute -> MainDestination.Accounts
+            com.awesome.manager.feature.account.search_filter.navigation.accountRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
             else -> null
         }
@@ -51,7 +51,7 @@ class AmAppState(
         @Composable get() = currentMainDestination != null
 
     val shouldShowFloatingActionButton
-        @Composable get() = currentDestination?.route== accountRoute||currentDestination?.route== transactionsRoute
+        @Composable get() = currentDestination?.route== com.awesome.manager.feature.account.search_filter.navigation.accountRoute ||currentDestination?.route== transactionsRoute
 
     val shouldShowShowTopBar
         @Composable get() = currentMainDestination == null && currentDestination?.route != authRoute
@@ -72,7 +72,7 @@ class AmAppState(
                 navHostController.navigate(homeRoute, navOptions = mainDestinationNavOption)
 
             MainDestination.Accounts ->
-                navHostController.navigate(accountRoute, navOptions = mainDestinationNavOption)
+                navHostController.navigate(com.awesome.manager.feature.account.search_filter.navigation.accountRoute, navOptions = mainDestinationNavOption)
 
             MainDestination.Transactions ->
                 navHostController.navigate(transactionsRoute, navOptions = mainDestinationNavOption)

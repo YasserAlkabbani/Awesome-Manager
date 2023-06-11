@@ -11,6 +11,7 @@ import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
 import com.awesome.manager.core.network.model.AccountNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class OfflineFirsAccountRepository @Inject constructor(
         val accountsEntity=accountNetworkDataSource.returnUpdatedAccount().map { it.asEntity() }
         accountDao.upsertAccount(accountsEntity)
         accountsEntity
-    }
+    }.collect()
 
     override suspend fun createAccount(account: AmAccount) {
         amInsert { accountDao.upsertAccount(account.asEntity()) }

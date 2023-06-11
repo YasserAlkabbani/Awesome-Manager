@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AmCard(modifier: Modifier,onClick:()->Unit,content:@Composable ColumnScope.()->Unit){
+fun AmCard(modifier: Modifier=Modifier,onClick:()->Unit,content:@Composable ColumnScope.()->Unit){
 
     Card(
         modifier = modifier,
@@ -19,11 +19,11 @@ fun AmCard(modifier: Modifier,onClick:()->Unit,content:@Composable ColumnScope.(
 }
 
 @Composable
-fun AmCard(modifier: Modifier,content:@Composable ColumnScope.()->Unit){
+fun AmCard(modifier: Modifier=Modifier,content:@Composable ColumnScope.()->Unit){
 
     Card(
         modifier = modifier,
-        content=content
+        content=content,
     )
 
 }

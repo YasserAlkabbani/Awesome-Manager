@@ -16,8 +16,6 @@ import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
-import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
 
@@ -49,10 +47,8 @@ fun AmApp(
                    AmAppBar(
                        modifier = Modifier,
                        title = "TEST_TOP_APPBAR_TITLE",
-                       navigationIcon = AmIcons.ArrowBack,
-                       actionIcon = AmIcons.ArrowBack,
-                       onNavigationClick = {  },
-                       onActionClick = {},
+                       onNavigationBack = mainActivityState::onClickBack,
+                       onEdit = mainActivityState::onClickEdit ,
                    )
                }
            } ,
@@ -73,7 +69,7 @@ fun AmApp(
                        expanded = true,
                        text = currentMainDestination.addTitle.asText(),
                        icon = currentMainDestination.addIcon,
-                       onClick = mainActivityState::onClickFab
+                       onClick = mainActivityState::onClickAdd
                    )
                }
            }
@@ -81,8 +77,8 @@ fun AmApp(
            AmNavHost(
                modifier = Modifier.padding(padding),
                amAppState = maAppState,
-               clickFab = mainActivityState.clickFab,
-               doneClickFab = mainActivityState::doneClickFab
+               onSelectAccount = mainActivityState::onSelectedAccount,
+               onSelectTransaction = mainActivityState::onSelectedTransaction
            )
        }
     }

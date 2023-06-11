@@ -26,8 +26,8 @@ class OfflineCurrencyRepository @Inject constructor (
 
     override suspend fun refreshCurrency() {
         amRequest {
-            val currencies=currencyNetworkDataSource.returnUpdatedCurrency().map { it.asEntity() }.toTypedArray()
-            currencyDao.upsertCurrency(*currencies)
+            val currencies=currencyNetworkDataSource.returnUpdatedCurrency().map { it.asEntity() }
+            currencyDao.upsertCurrency(currencies)
         }.collect()
     }
 

@@ -3,7 +3,9 @@ package com.awesome.manager.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.awesome.manager.feature.accounts.navigation.accountsScreen
+import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.feature.account.search_filter.navigation.accountsScreen
 import com.awesome.manager.feature.auth.navigation.authRoute
 import com.awesome.manager.feature.auth.navigation.authScreen
 import com.awesome.manager.feature.home.navigation.homeScreen
@@ -19,9 +21,9 @@ import kotlinx.coroutines.flow.StateFlow
 fun AmNavHost(
     modifier: Modifier,
     amAppState: AmAppState,
-    clickFab:StateFlow<Unit?>,
-    doneClickFab:()->Unit,
-    startDistinction: String= introRoute
+    startDistinction: String= introRoute,
+    onSelectAccount:(AmAccount)->Unit,
+    onSelectTransaction:(AmTransaction)->Unit
 ){
 
     val navController=amAppState.navHostController
@@ -35,14 +37,8 @@ fun AmNavHost(
         introScreen()
         authScreen()
         homeScreen()
-        accountsScreen(
-            clickFab=clickFab,
-            doneClickFab=doneClickFab
-        )
-        transactionsScreen(
-            clickFab=clickFab,
-            doneClickFab=doneClickFab
-        )
+        accountsScreen(onSelectAccount=onSelectAccount)
+        transactionsScreen(onSelectTransaction=onSelectTransaction)
         menuScreen()
 
     }
