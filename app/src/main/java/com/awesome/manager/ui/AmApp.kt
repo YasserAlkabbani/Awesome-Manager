@@ -29,12 +29,24 @@ fun AmApp(
     val mainActivityState=mainActivityViewModel.mainActivityState
 
     val loginState=mainActivityViewModel.mainActivityState.isLogin.collectAsStateWithLifecycle().value
+
     val currentDestinationRoute=maAppState.currentDestination?.route
+
     val currentMainDestination= maAppState.currentMainDestination
 
     LaunchedEffect(key1 = loginState,key2=currentDestinationRoute, block = {
         currentDestinationRoute?.let {
             maAppState.navigateByAuthState(loginState,currentDestinationRoute)
+        }
+    })
+
+    val clickAdd=mainActivityState.clickAdd.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = clickAdd, block = {
+        clickAdd?.let {
+            currentDestinationRoute?.let {
+                maAppState.navigateToAddByCurrentNavigation(currentDestinationRoute)
+            }
+            mainActivityState.doneClickAdd()
         }
     })
 
@@ -77,8 +89,6 @@ fun AmApp(
            AmNavHost(
                modifier = Modifier.padding(padding),
                amAppState = maAppState,
-               onSelectAccount = mainActivityState::onSelectedAccount,
-               onSelectTransaction = mainActivityState::onSelectedTransaction
            )
        }
     }

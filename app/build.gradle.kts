@@ -61,10 +61,14 @@ dependencies {
 
     implementation(project(":feature:intro"))
     implementation(project(":feature:auth"))
-    implementation(project(":feature:account"))
-    implementation(project(":feature:transaction"))
     implementation(project(":feature:menu"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:account:accounts"))
+    implementation(project(":feature:account:account-editor"))
+    implementation(project(":feature:account:account-details"))
+    implementation(project(":feature:transaction:transaction-editor"))
+    implementation(project(":feature:transaction:transactions"))
+    implementation(project(":feature:transaction:transaction-details"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

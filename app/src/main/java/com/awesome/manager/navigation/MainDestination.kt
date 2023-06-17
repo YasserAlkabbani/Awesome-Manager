@@ -5,8 +5,8 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.AmTextManager
 import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.feature.home.R as homeR
-import com.awesome.manager.feature.accounts.R as accountsR
-import com.awesome.manager.feature.transactions.R as transactionsR
+import com.awesome.manager.feature.account.accounts.R as accountsR
+import com.awesome.manager.feature.transaction.transactions.R as transactionsR
 
 
 enum class MainDestination(

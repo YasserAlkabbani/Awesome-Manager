@@ -10,11 +10,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.awesome.manager.feature.account.search_filter.navigation.accountRoute
+import com.awesome.manager.feature.account.accounts.navigation.accountsRoute
+import com.awesome.manager.feature.account.accounts.navigation.navigateToAccounts
+import com.awesome.manager.feature.account.details.navigation.accountDetailsRoute
+import com.awesome.manager.feature.account.editor.navigation.navigateToAccountEditor
 import com.awesome.manager.feature.auth.navigation.authRoute
+import com.awesome.manager.feature.auth.navigation.navigateToAuth
 import com.awesome.manager.feature.home.navigation.homeRoute
+import com.awesome.manager.feature.home.navigation.navigateToHome
 import com.awesome.manager.feature.intro.navigation.introRoute
-import com.awesome.manager.feature.transactions.navigation.transactionsRoute
+import com.awesome.manager.feature.intro.navigation.navigateToIntro
+import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsRoute
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToTransactionEditor
+import com.awesome.manager.feature.transaction.transactions.navigation.navigateToTransactions
+import com.awesome.manager.feature.transaction.transactions.navigation.transactionsRoute
 import com.awesome.manager.navigation.MainDestination
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
@@ -42,7 +51,7 @@ class AmAppState(
     val currentMainDestination
         @Composable get() = when (currentDestination?.route) {
             homeRoute -> MainDestination.Home
-            com.awesome.manager.feature.account.search_filter.navigation.accountRoute -> MainDestination.Accounts
+            accountsRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
             else -> null
         }
@@ -51,10 +60,13 @@ class AmAppState(
         @Composable get() = currentMainDestination != null
 
     val shouldShowFloatingActionButton
-        @Composable get() = currentDestination?.route== com.awesome.manager.feature.account.search_filter.navigation.accountRoute ||currentDestination?.route== transactionsRoute
+        @Composable get() = currentDestination?.route== accountsRoute ||currentDestination?.route== transactionsRoute
 
     val shouldShowShowTopBar
-        @Composable get() = currentMainDestination == null && currentDestination?.route != authRoute
+        @Composable get() = when(currentDestination?.route){
+            accountDetailsRoute, transactionDetailsRoute ->true
+            else -> false
+        }
 
 
     val mainDestination = MainDestination.values().toList()
@@ -69,31 +81,30 @@ class AmAppState(
         }
         when (mainDestination) {
             MainDestination.Home ->
-                navHostController.navigate(homeRoute, navOptions = mainDestinationNavOption)
+                navHostController.navigateToHome(navOptions = mainDestinationNavOption)
 
             MainDestination.Accounts ->
-                navHostController.navigate(com.awesome.manager.feature.account.search_filter.navigation.accountRoute, navOptions = mainDestinationNavOption)
+                navHostController.navigateToAccounts(navOptions = mainDestinationNavOption)
 
             MainDestination.Transactions ->
-                navHostController.navigate(transactionsRoute, navOptions = mainDestinationNavOption)
+                navHostController.navigateToTransactions(navOptions = mainDestinationNavOption)
         }
     }
 
     fun navigateByAuthState(isLogin: Boolean, currentDestinationRoute: String) {
-        Timber.d("TEST_AUTH NAVIGATE_BY_STATE $isLogin $currentDestinationRoute")
         when (isLogin) {
             true -> when (currentDestinationRoute) {
                 authRoute -> {
                     val homeNavOption = navOptions {
                         popUpTo(authRoute) { this.inclusive = true }
                     }
-                    navHostController.navigate(homeRoute, homeNavOption)
+                    navHostController.navigateToHome( homeNavOption)
                 }
                 introRoute -> {
                     val homeNavOption = navOptions {
                         popUpTo(introRoute) { this.inclusive = true }
                     }
-                    navHostController.navigate(homeRoute, homeNavOption)
+                    navHostController.navigateToHome(homeNavOption)
                 }
             }
             false -> {
@@ -103,20 +114,26 @@ class AmAppState(
                         val homeNavOption = navOptions {
                             popUpTo(introRoute) { this.inclusive = true }
                         }
-                        navHostController.navigate(authRoute, homeNavOption)
+                        navHostController.navigateToAuth(homeNavOption)
                     }
                     homeRoute -> {
                         val authNavOption = navOptions {
                             popUpTo(homeRoute) { this.inclusive = true }
                         }
-                        navHostController.navigate(introRoute, authNavOption)
+                        navHostController.navigateToIntro(authNavOption)
                     }
-
                     else -> {
                         navHostController.popBackStack()
                     }
                 }
             }
+        }
+    }
+
+    fun navigateToAddByCurrentNavigation(currentDestinationRoute: String){
+        when(currentDestinationRoute){
+            accountsRoute->navHostController.navigateToAccountEditor(null,null)
+            transactionsRoute->navHostController.navigateToTransactionEditor(null,null)
         }
     }
 
