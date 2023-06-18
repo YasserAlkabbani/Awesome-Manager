@@ -13,7 +13,7 @@ import androidx.navigation.navOptions
 import com.awesome.manager.feature.account.accounts.navigation.accountsRoute
 import com.awesome.manager.feature.account.accounts.navigation.navigateToAccounts
 import com.awesome.manager.feature.account.details.navigation.accountDetailsRoute
-import com.awesome.manager.feature.account.editor.navigation.navigateToAccountEditor
+import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
 import com.awesome.manager.feature.auth.navigation.authRoute
 import com.awesome.manager.feature.auth.navigation.navigateToAuth
 import com.awesome.manager.feature.home.navigation.homeRoute
@@ -26,7 +26,6 @@ import com.awesome.manager.feature.transaction.transactions.navigation.navigateT
 import com.awesome.manager.feature.transaction.transactions.navigation.transactionsRoute
 import com.awesome.manager.navigation.MainDestination
 import kotlinx.coroutines.CoroutineScope
-import timber.log.Timber
 
 
 @Composable
@@ -132,7 +131,7 @@ class AmAppState(
 
     fun navigateToAddByCurrentNavigation(currentDestinationRoute: String){
         when(currentDestinationRoute){
-            accountsRoute->navHostController.navigateToAccountEditor(null,null)
+            accountsRoute->navHostController.navigateToCreateAccount(null)
             transactionsRoute->navHostController.navigateToTransactionEditor(null,null)
         }
     }

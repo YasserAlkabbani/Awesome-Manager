@@ -1,13 +1,14 @@
 package com.awesome.manager.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.awesome.manager.feature.account.details.navigation.accountDetailsScreen
 import com.awesome.manager.feature.account.editor.navigation.accountEditorScreen
 import com.awesome.manager.feature.account.accounts.navigation.accountsScreen
-import com.awesome.manager.feature.account.editor.navigation.navigateToAccountEditor
+import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
+import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
 import com.awesome.manager.feature.auth.navigation.authScreen
 import com.awesome.manager.feature.home.navigation.homeScreen
 import com.awesome.manager.feature.intro.navigation.introRoute
@@ -17,7 +18,6 @@ import com.awesome.manager.feature.transaction.details.navigation.transactionDet
 import com.awesome.manager.feature.transaction.editor.navigation.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.navigation.transactionsScreen
 import com.awesome.manager.ui.AmAppState
-import timber.log.Timber
 
 @Composable
 fun AmNavHost(
@@ -31,7 +31,7 @@ fun AmNavHost(
     NavHost(
         modifier=modifier,
         navController = navController,
-        startDestination = startDistinction
+        startDestination = startDistinction,
     ){
 
         introScreen()
@@ -39,11 +39,8 @@ fun AmNavHost(
         homeScreen()
 
         accountsScreen(
-            navigateToAccountDetails = {
-                Timber.d("TEST_ACCOUNT_NAVIGATION ACCOUNT_DETAILS $it")
-                navController.navigateToAccountEditor(accountId = it,navOptions = null)
-            },
-            navigateToCreateAccount = { navController.navigateToAccountEditor(accountId = null,navOptions = null) }
+            navigateToAccountDetails = { navController.navigateToEditAccount(accountId = it,navOptions = null) },
+            navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) }
         )
         accountEditorScreen()
         accountDetailsScreen()

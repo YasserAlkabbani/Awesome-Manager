@@ -1,18 +1,18 @@
 package com.awesome.manager.feature.account.accounts
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.component.AmButton
-import com.awesome.manager.core.designsystem.component.AmText
-import com.awesome.manager.core.designsystem.component.rememberAmSheetState
 import timber.log.Timber
 
 @Composable
@@ -51,6 +51,7 @@ fun AccountsScreen(
 ){
     val accounts=accountsState.accounts.collectAsState().value
     LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp) ,
         content = {
             items(

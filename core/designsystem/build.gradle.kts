@@ -15,6 +15,7 @@ dependencies {
     api(libs.compose.foundation)
     api(libs.compose.runtime)
     api(libs.compose.ui.tooling.preview)
+    api(libs.coil.compose)
     debugApi(libs.compose.ui.tooling)
 
     implementation(libs.core.ktx)

@@ -1,23 +1,32 @@
 package com.awesome.manager.feature.account.editor
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDeepLink
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.DialogNavigator
-import androidx.navigation.get
-import com.awesome.manager.core.ui.ScreenPlaceHolder
+import com.awesome.manager.core.designsystem.component.AmImage
+import com.awesome.manager.core.designsystem.component.AmTextField
+import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
 fun AccountEditorRoute(
-    accountEditorViewModel: AccountEditorViewModel= hiltViewModel()
-){
+    accountEditorViewModel: AccountEditorViewModel = hiltViewModel()
+) {
 
-    val accountEditorState=accountEditorViewModel.accountEditorState
+    val accountEditorState = accountEditorViewModel.accountEditorState
 
 
     AccountEditorScreen(accountEditorState)
@@ -25,13 +34,58 @@ fun AccountEditorRoute(
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState:AccountEditorState){
+fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
-    val accountId=accountEditorState.accountId.collectAsStateWithLifecycle().value
+    val accountId = accountEditorState.accountId.collectAsStateWithLifecycle().value
+    val accountName: String = accountEditorState.name.collectAsStateWithLifecycle().value
+    val accountImage: String = accountEditorState.imageUrl.collectAsStateWithLifecycle().value
 
-    ScreenPlaceHolder(
-        title = "ACCOUNT EDITOR ACCOUNT_ID: $accountId",
-        textButton = "CLICK ME",
-        onClickButton = {}
-    )
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .wrapContentHeight()
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AmImage(modifier = Modifier.size(75.dp), imageUrl = accountImage)
+            Spacer(modifier = Modifier.width(8.dp))
+            AmTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                label = "Account", icon = AmIcons.Title, hint = "Example@Example.com",
+                text = accountName, onTextChange = accountEditorState::updateName
+            )
+        }
+        AmTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            label = "Account", icon = AmIcons.Title, hint = "Example@Example.com",
+            text = accountName, onTextChange = accountEditorState::updateName
+        )
+        AmTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            label = "Account", icon = AmIcons.Title, hint = "Example@Example.com",
+            text = accountName, onTextChange = accountEditorState::updateName
+        )
+        AmTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            label = "Account", icon = AmIcons.Title, hint = "Example@Example.com",
+            text = accountName, onTextChange = accountEditorState::updateName
+        )
+        AmTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            label = "Account", icon = AmIcons.Title, hint = "Example@Example.com",
+            text = accountName, onTextChange = accountEditorState::updateName
+        )
+    }
 }

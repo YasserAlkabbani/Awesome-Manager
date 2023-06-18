@@ -13,12 +13,13 @@ import com.awesome.manager.core.designsystem.component.AmCard
 
 @Composable
 fun ScreenPlaceHolder(
+    modifier: Modifier=Modifier,
     title:String,
     textButton:String,
     onClickButton:()->Unit
 ){
     AmCard {
-        Column(Modifier.fillMaxSize()) {
+        Column(modifier.fillMaxSize()) {
             Text(text = title, fontSize = 36.sp)
             Button(onClick = onClickButton) {
                 Text(text = textButton)

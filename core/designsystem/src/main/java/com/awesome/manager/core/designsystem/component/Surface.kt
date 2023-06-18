@@ -15,7 +15,10 @@ fun AmSurface(modifier: Modifier,onClick:()->Unit,content:@Composable ()->Unit) 
 }
 
 @Composable
-fun AmSurface(modifier: Modifier,content:@Composable ()->Unit) {
+fun AmSurface(
+    modifier: Modifier,
+    content:@Composable ()->Unit
+) {
 
     Surface(
         modifier=modifier,
