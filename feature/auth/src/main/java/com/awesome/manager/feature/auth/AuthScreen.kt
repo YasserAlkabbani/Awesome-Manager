@@ -3,12 +3,12 @@ package com.awesome.manager.feature.auth
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.component.AmButton
-import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
@@ -33,7 +33,7 @@ fun AuthScreen(
 
     Column(Modifier.fillMaxSize()) {
         AmIcon(amIconsType = AmIcons.AwesomeManagerIcon)
-        AmCard(
+        Card(
             modifier = Modifier,
             content = {
                 Column (modifier = Modifier.fillMaxWidth()){

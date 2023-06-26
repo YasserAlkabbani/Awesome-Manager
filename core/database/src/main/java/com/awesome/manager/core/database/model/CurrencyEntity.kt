@@ -13,6 +13,6 @@ data class CurrencyEntity(
     @ColumnInfo("currency_code") val currencyCode:String,
     @ColumnInfo("currency_name") val currencyName:String,
     @ColumnInfo("currency_symbol") val currencySymbol:String,
-    @ColumnInfo("created_at") val createdAt:String,
-    @ColumnInfo("updated_at") val updatedAt:String,
+    @ColumnInfo("created_at") val createdAt:Long,
+    @ColumnInfo("updated_at") val updatedAt:Long,
 )

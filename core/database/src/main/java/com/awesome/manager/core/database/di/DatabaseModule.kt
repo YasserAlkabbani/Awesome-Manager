@@ -19,6 +19,6 @@ object DatabaseModule{
     @Singleton
     fun providesAmDatabase(
         @ApplicationContext context: Context
-    )=Room.databaseBuilder(context,AmDatabase::class.java,"am_database").build()
+    )=Room.databaseBuilder(context,AmDatabase::class.java,"am_database").fallbackToDestructiveMigration().build()
 
 }

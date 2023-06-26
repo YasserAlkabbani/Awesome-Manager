@@ -1,6 +1,9 @@
 package com.awesome.manager.core.designsystem.component
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -9,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,7 +27,11 @@ fun AmCard(
     Card(
         modifier = modifier,
         onClick = onClick,
-        content=content,
+        content={
+            Column(modifier=modifier.padding(8.dp)){
+                content()
+            }
+        },
         colors =colors,
         shape = shape
     )
@@ -41,7 +49,11 @@ fun AmCard(
     Card(
         modifier = modifier,
         colors=colors,
-        content=content,
+        content={
+            Column(modifier=modifier.padding(8.dp)){
+                content()
+            }
+        },
         shape = shape,
     )
 

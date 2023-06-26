@@ -5,18 +5,14 @@ import com.awesome.manager.core.common.amRequest
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.AccountDao
-import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
-import com.awesome.manager.core.network.model.AccountNetwork
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class OfflineFirsAccountRepository @Inject constructor(
+class OfflineFirstAccountRepository @Inject constructor(
     private val accountDao: AccountDao,
     private val accountNetworkDataSource: AccountNetworkDataSource
 ) :AccountRepository{

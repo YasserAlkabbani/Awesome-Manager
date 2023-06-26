@@ -14,6 +14,7 @@ fun AmText(
     Text(
         modifier=modifier,
         text = text,
+        maxLines = 1,
         style =style
     )
 }

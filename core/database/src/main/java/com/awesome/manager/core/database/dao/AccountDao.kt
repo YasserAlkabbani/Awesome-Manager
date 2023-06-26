@@ -5,7 +5,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.awesome.manager.core.database.model.AccountEntity
-import com.awesome.manager.core.database.model.AccountEntityWithCurrency
+import com.awesome.manager.core.database.model.AccountEntityWithData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,10 +19,10 @@ interface AccountDao {
 
     @Transaction
     @Query ("SELECT * FROM accounts")
-    fun returnAccounts():Flow<List<AccountEntityWithCurrency>>
+    fun returnAccounts():Flow<List<AccountEntityWithData>>
 
     @Transaction
     @Query ("SELECT * FROM accounts WHERE account_id=:accountId")
-    fun returnAccountById(accountId:String):Flow<AccountEntityWithCurrency>
+    fun returnAccountById(accountId:String):Flow<AccountEntityWithData>
 
 }

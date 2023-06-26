@@ -6,6 +6,7 @@ data class AmAccount (
     val name:String,
     val imageUrl:String,
     val defaultCurrency: AmCurrency,
-    val createdAt:Long,
-    val defaultTransactionsType:String
+    val defaultTransactionsType:AmTransactionType,
+    val createdAt:String,
+    val updatedAt:String,
 )

@@ -4,7 +4,6 @@ import android.util.Log
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.asResult
-import com.awesome.manager.core.network.ktor.AuthRequest
 import com.awesome.manager.core.network.ktor.LoginResponse
 import dagger.Module
 import dagger.Provides
@@ -29,6 +28,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
+import io.ktor.resources.Resource
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.Serializable
@@ -38,6 +38,14 @@ import javax.inject.Singleton
 
 @Serializable
 data class RefreshTokenBody(val refresh_token:String)
+@Resource("auth/v1/")
+private class AuthRequest {
+    @Resource("token")
+    class RefreshToken(
+        val parent: AuthRequest = AuthRequest(),
+        val grant_type:String="refresh_token"
+    )
+}
 
 @Module
 @InstallIn(SingletonComponent::class)

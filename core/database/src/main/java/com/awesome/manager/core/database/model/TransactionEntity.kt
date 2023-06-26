@@ -1,18 +1,29 @@
 package com.awesome.manager.core.database.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity(tableName = "transactions")
 data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
-    @ColumnInfo("account_id") val accountId:String,
-    @ColumnInfo("creator_id") val creatorId:String,
+    @ColumnInfo("creator_user_id")val creatorUserId: String,
+    @ColumnInfo("account_id")val accountId: String,
+    @ColumnInfo("currency_id")val currencyId: String,
+    @ColumnInfo("transaction_type_id")val transactionTypeId: String,
     @ColumnInfo("title") val title:String,
-    @ColumnInfo("subTitle") val subTitle:String,
-    @ColumnInfo("created_date") val createdDate:Long,
-    @ColumnInfo("incoming_amount") val incomingAmount:Double,
-    @ColumnInfo("outgoing_amount") val outgoingAmount:Double,
-    @ColumnInfo("should_return") val shouldReturn:Boolean
+    @ColumnInfo("subtitle") val subtitle:String,
+    @ColumnInfo("amount") val amount:String,
+    @ColumnInfo("is_pay") val isPay:Boolean,
+    @ColumnInfo("created_at") val createdAt:Long,
+    @ColumnInfo("updated_at") val updatedAt:Long,
+)
+
+data class TransactionEntityWithData(
+    @Embedded val transactionEntity:TransactionEntity,
+    @Relation (entity = AccountEntity::class,parentColumn = "account_id", entityColumn ="account_id") val accountEntity: AccountEntityWithData,
+    @Relation (parentColumn = "currency_id", entityColumn ="currency_id") val currencyEntity: CurrencyEntity,
+    @Relation (parentColumn = "transaction_type_id", entityColumn ="transaction_type_id") val transactionTypeEntity: TransactionTypeEntity,
 )

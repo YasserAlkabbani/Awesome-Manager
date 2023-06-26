@@ -22,9 +22,6 @@ import androidx.navigation.Navigator
 import androidx.navigation.compose.dialog
 import androidx.navigation.get
 import androidx.navigation.navArgument
-import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmSheetState
-import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.ui.DialogDestinationContainer
 import com.awesome.manager.feature.account.editor.AccountEditorRoute
 

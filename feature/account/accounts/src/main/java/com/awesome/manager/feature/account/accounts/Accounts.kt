@@ -58,10 +58,10 @@ fun AccountsScreen(
                 items = accounts,
                 contentType = {"ACCOUNTS"},
                 key = {account->account.id},
-                itemContent = {
+                itemContent = {account->
                     AmButton(
-                        text = it.name,
-                        onClick = {accountsState.startAccountDetailsNavigation(it.id)}
+                        text = account.name,
+                        onClick = {accountsState.startAccountDetailsNavigation(account.id)}
                     )
                 }
             )

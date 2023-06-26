@@ -1,31 +1,33 @@
 package com.awesome.manager.core.data.model
 
 import com.awesome.manager.core.database.model.AccountEntity
-import com.awesome.manager.core.database.model.AccountEntityWithCurrency
+import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.network.model.AccountNetwork
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 
 fun AccountNetwork.asEntity()=AccountEntity(
-    id=id,
+    id=id.toString(),
     name=name,
     imageUrl=imageUrl,
-    defaultCurrencyId=defaultCurrencyId,
-    defaultTransactionsType=defaultTransactionsType,
-    creatorUserId=creatorUserId,
+    defaultCurrencyId=defaultCurrencyId.toString(),
+    defaultTransactionsTypeId = defaultTransactionTypeId.toString(),
+    creatorUserId=creatorUserId.toString(),
     createdAt=Instant.parse(createdAt).toEpochMilliseconds(),
     updatedAt= Instant.parse(updatedAt).toEpochMilliseconds(),
 )
 
-fun AccountEntityWithCurrency.asModel()=AmAccount(
+fun AccountEntityWithData.asModel()=AmAccount(
     id=accountEntity.id,
     creatorUserId = accountEntity.creatorUserId,
     name=accountEntity.name,
     imageUrl=accountEntity.imageUrl,
     defaultCurrency = defaultCurrencyEntity.asModel(),
-    defaultTransactionsType = accountEntity.defaultTransactionsType,
-    createdAt = accountEntity.createdAt,
+    defaultTransactionsType = defaultTransactionTypeEntity.asModel(),
+    createdAt = accountEntity.createdAt.toString(),
+    updatedAt = accountEntity.updatedAt.toString()
 )
 
 fun AmAccount.asEntity()=AccountEntity(
@@ -34,7 +36,7 @@ fun AmAccount.asEntity()=AccountEntity(
     name=name,
     imageUrl=imageUrl,
     defaultCurrencyId = defaultCurrency.id,
-    defaultTransactionsType = defaultTransactionsType,
-    createdAt = createdAt,
-    updatedAt = createdAt,
+    defaultTransactionsTypeId = defaultTransactionsType.id,
+    createdAt = Clock.System.now().toEpochMilliseconds(),
+    updatedAt = Clock.System.now().toEpochMilliseconds(),
 )

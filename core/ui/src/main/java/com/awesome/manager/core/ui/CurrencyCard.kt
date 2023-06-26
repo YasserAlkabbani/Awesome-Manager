@@ -24,7 +24,7 @@ fun CurrencyCard(modifier: Modifier,countryName:String, currencyName:String, cur
         onClick = {},
         content = {
             Row(
-                modifier=Modifier.padding(8.dp),
+                modifier=Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmImage(modifier = Modifier.size(40.dp), imageUrl = imageUrl)

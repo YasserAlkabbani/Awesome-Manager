@@ -19,6 +19,9 @@ object DaoModule{
     fun provideCurrencyDao(amDatabase: AmDatabase)=amDatabase.currencyDao()
 
     @Provides
+    fun provideTransactionType(amDatabase: AmDatabase)=amDatabase.transactionTypeDao()
+
+    @Provides
     fun provideAccountDao(amDatabase: AmDatabase)=amDatabase.accountDao()
 
     @Provides

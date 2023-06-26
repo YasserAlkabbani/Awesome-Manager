@@ -18,8 +18,7 @@ import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 @Resource("auth/v1/")
-
-class AuthRequest {
+private class AuthRequest {
     @Resource("token")
     class RefreshToken(
         val parent: AuthRequest = AuthRequest(),
@@ -78,7 +77,6 @@ class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: Http
     suspend fun recoverPassword(){}
 
     suspend fun logout(){}
-
 
     suspend fun refreshToken() {
         val token=httpClient.get("").body<String>()

@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 @Resource("rest/v1/accounts")
-class AccountRequest {
+private class AccountRequest {
     @Resource("")
     class ReturnAccount(
         val parent: AccountRequest = AccountRequest(),
