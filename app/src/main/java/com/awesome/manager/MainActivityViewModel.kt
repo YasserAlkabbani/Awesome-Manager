@@ -2,16 +2,16 @@ package com.awesome.manager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.common.AmResult
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.core.data.repository.transactions.TransactionRepository
-import com.awesome.manager.feature.auth.AuthScreenMainState
+import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,25 +32,28 @@ class MainActivityViewModel @Inject constructor(
 
     init {
         observeAuthTokenState()
-        refreshData()
     }
 
     private fun observeAuthTokenState(){
         viewModelScope.launch {
-            authRepository.isLogin().collectLatest {
+            authRepository.isLogin().distinctUntilChanged().collectLatest {
                 Timber.d("TEST_AUTH AUTH_TOKEN $it")
+                if (it) refreshData()
             }
         }
     }
 
-    private fun refreshData(){
-        viewModelScope.launch {
+    private suspend fun refreshData(){
+        Timber.d("TEST_AUTH REFRESH_DATA")
 //            launch { authRepository.refreshUserInfo() }
-            currencyRepository.refreshCurrency()
-            transactionTypeRepository.refreshTransactionType()
-            accountRepository.refreshAccounts()
-            transactionRepository.refreshTransactions()
+
+        coroutineScope {
+            launch {currencyRepository.refreshCurrency()}
+            launch {transactionTypeRepository.refreshTransactionType()}
+            launch {accountRepository.syncAccount()}
+            launch {transactionRepository.refreshTransactions()}
         }
+
     }
 
 }

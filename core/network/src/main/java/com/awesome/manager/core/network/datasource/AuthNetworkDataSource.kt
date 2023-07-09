@@ -1,13 +1,13 @@
 package com.awesome.manager.core.network.datasource
 
-import com.awesome.manager.core.network.ktor.LoginResponse
+import com.awesome.manager.core.network.model.AuthNetwork
 
 interface AuthNetworkDataSource {
 
-    suspend fun login(email:String,password: String): LoginResponse
+    suspend fun login(email:String,password: String): AuthNetwork
 
     suspend fun signUp(email: String,password:String): String
 
-    suspend fun refreshUser(): Any
+    suspend fun refreshUser(): AuthNetwork
 
 }

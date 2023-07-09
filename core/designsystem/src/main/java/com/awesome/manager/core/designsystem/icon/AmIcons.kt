@@ -6,7 +6,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.ui.graphics.painter.Painter
@@ -36,7 +39,7 @@ object AmIcons {
 
     val AccountsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.ManageAccounts)
     val AccountsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Person)
-    val Account=AmIconsType.ImageVictorAmIconsType(Icons.Default.PersonAdd)
+    val AccountAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.PersonAdd)
 
     val TransactionsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Payments)
     val TransactionsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
@@ -45,15 +48,18 @@ object AmIcons {
     val MenuSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
     val MenuUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
-    val ArrowBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
+    val NavigationBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
     val Edit=AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
-    val Close=AmIconsType.ImageVictorAmIconsType(Icons.Default.Cancel)
+    val Save=AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
+    val Close=AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
 
     val Email=AmIconsType.ImageVictorAmIconsType(Icons.Default.Email)
     val Password=AmIconsType.ImageVictorAmIconsType(Icons.Default.Password)
 
     val Title=AmIconsType.ImageVictorAmIconsType(Icons.Default.Title)
     val SubTitle=AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
+
+    val Done=AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
 
 }
 

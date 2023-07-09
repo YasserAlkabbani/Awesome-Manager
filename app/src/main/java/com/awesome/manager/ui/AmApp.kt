@@ -1,5 +1,7 @@
 package com.awesome.manager.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,13 +11,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
+import com.awesome.manager.R
 import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
 
@@ -27,26 +32,17 @@ fun AmApp(
 ) {
     val mainActivityViewModel:MainActivityViewModel= viewModel()
     val mainActivityState=mainActivityViewModel.mainActivityState
+    val scaffoldActions=mainActivityViewModel.mainActivityState.scaffoldActions
 
     val loginState=mainActivityViewModel.mainActivityState.isLogin.collectAsStateWithLifecycle().value
 
-    val currentDestinationRoute=maAppState.currentDestination?.route
+    val currentDestination=maAppState.currentDestination
 
     val currentMainDestination= maAppState.currentMainDestination
 
-    LaunchedEffect(key1 = loginState,key2=currentDestinationRoute, block = {
-        currentDestinationRoute?.let {
-            maAppState.navigateByAuthState(loginState,currentDestinationRoute)
-        }
-    })
-
-    val clickAdd=mainActivityState.clickAdd.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = clickAdd, block = {
-        clickAdd?.let {
-            currentDestinationRoute?.let {
-                maAppState.navigateToAddByCurrentNavigation(currentDestinationRoute)
-            }
-            mainActivityState.doneClickAdd()
+    LaunchedEffect(key1 = loginState,key2=currentDestination, block = {
+        currentDestination?.route?.let {
+            maAppState.navigateByAuthState(loginState,it)
         }
     })
 
@@ -55,17 +51,18 @@ fun AmApp(
     Surface(modifier = Modifier.fillMaxSize()) {
        Scaffold(
            topBar = {
-               if (maAppState.shouldShowShowTopBar){
+               if(maAppState.shouldShowShowTopBar) {
                    AmAppBar(
                        modifier = Modifier,
-                       title = "TEST_TOP_APPBAR_TITLE",
-                       onNavigationBack = mainActivityState::onClickBack,
-                       onEdit = mainActivityState::onClickEdit ,
+                       title = currentDestination?.label.toString(),
+                       onBack = mainActivityState::onNavigationBack,
+                       onSave = scaffoldActions::onSave, showSave = maAppState.shouldShowShowTopBarSave,
+                       onEdit = scaffoldActions::onEdit , showEdit = maAppState.shouldShowShowTopBarEdit,
                    )
                }
            } ,
            bottomBar = {
-               if (maAppState.shouldShowBottomBar){
+               if(maAppState.shouldShowBottomBar){
                    MaBottomBar(
                        modifier = Modifier,
                        mainDestinations = maAppState.mainDestination,
@@ -75,16 +72,16 @@ fun AmApp(
                }
            },
            floatingActionButton = {
-               if (maAppState.shouldShowFloatingActionButton&&currentMainDestination!=null){
+               maAppState.currentMainDestination?.let {
                    AmExtendedFloatingActionButton(
                        modifier = Modifier,
                        expanded = true,
-                       text = currentMainDestination.addTitle.asText(),
-                       icon = currentMainDestination.addIcon,
-                       onClick = mainActivityState::onClickAdd
+                       text = it.title.asText(),
+                       icon = it.addIcon,
+                       onClick = {currentDestination?.route?.let { maAppState.navigateToAddByCurrentNavigation(it) }}
                    )
                }
-           }
+           },
        ) {padding->
            AmNavHost(
                modifier = Modifier.padding(padding),

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,7 @@ fun AmImage(modifier:Modifier,imageUrl:String){
         placeholder = placeHolderPainter,
         error = errorPainter
     )
-    AmCard(
+    Surface(
         modifier=modifier,
         shape = CircleShape
     ) {

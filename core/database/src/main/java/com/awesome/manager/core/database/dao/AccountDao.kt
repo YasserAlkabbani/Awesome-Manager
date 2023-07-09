@@ -21,6 +21,9 @@ interface AccountDao {
     @Query ("SELECT * FROM accounts")
     fun returnAccounts():Flow<List<AccountEntityWithData>>
 
+    @Query("SELECT * FROM accounts WHERE pending=1")
+    fun returnPendingAccount():Flow<List<AccountEntity>>
+
     @Transaction
     @Query ("SELECT * FROM accounts WHERE account_id=:accountId")
     fun returnAccountById(accountId:String):Flow<AccountEntityWithData>

@@ -1,8 +1,9 @@
 package com.awesome.manager.core.designsystem.component
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -18,18 +19,26 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AmCard(
     modifier: Modifier=Modifier,
-    colors: CardColors = CardDefaults.cardColors(),
     shape: Shape=MaterialTheme.shapes.medium,
+    positive:Boolean, loading:Boolean,
     onClick:()->Unit,
     content:@Composable ColumnScope.()->Unit
 ){
 
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+    val errorContainer = MaterialTheme.colorScheme.errorContainer
+    val colors: CardColors = CardDefaults.cardColors(
+        containerColor = if (positive)  primaryContainer else errorContainer
+    )
     Card(
         modifier = modifier,
         onClick = onClick,
         content={
             Column(modifier=modifier.padding(8.dp)){
                 content()
+            }
+            AnimatedVisibility(visible = loading) {
+                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=positive)
             }
         },
         colors =colors,

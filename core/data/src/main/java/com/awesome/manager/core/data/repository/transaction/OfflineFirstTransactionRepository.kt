@@ -1,4 +1,4 @@
-package com.awesome.manager.core.data.repository.transactions
+package com.awesome.manager.core.data.repository.transaction
 
 import com.awesome.manager.core.common.amRequest
 import com.awesome.manager.core.data.model.asDomain
@@ -6,7 +6,6 @@ import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
-import com.awesome.manager.core.network.model.TransactionNetwork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map

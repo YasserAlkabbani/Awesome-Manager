@@ -17,7 +17,7 @@ fun AmTitleWithSubtitle(modifier: Modifier=Modifier,title:String,subtitle:String
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
-        AmText(text = title, style = MaterialTheme.typography.titleSmall)
+        AmText(text = title, style = MaterialTheme.typography.labelMedium)
         AmText(text = subtitle, style = MaterialTheme.typography.bodySmall)
     }
 }

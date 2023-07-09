@@ -1,16 +1,16 @@
 package com.awesome.manager.feature.transaction.transactions
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.designsystem.component.AmButton
+import com.awesome.manager.core.ui.TransactionCard
 
 
 @Composable
@@ -24,6 +24,7 @@ fun TransactionsRoute(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransactionScreen(transactionState: TransactionState) {
 
@@ -38,8 +39,16 @@ fun TransactionScreen(transactionState: TransactionState) {
                 contentType = {"TRANSACTIONS"},
                 key = {transactions->transactions.id},
                 itemContent = {transaction->
-                    AmButton(
-                        text = transaction.title,
+                    TransactionCard(
+                        modifier = Modifier.animateItemPlacement(),
+                        title = transaction.title,
+                        subTitle = transaction.subtitle,
+                        amount = transaction.amount,
+                        date = transaction.updatedAt,
+                        transactionType = transaction.transactionType.title,
+                        isPay = transaction.isPay,
+                        currency = transaction.account.currency.currencySymbol,
+                        createdBy = transaction.creatorUserId,
                         onClick = {}
                     )
                 }

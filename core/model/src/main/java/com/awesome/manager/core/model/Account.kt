@@ -5,8 +5,11 @@ data class AmAccount (
     val creatorUserId:String,
     val name:String,
     val imageUrl:String,
-    val defaultCurrency: AmCurrency,
-    val defaultTransactionsType:AmTransactionType,
+    val currency: AmCurrency,
+    val defaultTransactionType:AmTransactionType,
+    val creditor:Double,
+    val debtor:Double,
+    val pending:Boolean,
     val createdAt:String,
     val updatedAt:String,
 )

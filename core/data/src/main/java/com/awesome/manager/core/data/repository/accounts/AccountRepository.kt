@@ -9,9 +9,12 @@ interface AccountRepository {
 
     suspend fun refreshAccounts()
 
-    suspend fun createAccount(account: AmAccount)
-
     suspend fun syncAccount()
+
+    suspend fun createAccount(
+        creatorUserId:String, currencyId:String, defaultTransactionTypeId:String,
+        accountName: String, imageUrl:String,
+    )
 
     fun returnAccounts(): Flow<List<AmAccount>>
 

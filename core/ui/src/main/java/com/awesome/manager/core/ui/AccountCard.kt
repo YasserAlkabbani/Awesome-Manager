@@ -16,61 +16,57 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
+import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import kotlin.math.absoluteValue
 
 @Composable
 fun AccountCard(
     modifier: Modifier, title: String, imageUrl: String,
-    creditor: Double, debtor: Double,currency:String,
+    creditor: Double, debtor: Double, currency: String,
+    loading:Boolean,
     onClick: () -> Unit
 ) {
-
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val total = remember(creditor, debtor) { creditor - debtor }
-    val cardColor = remember(total) { if (total > 0) primaryContainer else errorContainer }
+    
+    val total = remember(creditor, debtor)
+    { (creditor - debtor).absoluteValue }
 
     AmCard(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = cardColor),
+        positive=total>=0,loading = loading,
         onClick = onClick,
         content = {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                AmImage(modifier = Modifier.size(30.dp), imageUrl = imageUrl)
-                Spacer(modifier = Modifier.width(8.dp))
-                AmText(text = title, style = MaterialTheme.typography.titleLarge)
+                AmImage(modifier = Modifier.size(42.dp), imageUrl = imageUrl)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)) {
+                    AmText(text = title, style = MaterialTheme.typography.titleMedium)
+                    AmText(text = "$total $currency", style = MaterialTheme.typography.labelLarge)
+                }
+                Column {
+                    AmIconButton(amIconsType = AmIcons.TransactionAdd, onClick = {})
+                }
             }
             Row {
                 AmTitleWithSubtitle(
-                    modifier
+                    Modifier
                         .fillMaxWidth()
                         .weight(1f),
                     title = stringResource(R.string.creditor),
                     subtitle = creditor.toString()
                 )
                 AmTitleWithSubtitle(
-                    modifier
+                    Modifier
                         .fillMaxWidth()
                         .weight(1f),
                     title = stringResource(R.string.debtor),
                     subtitle = debtor.toString()
-                )
-                AmTitleWithSubtitle(
-                    modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    title = stringResource(R.string.total),
-                    subtitle = total.toString()
-                )
-                AmTitleWithSubtitle(
-                    modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    title = stringResource(R.string.currency),
-                    subtitle = currency
                 )
             }
         }
@@ -85,6 +81,7 @@ fun AccountCardPreview() {
         modifier = Modifier.width(400.dp),
         title = "TITLE", imageUrl = "",
         creditor = 15000.0, debtor = 6000.0, currency = "$",
+        loading = true,
         onClick = {}
     )
 }

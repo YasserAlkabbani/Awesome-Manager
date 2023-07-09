@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.common.AmResult
 import com.awesome.manager.core.data.repository.auth.AuthRepository
+import com.awesome.manager.core.data.repository.profile.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ):ViewModel(){
 
     val authScreenState:AuthScreenState=AuthScreenState(

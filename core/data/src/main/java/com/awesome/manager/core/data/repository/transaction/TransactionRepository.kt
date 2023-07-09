@@ -1,4 +1,4 @@
-package com.awesome.manager.core.data.repository.transactions
+package com.awesome.manager.core.data.repository.transaction
 
 import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.Flow

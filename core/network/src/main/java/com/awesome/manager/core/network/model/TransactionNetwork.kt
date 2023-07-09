@@ -10,7 +10,6 @@ data class TransactionNetwork(
     @SerialName("id") val id:String,
     @SerialName("creator_user_id") val creatorUserId:String,
     @SerialName("account_id") val accountId:String,
-    @SerialName("currency_id") val currencyId:String,
     @SerialName("transaction_type_id") val transactionTypeId:String,
     @SerialName("title") val title:String,
     @SerialName("subtitle") val subtitle:String,

@@ -12,18 +12,21 @@ class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val au
 
     private val accessTokenKey = stringPreferencesKey("access_token")
     private val refreshTokenKey = stringPreferencesKey("refresh_token")
+    private val currentUserIdKey=stringPreferencesKey("current_user_id")
 
-    suspend fun updateToken(accessToken:String, refreshToken:String){
+    suspend fun updateToken(accessToken:String, refreshToken:String, currentUserId:String){
         authDataStore.edit {
             it[accessTokenKey]=accessToken
             it[refreshTokenKey]=refreshToken
+            it[currentUserIdKey]=currentUserId
         }
     }
 
-    suspend fun clearAuthToken(){
+    suspend fun clearAuth(){
         authDataStore.edit {
             it[accessTokenKey]=""
             it[refreshTokenKey]=""
+            it[currentUserIdKey]=""
         }
     }
 
@@ -32,6 +35,9 @@ class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val au
     }
     fun returnRefreshToken()=authDataStore.data.map {
         it[refreshTokenKey]
+    }
+    fun returnCurrentUserId()=authDataStore.data.map {
+        it[currentUserIdKey]
     }
 
 }

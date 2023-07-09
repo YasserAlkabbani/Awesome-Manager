@@ -42,7 +42,7 @@ fun AmNavHost(
             navigateToAccountDetails = { navController.navigateToEditAccount(accountId = it,navOptions = null) },
             navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) }
         )
-        accountEditorScreen()
+        accountEditorScreen(navController::popBackStack)
         accountDetailsScreen()
 
         transactionsScreen({},{})

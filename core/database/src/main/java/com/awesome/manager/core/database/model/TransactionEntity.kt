@@ -11,11 +11,10 @@ data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
     @ColumnInfo("creator_user_id")val creatorUserId: String,
     @ColumnInfo("account_id")val accountId: String,
-    @ColumnInfo("currency_id")val currencyId: String,
     @ColumnInfo("transaction_type_id")val transactionTypeId: String,
     @ColumnInfo("title") val title:String,
     @ColumnInfo("subtitle") val subtitle:String,
-    @ColumnInfo("amount") val amount:String,
+    @ColumnInfo("amount") val amount:Double,
     @ColumnInfo("is_pay") val isPay:Boolean,
     @ColumnInfo("created_at") val createdAt:Long,
     @ColumnInfo("updated_at") val updatedAt:Long,
@@ -23,7 +22,6 @@ data class TransactionEntity(
 
 data class TransactionEntityWithData(
     @Embedded val transactionEntity:TransactionEntity,
-    @Relation (entity = AccountEntity::class,parentColumn = "account_id", entityColumn ="account_id") val accountEntity: AccountEntityWithData,
-    @Relation (parentColumn = "currency_id", entityColumn ="currency_id") val currencyEntity: CurrencyEntity,
+    @Relation (entity = AccountEntity::class,parentColumn = "account_id", entityColumn ="account_id") val accountEntityWithData: AccountEntityWithData,
     @Relation (parentColumn = "transaction_type_id", entityColumn ="transaction_type_id") val transactionTypeEntity: TransactionTypeEntity,
 )

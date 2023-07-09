@@ -5,5 +5,6 @@ data class AmUser(
     val name:String,
     val email:String,
     val imageUrl:String?,
-    val lastUpdatedDate:Long
+    val createdAt:String,
+    val updatedAt:String,
 )

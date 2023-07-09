@@ -8,8 +8,8 @@ import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.currency.OfflineFirstCurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.OfflineFirstTransactionTypeRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.core.data.repository.transactions.OfflineFirstTransactionRepository
-import com.awesome.manager.core.data.repository.transactions.TransactionRepository
+import com.awesome.manager.core.data.repository.transaction.OfflineFirstTransactionRepository
+import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -2,7 +2,8 @@ package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.asResult
 import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
-import com.awesome.manager.core.network.model.AccountNetwork
+import com.awesome.manager.core.network.model.AccountNetworkRequest
+import com.awesome.manager.core.network.model.AccountNetworkResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
@@ -25,10 +26,11 @@ private class AccountRequest {
 
 class KtorAccountNetworkDataSource @Inject constructor(private val httpClient: HttpClient): AccountNetworkDataSource {
 
-    override suspend fun returnUpdatedAccount(): List<AccountNetwork> =
+    override suspend fun returnUpdatedAccount(): List<AccountNetworkResponse> =
         httpClient.get(AccountRequest.ReturnAccount()).asResult()
 
-    override suspend fun createAccount(accountNetwork: AccountNetwork):AccountNetwork =
-        httpClient.post(AccountRequest()){ setBody(accountNetwork) }.asResult()
+    override suspend fun createAccount(accountNetwork: List<AccountNetworkRequest>) {
+        httpClient.post(AccountRequest()){ setBody(accountNetwork) }.asResult<Any>()
+    }
 
 }

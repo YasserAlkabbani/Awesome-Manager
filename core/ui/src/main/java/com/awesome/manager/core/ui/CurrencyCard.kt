@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,9 +19,10 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyCard(modifier: Modifier,countryName:String, currencyName:String, currencySympl:String, imageUrl:String,onClick:()->Unit){
-    AmCard(
+    Card(
         modifier = modifier,
         onClick = {},
         content = {
@@ -31,11 +34,7 @@ fun CurrencyCard(modifier: Modifier,countryName:String, currencyName:String, cur
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     AmText(text = currencySympl)
-                    Row {
-                        AmText(text = countryName)
-                        AmText(text = ", ")
-                        AmText(text = currencyName)
-                    }
+                    AmText(text = "$countryName, $currencyName")
                 }
             }
         },

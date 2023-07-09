@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionCard(
     modifier: Modifier,
@@ -30,7 +33,6 @@ fun TransactionCard(
 
     AmCard(
         modifier=modifier,
-        colors = CardDefaults.cardColors(containerColor = cardColor),
         content = {
             Row(modifier = Modifier.fillMaxWidth()) {
                 AmText(modifier = Modifier.fillMaxWidth().weight(1f),text = title, style = MaterialTheme.typography.titleLarge)
@@ -43,6 +45,8 @@ fun TransactionCard(
                 AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Data", subtitle = date)
             }
         },
+        positive= listOf(true,false).random(),
+        loading = true,
         onClick = onClick
     )
 }

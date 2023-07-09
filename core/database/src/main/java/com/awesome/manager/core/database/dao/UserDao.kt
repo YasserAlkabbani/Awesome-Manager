@@ -13,6 +13,6 @@ interface UserDao {
     suspend fun upsertUser(userEntity: UserEntity)
 
     @Query("SELECT * FROM users")
-    fun returnUsers():Flow<List<UserEntity>>
+    fun returnUser():Flow<UserEntity>
 
 }

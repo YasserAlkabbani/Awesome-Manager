@@ -34,7 +34,7 @@ fun RowScope.AmNavigationItem(
     NavigationBarItem(
         modifier=modifier,
         selected=isSelected,
-        icon = { AmIcon(if (isSelected)selectedIcon else unSelectedIcon) },
+        icon = { AmIcon(amIconsType = if (isSelected)selectedIcon else unSelectedIcon) },
         onClick = onSelect,
         label = { AmText(text = label)}
     )

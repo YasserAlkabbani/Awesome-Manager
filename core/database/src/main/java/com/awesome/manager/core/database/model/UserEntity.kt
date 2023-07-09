@@ -11,5 +11,6 @@ data class UserEntity(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "email") val email: String,
     @ColumnInfo(name = "image_url") val imageUrl: String?,
-    @ColumnInfo(name = "last_update_date") val lastUpdatedDate: Long
+    @ColumnInfo(name = "updated_at") val createdAt: Long,
+    @ColumnInfo(name = "created_at") val updatedAt: Long,
 )

@@ -4,7 +4,7 @@ import android.util.Log
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.asResult
-import com.awesome.manager.core.network.ktor.LoginResponse
+import com.awesome.manager.core.network.model.AuthNetwork
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,13 +31,14 @@ import io.ktor.http.contentType
 import io.ktor.resources.Resource
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 
 @Serializable
-data class RefreshTokenBody(val refresh_token:String)
+private data class RefreshTokenBody(@SerialName("refresh_token") val refreshToken:String)
 @Resource("auth/v1/")
 private class AuthRequest {
     @Resource("token")
@@ -89,10 +90,11 @@ object NetworkModule {
                     Log.d("KTOR_SERVICE","TEST_AUTH REFRESH_TOKEN REFRESH:${oldTokens?.refreshToken} ACCESS:${oldTokens?.accessToken}")
                     val refreshTokenResult=client.post(AuthRequest.RefreshToken()){
                         setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
-                    }.asResult<LoginResponse>()
-                    val accessToken=refreshTokenResult.accessToken.orEmpty()
-                    val refreshToken=refreshTokenResult.refreshToken.orEmpty()
-                    authPreferencesDataStore.updateToken(accessToken,refreshToken)
+                    }.asResult<AuthNetwork>()
+                    val accessToken=refreshTokenResult.accessToken
+                    val refreshToken=refreshTokenResult.refreshToken
+                    val currentUserId=refreshTokenResult.refreshToken
+                    authPreferencesDataStore.updateToken(accessToken = accessToken, refreshToken = refreshToken,currentUserId=currentUserId)
                     BearerTokens(accessToken,refreshToken)
                 }
             }

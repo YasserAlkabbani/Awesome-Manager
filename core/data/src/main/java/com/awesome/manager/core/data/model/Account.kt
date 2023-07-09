@@ -3,20 +3,21 @@ package com.awesome.manager.core.data.model
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.network.model.AccountNetwork
-import kotlinx.datetime.Clock
+import com.awesome.manager.core.network.model.AccountNetworkRequest
+import com.awesome.manager.core.network.model.AccountNetworkResponse
 import kotlinx.datetime.Instant
 
 
-fun AccountNetwork.asEntity()=AccountEntity(
-    id=id.toString(),
+fun AccountNetworkResponse.asEntity()=AccountEntity(
+    id=id,
     name=name,
     imageUrl=imageUrl,
-    defaultCurrencyId=defaultCurrencyId.toString(),
-    defaultTransactionsTypeId = defaultTransactionTypeId.toString(),
-    creatorUserId=creatorUserId.toString(),
-    createdAt=Instant.parse(createdAt).toEpochMilliseconds(),
-    updatedAt= Instant.parse(updatedAt).toEpochMilliseconds(),
+    currencyId =currencyId,
+    defaultTransactionTypeId = defaultTransactionTypeId,
+    creatorUserId=creatorUserId,
+    pending = false,
+    createdAt=Instant.parse(createdAt.orEmpty()).toEpochMilliseconds(),
+    updatedAt= Instant.parse(updatedAt.orEmpty()).toEpochMilliseconds(),
 )
 
 fun AccountEntityWithData.asModel()=AmAccount(
@@ -24,19 +25,20 @@ fun AccountEntityWithData.asModel()=AmAccount(
     creatorUserId = accountEntity.creatorUserId,
     name=accountEntity.name,
     imageUrl=accountEntity.imageUrl,
-    defaultCurrency = defaultCurrencyEntity.asModel(),
-    defaultTransactionsType = defaultTransactionTypeEntity.asModel(),
+    currency = defaultCurrencyEntity.asModel(),
+    defaultTransactionType = defaultTransactionTypeEntity.asModel(),
+    debtor = (1000 .. 5000).random().toDouble() ,
+    creditor = (1000 .. 5000).random().toDouble(),
+    pending = accountEntity.pending,
     createdAt = accountEntity.createdAt.toString(),
     updatedAt = accountEntity.updatedAt.toString()
 )
 
-fun AmAccount.asEntity()=AccountEntity(
+fun AccountEntity.asNetwork()=AccountNetworkRequest(
     id=id,
     creatorUserId =creatorUserId,
     name=name,
     imageUrl=imageUrl,
-    defaultCurrencyId = defaultCurrency.id,
-    defaultTransactionsTypeId = defaultTransactionsType.id,
-    createdAt = Clock.System.now().toEpochMilliseconds(),
-    updatedAt = Clock.System.now().toEpochMilliseconds(),
+    currencyId =currencyId,
+    defaultTransactionTypeId = defaultTransactionTypeId,
 )

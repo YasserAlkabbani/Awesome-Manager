@@ -12,4 +12,7 @@ interface AuthRepository {
     suspend fun refreshUserInfo()
 
     fun isLogin(): Flow<Boolean>
+
+    suspend fun returnCurrentUserId(): String?
+
 }
