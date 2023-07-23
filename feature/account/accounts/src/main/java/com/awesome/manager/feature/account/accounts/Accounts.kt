@@ -18,14 +18,16 @@ import timber.log.Timber
 
 @Composable
 fun AccountsRoute(
-    navigateToAccountDetails:(String)->Unit,
-    navigateToCreateAccount:()->Unit,
+    navigateToCreateAccount: () -> Unit,
+    navigateToAccountDetails: (String) -> Unit,
+    navigateToCreateTransaction: (String) -> Unit,
     accountsViewModel: AccountsViewModel = hiltViewModel()
-){
+) {
 
-    val accountsState=accountsViewModel.accountsState
+    val accountsState = accountsViewModel.accountsState
 
-    val createAccountNavigation=accountsState.createAccountNavigation.collectAsStateWithLifecycle().value
+    val createAccountNavigation =
+        accountsState.createAccountNavigation.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = createAccountNavigation, block = {
         createAccountNavigation?.let {
             navigateToCreateAccount()
@@ -33,12 +35,22 @@ fun AccountsRoute(
         }
     })
 
-    val accountDetailsNavigation=accountsState.accountDetailsNavigation.collectAsStateWithLifecycle().value
+    val accountDetailsNavigation =
+        accountsState.accountDetailsNavigation.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = accountDetailsNavigation, block = {
         Timber.d("TEST_ACCOUNT_NAVIGATION ACCOUNT_DETAILS_SCREEN $accountDetailsNavigation")
         accountDetailsNavigation?.let {
             navigateToAccountDetails(it)
             accountsState.doneAccountDetailsNavigation()
+        }
+    })
+
+    val createTransactionNavigation=
+        accountsState.createTransactionNavigation.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = createTransactionNavigation, block = {
+        createTransactionNavigation?.let {
+            navigateToCreateTransaction(it)
+            accountsState.doneCreateTransactionNavigation()
         }
     })
 
@@ -50,18 +62,18 @@ fun AccountsRoute(
 @Composable
 fun AccountsScreen(
     accountsState: AccountsState
-){
-    val accounts=accountsState.accounts.collectAsState().value
+) {
+    val accounts = accountsState.accounts.collectAsState().value
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp) ,
+        contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(0.5.dp),
         content = {
             items(
                 items = accounts,
-                contentType = {"ACCOUNTS"},
-                key = {account->account.id},
-                itemContent = {account->
+                contentType = { "ACCOUNTS" },
+                key = { account -> account.id },
+                itemContent = { account ->
                     AccountCard(
                         modifier = Modifier.animateItemPlacement(),
                         title = account.name,
@@ -70,7 +82,9 @@ fun AccountsScreen(
                         debtor = account.debtor,
                         currency = account.currency.currencySymbol,
                         loading = account.pending,
-                        onClick = {}
+                        onClick = { accountsState.startAccountDetailsNavigation(account.id) },
+                        onAddTransaction = { accountsState.startCreateTransactionNavigation(account.id) },
+                        onEditTransaction = null
                     )
                 }
             )

@@ -28,4 +28,9 @@ class AccountsState(
     fun startAccountDetailsNavigation(accountId:String){_accountDetailsNavigation.update { accountId }}
     fun doneAccountDetailsNavigation(){_accountDetailsNavigation.update { null }}
 
+    private val _createTransactionNavigation:MutableStateFlow<String?> =MutableStateFlow(null)
+    val createTransactionNavigation:StateFlow<String?> =_createTransactionNavigation
+    fun startCreateTransactionNavigation(accountId:String?){_createTransactionNavigation.update { accountId }}
+    fun doneCreateTransactionNavigation(){_createTransactionNavigation.update { null }}
+
 }

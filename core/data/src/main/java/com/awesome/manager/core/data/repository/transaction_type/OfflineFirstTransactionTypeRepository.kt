@@ -33,4 +33,7 @@ class OfflineFirstTransactionTypeRepository @Inject constructor(
     override fun returnTransactionTypes(): Flow<List<AmTransactionType>> =
         transactionTypeDao.returnTransactionTypes().map { it.map { it.asModel() } }
 
+    override fun returnTransactionTypeById(transactionTypeId:String?) :Flow<AmTransactionType?> =
+        transactionTypeDao.returnTransactionTypes(transactionTypeId).map { it?.asModel() }
+
 }

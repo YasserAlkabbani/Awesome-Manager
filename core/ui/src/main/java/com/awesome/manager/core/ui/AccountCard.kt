@@ -27,11 +27,12 @@ fun AccountCard(
     modifier: Modifier, title: String, imageUrl: String,
     creditor: Double, debtor: Double, currency: String,
     loading:Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onAddTransaction:(()->Unit)?,
+    onEditTransaction:(()->Unit)?
 ) {
     
-    val total = remember(creditor, debtor)
-    { (creditor - debtor).absoluteValue }
+    val total = remember(creditor, debtor) { (creditor - debtor).absoluteValue }
 
     AmCard(
         modifier = modifier,
@@ -49,8 +50,15 @@ fun AccountCard(
                     AmText(text = title, style = MaterialTheme.typography.titleMedium)
                     AmText(text = "$total $currency", style = MaterialTheme.typography.labelLarge)
                 }
-                Column {
-                    AmIconButton(amIconsType = AmIcons.TransactionAdd, onClick = {})
+                onAddTransaction?.let {
+                    Column {
+                        AmIconButton(amIconsType = AmIcons.TransactionAdd, onClick = onAddTransaction)
+                    }
+                }
+                onEditTransaction?.let {
+                    Column {
+                        AmIconButton(amIconsType = AmIcons.Edit, onClick = onEditTransaction)
+                    }
                 }
             }
             Row {
@@ -82,6 +90,6 @@ fun AccountCardPreview() {
         title = "TITLE", imageUrl = "",
         creditor = 15000.0, debtor = 6000.0, currency = "$",
         loading = true,
-        onClick = {}
+        onClick = {}, onAddTransaction = {},onEditTransaction = {}
     )
 }

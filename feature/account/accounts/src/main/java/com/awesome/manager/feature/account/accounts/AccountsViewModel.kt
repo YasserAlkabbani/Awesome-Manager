@@ -17,7 +17,7 @@ class AccountsViewModel @Inject constructor(
         AccountsState(
             savedStateHandle = savedStateHandle,
             coroutineScope = viewModelScope,
-            amAccountsAsFlow = accountRepository.returnAccounts()
+            amAccountsAsFlow = accountRepository.returnAccounts("")
         )
 
 

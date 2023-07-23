@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,8 +32,16 @@ fun AmChip(
         selected = selected,
         label = { Text(text = label) },
         shape=shape,
+        border = FilterChipDefaults.filterChipBorder(borderWidth = 1.5.dp),
         leadingIcon = { if (selected) AmIcon(amIconsType = AmIcons.Done)},
         onClick = onClick,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.surface,
+            selectedTrailingIconColor = MaterialTheme.colorScheme.surface,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.surface
+        )
     )
 }
 

@@ -71,7 +71,7 @@ fun AmTextField(
     val padding =
         animateDpAsState(targetValue = if (isFocus.value) 4.dp else 3.dp, label = "0").value
     val color = animateColorAsState(
-        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.secondaryContainer,
+        targetValue = if (isFocus.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
         label = "1"
     ).value
 
@@ -87,7 +87,7 @@ fun AmTextField(
             ) {
                 AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = icon)
                 Spacer(modifier = Modifier.width(4.dp))
-                AmText(modifier = Modifier.wrapContentHeight(),text = hint, style = MaterialTheme.typography.labelLarge)
+                AmText(modifier = Modifier.wrapContentHeight(),text = hint, style = MaterialTheme.typography.titleMedium)
             }
             CustomTextField(
                 modifier = Modifier

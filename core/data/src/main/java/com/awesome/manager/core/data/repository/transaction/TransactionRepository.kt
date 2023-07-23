@@ -9,6 +9,6 @@ interface TransactionRepository {
 
     fun returnTransactions():Flow<List<AmTransaction>>
 
-    fun retrunTransactionById(id:String) :Flow<AmTransaction>
+    fun returnTransactionById(id:String) :Flow<AmTransaction>
 
 }

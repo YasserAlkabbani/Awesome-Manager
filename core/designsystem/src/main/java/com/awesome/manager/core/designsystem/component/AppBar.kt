@@ -22,7 +22,7 @@ fun AmAppBar(
         modifier = modifier,
         title = { AmText(text = title) },
         navigationIcon = {
-            AmIconButton(amIconsType = AmIcons.NavigationBack, onClick = onBack)
+            AmIconButton(amIconsType = AmIcons.ArrowBack, onClick = onBack)
         },
         actions = {
             AnimatedVisibility(visible = showEdit) {
@@ -51,7 +51,7 @@ fun AmDetailsAppBar(
         navigationIcon = {
             AnimatedVisibility(visible = onNavigationBack != null) {
                 AmIconButton(
-                    amIconsType = AmIcons.NavigationBack,
+                    amIconsType = AmIcons.ArrowBack,
                     onClick = { onNavigationBack?.invoke() })
             }
         },

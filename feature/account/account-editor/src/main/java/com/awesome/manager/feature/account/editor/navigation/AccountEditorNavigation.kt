@@ -15,7 +15,14 @@ private const val ARG_ACCOUNT_ID:String="account_id"
 
 
 internal class AccountEditorArg(val accountId:String?){
-    constructor(savedStateHandle: SavedStateHandle) : this((Uri.decode(savedStateHandle[ARG_ACCOUNT_ID])))
+    constructor(savedStateHandle: SavedStateHandle) : this(Uri.decode(savedStateHandle[ARG_ACCOUNT_ID]))
+}
+
+fun NavHostController.navigateToCreateAccount(navOptions: NavOptions?){
+    navigate(
+        route = "$accountEditorRoute/${null}",
+        navOptions=navOptions,
+    )
 }
 
 fun NavHostController.navigateToEditAccount(accountId:String, navOptions: NavOptions?){
@@ -25,12 +32,7 @@ fun NavHostController.navigateToEditAccount(accountId:String, navOptions: NavOpt
         navOptions=navOptions,
     )
 }
-fun NavHostController.navigateToCreateAccount(navOptions: NavOptions?){
-    navigate(
-        route = "$accountEditorRoute/${null}",
-        navOptions=navOptions,
-    )
-}
+
 fun NavGraphBuilder.accountEditorScreen(onBack:()->Unit){
     composable(
         route="$accountEditorRoute/{$ARG_ACCOUNT_ID}",
@@ -40,7 +42,6 @@ fun NavGraphBuilder.accountEditorScreen(onBack:()->Unit){
             defaultValue=null
         }),
     ){
-        it.destination
         AccountEditorRoute(onBack = onBack)
     }
 }

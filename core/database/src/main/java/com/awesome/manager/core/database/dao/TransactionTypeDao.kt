@@ -15,4 +15,7 @@ interface TransactionTypeDao {
     @Query("SELECT * FROM transaction_types")
     fun returnTransactionTypes(): Flow<List<TransactionTypeEntity>>
 
+    @Query("SELECT * FROM transaction_types WHERE transaction_type_id=:transactionTypeId")
+    fun returnTransactionTypes(transactionTypeId:String?): Flow<TransactionTypeEntity?>
+
 }

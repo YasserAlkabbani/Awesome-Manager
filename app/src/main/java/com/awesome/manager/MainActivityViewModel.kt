@@ -38,7 +38,7 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.isLogin().distinctUntilChanged().collectLatest {
                 Timber.d("TEST_AUTH AUTH_TOKEN $it")
-                if (it) refreshData()
+//                if (it) refreshData()
             }
         }
     }

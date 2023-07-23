@@ -12,12 +12,12 @@ interface AccountRepository {
     suspend fun syncAccount()
 
     suspend fun createAccount(
-        creatorUserId:String, currencyId:String, defaultTransactionTypeId:String,
-        accountName: String, imageUrl:String,
+        creatorUserId: String, currencyId: String, defaultTransactionTypeId: String,
+        accountName: String, imageUrl: String,
     )
 
-    fun returnAccounts(): Flow<List<AmAccount>>
+    fun returnAccounts(searchKey: String): Flow<List<AmAccount>>
 
-    fun returnAccountById(accountId:String): Flow<AmAccount>
+    fun returnAccountById(accountId: String?): Flow<AmAccount?>
 
 }

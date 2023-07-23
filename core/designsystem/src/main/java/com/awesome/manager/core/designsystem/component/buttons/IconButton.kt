@@ -18,7 +18,7 @@ fun AmIconButton(amIconsType: AmIconsType, onClick:()->Unit){
 @Composable
 fun AmIconButtonPreview(){
     AmIconButton(
-        amIconsType = AmIcons.NavigationBack,
+        amIconsType = AmIcons.ArrowBack,
         onClick = {}
     )
 }

@@ -15,6 +15,8 @@ import com.awesome.manager.feature.intro.navigation.introRoute
 import com.awesome.manager.feature.intro.navigation.introScreen
 import com.awesome.manager.feature.menu.navigation.menuScreen
 import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsScreen
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
 import com.awesome.manager.feature.transaction.editor.navigation.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.navigation.transactionsScreen
 import com.awesome.manager.ui.AmAppState
@@ -39,14 +41,17 @@ fun AmNavHost(
         homeScreen()
 
         accountsScreen(
-            navigateToAccountDetails = { navController.navigateToEditAccount(accountId = it,navOptions = null) },
-            navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) }
+            navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
+            navigateToAccountDetails = { accountId->navController.navigateToEditAccount(accountId = accountId,navOptions = null) },
+            navigateToCreateTransaction = {accountId-> navController.navigateToCreateTransaction(accountId=accountId,navOptions = null)}
         )
         accountEditorScreen(navController::popBackStack)
         accountDetailsScreen()
 
         transactionsScreen({},{})
-        transactionEditorScreen()
+        transactionEditorScreen(
+            onBack = {navController.popBackStack()}
+        )
         transactionDetailsScreen()
 
         menuScreen()

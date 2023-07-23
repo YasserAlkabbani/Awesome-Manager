@@ -3,6 +3,7 @@ package com.awesome.manager.core.designsystem.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -41,7 +42,7 @@ fun AmImage(modifier:Modifier,imageUrl:String){
         shape = CircleShape
     ) {
         Image(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(1.dp),
             painter=painter,
             contentScale = ContentScale.Crop,
             contentDescription = null
@@ -52,7 +53,5 @@ fun AmImage(modifier:Modifier,imageUrl:String){
 @Preview
 @Composable
 fun AmImagePreview(){
-    Card {
-        AmImage(modifier = Modifier.size(50.dp),imageUrl = "")
-    }
+    AmImage(modifier = Modifier.size(50.dp),imageUrl = "")
 }

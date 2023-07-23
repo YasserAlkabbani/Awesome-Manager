@@ -17,9 +17,9 @@ import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-class AmSheetState(
+class AmBottomSheetState(
     internal val sheetState: SheetState,
-    internal val isOpenButtonSheet: MutableState<Boolean>,
+    val isOpenButtonSheet: MutableState<Boolean>,
     internal val coroutineScope:CoroutineScope,
     internal val onDismiss:()->Unit,internal val onOpen:()->Unit
 ){
@@ -48,13 +48,13 @@ class AmSheetState(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun rememberAmSheetState(
+fun rememberAmBottomSheetState(
     sheetState:SheetState= rememberModalBottomSheetState(),
     coroutineScope:CoroutineScope= rememberCoroutineScope(),
     openBottomSheet: MutableState<Boolean> =  rememberSaveable { mutableStateOf(false) }
-):AmSheetState{
+):AmBottomSheetState{
     return remember(sheetState,coroutineScope,openBottomSheet) {
-        AmSheetState(
+        AmBottomSheetState(
             sheetState =sheetState,
             isOpenButtonSheet =openBottomSheet,
             coroutineScope =coroutineScope,
@@ -67,13 +67,13 @@ fun rememberAmSheetState(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmModelBottomSheet(
-   amSheetState:AmSheetState,
-   content:@Composable ColumnScope.()->Unit,
+    amBottomSheetState:AmBottomSheetState,
+    content:@Composable ColumnScope.()->Unit,
 ) {
-    if (amSheetState.isOpenButtonSheet.value) {
+    if (amBottomSheetState.isOpenButtonSheet.value) {
         ModalBottomSheet(
-            onDismissRequest = amSheetState.onDismiss,
-            sheetState = amSheetState.sheetState,
+            onDismissRequest = amBottomSheetState.onDismiss,
+            sheetState = amBottomSheetState.sheetState,
             content = content
         )
     }

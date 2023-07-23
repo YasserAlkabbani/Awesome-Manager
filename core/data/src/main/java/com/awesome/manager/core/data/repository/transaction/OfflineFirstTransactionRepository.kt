@@ -24,6 +24,6 @@ class OfflineFirstTransactionRepository @Inject constructor(
     override fun returnTransactions(): Flow<List<AmTransaction>> =
         transactionDao.returnTransactions().map { it.map { it.asDomain() } }
 
-    override fun retrunTransactionById(id: String): Flow<AmTransaction> =
+    override fun returnTransactionById(id: String): Flow<AmTransaction> =
         transactionDao.returnTransactionById(id).map { it.asDomain() }
 }

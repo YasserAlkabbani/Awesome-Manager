@@ -11,12 +11,12 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 
 @Composable
-fun DialogDestinationContainer(content:@Composable ColumnScope.() -> Unit){
-    AmCard (
+fun AmBottomSheetContainer(content: @Composable ColumnScope.() -> Unit) {
+    AmCard(
         modifier = Modifier
-            .padding(top = 80.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+            .padding(8.dp)
             .fillMaxSize(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        content=content
+        content = content
     )
 }

@@ -5,7 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Done
@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.ui.graphics.painter.Painter
@@ -48,7 +49,8 @@ object AmIcons {
     val MenuSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
     val MenuUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
-    val NavigationBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
+    val ArrowBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
+    val ArrowForward=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowForward)
     val Edit=AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
     val Save=AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
     val Close=AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
@@ -60,6 +62,8 @@ object AmIcons {
     val SubTitle=AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
 
     val Done=AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
+
+    val Search=AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
 
 }
 

@@ -6,20 +6,22 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.awesome.manager.feature.account.accounts.AccountsRoute
 
-const val accountsRoute="accounts_route"
+const val accountsRoute = "accounts_route"
 
-fun NavHostController.navigateToAccounts(navOptions: NavOptions?){
-    navigate(route = accountsRoute,navOptions=navOptions)
+fun NavHostController.navigateToAccounts(navOptions: NavOptions?) {
+    navigate(route = accountsRoute, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.accountsScreen(
-    navigateToAccountDetails:(String)->Unit,
-    navigateToCreateAccount:()->Unit,
-){
-    composable(route= accountsRoute){
+    navigateToCreateAccount: () -> Unit,
+    navigateToAccountDetails: (String) -> Unit,
+    navigateToCreateTransaction: (String) -> Unit
+) {
+    composable(route = accountsRoute) {
         AccountsRoute(
-            navigateToAccountDetails=navigateToAccountDetails,
-            navigateToCreateAccount=navigateToCreateAccount,
+            navigateToCreateAccount = navigateToCreateAccount,
+            navigateToAccountDetails = navigateToAccountDetails,
+            navigateToCreateTransaction = navigateToCreateTransaction
         )
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ fun AmExtendedFloatingActionButton(
         expanded = expanded,
         text = { AmText(modifier=Modifier,text = text)},
         icon = { AmIcon(amIconsType = icon)} ,
-        elevation = FloatingActionButtonDefaults.elevation(0.dp)
+        elevation = FloatingActionButtonDefaults.elevation(0.dp),
+        containerColor = MaterialTheme.colorScheme.secondary
     )
 }

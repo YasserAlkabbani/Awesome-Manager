@@ -77,10 +77,10 @@ class OfflineFirstAccountRepository @Inject constructor(
 
 
 
-    override fun returnAccounts(): Flow<List<AmAccount>> =
-        accountDao.returnAccounts().map { it.map { it.asModel() } }
+    override fun returnAccounts(searchKey:String): Flow<List<AmAccount>> =
+        accountDao.returnAccounts(searchKey).map { it.map { it.asModel() } }
 
-    override fun returnAccountById(accountId: String): Flow<AmAccount> =
-        accountDao.returnAccountById(accountId).map { it.asModel() }
+    override fun returnAccountById(accountId: String?): Flow<AmAccount?> =
+        accountDao.returnAccountById(accountId).map { it?.asModel() }
 
 }

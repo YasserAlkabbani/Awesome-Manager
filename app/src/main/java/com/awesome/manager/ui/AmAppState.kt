@@ -22,7 +22,7 @@ import com.awesome.manager.feature.home.navigation.navigateToHome
 import com.awesome.manager.feature.intro.navigation.introRoute
 import com.awesome.manager.feature.intro.navigation.navigateToIntro
 import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsRoute
-import com.awesome.manager.feature.transaction.editor.navigation.navigateToTransactionEditor
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
 import com.awesome.manager.feature.transaction.editor.navigation.transactionEditorRoute
 import com.awesome.manager.feature.transaction.transactions.navigation.navigateToTransactions
 import com.awesome.manager.feature.transaction.transactions.navigation.transactionsRoute
@@ -149,7 +149,7 @@ class AmAppState(
         when(currentDestinationRoute){
             homeRoute->navHostController.navigateToCreateAccount(null)
             accountsRoute->navHostController.navigateToCreateAccount(null)
-            transactionsRoute->navHostController.navigateToTransactionEditor(null,null)
+            transactionsRoute->navHostController.navigateToCreateTransaction(null,null)
         }
     }
 
