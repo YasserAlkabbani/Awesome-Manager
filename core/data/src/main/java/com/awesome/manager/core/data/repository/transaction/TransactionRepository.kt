@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
 
+    suspend fun createTransaction(creatorUserId:String, accountId:String, transactionTypeId: String, title:String, subtitle:String, amount:Double, paymentTransaction:Boolean)
+
     suspend fun refreshTransactions()
 
     fun returnTransactions():Flow<List<AmTransaction>>

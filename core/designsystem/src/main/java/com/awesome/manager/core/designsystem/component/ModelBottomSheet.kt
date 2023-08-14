@@ -1,6 +1,9 @@
 package com.awesome.manager.core.designsystem.component
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -12,6 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -46,7 +53,7 @@ class AmBottomSheetState(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun rememberAmBottomSheetState(
     sheetState:SheetState= rememberModalBottomSheetState(),
@@ -59,7 +66,9 @@ fun rememberAmBottomSheetState(
             isOpenButtonSheet =openBottomSheet,
             coroutineScope =coroutineScope,
             onDismiss ={ openBottomSheet.value=false },
-            onOpen = { openBottomSheet.value = true }
+            onOpen = {
+                openBottomSheet.value = true
+            }
         )
     }
 }
@@ -72,9 +81,15 @@ fun AmModelBottomSheet(
 ) {
     if (amBottomSheetState.isOpenButtonSheet.value) {
         ModalBottomSheet(
+            modifier = Modifier.padding(4.dp),
             onDismissRequest = amBottomSheetState.onDismiss,
             sheetState = amBottomSheetState.sheetState,
-            content = content
+            content = {
+                Column(
+                    modifier = Modifier.padding(6.dp),
+                    content=content
+                )
+            }
         )
     }
 }

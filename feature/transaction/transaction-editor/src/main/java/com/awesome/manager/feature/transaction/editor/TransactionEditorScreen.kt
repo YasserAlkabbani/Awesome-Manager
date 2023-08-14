@@ -13,16 +13,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,16 +39,16 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmBottomSheetState
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmModelBottomSheet
+import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmSwitch
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
-import com.awesome.manager.core.designsystem.component.buttons.AmTextButton
 import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
+import com.awesome.manager.core.ui.ChipData
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -50,10 +59,21 @@ fun TransactionEditorRoute(
 
     val transactionEditorState:TransactionEditorState =transactionEditorViewModel.transactionEditorState
 
+    val popup=transactionEditorState.navigatePopup.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = popup, block = {
+        popup?.let {
+            transactionEditorState.donePop()
+            onBack()
+        }
+    })
+
     val searchForAccountSheetState: AmBottomSheetState = rememberAmBottomSheetState()
-    val searchForAccount=transactionEditorState.searchForAnAccount.collectAsStateWithLifecycle().value
+    val searchForAccount=transactionEditorState.searchForAnAccountBottomSheet.collectAsStateWithLifecycle().value
+
+    val focusManager=LocalFocusManager.current
     LaunchedEffect(key1 = searchForAccount, block = {
         if (searchForAccount){
+            focusManager.clearFocus()
             searchForAccountSheetState.open()
         }else{
             searchForAccountSheetState.close()
@@ -70,11 +90,18 @@ fun TransactionEditorRoute(
     AmModelBottomSheet(
         amBottomSheetState = searchForAccountSheetState,
         content = {
+            val focusRequester:FocusRequester=FocusRequester()
             AmTextField(
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .onGloballyPositioned {
+                        focusRequester.requestFocus()
+                    },
                 hint = "Search For Account", icon = AmIcons.Search, label = "Something..",
                 text = accountSearchKey,
                 onTextChange = transactionEditorState::updateAccountSearchKey
             )
+            Spacer(modifier = Modifier.height(8.dp))
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp),
@@ -112,17 +139,17 @@ fun TransactionEditorRoute(
     TransactionEditorScreen(transactionEditorState)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
 
     val account=transactionEditorState.account.collectAsStateWithLifecycle().value
     val transactionTypes=transactionEditorState.transactionTypes.collectAsStateWithLifecycle().value
-    val transactionType=transactionEditorState.transactionType.collectAsStateWithLifecycle().value
+    val transactionTypeChip= remember(transactionTypes) { transactionTypes.map { ChipData(id=it.id, title = it.title) } }
+    val selectedTransactionType=transactionEditorState.transactionType.collectAsStateWithLifecycle().value
     val title=transactionEditorState.title.collectAsStateWithLifecycle().value
     val subtitle=transactionEditorState.subtitle.collectAsStateWithLifecycle().value
     val amount=transactionEditorState.amount.collectAsStateWithLifecycle().value
-    val payTransaction=transactionEditorState.payTransaction.collectAsStateWithLifecycle().value
+    val paymentTransaction=transactionEditorState.paymentTransaction.collectAsStateWithLifecycle().value
 
     Column(
 
@@ -131,7 +158,7 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AmFilledTonalIconButton(amIconsType = AmIcons.ArrowBack, isPositive = false, onClick = transactionEditorState::startPoup)
+            AmFilledTonalIconButton(amIconsType = AmIcons.ArrowBack, isPositive = false, onClick = transactionEditorState::startPop)
             AmText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,17 +178,21 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
             AnimatedVisibility(account==null){
                     AmCard(
                         modifier = Modifier.fillMaxWidth(),
-                        loading = false, positive = true,
+                        loading = false, balance = null,
                         onClick = transactionEditorState::startSearchForAnAccount,
                         content = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                            AmSurface(modifier = Modifier) {
                                 AmIcon(
-                                    modifier = Modifier.size(30.dp),
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                        .size(30.dp),
                                     amIconsType = AmIcons.Search
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
                                 AmText(
                                     modifier = Modifier.padding(8.dp),
                                     text = "Search For An Account",
@@ -189,25 +220,31 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
             }
 
             AmTextField(hint = "Title", icon = AmIcons.Title, label = "Transaction Subject",
-                text = title, onTextChange = transactionEditorState::updateTitle
+                text = title, onTextChange = transactionEditorState::updateTitle,
+                keyboardActions = KeyboardActions(),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next,)
             )
             AmTextField(hint = "Subtitle", icon = AmIcons.SubTitle, label = "Transaction Description",
-                text = subtitle, onTextChange = transactionEditorState::updateSubTitle
+                text = subtitle, onTextChange = transactionEditorState::updateSubTitle,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
-            AmTextField(hint = "Amount", icon = AmIcons.SubTitle, label = "5000.0",
-                text = subtitle, onTextChange = transactionEditorState::updateAmount
+            AmTextField(hint = "Amount", icon = AmIcons.Money, label = "5000.0",
+                text = amount, onTextChange = transactionEditorState::updateAmount,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
+                ),
             )
             AmSwitch(
                 title="Payment Type", checkSubtitle = "Pay", unCheckSubtitle = "Receive",
-                checked = payTransaction,
-                onCheck = transactionEditorState::updateIsPayTransaction
+                checked = paymentTransaction,
+                onCheck = transactionEditorState::updateTransactionPayment
             )
 
             AmChipsContainer(
                 title = "Transaction Type",
-                chipDataList = transactionTypes,
+                chipDataList = transactionTypeChip,
                 onSelect = transactionEditorState::updateTransactionTypeId,
-                selectedItem = transactionType
+                selectedItem = selectedTransactionType?.id
             )
         }
 

@@ -46,7 +46,7 @@ fun TransactionScreen(transactionState: TransactionState) {
                         amount = transaction.amount,
                         date = transaction.updatedAt,
                         transactionType = transaction.transactionType.title,
-                        isPay = transaction.isPay,
+                        isPay = transaction.paymentTransaction,
                         currency = transaction.account.currency.currencySymbol,
                         createdBy = transaction.creatorUserId,
                         onClick = {}

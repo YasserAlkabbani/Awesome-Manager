@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -36,7 +35,7 @@ fun AccountCard(
 
     AmCard(
         modifier = modifier,
-        positive=total>=0,loading = loading,
+        balance=total>=0,loading = loading,
         onClick = onClick,
         content = {
             Row(

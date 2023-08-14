@@ -20,15 +20,19 @@ import androidx.compose.ui.unit.dp
 fun AmCard(
     modifier: Modifier=Modifier,
     shape: Shape=MaterialTheme.shapes.medium,
-    positive:Boolean, loading:Boolean,
+    balance:Boolean?, loading:Boolean,
     onClick:()->Unit,
     content:@Composable ColumnScope.()->Unit
 ){
-
+    val primary = MaterialTheme.colorScheme.primary
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
     val colors: CardColors = CardDefaults.cardColors(
-        containerColor = if (positive)  primaryContainer else errorContainer
+        containerColor = when (balance) {
+            null->primary
+            true->primaryContainer
+            false->errorContainer
+        }
     )
     Card(
         modifier = modifier,
@@ -38,7 +42,7 @@ fun AmCard(
                 content()
             }
             AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=positive)
+                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=balance==true)
             }
         },
         colors =colors,

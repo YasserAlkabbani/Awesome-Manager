@@ -61,21 +61,13 @@ class OfflineFirstAccountRepository @Inject constructor(
         creatorUserId:String, currencyId:String, defaultTransactionTypeId:String,
         accountName: String, imageUrl:String,
     ) {
-        val account:AccountEntity=AccountEntity(
-            id=UUID.randomUUID().toString(),
-            creatorUserId = creatorUserId,
-            defaultTransactionTypeId = defaultTransactionTypeId,
-            currencyId = currencyId,
-            name = accountName,
-            imageUrl=imageUrl,
-            createdAt = Clock.System.now().toEpochMilliseconds(),
-            updatedAt = Clock.System.now().toEpochMilliseconds(),
-            pending = true
+        val account:AccountEntity=createAccountEntity(
+            creatorUserId=creatorUserId, currencyId=currencyId,
+            defaultTransactionTypeId=defaultTransactionTypeId,
+            accountName=accountName, imageUrl=imageUrl,
         )
         amInsert { accountDao.upsertAccount(account) }
     }
-
-
 
     override fun returnAccounts(searchKey:String): Flow<List<AmAccount>> =
         accountDao.returnAccounts(searchKey).map { it.map { it.asModel() } }
@@ -84,3 +76,13 @@ class OfflineFirstAccountRepository @Inject constructor(
         accountDao.returnAccountById(accountId).map { it?.asModel() }
 
 }
+
+private fun createAccountEntity(
+    creatorUserId:String, currencyId:String, defaultTransactionTypeId:String,
+    accountName: String, imageUrl:String,
+)= AccountEntity(
+        id=UUID.randomUUID().toString(), creatorUserId = creatorUserId, defaultTransactionTypeId = defaultTransactionTypeId,
+        currencyId = currencyId, name = accountName, imageUrl=imageUrl,
+        createdAt = Clock.System.now().toEpochMilliseconds(), updatedAt = Clock.System.now().toEpochMilliseconds(),
+        pending = true
+    )

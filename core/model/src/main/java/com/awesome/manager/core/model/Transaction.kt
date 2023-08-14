@@ -8,7 +8,7 @@ data class AmTransaction(
     val title:String,
     val subtitle:String,
     val amount:Double,
-    val isPay:Boolean,
+    val paymentTransaction:Boolean,
     val createdAt:String,
     val updatedAt:String
 )

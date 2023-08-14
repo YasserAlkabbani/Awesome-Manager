@@ -15,11 +15,11 @@ data class TransactionEntity(
     @ColumnInfo("title") val title:String,
     @ColumnInfo("subtitle") val subtitle:String,
     @ColumnInfo("amount") val amount:Double,
-    @ColumnInfo("is_pay") val isPay:Boolean,
+    @ColumnInfo("payment_transaction") val paymentTransaction:Boolean,
     @ColumnInfo("created_at") val createdAt:Long,
     @ColumnInfo("updated_at") val updatedAt:Long,
+    @ColumnInfo("pending") val pending:Boolean,
 )
-
 data class TransactionEntityWithData(
     @Embedded val transactionEntity:TransactionEntity,
     @Relation (entity = AccountEntity::class,parentColumn = "account_id", entityColumn ="account_id") val accountEntityWithData: AccountEntityWithData,

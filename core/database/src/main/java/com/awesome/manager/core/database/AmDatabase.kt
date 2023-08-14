@@ -16,7 +16,7 @@ import com.awesome.manager.core.database.model.UserEntity
 
 @Database(
     entities = [UserEntity::class,CurrencyEntity::class,TransactionTypeEntity::class,AccountEntity::class,TransactionEntity::class] ,
-    version = 5, exportSchema = false
+    version = 56, exportSchema = false
 )
 abstract class AmDatabase :RoomDatabase(){
 

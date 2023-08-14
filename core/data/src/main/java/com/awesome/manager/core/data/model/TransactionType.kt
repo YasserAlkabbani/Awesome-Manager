@@ -8,15 +8,19 @@ import kotlinx.datetime.Instant
 fun TransactionTypesNetwork.asEntity() = TransactionTypeEntity(
     id = id,
     title = title,
-    isClose = isClose,
+    deadTransaction  = deadTransaction,
+    defaultPaymentTransaction = defaultPaymentTransaction,
+    switchPaymentTransaction = switchPaymentTransaction,
     createdAt = Instant.parse(createdAt).toEpochMilliseconds(),
-    updatedAt = Instant.parse(updatedAt).toEpochMilliseconds()
+    updatedAt = Instant.parse(updatedAt).toEpochMilliseconds(),
 )
 
 fun TransactionTypeEntity.asModel() = AmTransactionType(
     id = id,
     title = title,
-    isClose = isClose,
+    deadTransaction = deadTransaction,
+    defaultPaymentTransaction = defaultPaymentTransaction,
+    switchPaymentTransaction = switchPaymentTransaction,
     updatedAt = updatedAt.toString(),
     createdAt = createdAt.toString()
 )

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
@@ -60,6 +61,7 @@ object AmIcons {
 
     val Title=AmIconsType.ImageVictorAmIconsType(Icons.Default.Title)
     val SubTitle=AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
+    val Money=AmIconsType.ImageVictorAmIconsType(Icons.Default.Money)
 
     val Done=AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
 

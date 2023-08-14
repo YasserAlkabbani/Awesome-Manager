@@ -1,10 +1,6 @@
 package com.awesome.manager.core.designsystem.component.buttons
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +21,7 @@ fun AmFilledTonalIconButton(
     AmCard(
         modifier=modifier,
         onClick = onClick,
-        positive = isPositive,
+        balance = isPositive,
         loading = false
     ) {
         AmIcon(modifier=Modifier.padding(horizontal = 4.dp),amIconsType = amIconsType)

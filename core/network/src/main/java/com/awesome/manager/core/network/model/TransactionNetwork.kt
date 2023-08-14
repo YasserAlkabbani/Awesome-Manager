@@ -14,7 +14,7 @@ data class TransactionNetwork(
     @SerialName("title") val title:String,
     @SerialName("subtitle") val subtitle:String,
     @SerialName("amount") val amount:Double,
-    @SerialName("is_pay") val isPay:Boolean,
+    @SerialName("payment_transaction") val paymentTransaction:Boolean,
     @SerialName("created_at") val createdAt:String,
     @SerialName("updated_at") val updatedAt:String
 )

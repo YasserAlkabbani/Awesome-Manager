@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey
 data class TransactionTypeEntity(
     @ColumnInfo("transaction_type_id") @PrimaryKey val id: String,
     @ColumnInfo("title") val title:String,
-    @ColumnInfo("is_close") val isClose:Boolean,
+    @ColumnInfo("dead_transaction") val deadTransaction:Boolean,
+    @ColumnInfo("default_payment_transaction") val defaultPaymentTransaction:Boolean,
+    @ColumnInfo("switch_payment_transaction") val switchPaymentTransaction:Boolean,
     @ColumnInfo("created_at") val createdAt:Long,
     @ColumnInfo("updated_at") val updatedAt:Long,
 )

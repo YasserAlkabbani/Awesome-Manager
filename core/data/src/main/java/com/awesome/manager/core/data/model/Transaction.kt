@@ -14,9 +14,10 @@ fun TransactionNetwork.asEntity()=TransactionEntity(
     title=title,
     subtitle=subtitle,
     amount=amount,
-    isPay=isPay,
+    paymentTransaction =paymentTransaction,
     createdAt= Instant.parse(createdAt).toEpochMilliseconds(),
-    updatedAt= Instant.parse(updatedAt).toEpochMilliseconds()
+    updatedAt= Instant.parse(updatedAt).toEpochMilliseconds(),
+    pending = false
 )
 
 fun TransactionEntityWithData.asDomain()=AmTransaction(
@@ -27,7 +28,7 @@ fun TransactionEntityWithData.asDomain()=AmTransaction(
     title=transactionEntity.title,
     subtitle=transactionEntity.subtitle,
     amount=transactionEntity.amount,
-    isPay=transactionEntity.isPay,
+    paymentTransaction=transactionEntity.paymentTransaction,
     createdAt=transactionEntity.createdAt.toString(),
     updatedAt=transactionEntity.updatedAt.toString(),
 )

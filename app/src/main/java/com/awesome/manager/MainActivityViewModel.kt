@@ -31,7 +31,15 @@ class MainActivityViewModel @Inject constructor(
     )
 
     init {
+        sync()
+    }
+
+    fun sync(){
         observeAuthTokenState()
+        viewModelScope.launch {
+            refreshData()
+        }
+
     }
 
     private fun observeAuthTokenState(){
