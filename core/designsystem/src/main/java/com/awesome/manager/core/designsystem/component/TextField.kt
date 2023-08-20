@@ -64,6 +64,7 @@ fun AmTextField(
     singleLine: Boolean=true,error:String?,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation:VisualTransformation = VisualTransformation.None,
     onTextChange: (String) -> Unit
 ) {
     val isFocus = remember { mutableStateOf(false) }
@@ -90,7 +91,7 @@ fun AmTextField(
             ) {
                 AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = icon)
                 Spacer(modifier = Modifier.width(4.dp))
-                AmText(modifier = Modifier.wrapContentHeight(),text = hint, style = MaterialTheme.typography.titleMedium)
+                AmText(modifier = Modifier.wrapContentHeight(),text = label, style = MaterialTheme.typography.titleMedium)
             }
             CustomTextField(
                 modifier = Modifier
@@ -103,12 +104,13 @@ fun AmTextField(
                     .onFocusChanged { isFocus.value = it.hasFocus },
                 value = text,
                 onValueChange = onTextChange,
-                placeholder = { AmText(text = label, style = MaterialTheme.typography.bodyLarge) },
+                placeholder = { AmText(modifier,text = hint, style = MaterialTheme.typography.bodyLarge) },
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = shape,
                 singleLine = singleLine,
                 keyboardOptions=keyboardOptions,
                 keyboardActions = keyboardActions,
+                visualTransformation=visualTransformation,
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,

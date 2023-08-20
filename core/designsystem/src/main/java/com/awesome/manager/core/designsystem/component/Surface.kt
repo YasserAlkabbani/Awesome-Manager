@@ -1,10 +1,13 @@
 package com.awesome.manager.core.designsystem.component
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun AmSurface(
@@ -24,9 +27,13 @@ fun AmSurface(
     }
     Surface(
         modifier=modifier,
-        shape = MaterialTheme.shapes.small,
-        content=content,
+        shape = MaterialTheme.shapes.medium,
         color=surfaceColors,
+        content={
+            Column(modifier=modifier.padding(8.dp)){
+                content()
+            }
+        },
         onClick = onClick
     )
 }
@@ -48,9 +55,13 @@ fun AmSurface(
     }
     Surface(
         modifier=modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
         color=surfaceColors,
-        content=content,
+        content={
+            Column(modifier=modifier.padding(8.dp)){
+                content()
+            }
+        },
     )
 
 }

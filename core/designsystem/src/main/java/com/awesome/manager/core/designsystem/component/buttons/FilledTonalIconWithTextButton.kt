@@ -27,20 +27,19 @@ fun AmFilledTonalIconWithTextButton(
     isPositive:Boolean,
     onClick:()->Unit
 ){
-    AmCard(
+    AmSurface(
         modifier=modifier,
         onClick = onClick,
         balance = isPositive,
-        loading = false
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(2.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             AmText(text = text, style = MaterialTheme.typography.titleLarge)
-            AmSurface(balance = isPositive) {
-                AmIcon(modifier=Modifier.size(40.dp),amIconsType = amIconsType)
+            AmCard(balance = isPositive) {
+                AmIcon(modifier=Modifier.size(32.dp),amIconsType = amIconsType)
             }
         }
     }

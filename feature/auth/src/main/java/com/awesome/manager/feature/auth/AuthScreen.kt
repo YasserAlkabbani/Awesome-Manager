@@ -2,6 +2,7 @@ package com.awesome.manager.feature.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -15,12 +16,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,6 +38,7 @@ import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
+import com.awesome.manager.core.designsystem.component.buttons.AmTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
@@ -55,15 +63,17 @@ fun AuthScreen(
             .fillMaxSize(),
     ) {
 
-        Spacer(modifier = Modifier.fillMaxWidth().weight(0.2f))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.1f))
 
         Row(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .height(IntrinsicSize.Min),
-                verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .wrapContentWidth()
+                .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-                AmCard(
+                AmSurface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -76,7 +86,7 @@ fun AuthScreen(
                     )
                 }
                 Spacer(modifier = Modifier.width(2.dp))
-                AmCard(
+                AmSurface(
                     modifier = Modifier,
                     balance = true
                 ) {
@@ -90,38 +100,67 @@ fun AuthScreen(
                 }
             }
 
-        Spacer(modifier = Modifier.fillMaxWidth().weight(0.3f))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.3f))
 
-        AmCard(
-            modifier = Modifier
-                .fillMaxWidth(),
+        AmSurface(
+            modifier = Modifier.fillMaxWidth(),
             balance = true
         ) {
             Column (modifier = Modifier.fillMaxWidth()){
+
+                AmText(
+                    text = "Login/Register",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 AmSurface(
                     modifier = Modifier,
                     balance = null,
                     content = {
                         Column (Modifier.fillMaxWidth()){
                             AmTextField(
-                                modifier = Modifier.padding(4.dp),
+                                modifier = Modifier,
                                 label = "Email", icon = AmIcons.Email, hint = "Example@Example.com",
-                                text = email, error = null ,onTextChange = authScreenState::updateEmail
+                                text = email, error = null ,onTextChange = authScreenState::updateEmail,
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Next,
+                                    keyboardType = KeyboardType.Email
+                                )
                             )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
                             AmTextField(
-                                modifier = Modifier.padding(4.dp),
-                                label = "Password", icon = AmIcons.Password, hint = "*************",
-                                text = password, error = null ,onTextChange = authScreenState::updatePassword
+                                modifier = Modifier,
+                                label = "Password", icon = AmIcons.Password, hint = "123456789",
+                                text = password, error = null ,onTextChange = authScreenState::updatePassword,
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Done,
+                                    keyboardType = KeyboardType.Password
+                                ),
+                                visualTransformation= PasswordVisualTransformation()
                             )
                         }
                     }
                 )
             }
+            Spacer(modifier = Modifier.height(6.dp))
         }
+        Spacer(modifier = Modifier.height(6.dp))
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            AmCard(balance = false) {
+                AmText(text = "Reset Password ?")
+            }
+        }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1.6f))
 
-        Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-
-        AmFilledTonalIconWithTextButton(text = "START ACCOUNTING", amIconsType = AmIcons.ArrowForward, isPositive = true, onClick = authScreenState.login)
+        AmFilledTonalIconWithTextButton(text = "Start Accounting", amIconsType = AmIcons.ArrowForward, isPositive = true, onClick = authScreenState.login)
 
     }
 
