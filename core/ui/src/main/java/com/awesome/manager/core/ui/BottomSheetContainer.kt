@@ -16,7 +16,7 @@ fun AmBottomSheetContainer(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxSize(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        content = content
+        content = content,
+        balance=null
     )
 }

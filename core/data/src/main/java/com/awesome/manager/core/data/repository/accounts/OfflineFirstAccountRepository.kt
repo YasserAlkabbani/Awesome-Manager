@@ -26,37 +26,6 @@ class OfflineFirstAccountRepository @Inject constructor(
     private val accountNetworkDataSource: AccountNetworkDataSource
 ) :AccountRepository{
 
-    override suspend fun refreshAccounts() = amRequest {
-        val accountsEntity=accountNetworkDataSource.returnUpdatedAccount().map { it.asEntity() }
-        accountDao.upsertAccount(accountsEntity)
-        accountsEntity
-    }.collect()
-
-    override suspend fun syncAccount() {
-        accountDao.returnPendingAccount().distinctUntilChanged().map {
-            Log.d("com.awesome.manager","REFRESH_ACCOUNT RETURN_PENDING $it")
-            val accountsNetwork=it.map {accountEntity->accountEntity.asNetwork() }
-            accountNetworkDataSource.createAccount(accountsNetwork)
-            Log.d("com.awesome.manager","REFRESH_ACCOUNT CREATE_SUCCESS $it")
-        }.asAmResult().map {
-            when(it){
-                is AmResult.Error -> {
-                    Log.d(
-                        "com.awesome.manager",
-                        "REFRESH_ACCOUNT CREATE_STATE ERROR ${it.throwable.message}"
-                    )
-                    delay(60000)
-                    syncAccount()
-                }
-                is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_ACCOUNT CREATE_STATE LOADING ${it}")
-                is AmResult.Success -> {
-                    Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE SUCCESS $it")
-                    refreshAccounts()
-                }
-            }
-        }.collect()
-    }
-
     override suspend fun createAccount(
         creatorUserId:String, currencyId:String, defaultTransactionTypeId:String,
         accountName: String, imageUrl:String,
@@ -67,6 +36,28 @@ class OfflineFirstAccountRepository @Inject constructor(
             accountName=accountName, imageUrl=imageUrl,
         )
         amInsert { accountDao.upsertAccount(account) }
+    }
+
+    override suspend fun refreshAccounts() = amRequest {
+        val accountsEntity=accountNetworkDataSource.returnUpdatedAccount().map { it.asEntity() }
+        accountDao.upsertAccount(accountsEntity)
+        accountsEntity
+    }.collect()
+
+    override suspend fun syncAccount() {
+        accountDao.returnPendingAccount().distinctUntilChanged().asAmResult(
+            taskToDo = {
+                val accountsNetwork=it.map {accountEntity->accountEntity.asNetwork() }
+                accountNetworkDataSource.createAccount(accountsNetwork)
+            },
+            doOnError = ::syncAccount, doOnSuccess = ::refreshAccounts
+        ).map {
+            when(it){
+                is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE ERROR ${it.throwable.message}")
+                is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_ACCOUNT CREATE_STATE LOADING ${it}")
+                is AmResult.Success -> Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE SUCCESS $it")
+            }
+        }.collect()
     }
 
     override fun returnAccounts(searchKey:String): Flow<List<AmAccount>> =

@@ -9,6 +9,8 @@ interface TransactionRepository {
 
     suspend fun refreshTransactions()
 
+    suspend fun synTransactions()
+
     fun returnTransactions():Flow<List<AmTransaction>>
 
     fun returnTransactionById(id:String) :Flow<AmTransaction>

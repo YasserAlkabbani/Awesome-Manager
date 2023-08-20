@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
 
-    suspend fun refreshAccounts()
-
-    suspend fun syncAccount()
-
     suspend fun createAccount(
         creatorUserId: String, currencyId: String, defaultTransactionTypeId: String,
         accountName: String, imageUrl: String,
     )
+
+    suspend fun refreshAccounts()
+
+    suspend fun syncAccount()
 
     fun returnAccounts(searchKey: String): Flow<List<AmAccount>>
 

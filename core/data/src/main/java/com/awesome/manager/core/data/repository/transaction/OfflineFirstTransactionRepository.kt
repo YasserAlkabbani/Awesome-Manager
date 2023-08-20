@@ -1,15 +1,22 @@
 package com.awesome.manager.core.data.repository.transaction
 
+import android.util.Log
+import com.awesome.manager.core.common.AmResult
 import com.awesome.manager.core.common.amInsert
 import com.awesome.manager.core.common.amRequest
+import com.awesome.manager.core.common.asAmResult
 import com.awesome.manager.core.data.model.asDomain
 import com.awesome.manager.core.data.model.asEntity
+import com.awesome.manager.core.data.model.asNetwork
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import java.util.UUID
@@ -40,6 +47,23 @@ class OfflineFirstTransactionRepository @Inject constructor(
         transactionDao.upsertTransaction(transactions)
         transactions
     }.collect()
+
+    override suspend fun synTransactions() {
+        transactionDao.returnPendingTransaction().distinctUntilChanged().asAmResult(
+            taskToDo = {
+                val transactionsNetwork=it.map { it.asNetwork() }
+                transactionNetworkDataSource.createTransaction(transactionsNetwork)
+            },
+            doOnError = ::synTransactions,
+            doOnSuccess = ::refreshTransactions
+        ).map {
+                when(it){
+                    is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.throwable.message}")
+                    is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_TRANSACTION CREATE_STATE LOADING ${it}")
+                    is AmResult.Success -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it")
+                }
+            }.collect()
+    }
 
     override fun returnTransactions(): Flow<List<AmTransaction>> =
         transactionDao.returnTransactions().map { it.map { it.asDomain() } }

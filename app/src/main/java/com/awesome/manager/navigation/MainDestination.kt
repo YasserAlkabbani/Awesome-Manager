@@ -17,13 +17,13 @@ enum class MainDestination(
     val title:AmTextManager,
 ){
 
-    Home(
-        selectedAmIconsType=AmIcons.HomeSelected,
-        unSelectedAmIconsType = AmIcons.HomeUnSelected,
-        addIcon = AmIcons.HomeUnSelected,
-        addTitle = "ADD".asAmText(),
-        title = homeR.string.home.asAmText()
-    ),
+//    Home(
+//        selectedAmIconsType=AmIcons.HomeSelected,
+//        unSelectedAmIconsType = AmIcons.HomeUnSelected,
+//        addIcon = AmIcons.HomeUnSelected,
+//        addTitle = "ADD".asAmText(),
+//        title = homeR.string.home.asAmText()
+//    ),
     Accounts(
         selectedAmIconsType=AmIcons.AccountsSelected,
         unSelectedAmIconsType = AmIcons.AccountsUnSelected,

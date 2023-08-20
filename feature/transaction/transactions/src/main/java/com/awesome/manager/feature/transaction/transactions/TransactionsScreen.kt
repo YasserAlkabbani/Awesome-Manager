@@ -7,9 +7,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.designsystem.component.AmCard
+import com.awesome.manager.core.designsystem.component.AmTextField
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.ui.SearchBox
 import com.awesome.manager.core.ui.TransactionCard
 
 
@@ -18,7 +24,7 @@ fun TransactionsRoute(
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ){
 
-    val transactionState=transactionsViewModel.transactionState
+    val transactionState=transactionsViewModel.transactionsState
 
     TransactionScreen(transactionState)
 }
@@ -26,9 +32,12 @@ fun TransactionsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionScreen(transactionState: TransactionState) {
+fun TransactionScreen(transactionsState: TransactionsState) {
 
-    val transactions=transactionState.transactions.collectAsStateWithLifecycle().value
+    val transactions=transactionsState.transactions.collectAsStateWithLifecycle().value
+    val searchKey=transactionsState.searchKey.collectAsStateWithLifecycle().value
+
+    SearchBox(searchKey = searchKey, onSearchKeyChange = transactionsState::onUpdateSearchkey, errorMessage = "")
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -47,7 +56,7 @@ fun TransactionScreen(transactionState: TransactionState) {
                         date = transaction.updatedAt,
                         transactionType = transaction.transactionType.title,
                         isPay = transaction.paymentTransaction,
-                        currency = transaction.account.currency.currencySymbol,
+                        currency = "TODO",
                         createdBy = transaction.creatorUserId,
                         onClick = {}
                     )

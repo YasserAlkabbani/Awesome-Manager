@@ -67,7 +67,7 @@ fun AccountsScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(0.5.dp),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
         content = {
             items(
                 items = accounts,

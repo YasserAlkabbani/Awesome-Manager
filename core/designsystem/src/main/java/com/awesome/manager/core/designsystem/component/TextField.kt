@@ -61,7 +61,7 @@ fun AmTextField(
     icon: AmIconsType,
     label: String,
     text: String,
-    singleLine: Boolean=true,
+    singleLine: Boolean=true,error:String?,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onTextChange: (String) -> Unit
@@ -71,7 +71,10 @@ fun AmTextField(
     val padding =
         animateDpAsState(targetValue = if (isFocus.value) 4.dp else 3.dp, label = "0").value
     val color = animateColorAsState(
-        targetValue = if (isFocus.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+        targetValue = if (isFocus.value)
+            if (error!=null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
+        else
+            if (error!=null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
         label = "1"
     ).value
 
@@ -131,7 +134,8 @@ fun AmTextFieldPreview() {
         icon = AmIcons.Email,
         text = "TEXT",
         label = "LABEL",
-        onTextChange = {}
+        onTextChange = {},
+        error = "ERROR MESSAGE"
     )
 }
 

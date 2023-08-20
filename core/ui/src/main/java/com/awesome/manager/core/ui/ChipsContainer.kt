@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmChip
+import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 
 data class ChipData(val id:String,val title:String)
@@ -24,7 +25,8 @@ fun AmChipsContainer (
     title:String,
     chipDataList: List<ChipData>,
     selectedItem:String?,
-    onSelect:(String)->Unit
+    onSelect:(String)->Unit,
+    content:(@Composable ()->Unit)?
 ){
 
     Card(
@@ -49,6 +51,9 @@ fun AmChipsContainer (
                         onClick = {onSelect(chipData.id)}
                     )
                 }
+            }
+            AmSurface(modifier = Modifier.padding(4.dp),balance = null) {
+                content?.invoke()
             }
         }
     }

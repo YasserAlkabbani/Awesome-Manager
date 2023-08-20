@@ -1,11 +1,13 @@
 package com.awesome.manager.core.common
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 
@@ -16,10 +18,18 @@ sealed interface AmResult<out T> {
 }
 
 
-fun <T> Flow<T>.asAmResult(): Flow<AmResult<T>> =
-    map<T, AmResult<T>> { AmResult.Success(data = it,freshData = true) }
+inline fun <T> Flow<T>.asAmResult(
+    crossinline taskToDo:suspend (T)->Unit,
+    crossinline doOnSuccess:suspend ()->Unit,
+    crossinline doOnError:suspend ()->Unit
+): Flow<AmResult<T>> =
+    map<T, AmResult<T>> {
+        taskToDo(it)
+        AmResult.Success(data = it,freshData = true)
+    }
         .onStart { emit(AmResult.Loading()) }
         .catch { throwable -> emit(AmResult.Error(throwable)) }
+        .onCompletion { it?.let { delay(1000*60*2); doOnError() }?:doOnSuccess() }
         .flowOn(Dispatchers.Default)
 
 suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmResult<T>> {

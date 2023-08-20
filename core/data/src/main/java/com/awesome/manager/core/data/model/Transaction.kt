@@ -3,10 +3,11 @@ package com.awesome.manager.core.data.model
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.network.model.TransactionNetwork
+import com.awesome.manager.core.network.model.TransactionNetworkRequest
+import com.awesome.manager.core.network.model.TransactionNetworkResponse
 import kotlinx.datetime.Instant
 
-fun TransactionNetwork.asEntity()=TransactionEntity(
+fun TransactionNetworkResponse.asEntity()=TransactionEntity(
     id= id,
     creatorUserId= creatorUserId,
     accountId= accountId,
@@ -23,7 +24,6 @@ fun TransactionNetwork.asEntity()=TransactionEntity(
 fun TransactionEntityWithData.asDomain()=AmTransaction(
     id=transactionEntity.id,
     creatorUserId=transactionEntity.creatorUserId,
-    account=accountEntityWithData.asModel(),
     transactionType=transactionTypeEntity.asModel(),
     title=transactionEntity.title,
     subtitle=transactionEntity.subtitle,
@@ -31,4 +31,15 @@ fun TransactionEntityWithData.asDomain()=AmTransaction(
     paymentTransaction=transactionEntity.paymentTransaction,
     createdAt=transactionEntity.createdAt.toString(),
     updatedAt=transactionEntity.updatedAt.toString(),
+)
+
+fun TransactionEntity.asNetwork()=TransactionNetworkRequest(
+    id=id,
+    creatorUserId=creatorUserId,
+    accountId=accountId,
+    transactionTypeId=transactionTypeId,
+    title=title,
+    subtitle=subtitle,
+    amount=amount,
+    paymentTransaction=paymentTransaction
 )

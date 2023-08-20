@@ -17,6 +17,9 @@ interface TransactionDao{
     @Upsert
     fun upsertTransaction(transactionEntity: List<TransactionEntity>)
 
+    @Query("SELECT * FROM transactions WHERE pending=1")
+    fun returnPendingTransaction():Flow<List<TransactionEntity>>
+
     @Transaction
     @Query("SELECT * FROM transactions")
     fun returnTransactions():Flow<List<TransactionEntityWithData>>

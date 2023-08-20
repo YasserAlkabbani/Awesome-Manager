@@ -9,12 +9,13 @@ import androidx.compose.ui.text.TextStyle
 @Composable
 fun AmText(
     modifier: Modifier=Modifier,
-    text:String, style:TextStyle=LocalTextStyle.current
+    text:String,maxLines:Int = 1,
+    style:TextStyle=LocalTextStyle.current
 ){
     Text(
         modifier=modifier,
         text = text,
-        maxLines = 1,
+        maxLines = maxLines,
         style =style
     )
 }

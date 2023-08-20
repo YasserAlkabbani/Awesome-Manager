@@ -51,7 +51,7 @@ class AmAppState(
 
     val currentMainDestination
         @Composable get() = when (currentDestination?.route) {
-            homeRoute -> MainDestination.Home
+//            homeRoute -> MainDestination.Home
             accountsRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
             else -> null
@@ -95,8 +95,8 @@ class AmAppState(
             restoreState = true
         }
         when (mainDestination) {
-            MainDestination.Home ->
-                navHostController.navigateToHome(navOptions = mainDestinationNavOption)
+//            MainDestination.Home ->
+//                navHostController.navigateToHome(navOptions = mainDestinationNavOption)
 
             MainDestination.Accounts ->
                 navHostController.navigateToAccounts(navOptions = mainDestinationNavOption)

@@ -38,7 +38,7 @@ fun TransactionCard(
             AmText(text = subTitle)
             Row {
                 AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Type", subtitle = transactionType)
-                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Creator", subtitle = createdBy)
+//                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Creator", subtitle = createdBy)
                 AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Data", subtitle = date)
             }
         },

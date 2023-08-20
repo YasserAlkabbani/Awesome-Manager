@@ -18,14 +18,18 @@ fun ScreenPlaceHolder(
     textButton:String,
     onClickButton:()->Unit
 ){
-    AmCard {
-        Column(modifier.fillMaxSize()) {
-            Text(text = title, fontSize = 36.sp)
-            Button(onClick = onClickButton) {
-                Text(text = textButton)
+    AmCard(
+        modifier = Modifier,
+        balance = null,
+        content = {
+            Column(modifier.fillMaxSize()) {
+                Text(text = title, fontSize = 36.sp)
+                Button(onClick = onClickButton) {
+                    Text(text = textButton)
+                }
             }
         }
-    }
+    )
 }
 
 

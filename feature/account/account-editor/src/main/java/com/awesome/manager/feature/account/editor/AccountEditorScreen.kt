@@ -94,7 +94,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 label = "Name", icon = AmIcons.Title, hint = "Account Name",
-                text = accountName, onTextChange = accountEditorState::updateName
+                text = accountName, error = null ,onTextChange = accountEditorState::updateName
             )
         }
         Spacer(modifier = Modifier.height(6.dp))

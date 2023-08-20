@@ -18,14 +18,16 @@ interface AccountDao {
     suspend fun upsertAccount(accountEntity: AccountEntity)
 
     @Transaction
-    @Query ("SELECT * FROM accounts WHERE name LIKE '%' || :searchKey || '%' ")
+    @Query ("SELECT * , IFNULL(SUM(transactions.amount),0) AS incoming , IFNULL(SUM(transactions.amount),0) AS outgoing " +
+            "FROM accounts LEFT JOIN transactions ON transactions.account_id WHERE name LIKE '%' || :searchKey || '%' ")
     fun returnAccounts(searchKey:String):Flow<List<AccountEntityWithData>>
 
     @Query("SELECT * FROM accounts WHERE pending=1")
     fun returnPendingAccount():Flow<List<AccountEntity>>
 
     @Transaction
-    @Query ("SELECT * FROM accounts WHERE account_id=:accountId")
+    @Query ("SELECT * , IFNULL(SUM(transactions.amount),0) AS incoming , IFNULL(SUM(transactions.amount),0) AS outgoing " +
+            " FROM accounts LEFT JOIN transactions ON transactions.account_id = accounts.account_id WHERE accounts.account_id=:accountId")
     fun returnAccountById(accountId:String?):Flow<AccountEntityWithData?>
 
 }

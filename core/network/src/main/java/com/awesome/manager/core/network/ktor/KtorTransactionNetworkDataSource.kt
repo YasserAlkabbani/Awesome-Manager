@@ -2,12 +2,11 @@ package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.asResult
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
-import com.awesome.manager.core.network.model.TransactionNetwork
+import com.awesome.manager.core.network.model.TransactionNetworkRequest
+import com.awesome.manager.core.network.model.TransactionNetworkResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
-import io.ktor.client.request.get
-import io.ktor.client.request.post
 import io.ktor.resources.Resource
 import javax.inject.Inject
 
@@ -23,10 +22,10 @@ private class TransactionRequest {
 class KtorTransactionNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     TransactionNetworkDataSource {
 
-    override suspend fun createTransaction(transactionNetwork: TransactionNetwork): TransactionNetwork =
+    override suspend fun createTransaction(transactionNetworkResponse: List<TransactionNetworkRequest>): TransactionNetworkResponse =
         httpClient.post(TransactionRequest.ReturnTransactions()).asResult()
 
-    override suspend fun returnUpdatedTransactions(): List<TransactionNetwork> =
+    override suspend fun returnUpdatedTransactions(): List<TransactionNetworkResponse> =
         httpClient.get(TransactionRequest.ReturnTransactions()).asResult()
 
 }

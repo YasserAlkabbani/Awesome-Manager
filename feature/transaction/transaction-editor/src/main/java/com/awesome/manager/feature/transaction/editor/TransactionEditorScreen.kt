@@ -98,14 +98,14 @@ fun TransactionEditorRoute(
                         focusRequester.requestFocus()
                     },
                 hint = "Search For Account", icon = AmIcons.Search, label = "Something..",
-                text = accountSearchKey,
+                text = accountSearchKey,error = null ,
                 onTextChange = transactionEditorState::updateAccountSearchKey
             )
             Spacer(modifier = Modifier.height(8.dp))
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(0.5.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
                 content = {
                     items(
                         items = accountSearchResult,
@@ -184,7 +184,7 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                            AmSurface(modifier = Modifier) {
+                            AmSurface(modifier = Modifier, balance = null) {
                                 AmIcon(
                                     modifier = Modifier
                                         .padding(2.dp)
@@ -221,30 +221,32 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
 
             AmTextField(hint = "Title", icon = AmIcons.Title, label = "Transaction Subject",
                 text = title, onTextChange = transactionEditorState::updateTitle,
-                keyboardActions = KeyboardActions(),
+                keyboardActions = KeyboardActions(),error = null ,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next,)
             )
             AmTextField(hint = "Subtitle", icon = AmIcons.SubTitle, label = "Transaction Description",
-                text = subtitle, onTextChange = transactionEditorState::updateSubTitle,
+                text = subtitle, onTextChange = transactionEditorState::updateSubTitle,error = null ,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(hint = "Amount", icon = AmIcons.Money, label = "5000.0",
-                text = amount, onTextChange = transactionEditorState::updateAmount,
+                text = amount, onTextChange = transactionEditorState::updateAmount,error = null ,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
                 ),
-            )
-            AmSwitch(
-                title="Payment Type", checkSubtitle = "Pay", unCheckSubtitle = "Receive",
-                checked = paymentTransaction,
-                onCheck = transactionEditorState::updateTransactionPayment
             )
 
             AmChipsContainer(
                 title = "Transaction Type",
                 chipDataList = transactionTypeChip,
                 onSelect = transactionEditorState::updateTransactionTypeId,
-                selectedItem = selectedTransactionType?.id
+                selectedItem = selectedTransactionType?.id,
+                content = {
+                    AmSwitch(
+                        title="Payment Type", checkSubtitle = "Pay", unCheckSubtitle = "Receive",
+                        checked = paymentTransaction,
+                        onCheck = transactionEditorState::updateTransactionPayment
+                    )
+                }
             )
         }
 
