@@ -1,16 +1,20 @@
 package com.awesome.manager.core.network.di
 
+import android.content.Context
 import android.util.Log
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.asResult
 import com.awesome.manager.core.network.model.AuthNetwork
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.chuckerteam.chucker.api.RetentionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -54,7 +58,30 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideKtorClient(authPreferencesDataStore: AuthPreferencesDataStore) = HttpClient(OkHttp) {
+    fun provideChucker(@ApplicationContext context: Context): ChuckerInterceptor {
+        val chuckerCollector = ChuckerCollector(
+            context = context,
+            showNotification = true,
+            retentionPeriod = RetentionManager.Period.ONE_HOUR
+        )
+
+        return ChuckerInterceptor.Builder(context)
+            .collector(chuckerCollector)
+            .maxContentLength(250_000L)
+            .redactHeaders("Auth-Token", "Bearer")
+            .alwaysReadResponseBody(true)
+            .createShortcut(true)
+            .build()
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideKtorClient(
+        authPreferencesDataStore: AuthPreferencesDataStore,
+        chuckerInterceptor: ChuckerInterceptor
+    ) = HttpClient(OkHttp.create{addInterceptor(chuckerInterceptor)}) {
+
 
         engine {}
 

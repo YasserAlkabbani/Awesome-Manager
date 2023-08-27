@@ -43,6 +43,9 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    implementation(libs.chucker.debug)
+    implementation(libs.chucker.release)
+
     implementation(project(":core:datastore"))
 
 }
