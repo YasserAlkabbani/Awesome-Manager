@@ -15,6 +15,7 @@ sealed interface AmResult<out T> {
     data class Success<T>(val data: T, val freshData: Boolean) : AmResult<T>
     data class Error(val throwable: Throwable) : AmResult<Nothing>
     data class Loading(val progress: Int = 0) : AmResult<Nothing>
+    fun getErrorMessage() = (this as? Error)?.throwable?.message?:"Unknown Error"
 }
 
 

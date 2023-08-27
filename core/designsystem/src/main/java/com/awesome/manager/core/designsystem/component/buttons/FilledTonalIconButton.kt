@@ -15,13 +15,13 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmFilledTonalIconButton(
     modifier: Modifier=Modifier,
     amIconsType: AmIconsType,
-    isPositive:Boolean,
+    positive:Boolean,
     onClick:()->Unit
 ){
     AmCard(
         modifier=modifier,
         onClick = onClick,
-        balance = isPositive,
+        positive = positive,
         loading = false
     ) {
         AmIcon(modifier=Modifier.padding(horizontal = 4.dp),amIconsType = amIconsType)
@@ -35,7 +35,7 @@ fun AmFilledTonalIconButtonPositivePreview(){
     AmFilledTonalIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.Save,
-        isPositive = true,
+        positive = true,
         onClick = {}
     )
 }
@@ -45,7 +45,7 @@ fun AmFilledTonalIconButtonNegativePreview(){
     AmFilledTonalIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.Save,
-        isPositive = false,
+        positive = false,
         onClick = {}
     )
 }

@@ -3,7 +3,6 @@ package com.awesome.manager.core.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,7 +19,7 @@ fun ScreenPlaceHolder(
 ){
     AmCard(
         modifier = Modifier,
-        balance = null,
+        positive = null,
         content = {
             Column(modifier.fillMaxSize()) {
                 Text(text = title, fontSize = 36.sp)

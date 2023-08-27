@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.ManageAccounts
@@ -66,6 +67,8 @@ object AmIcons {
     val Done=AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
 
     val Search=AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
+
+    val Error=AmIconsType.ImageVictorAmIconsType(Icons.Default.Error)
 
 }
 

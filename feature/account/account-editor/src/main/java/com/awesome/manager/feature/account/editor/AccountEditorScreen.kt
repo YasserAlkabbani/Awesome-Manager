@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.component.AmChip
-import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
@@ -71,13 +69,13 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
             modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AmFilledTonalIconButton(amIconsType = AmIcons.Close, isPositive = false, onClick = accountEditorState::onNavigationBack)
+            AmFilledTonalIconButton(amIconsType = AmIcons.Close, positive = false, onClick = accountEditorState::onNavigationBack)
             AmText(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).weight(1f),
                 text = stringResource(id = R.string.create_account),
                 style = MaterialTheme.typography.titleLarge
             )
-            AmFilledTonalIconButton(amIconsType = AmIcons.Save, isPositive = true, onClick = accountEditorState.onSave)
+            AmFilledTonalIconButton(amIconsType = AmIcons.Save, positive = true, onClick = accountEditorState.onSave)
         }
 
         Spacer(modifier = Modifier.height(8.dp))

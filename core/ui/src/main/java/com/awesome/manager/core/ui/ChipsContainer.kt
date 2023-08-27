@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmChip
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
@@ -52,7 +51,7 @@ fun AmChipsContainer (
                     )
                 }
             }
-            AmSurface(modifier = Modifier.padding(4.dp),balance = null) {
+            AmSurface(modifier = Modifier.padding(4.dp),positive = null,loading = false) {
                 content?.invoke()
             }
         }

@@ -35,7 +35,7 @@ fun AccountCard(
 
     AmCard(
         modifier = modifier,
-        balance=total>=0,loading = loading,
+        positive=total>=0,loading = loading,
         onClick = onClick,
         content = {
             Row(

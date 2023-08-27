@@ -40,7 +40,7 @@ fun AmSwitch(
     }
     AmCard(
         modifier=modifier.fillMaxWidth(),
-        loading=false, balance = !checked,
+        loading=false, positive = !checked,
         onClick ={ onCheck(!checked) }
     ) {
         Row(

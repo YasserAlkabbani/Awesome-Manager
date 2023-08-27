@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -17,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
@@ -77,13 +79,20 @@ fun rememberAmBottomSheetState(
 @Composable
 fun AmModelBottomSheet(
     amBottomSheetState:AmBottomSheetState,
+    positive:Boolean?,
     content:@Composable ColumnScope.()->Unit,
 ) {
+    val containerColor=when(positive){
+        true -> MaterialTheme.colorScheme.primaryContainer
+        false -> MaterialTheme.colorScheme.errorContainer
+        null -> MaterialTheme.colorScheme.surface
+    }
     if (amBottomSheetState.isOpenButtonSheet.value) {
         ModalBottomSheet(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(horizontal = 4.dp),
             onDismissRequest = amBottomSheetState.onDismiss,
             sheetState = amBottomSheetState.sheetState,
+            containerColor = containerColor,
             content = {
                 Column(
                     modifier = Modifier.padding(6.dp),

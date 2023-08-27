@@ -42,7 +42,7 @@ fun TransactionCard(
                 AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Data", subtitle = date)
             }
         },
-        balance= listOf(true,false).random(),
+        positive= listOf(true,false).random(),
         loading = true,
         onClick = onClick
     )

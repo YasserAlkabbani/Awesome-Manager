@@ -86,7 +86,9 @@ fun AmTextField(
     ) {
         Column(Modifier.padding(padding)) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(padding),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(padding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = icon)
@@ -122,6 +124,18 @@ fun AmTextField(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
             )
+            AnimatedVisibility(visible = error!=null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(padding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = AmIcons.Error)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    AmText(modifier = Modifier.wrapContentHeight(),text = error.orEmpty(), style = MaterialTheme.typography.titleMedium)
+                }
+            }
         }
     }
 }

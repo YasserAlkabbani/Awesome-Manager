@@ -116,20 +116,20 @@ class AmAppState(
                     navHostController.navigateToHome( homeNavOption)
                 }
                 introRoute -> {
-                    val homeNavOption = navOptions {
+                    val navOption = navOptions {
                         popUpTo(introRoute) { this.inclusive = true }
                     }
-                    navHostController.navigateToHome(homeNavOption)
+                    navHostController.navigateToHome(navOption)
                 }
             }
             false -> {
                 when (currentDestinationRoute) {
                     authRoute -> {}
                     introRoute -> {
-                        val homeNavOption = navOptions {
+                        val navOption = navOptions {
                             popUpTo(introRoute) { this.inclusive = true }
                         }
-                        navHostController.navigateToAuth(homeNavOption)
+                        navHostController.navigateToAuth(navOption)
                     }
                     homeRoute -> {
                         val authNavOption = navOptions {

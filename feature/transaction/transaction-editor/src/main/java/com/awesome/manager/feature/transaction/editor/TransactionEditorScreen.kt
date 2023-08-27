@@ -88,7 +88,7 @@ fun TransactionEditorRoute(
     val accountSearchKey=transactionEditorState.accountSearchKey.collectAsStateWithLifecycle().value
     val accountSearchResult=transactionEditorState.accountSearchResult.collectAsStateWithLifecycle().value
     AmModelBottomSheet(
-        amBottomSheetState = searchForAccountSheetState,
+        amBottomSheetState = searchForAccountSheetState, positive = null,
         content = {
             val focusRequester:FocusRequester=FocusRequester()
             AmTextField(
@@ -158,7 +158,7 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AmFilledTonalIconButton(amIconsType = AmIcons.ArrowBack, isPositive = false, onClick = transactionEditorState::startPop)
+            AmFilledTonalIconButton(amIconsType = AmIcons.ArrowBack, positive = false, onClick = transactionEditorState::startPop)
             AmText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,7 +167,7 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
                 text = stringResource(R.string.create_transaction),
                 style = MaterialTheme.typography.titleMedium
             )
-            AmFilledTonalIconButton(amIconsType = AmIcons.Save, isPositive = true, onClick = transactionEditorState.createTransaction)
+            AmFilledTonalIconButton(amIconsType = AmIcons.Save, positive = true, onClick = transactionEditorState.createTransaction)
         }
 
         Column(
@@ -178,13 +178,13 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
             AnimatedVisibility(account==null){
                     AmCard(
                         modifier = Modifier.fillMaxWidth(),
-                        loading = false, balance = null,
+                        loading = false, positive = null,
                         onClick = transactionEditorState::startSearchForAnAccount,
                         content = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                            AmSurface(modifier = Modifier, balance = null) {
+                            AmSurface(modifier = Modifier, positive = null,loading = false) {
                                 AmIcon(
                                     modifier = Modifier
                                         .padding(2.dp)

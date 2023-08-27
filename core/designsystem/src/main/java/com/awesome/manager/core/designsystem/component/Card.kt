@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
@@ -21,15 +21,15 @@ import androidx.compose.ui.unit.dp
 fun AmCard(
     modifier: Modifier=Modifier,
     shape: Shape=MaterialTheme.shapes.medium,
-    balance:Boolean?, loading:Boolean,
+    positive:Boolean?, loading:Boolean,
     onClick:()->Unit,
     content:@Composable ColumnScope.()->Unit
 ){
     val primary = MaterialTheme.colorScheme.primary
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val cardColors= remember(balance) {
-        when (balance) {
+    val cardColors= remember(positive) {
+        when (positive) {
             null->primary
             true->primaryContainer
             false->errorContainer
@@ -39,11 +39,14 @@ fun AmCard(
         modifier = modifier,
         onClick = onClick,
         content={
-            Column(modifier=modifier.padding(8.dp)){
+            Column(
+                modifier=modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
                 content()
             }
             AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=balance==true)
+                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=positive==true)
             }
         },
         colors =CardDefaults.cardColors(containerColor = cardColors),
@@ -55,14 +58,14 @@ fun AmCard(
 @Composable
 fun AmCard(
     modifier: Modifier=Modifier,
-    balance:Boolean?,shape: Shape=MaterialTheme.shapes.medium,
+    positive:Boolean?, shape: Shape=MaterialTheme.shapes.medium,
     content:@Composable ColumnScope.()->Unit
 ){
     val primary = MaterialTheme.colorScheme.primary
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val cardColors= remember(balance) {
-        when (balance) {
+    val cardColors= remember(positive) {
+        when (positive) {
             null->primary
             true->primaryContainer
             false->errorContainer
