@@ -4,6 +4,7 @@ import android.util.Log
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.asResult
 import com.awesome.manager.core.network.model.AuthNetwork
+import com.awesome.manager.core.network.model.AuthUserNetwork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
@@ -53,6 +54,9 @@ private class AuthRequest {
 @Serializable
 data class LoginRequest(val email: String,val password: String)
 
+@Serializable
+data class SignupRequest(val email: String,val password: String)
+
 
 
 class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
@@ -60,20 +64,21 @@ class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: Http
 
     override suspend fun login(email: String, password: String) : AuthNetwork =
         httpClient.post(AuthRequest.Login()){
-            setBody(LoginRequest(email,password))
+            setBody(LoginRequest(email=email,password=password))
         }.asResult<AuthNetwork>().also {authNetwork->
             httpClient.plugin(Auth).bearer {
                 loadTokens { BearerTokens(authNetwork.accessToken, authNetwork.refreshToken) }
             }
         }
 
+    override suspend fun signUp(email: String, password: String) : AuthUserNetwork =
+        httpClient.post(AuthRequest.SignUp()){
+            setBody(SignupRequest(email = email,password=password))
+        }.asResult()
 
-    override suspend fun signUp(email: String, password: String) =
-        httpClient.post(AuthRequest.SignUp()).body<String>()
+    override suspend fun refreshUser():AuthNetwork= httpClient.get(AuthRequest.RefreshUser()).asResult()
 
-    override suspend fun refreshUser():AuthNetwork= httpClient.get(AuthRequest.RefreshUser()).asResult<AuthNetwork>()
-
-    suspend fun recoverPassword(){}
+//    suspend fun recoverPassword() =httpClient.get(AuthRequest.RefreshUser()).asResult()
 
     suspend fun logout(){}
 

@@ -58,7 +58,7 @@ class OfflineFirstTransactionRepository @Inject constructor(
             doOnSuccess = ::refreshTransactions
         ).map {
                 when(it){
-                    is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.throwable.message}")
+                    is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.amError.message}")
                     is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_TRANSACTION CREATE_STATE LOADING ${it}")
                     is AmResult.Success -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it")
                 }

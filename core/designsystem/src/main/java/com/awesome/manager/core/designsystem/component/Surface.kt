@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -33,7 +34,7 @@ fun AmSurface(
         color=surfaceColors,
         content={
             Column {
-                Column(modifier=modifier.padding(8.dp)){
+                Column(modifier=modifier.padding(8.dp),horizontalAlignment = Alignment.CenterHorizontally){
                     content()
                 }
                 AnimatedVisibility(visible = loading) {
@@ -47,7 +48,7 @@ fun AmSurface(
 
 @Composable
 fun AmSurface(
-    modifier: Modifier=Modifier, positive:Boolean?, loading:Boolean,
+    modifier: Modifier=Modifier, positive:Boolean?=null, loading:Boolean=false,
     content:@Composable ()->Unit
 ) {
     val surface = MaterialTheme.colorScheme.surface

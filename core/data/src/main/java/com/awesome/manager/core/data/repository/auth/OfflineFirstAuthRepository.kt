@@ -23,7 +23,7 @@ class OfflineFirstAuthRepository @Inject constructor(
         }.collect()
     }
 
-    override suspend fun login(email: String, password: String): Flow<AmResult<String>> =
+    override suspend fun login(email: String, password: String): Flow<AmResult<Boolean>> =
         amRequest {
             val response = authNetworkDataSource.login(email, password)
             authPreferencesDataStore.updateToken(
@@ -31,11 +31,12 @@ class OfflineFirstAuthRepository @Inject constructor(
                 refreshToken = response.refreshToken,
                 currentUserId = response.authUserNetwork.id
             )
-            response.authUserNetwork.id
+            true
         }
 
-    override suspend fun signUp(email: String, password: String) = amRequest {
-        authNetworkDataSource.signUp(email, password)
+    override suspend fun signUp(email: String, password: String): Flow<AmResult<Boolean>> = amRequest {
+        val response=authNetworkDataSource.signUp(email, password)
+        response.identities.isEmpty()
     }
 
     override fun isLogin(): Flow<Boolean> =

@@ -109,12 +109,9 @@ object NetworkModule {
                 loadTokens {
                     val authToken=authPreferencesDataStore.returnAccessToken().first().orEmpty()
                     val refreshToken=authPreferencesDataStore.returnRefreshToken().first().orEmpty()
-                    Log.d("KTOR_SERVICE","TEST_AUTH LOAD_TOKEN AUTH_TOKEN $authToken")
-                    Log.d("KTOR_SERVICE","TEST_AUTH LOAD_TOKEN REFRESH_TOKEN $refreshToken")
                     BearerTokens(authToken,refreshToken)
                 }
                 refreshTokens {
-                    Log.d("KTOR_SERVICE","TEST_AUTH REFRESH_TOKEN REFRESH:${oldTokens?.refreshToken} ACCESS:${oldTokens?.accessToken}")
                     val refreshTokenResult=client.post(AuthRequest.RefreshToken()){
                         setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
                     }.asResult<AuthNetwork>()

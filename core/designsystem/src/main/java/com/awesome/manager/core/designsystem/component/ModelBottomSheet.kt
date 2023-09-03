@@ -79,20 +79,13 @@ fun rememberAmBottomSheetState(
 @Composable
 fun AmModelBottomSheet(
     amBottomSheetState:AmBottomSheetState,
-    positive:Boolean?,
     content:@Composable ColumnScope.()->Unit,
 ) {
-    val containerColor=when(positive){
-        true -> MaterialTheme.colorScheme.primaryContainer
-        false -> MaterialTheme.colorScheme.errorContainer
-        null -> MaterialTheme.colorScheme.surface
-    }
     if (amBottomSheetState.isOpenButtonSheet.value) {
         ModalBottomSheet(
             modifier = Modifier.padding(horizontal = 4.dp),
             onDismissRequest = amBottomSheetState.onDismiss,
             sheetState = amBottomSheetState.sheetState,
-            containerColor = containerColor,
             content = {
                 Column(
                     modifier = Modifier.padding(6.dp),

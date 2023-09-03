@@ -26,58 +26,64 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Title
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.awesome.manager.core.designsystem.R
 
 object AmIcons {
-    
-    val AwesomeManagerIcon=AmIconsType.DrawableResourceAmIconsType(R.drawable.awesome_manager_icon)
 
-    val PlaceHolderIcon=AmIconsType.DrawableResourceAmIconsType(R.drawable.awesome_manager_icon)
+    val AwesomeManagerIcon =
+        AmIconsType.DrawableResourceAmIconsType(R.drawable.awesome_manager_icon)
 
-    val HomeSelected= AmIconsType.ImageVictorAmIconsType(Icons.Default.House)
-    val HomeUnSelected= AmIconsType.ImageVictorAmIconsType(Icons.Default.Home)
-    val HomeAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
+    val PlaceHolderIcon = AmIconsType.DrawableResourceAmIconsType(R.drawable.awesome_manager_icon)
 
-    val AccountsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.ManageAccounts)
-    val AccountsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Person)
-    val AccountAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.PersonAdd)
+    val HomeSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.House)
+    val HomeUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Home)
+    val HomeAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
-    val TransactionsSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Payments)
-    val TransactionsUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
-    val TransactionAdd=AmIconsType.ImageVictorAmIconsType(Icons.Default.AddCard)
+    val AccountsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.ManageAccounts)
+    val AccountsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Person)
+    val AccountAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.PersonAdd)
 
-    val MenuSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
-    val MenuUnSelected=AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
+    val TransactionsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Payments)
+    val TransactionsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
+    val TransactionAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.AddCard)
 
-    val ArrowBack=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
-    val ArrowForward=AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowForward)
-    val Edit=AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
-    val Save=AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
-    val Close=AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
+    val MenuSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
+    val MenuUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
-    val Email=AmIconsType.ImageVictorAmIconsType(Icons.Default.Email)
-    val Password=AmIconsType.ImageVictorAmIconsType(Icons.Default.Password)
+    val ArrowBack = AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
+    val ArrowForward = AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowForward)
+    val Edit = AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
+    val Save = AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
+    val Close = AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
 
-    val Title=AmIconsType.ImageVictorAmIconsType(Icons.Default.Title)
-    val SubTitle=AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
-    val Money=AmIconsType.ImageVictorAmIconsType(Icons.Default.Money)
+    val Email = AmIconsType.ImageVictorAmIconsType(Icons.Default.Email)
+    val Password = AmIconsType.ImageVictorAmIconsType(Icons.Default.Password)
 
-    val Done=AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
+    val Title = AmIconsType.ImageVictorAmIconsType(Icons.Default.Title)
+    val SubTitle = AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
+    val Money = AmIconsType.ImageVictorAmIconsType(Icons.Default.Money)
 
-    val Search=AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
+    val Done = AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
 
-    val Error=AmIconsType.ImageVictorAmIconsType(Icons.Default.Error)
+    val Search = AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
+
+    val Error = AmIconsType.ImageVictorAmIconsType(Icons.Default.Error)
+
+    val Visibility = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Visibility)
+    val VisibilityOff = AmIconsType.ImageVictorAmIconsType(Icons.Filled.VisibilityOff)
 
 }
 
-sealed class AmIconsType{
+sealed class AmIconsType {
 
-    data class ImageVictorAmIconsType(val imageVector: ImageVector):AmIconsType()
+    data class ImageVictorAmIconsType(val imageVector: ImageVector) : AmIconsType()
 
-    data class PainterAmIconsType(val painter: Painter):AmIconsType()
+    data class PainterAmIconsType(val painter: Painter) : AmIconsType()
 
-    data class DrawableResourceAmIconsType(@DrawableRes val id:Int):AmIconsType()
+    data class DrawableResourceAmIconsType(@DrawableRes val id: Int) : AmIconsType()
 
 }

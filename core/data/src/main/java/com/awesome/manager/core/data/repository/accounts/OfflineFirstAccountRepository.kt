@@ -41,7 +41,6 @@ class OfflineFirstAccountRepository @Inject constructor(
     override suspend fun refreshAccounts() = amRequest {
         val accountsEntity=accountNetworkDataSource.returnUpdatedAccount().map { it.asEntity() }
         accountDao.upsertAccount(accountsEntity)
-        accountsEntity
     }.collect()
 
     override suspend fun syncAccount() {
@@ -53,7 +52,7 @@ class OfflineFirstAccountRepository @Inject constructor(
             doOnError = ::syncAccount, doOnSuccess = ::refreshAccounts
         ).map {
             when(it){
-                is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE ERROR ${it.throwable.message}")
+                is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE ERROR ${it.amError.message}")
                 is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_ACCOUNT CREATE_STATE LOADING ${it}")
                 is AmResult.Success -> Log.d("com.awesome.manager", "REFRESH_ACCOUNT CREATE_STATE SUCCESS $it")
             }

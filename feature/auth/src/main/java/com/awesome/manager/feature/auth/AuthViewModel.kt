@@ -3,14 +3,12 @@ package com.awesome.manager.feature.auth
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.common.AmResult
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +30,6 @@ class AuthViewModel @Inject constructor(
             authRepository.login(email,password).collectLatest { amResult ->
                 authScreenState.updateStateBasedOnResult(
                     amResult = amResult, onSuccess = {},
-                    onFailure = {authScreenState.showBottomSheetMessage(MessageType.LoginError)}
                 )
             }
         }
@@ -44,15 +41,6 @@ class AuthViewModel @Inject constructor(
                 authScreenState.updateStateBasedOnResult(
                     amResult = amResult,
                     onSuccess = { authScreenState.showBottomSheetMessage(MessageType.RegisterSuccess) },
-                    onFailure = {
-                        authScreenState.showBottomSheetMessage(
-                            MessageType.OtherError(
-                                errorMessage = amResult.getErrorMessage(),
-                                onRetry = ::register,
-                                onDone = authScreenState::setMainStateAsIdle
-                            )
-                        )
-                    }
                 )
             }
         }
@@ -64,15 +52,6 @@ class AuthViewModel @Inject constructor(
                 authScreenState.updateStateBasedOnResult(
                     amResult = amResult,
                     onSuccess = { authScreenState.showBottomSheetMessage(MessageType.ResetPasswordSuccess) },
-                    onFailure = {
-                        authScreenState.showBottomSheetMessage(
-                            MessageType.OtherError(
-                                errorMessage = amResult.getErrorMessage(),
-                                onRetry = ::resetPassword,
-                                onDone = authScreenState::setMainStateAsIdle
-                            )
-                        )
-                    }
                 )
             }
         }

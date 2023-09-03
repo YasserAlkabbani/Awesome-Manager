@@ -88,7 +88,7 @@ fun TransactionEditorRoute(
     val accountSearchKey=transactionEditorState.accountSearchKey.collectAsStateWithLifecycle().value
     val accountSearchResult=transactionEditorState.accountSearchResult.collectAsStateWithLifecycle().value
     AmModelBottomSheet(
-        amBottomSheetState = searchForAccountSheetState, positive = null,
+        amBottomSheetState = searchForAccountSheetState,
         content = {
             val focusRequester:FocusRequester=FocusRequester()
             AmTextField(

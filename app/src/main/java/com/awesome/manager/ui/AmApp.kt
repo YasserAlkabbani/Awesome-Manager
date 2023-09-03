@@ -3,6 +3,7 @@ package com.awesome.manager.ui
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -72,14 +73,16 @@ fun AmApp(
                }
            },
            floatingActionButton = {
-               maAppState.currentMainDestination?.let {
-                   AmExtendedFloatingActionButton(
-                       modifier = Modifier,
-                       expanded = true,
-                       text = it.title.asText(),
-                       icon = it.addIcon,
-                       onClick = {currentDestination?.route?.let { maAppState.navigateToAddByCurrentNavigation(it) }}
-                   )
+               if(maAppState.shouldShowFloatingActionButton) {
+                   maAppState.currentMainDestination?.let {
+                       AmExtendedFloatingActionButton(
+                           modifier = Modifier,
+                           expanded = true,
+                           text = it.title.asText(),
+                           icon = it.addIcon,
+                           onClick = {currentDestination?.route?.let { maAppState.navigateToAddByCurrentNavigation(it) }}
+                       )
+                   }
                }
            },
        ) {padding->

@@ -5,17 +5,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 
 @Composable
-fun AmButton(modifier: Modifier=Modifier,text:String, onClick:()->Unit){
-    Button(
+fun AmButton(
+    modifier: Modifier=Modifier,
+    text:String,positive:Boolean?,
+    onClick:()->Unit
+){
+    AmSurface(
         modifier=modifier,
-        shape = MaterialTheme.shapes.small,
-        onClick = onClick
+        onClick = onClick,
+        positive = positive,
+        loading = false
     ) {
         AmText(text = text)
     }
@@ -26,6 +33,6 @@ fun AmButton(modifier: Modifier=Modifier,text:String, onClick:()->Unit){
 fun AmButtonPreview(){
     AmButton(
         text = "CLICK ME !!",
-        onClick = {}
+        onClick = {}, positive = null
     )
 }

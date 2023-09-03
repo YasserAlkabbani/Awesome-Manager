@@ -37,8 +37,11 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -47,9 +50,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import kotlinx.coroutines.newSingleThreadContext
@@ -61,10 +66,9 @@ fun AmTextField(
     icon: AmIconsType,
     label: String,
     text: String,
-    singleLine: Boolean=true,error:String?,
+    singleLine: Boolean = true, error: String?, password: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    visualTransformation:VisualTransformation = VisualTransformation.None,
     onTextChange: (String) -> Unit
 ) {
     val isFocus = remember { mutableStateOf(false) }
@@ -73,11 +77,14 @@ fun AmTextField(
         animateDpAsState(targetValue = if (isFocus.value) 4.dp else 3.dp, label = "0").value
     val color = animateColorAsState(
         targetValue = if (isFocus.value)
-            if (error!=null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
+            if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
         else
-            if (error!=null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
+            if (error != null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
         label = "1"
     ).value
+    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+
+
 
     Card(
         modifier = modifier,
@@ -91,11 +98,15 @@ fun AmTextField(
                     .padding(padding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = icon)
+                AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
                 Spacer(modifier = Modifier.width(4.dp))
-                AmText(modifier = Modifier.wrapContentHeight(),text = label, style = MaterialTheme.typography.titleMedium)
+                AmText(
+                    modifier = Modifier.wrapContentHeight(),
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
-            CustomTextField(
+            TextField(
                 modifier = Modifier
                     .fillMaxWidth()
 //                    .defaultMinSize(
@@ -106,13 +117,25 @@ fun AmTextField(
                     .onFocusChanged { isFocus.value = it.hasFocus },
                 value = text,
                 onValueChange = onTextChange,
-                placeholder = { AmText(modifier,text = hint, style = MaterialTheme.typography.bodyLarge) },
+                placeholder = {
+                    AmText(
+                        modifier,
+                        text = hint,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = shape,
                 singleLine = singleLine,
-                keyboardOptions=keyboardOptions,
+                keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
-                visualTransformation=visualTransformation,
+                visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon =  if (password){{
+                    AmIconButton(
+                        onClick = { passwordHidden = !passwordHidden },
+                        amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
+                    )
+                }} else null,
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -124,16 +147,23 @@ fun AmTextField(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
             )
-            AnimatedVisibility(visible = error!=null) {
+            AnimatedVisibility(visible = error != null) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(padding),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AmIcon(modifier=Modifier.height(IntrinsicSize.Max),amIconsType = AmIcons.Error)
+                    AmIcon(
+                        modifier = Modifier.height(IntrinsicSize.Max),
+                        amIconsType = AmIcons.Error
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
-                    AmText(modifier = Modifier.wrapContentHeight(),text = error.orEmpty(), style = MaterialTheme.typography.titleMedium)
+                    AmText(
+                        modifier = Modifier.wrapContentHeight(),
+                        text = error.orEmpty(),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }

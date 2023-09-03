@@ -63,7 +63,7 @@ fun AccountsRoute(
 fun AccountsScreen(
     accountsState: AccountsState
 ) {
-    val accounts = accountsState.accounts.collectAsState().value
+    val accounts = accountsState.accounts.collectAsStateWithLifecycle().value
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp),

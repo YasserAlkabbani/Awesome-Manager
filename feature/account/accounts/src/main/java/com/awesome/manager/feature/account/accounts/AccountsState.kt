@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.update
 class AccountsState(
     private val savedStateHandle: SavedStateHandle,
     coroutineScope: CoroutineScope,
-    amAccountsAsFlow:Flow<List<AmAccount>>
+    amAccountsAsStateFlow:Flow<List<AmAccount>>
 ){
-    val accounts:StateFlow<List<AmAccount>> =amAccountsAsFlow
+    val accounts:StateFlow<List<AmAccount>> =amAccountsAsStateFlow
         .stateIn(scope = coroutineScope, started = SharingStarted.WhileSubscribed(5000), initialValue = listOf())
 
     private val _createAccountNavigation:MutableStateFlow<Unit?> =MutableStateFlow(null)

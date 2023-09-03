@@ -24,7 +24,7 @@ class OfflineFirstTransactionTypeRepository @Inject constructor(
         transactionTypes
     }.map {
         when(it){
-            is AmResult.Error -> Log.d("TRANSACTION_TYPE","ERROR ${it.throwable.message}")
+            is AmResult.Error -> Log.d("TRANSACTION_TYPE","ERROR ${it.amError.message}")
             is AmResult.Loading -> Log.d("TRANSACTION_TYPE","LOADING")
             is AmResult.Success -> Log.d("TRANSACTION_TYPE","SUCCESS ${it.data}")
         }

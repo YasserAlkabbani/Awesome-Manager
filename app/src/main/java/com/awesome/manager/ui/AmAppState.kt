@@ -28,6 +28,7 @@ import com.awesome.manager.feature.transaction.transactions.navigation.navigateT
 import com.awesome.manager.feature.transaction.transactions.navigation.transactionsRoute
 import com.awesome.manager.navigation.MainDestination
 import kotlinx.coroutines.CoroutineScope
+import timber.log.Timber
 
 
 @Composable
@@ -51,7 +52,7 @@ class AmAppState(
 
     val currentMainDestination
         @Composable get() = when (currentDestination?.route) {
-//            homeRoute -> MainDestination.Home
+            homeRoute -> MainDestination.Home
             accountsRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
             else -> null
@@ -60,15 +61,15 @@ class AmAppState(
     val shouldShowBottomBar
         @Composable get() = currentMainDestination != null
 
-//    val shouldShowFloatingActionButton
-//        @Composable get() = when(currentDestination?.route){
-//            accountsRoute, accountDetailsRoute ->true
-//            else -> false
-//        }
+    val shouldShowFloatingActionButton
+        @Composable get() = when(currentDestination?.route){
+            accountsRoute, transactionsRoute ->true
+            else -> false
+        }
 
     val shouldShowShowTopBar
         @Composable get() = when(currentDestination?.route){
-//            homeRoute, accountsRoute,transactionsRoute, accountEditorRoute ->true
+            transactionEditorRoute, transactionDetailsRoute, accountDetailsRoute, accountEditorRoute ->true
             else -> false
         }
 
@@ -95,8 +96,8 @@ class AmAppState(
             restoreState = true
         }
         when (mainDestination) {
-//            MainDestination.Home ->
-//                navHostController.navigateToHome(navOptions = mainDestinationNavOption)
+            MainDestination.Home ->
+                navHostController.navigateToHome(navOptions = mainDestinationNavOption)
 
             MainDestination.Accounts ->
                 navHostController.navigateToAccounts(navOptions = mainDestinationNavOption)
