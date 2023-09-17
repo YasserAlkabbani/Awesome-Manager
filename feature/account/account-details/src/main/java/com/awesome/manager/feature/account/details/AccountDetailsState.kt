@@ -2,22 +2,25 @@ package com.awesome.manager.feature.account.details
 
 import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.AmCurrency
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import com.awesome.manager.core.model.AmTransaction
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class AccountDetailsState(
-    private val savedStateHandle: SavedStateHandle,
-    private val defaultCurrency:AmCurrency,
-    private val returnCurrencyByCurrencyId:(String)-> AmCurrency,
-    coroutineScope: CoroutineScope,
-    amAccountAsFlow: Flow<AmAccount?>,
-    amAccountsAsFlow: Flow<List<AmAccount>>
+    savedStateHandle: SavedStateHandle,
+    val amAccount: StateFlow<AmAccount?>,
+    val amTransactions:StateFlow<List<AmTransaction>>
 ){
 
+    private val _backNavigation:MutableStateFlow<Unit?> = MutableStateFlow(null)
+    val backNavigation:StateFlow<Unit?> =_backNavigation
+    fun startBackNavigation(){_backNavigation.update {  }}
+    fun doneBackNavigation(){_backNavigation.update { null }}
+
+    private val _transactionNavigation:MutableStateFlow<String?> = MutableStateFlow(null)
+    val transactionNavigation:StateFlow<String?> =_transactionNavigation
+    fun startTransactionNavigation(transactionId:String){_transactionNavigation.update { transactionId }}
+    fun doneTransactionNavigation(){_transactionNavigation.update { null }}
 
 }

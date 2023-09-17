@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import com.awesome.manager.feature.account.details.navigation.accountDetailsScreen
 import com.awesome.manager.feature.account.editor.navigation.accountEditorScreen
 import com.awesome.manager.feature.account.accounts.navigation.accountsScreen
+import com.awesome.manager.feature.account.details.navigation.navigateToAccountDetails
 import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
 import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
 import com.awesome.manager.feature.auth.navigation.authScreen
@@ -14,6 +15,7 @@ import com.awesome.manager.feature.home.navigation.homeScreen
 import com.awesome.manager.feature.intro.navigation.introRoute
 import com.awesome.manager.feature.intro.navigation.introScreen
 import com.awesome.manager.feature.menu.navigation.menuScreen
+import com.awesome.manager.feature.transaction.details.navigation.navigateToTransactionDetails
 import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsScreen
 import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
 import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
@@ -42,11 +44,14 @@ fun AmNavHost(
 
         accountsScreen(
             navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
-            navigateToAccountDetails = { accountId->navController.navigateToEditAccount(accountId = accountId,navOptions = null) },
+            navigateToAccountDetails = { accountId->navController.navigateToAccountDetails(accountId = accountId,navOptions = null) },
             navigateToCreateTransaction = {accountId-> navController.navigateToCreateTransaction(accountId=accountId,navOptions = null)}
         )
         accountEditorScreen(navController::popBackStack)
-        accountDetailsScreen()
+        accountDetailsScreen(
+            navigateBack = navController::popBackStack,
+            navigateToTransaction = {transcationId->navController.navigateToTransactionDetails(transactionId = transcationId,navOptions = null)}
+        )
 
         transactionsScreen({},{})
         transactionEditorScreen(

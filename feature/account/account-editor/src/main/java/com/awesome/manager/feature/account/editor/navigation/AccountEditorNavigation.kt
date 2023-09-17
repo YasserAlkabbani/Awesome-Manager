@@ -41,7 +41,8 @@ fun NavGraphBuilder.accountEditorScreen(onBack:()->Unit){
             nullable=true
             defaultValue=null
         }),
-    ){
-        AccountEditorRoute(onBack = onBack)
-    }
+        content = {
+            AccountEditorRoute(onBack = onBack)
+        }
+    )
 }

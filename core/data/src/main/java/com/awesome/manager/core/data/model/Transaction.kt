@@ -26,6 +26,7 @@ fun TransactionEntityWithData.asDomain()=AmTransaction(
     creatorUserId=transactionEntity.creatorUserId,
     transactionType=transactionTypeEntity.asModel(),
     title=transactionEntity.title,
+    pending = transactionEntity.pending,
     subtitle=transactionEntity.subtitle,
     amount=transactionEntity.amount,
     paymentTransaction=transactionEntity.paymentTransaction,

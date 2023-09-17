@@ -8,7 +8,7 @@ import com.awesome.manager.feature.transaction.details.TransactionDetailsRoute
 
 const val transactionDetailsRoute:String="transaction_details_route"
 
-fun NavHostController.navigateToTransactionDetails(navOptions: NavOptions?) {
+fun NavHostController.navigateToTransactionDetails(transactionId:String,navOptions: NavOptions?) {
     navigate(route = transactionDetailsRoute,navOptions = navOptions)
 }
 

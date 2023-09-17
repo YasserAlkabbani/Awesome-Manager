@@ -18,19 +18,30 @@ interface AccountDao {
     suspend fun upsertAccount(accountEntity: AccountEntity)
 
     @Transaction
-    @Query ("SELECT * " +
-//            ", IFNULL(SUM(transactions.amount),0) AS incoming , IFNULL(SUM(transactions.amount),0) AS outgoing " +
-            "FROM accounts " +
-            "LEFT JOIN transactions ON transactions.account_id =accounts.account_id " +
-            "WHERE name LIKE '%' || :searchKey || '%' ")
+    @Query (
+        "SELECT accounts.* ," +
+        "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
+        "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
+        "FROM accounts " +
+        "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
+        "WHERE accounts.name LIKE '%' || :searchKey || '%' " +
+        "GROUP BY accounts.account_id "
+    )
     fun returnAccounts(searchKey:String):Flow<List<AccountEntityWithData>>
 
     @Query("SELECT * FROM accounts WHERE pending=1")
     fun returnPendingAccount():Flow<List<AccountEntity>>
 
     @Transaction
-    @Query ("SELECT * , IFNULL(SUM(transactions.amount),0) AS incoming , IFNULL(SUM(transactions.amount),0) AS outgoing " +
-            " FROM accounts LEFT JOIN transactions ON transactions.account_id = accounts.account_id WHERE accounts.account_id=:accountId")
+    @Query (
+        "SELECT accounts.* ," +
+        "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
+        "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
+        "FROM accounts " +
+        "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
+        "WHERE accounts.account_id=:accountId "+
+        "GROUP BY accounts.account_id "
+    )
     fun returnAccountById(accountId:String?):Flow<AccountEntityWithData?>
 
 }

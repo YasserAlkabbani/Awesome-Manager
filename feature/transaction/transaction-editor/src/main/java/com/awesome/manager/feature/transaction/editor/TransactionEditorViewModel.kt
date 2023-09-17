@@ -7,6 +7,7 @@ import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
+import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.feature.transaction.editor.navigation.TransactionEditorArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -34,8 +36,6 @@ class TransactionEditorViewModel @Inject constructor(
         TransactionEditorState(
             savedStateHandle = savedStateHandle,
             transactionTypes = transactionTypeRepository.returnTransactionTypes()
-                .distinctUntilChanged()
-                .filterNotNull()
                 .flowOn(Dispatchers.Default)
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()),
             asAccountsSearchResult = {
@@ -43,8 +43,8 @@ class TransactionEditorViewModel @Inject constructor(
                     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
             },
             asAccount = {
-                flatMapLatest { accountRepository.returnAccountById(it) }
-                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+                    flatMapLatest { accountRepository.returnAccountById(it) }
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
             },
             asTransactionType={
                     flatMapLatest { transactionTypeRepository.returnTransactionTypeById(it) }

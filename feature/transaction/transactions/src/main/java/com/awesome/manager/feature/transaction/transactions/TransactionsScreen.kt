@@ -53,6 +53,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                         title = transaction.title,
                         subTitle = transaction.subtitle,
                         amount = transaction.amount,
+                        pending = transaction.pending,
                         date = transaction.updatedAt,
                         transactionType = transaction.transactionType.title,
                         isPay = transaction.paymentTransaction,

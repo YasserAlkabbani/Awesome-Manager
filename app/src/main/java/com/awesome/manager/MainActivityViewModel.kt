@@ -42,11 +42,11 @@ class MainActivityViewModel @Inject constructor(
             launch { transactionTypeRepository.refreshTransactionType() }
             launch {
                 accountRepository.refreshAccounts()
-//                accountRepository.syncAccount()
+                accountRepository.syncAccount()
             }
             launch {
                 transactionRepository.refreshTransactions()
-//                transactionRepository.synTransactions()
+                transactionRepository.synTransactions()
             }
         }
 

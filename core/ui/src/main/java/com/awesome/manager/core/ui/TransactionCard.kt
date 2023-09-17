@@ -18,32 +18,27 @@ import com.awesome.manager.core.designsystem.component.AmText
 @Composable
 fun TransactionCard(
     modifier: Modifier,
-    title:String,subTitle:String,amount:Double,
-    date:String,transactionType:String,isPay:Boolean,currency:String,createdBy:String,
-    onClick:()->Unit
+    title:String,subTitle:String,amount:Double,pending:Boolean,
+    date:String,transactionType:String, isPay:Boolean,currency:String,
+    createdBy:String, onClick:()->Unit
 ) {
-
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val amountString= remember(amount) { amount.toString() }
-    val cardColor= remember(isPay) { if (isPay)errorContainer else primaryContainer }
 
     AmCard(
         modifier=modifier,
         content = {
             Row(modifier = Modifier.fillMaxWidth()) {
                 AmText(modifier = Modifier.fillMaxWidth().weight(1f),text = title, style = MaterialTheme.typography.titleLarge)
-                AmText(modifier = Modifier.wrapContentWidth(),text = currency+amountString, style = MaterialTheme.typography.titleLarge)
+                AmText(modifier = Modifier.wrapContentWidth(),text = amount.toString()+currency, style = MaterialTheme.typography.titleLarge)
             }
             AmText(text = subTitle)
             Row {
                 AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Type", subtitle = transactionType)
 //                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Creator", subtitle = createdBy)
-                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Data", subtitle = date)
+                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Date", subtitle = date)
             }
         },
-        positive= listOf(true,false).random(),
-        loading = true,
+        positive= isPay,
+        loading = pending,
         onClick = onClick
     )
 }
@@ -57,6 +52,7 @@ fun TransactionCardPreview(){
         title = "TRANSACTION TITLE",
         subTitle = "TRANSACTION SUBTITLE",
         amount = 5000.0,
+        pending = false,
         date = "15.10.2023",
         transactionType = "Salary",
         isPay = true,

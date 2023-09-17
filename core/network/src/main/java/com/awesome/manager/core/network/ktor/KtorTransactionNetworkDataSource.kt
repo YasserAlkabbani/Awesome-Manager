@@ -7,6 +7,7 @@ import com.awesome.manager.core.network.model.TransactionNetworkResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
+import io.ktor.client.request.setBody
 import io.ktor.resources.Resource
 import javax.inject.Inject
 
@@ -23,7 +24,9 @@ class KtorTransactionNetworkDataSource @Inject constructor(private val httpClien
     TransactionNetworkDataSource {
 
     override suspend fun createTransaction(transactionNetworkResponse: List<TransactionNetworkRequest>): TransactionNetworkResponse =
-        httpClient.post(TransactionRequest.ReturnTransactions()).asResult()
+        httpClient.post(TransactionRequest()){
+            setBody(transactionNetworkResponse)
+        }.asResult()
 
     override suspend fun returnUpdatedTransactions(): List<TransactionNetworkResponse> =
         httpClient.get(TransactionRequest.ReturnTransactions()).asResult()
