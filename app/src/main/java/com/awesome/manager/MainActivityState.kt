@@ -1,6 +1,7 @@
 package com.awesome.manager
 
-import com.awesome.manager.core.designsystem.text.AmTextManager
+import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,26 +34,10 @@ class MainActivityState(
         _navigationBack.update { null }
     }
 
-    val scaffoldActions: ScaffoldActions = ScaffoldActions()
-
-}
-
-class ScaffoldActions(
-){
-
-    private val _add:MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val add: StateFlow<Unit?> =MutableStateFlow(null)
-    fun onAdd(){_add.update {  }}
-    fun doneAdd(){_add.update { null }}
-
-    private val _save:MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val save: StateFlow<Unit?> =MutableStateFlow(null)
-    fun onSave(){_save.update {  }}
-    fun doneSave(){_save.update { null }}
-
-    private val _edit:MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val edit: StateFlow<Unit?> =MutableStateFlow(null)
-    fun onEdit(){_edit.update {  }}
-    fun doneEdit(){_edit.update {  }}
+    private val _appBarState: MutableStateFlow<AppBarData?> = MutableStateFlow(null)
+    val appBarState: StateFlow<AppBarData?> = _appBarState
+    fun updateAppBarState(appBarData: AppBarData?) {
+        _appBarState.update { appBarData }
+    }
 
 }

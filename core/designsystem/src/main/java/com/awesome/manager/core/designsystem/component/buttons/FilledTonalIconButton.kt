@@ -13,25 +13,25 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmFilledTonalIconButton(
-    modifier: Modifier=Modifier,
+    modifier: Modifier = Modifier,
     amIconsType: AmIconsType,
-    positive:Boolean,
-    onClick:()->Unit
-){
+    positive: Boolean,
+    onClick: () -> Unit
+) {
     AmCard(
-        modifier=modifier,
+        modifier = modifier,
         onClick = onClick,
         positive = positive,
         loading = false
     ) {
-        AmIcon(modifier=Modifier.padding(horizontal = 4.dp),amIconsType = amIconsType)
+        AmIcon(modifier = Modifier.padding(2.dp), amIconsType = amIconsType)
     }
 }
 
 
 @Preview
 @Composable
-fun AmFilledTonalIconButtonPositivePreview(){
+fun AmFilledTonalIconButtonPositivePreview() {
     AmFilledTonalIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.Save,
@@ -39,9 +39,10 @@ fun AmFilledTonalIconButtonPositivePreview(){
         onClick = {}
     )
 }
+
 @Preview
 @Composable
-fun AmFilledTonalIconButtonNegativePreview(){
+fun AmFilledTonalIconButtonNegativePreview() {
     AmFilledTonalIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.Save,

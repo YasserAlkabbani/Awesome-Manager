@@ -42,13 +42,14 @@ import javax.inject.Singleton
 
 
 @Serializable
-private data class RefreshTokenBody(@SerialName("refresh_token") val refreshToken:String)
+private data class RefreshTokenBody(@SerialName("refresh_token") val refreshToken: String)
+
 @Resource("auth/v1/")
 private class AuthRequest {
     @Resource("token")
     class RefreshToken(
         val parent: AuthRequest = AuthRequest(),
-        val grant_type:String="refresh_token"
+        val grant_type: String = "refresh_token"
     )
 }
 
@@ -80,17 +81,17 @@ object NetworkModule {
     fun provideKtorClient(
         authPreferencesDataStore: AuthPreferencesDataStore,
         chuckerInterceptor: ChuckerInterceptor
-    ) = HttpClient(OkHttp.create{addInterceptor(chuckerInterceptor)}) {
+    ) = HttpClient(OkHttp.create { addInterceptor(chuckerInterceptor) }) {
 
 
         engine {}
 
         defaultRequest {
             contentType(ContentType.Application.Json)
-            header("apikey",BuildConfig.API_KEY)
+            header("apikey", BuildConfig.API_KEY)
             url {
-                protocol= URLProtocol.HTTPS
-                host =BuildConfig.BASE_URL
+                protocol = URLProtocol.HTTPS
+                host = BuildConfig.BASE_URL
             }
         }
 
@@ -107,19 +108,24 @@ object NetworkModule {
         install(Auth) {
             bearer {
                 loadTokens {
-                    val authToken=authPreferencesDataStore.returnAccessToken().first().orEmpty()
-                    val refreshToken=authPreferencesDataStore.returnRefreshToken().first().orEmpty()
-                    BearerTokens(authToken,refreshToken)
+                    val authToken = authPreferencesDataStore.returnAccessToken().first().orEmpty()
+                    val refreshToken =
+                        authPreferencesDataStore.returnRefreshToken().first().orEmpty()
+                    BearerTokens(authToken, refreshToken)
                 }
                 refreshTokens {
-                    val refreshTokenResult=client.post(AuthRequest.RefreshToken()){
+                    val refreshTokenResult = client.post(AuthRequest.RefreshToken()) {
                         setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
                     }.asResult<AuthNetwork>()
-                    val accessToken=refreshTokenResult.accessToken
-                    val refreshToken=refreshTokenResult.refreshToken
-                    val currentUserId=refreshTokenResult.refreshToken
-                    authPreferencesDataStore.updateToken(accessToken = accessToken, refreshToken = refreshToken,currentUserId=currentUserId)
-                    BearerTokens(accessToken,refreshToken)
+                    val accessToken = refreshTokenResult.accessToken
+                    val refreshToken = refreshTokenResult.refreshToken
+                    val currentUserId = refreshTokenResult.authUserNetwork.id
+                    authPreferencesDataStore.updateToken(
+                        accessToken = accessToken,
+                        refreshToken = refreshToken,
+                        currentUserId = currentUserId
+                    )
+                    BearerTokens(accessToken, refreshToken)
                 }
             }
         }

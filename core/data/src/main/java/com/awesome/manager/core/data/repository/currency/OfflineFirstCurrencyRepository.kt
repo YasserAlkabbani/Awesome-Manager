@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class OfflineFirstCurrencyRepository @Inject constructor (
-    private val currencyNetworkDataSource:CurrencyNetworkDataSource,
-    private val currencyDao:CurrencyDao,
-) :CurrencyRepository{
+class OfflineFirstCurrencyRepository @Inject constructor(
+    private val currencyNetworkDataSource: CurrencyNetworkDataSource,
+    private val currencyDao: CurrencyDao,
+) : CurrencyRepository {
 
     override suspend fun refreshCurrency() {
         amRequest {
-            val currencies=currencyNetworkDataSource.returnUpdatedCurrency().map { it.asEntity() }
+            val currencies = currencyNetworkDataSource.returnUpdatedCurrency().map { it.asEntity() }
             currencyDao.upsertCurrency(currencies)
             currencies
         }.collect()
@@ -26,5 +26,8 @@ class OfflineFirstCurrencyRepository @Inject constructor (
 
     override fun returnCurrencies(): Flow<List<AmCurrency>> =
         currencyDao.returnCurrencies().map { it.map { it.asModel() } }
+
+    override fun returnCurrencyById(currencyId: String?): Flow<AmCurrency?> =
+        currencyDao.returnCurrencyById(currencyId).map { it?.asModel() }
 
 }

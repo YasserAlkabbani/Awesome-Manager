@@ -23,8 +23,8 @@ private class TransactionRequest {
 class KtorTransactionNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     TransactionNetworkDataSource {
 
-    override suspend fun createTransaction(transactionNetworkResponse: List<TransactionNetworkRequest>): TransactionNetworkResponse =
-        httpClient.post(TransactionRequest()){
+    override suspend fun createTransaction(transactionNetworkResponse: TransactionNetworkRequest): TransactionNetworkResponse =
+        httpClient.post(TransactionRequest()) {
             setBody(transactionNetworkResponse)
         }.asResult()
 

@@ -30,17 +30,17 @@ interface AccountDao {
     fun returnAccounts(searchKey:String):Flow<List<AccountEntityWithData>>
 
     @Query("SELECT * FROM accounts WHERE pending=1")
-    fun returnPendingAccount():Flow<List<AccountEntity>>
+    fun returnPendingAccount():Flow<AccountEntity?>
 
     @Transaction
     @Query (
         "SELECT accounts.* ," +
-        "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
-        "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
-        "FROM accounts " +
-        "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
-        "WHERE accounts.account_id=:accountId "+
-        "GROUP BY accounts.account_id "
+                "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
+                "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
+                "FROM accounts " +
+                "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
+                "WHERE accounts.account_id=:accountId " +
+                "GROUP BY accounts.account_id "
     )
     fun returnAccountById(accountId:String?):Flow<AccountEntityWithData?>
 

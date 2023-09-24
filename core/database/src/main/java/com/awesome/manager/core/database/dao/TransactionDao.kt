@@ -9,7 +9,7 @@ import com.awesome.manager.core.database.model.TransactionEntityWithData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface TransactionDao{
+interface TransactionDao {
 
     @Upsert
     fun upsertTransaction(transactionEntity: TransactionEntity)
@@ -18,18 +18,18 @@ interface TransactionDao{
     fun upsertTransaction(transactionEntity: List<TransactionEntity>)
 
     @Query("SELECT * FROM transactions WHERE pending=1")
-    fun returnPendingTransaction():Flow<List<TransactionEntity>>
+    fun returnPendingTransaction(): Flow<TransactionEntity?>
 
     @Transaction
     @Query("SELECT * FROM transactions")
-    fun returnTransactions():Flow<List<TransactionEntityWithData>>
+    fun returnTransactions(): Flow<List<TransactionEntityWithData>>
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId")
-    fun returnTransactionsByAccountId(accountId:String):Flow<List<TransactionEntityWithData>>
+    fun returnTransactionsByAccountId(accountId: String): Flow<List<TransactionEntityWithData>>
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transaction_id=:transactionId")
-    fun returnTransactionById(transactionId:String):Flow<TransactionEntityWithData>
+    fun returnTransactionById(transactionId: String): Flow<TransactionEntityWithData>
 
 }

@@ -21,7 +21,6 @@ class AccountDetailsViewModel @Inject constructor(
     private val accountDetailsArg: AccountDetailsArg = AccountDetailsArg(savedStateHandle)
 
     val accountDetailsState: AccountDetailsState = AccountDetailsState(
-        savedStateHandle = savedStateHandle,
         amAccount = accountRepository.returnAccountById(accountDetailsArg.accountId)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null),
         amTransactions = transactionRepository.returnTransactionsByAccountId(accountDetailsArg.accountId)

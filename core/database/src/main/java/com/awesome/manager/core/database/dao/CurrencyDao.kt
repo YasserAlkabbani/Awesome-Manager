@@ -13,6 +13,9 @@ interface CurrencyDao {
     fun upsertCurrency(currencyEntity: List<CurrencyEntity>)
 
     @Query("SELECT * FROM currencies")
-    fun returnCurrencies():Flow<List<CurrencyEntity>>
+    fun returnCurrencies(): Flow<List<CurrencyEntity>>
+
+    @Query("SELECT * FROM currencies WHERE currency_id=:currencyId")
+    fun returnCurrencyById(currencyId: String?): Flow<CurrencyEntity?>
 
 }

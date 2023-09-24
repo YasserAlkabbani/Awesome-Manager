@@ -28,22 +28,22 @@ import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
-fun AmImage(modifier:Modifier,imageUrl:String){
+fun AmImage(modifier: Modifier, imageUrl: String) {
 
-    val placeHolderPainter= rememberVectorPainter(image = Icons.Default.Downloading)
-    val errorPainter= rememberVectorPainter(image =Icons.Default.ErrorOutline)
+    val placeHolderPainter = rememberVectorPainter(image = Icons.Default.Downloading)
+    val errorPainter = rememberVectorPainter(image = Icons.Default.ErrorOutline)
     val painter = rememberAsyncImagePainter(
-        model =imageUrl,
+        model = imageUrl,
         placeholder = placeHolderPainter,
         error = errorPainter
     )
     Surface(
-        modifier=modifier,
+        modifier = modifier,
         shape = CircleShape
     ) {
         Image(
-            modifier = Modifier.fillMaxSize().padding(1.dp),
-            painter=painter,
+            modifier = Modifier.fillMaxSize(),
+            painter = painter,
             contentScale = ContentScale.Crop,
             contentDescription = null
         )
@@ -52,6 +52,6 @@ fun AmImage(modifier:Modifier,imageUrl:String){
 
 @Preview
 @Composable
-fun AmImagePreview(){
-    AmImage(modifier = Modifier.size(50.dp),imageUrl = "")
+fun AmImagePreview() {
+    AmImage(modifier = Modifier.size(50.dp), imageUrl = "")
 }

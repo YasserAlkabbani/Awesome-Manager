@@ -26,23 +26,43 @@ import com.awesome.manager.core.designsystem.component.AmChip
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
+import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import kotlinx.coroutines.delay
 
 @Composable
 fun AccountEditorRoute(
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
-    onBack:()->Unit
+    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    onBack: () -> Unit
 ) {
 
     val accountEditorState = accountEditorViewModel.accountEditorState
 
-    val navigationBack=accountEditorState.navigationBack.collectAsStateWithLifecycle().value
+    val navigationBack = accountEditorState.navigationBack.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = navigationBack, block = {
         navigationBack?.let {
             accountEditorState.doneNavigationBack()
             onBack()
         }
+    })
+
+    val createAccountTest = stringResource(id = R.string.create_account)
+    val editAccountText = stringResource(R.string.edit_account)
+    val account = accountEditorState.account.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = account, block = {
+        delay(100)
+        val title = when (account) {
+            null -> createAccountTest
+            else -> editAccountText
+        }
+        updateAppBarState(
+            AppBarData(
+                title = title,
+                startIcon = AmIcons.Close to accountEditorState::onNavigationBack,
+                endIcon = AmIcons.Save to accountEditorState.onSave
+            )
+        )
     })
 
     AccountEditorScreen(accountEditorState)
@@ -54,29 +74,17 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     val accountName: String = accountEditorState.name.collectAsStateWithLifecycle().value
     val accountImage: String = accountEditorState.imageUrl.collectAsStateWithLifecycle().value
-    val currencies=accountEditorState.currencies.collectAsStateWithLifecycle().value
-    val selectedCurrency=accountEditorState.selectedCurrency.collectAsStateWithLifecycle().value
-    val transactionTypes=accountEditorState.transactionTypes.collectAsStateWithLifecycle().value
-    val defaultTransactionType=accountEditorState.defaultTransactionType.collectAsStateWithLifecycle().value
+    val currencies = accountEditorState.currencies.collectAsStateWithLifecycle().value
+    val selectedCurrency = accountEditorState.selectedCurrency.collectAsStateWithLifecycle().value
+    val transactionTypes = accountEditorState.transactionTypes.collectAsStateWithLifecycle().value
+    val defaultTransactionType =
+        accountEditorState.defaultTransactionType.collectAsStateWithLifecycle().value
 
     Column(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
     ) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AmFilledTonalIconButton(amIconsType = AmIcons.Close, positive = false, onClick = accountEditorState::onNavigationBack)
-            AmText(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).weight(1f),
-                text = stringResource(id = R.string.create_account),
-                style = MaterialTheme.typography.titleLarge
-            )
-            AmFilledTonalIconButton(amIconsType = AmIcons.Save, positive = true, onClick = accountEditorState.onSave)
-        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -92,14 +100,16 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 label = "Name", icon = AmIcons.Title, hint = "Account Name",
-                text = accountName, error = null ,onTextChange = accountEditorState::updateName
+                text = accountName, error = null, onTextChange = accountEditorState::updateName
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
 
-        Column (modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+        ) {
             AmText(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 text = "Currency",
@@ -110,14 +120,19 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
-                items(items = currencies, key = {it.id}, contentType = {"CURRENCY"}){
-                    AmChip(selected = selectedCurrency?.id==it.id, label = it.currencyName, onClick = {accountEditorState.updateCurrency(it.id)})
+                items(items = currencies, key = { it.id }, contentType = { "CURRENCY" }) {
+                    AmChip(
+                        selected = selectedCurrency?.id == it.id,
+                        label = it.currencyName,
+                        onClick = { accountEditorState.updateCurrency(it.id) })
                 }
             }
         }
-        Column (modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+        ) {
             AmText(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 text = "Default Transaction Type",
@@ -128,8 +143,14 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
-                items(items = transactionTypes, key = {it.id}, contentType = {"TRANSACTION_TYPE"}){
-                    AmChip(selected = defaultTransactionType?.id==it.id, label = it.title, onClick = {accountEditorState.updateDefaultTransactionType(it.id)})
+                items(
+                    items = transactionTypes,
+                    key = { it.id },
+                    contentType = { "TRANSACTION_TYPE" }) {
+                    AmChip(
+                        selected = defaultTransactionType?.id == it.id,
+                        label = it.title,
+                        onClick = { accountEditorState.updateDefaultTransactionType(it.id) })
                 }
             }
         }

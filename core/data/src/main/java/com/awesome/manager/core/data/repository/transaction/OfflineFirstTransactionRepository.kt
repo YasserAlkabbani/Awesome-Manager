@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import java.util.UUID
@@ -27,42 +28,56 @@ class OfflineFirstTransactionRepository @Inject constructor(
     private val transactionDao: TransactionDao
 ) : TransactionRepository {
     override suspend fun createTransaction(
-        creatorUserId:String,
+        creatorUserId: String,
         accountId: String,
         transactionTypeId: String,
         title: String,
         subtitle: String,
         amount: Double,
-        paymentTransaction:Boolean
+        paymentTransaction: Boolean
     ) {
-        val transactionEntity=createTransactionEntity(
-            creatorUserId=creatorUserId, accountId=accountId, transactionTypeId = transactionTypeId,
-            title=title, subtitle=subtitle, amount=amount,paymentTransaction = paymentTransaction
+        val transactionEntity = createTransactionEntity(
+            creatorUserId = creatorUserId,
+            accountId = accountId,
+            transactionTypeId = transactionTypeId,
+            title = title,
+            subtitle = subtitle,
+            amount = amount,
+            paymentTransaction = paymentTransaction
         )
         amInsert { transactionDao.upsertTransaction(transactionEntity) }
     }
 
     override suspend fun refreshTransactions() = amRequest {
-        val transactions =transactionNetworkDataSource.returnUpdatedTransactions().map { it.asEntity() }
+        val transactions =
+            transactionNetworkDataSource.returnUpdatedTransactions().map { it.asEntity() }
         transactionDao.upsertTransaction(transactions)
         transactions
     }.collect()
 
     override suspend fun synTransactions() {
-        transactionDao.returnPendingTransaction().distinctUntilChanged().asAmResult(
-            taskToDo = {
-                val transactionsNetwork=it.map { it.asNetwork() }
-                transactionNetworkDataSource.createTransaction(transactionsNetwork)
-            },
-            doOnError = ::synTransactions,
+        transactionDao.returnPendingTransaction().filterNotNull().distinctUntilChanged()
+            .map { it.asNetwork() }.asAmResult(
+            taskToDo = transactionNetworkDataSource::createTransaction,
             doOnSuccess = ::refreshTransactions
         ).map {
-                when(it){
-                    is AmResult.Error -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.amError.message}")
-                    is AmResult.Loading -> Log.d("com.awesome.manager","REFRESH_TRANSACTION CREATE_STATE LOADING ${it}")
-                    is AmResult.Success -> Log.d("com.awesome.manager", "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it")
-                }
-            }.collect()
+            when (it) {
+                is AmResult.Error -> Log.d(
+                    "com.awesome.manager",
+                    "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.amError.message}"
+                )
+
+                is AmResult.Loading -> Log.d(
+                    "com.awesome.manager",
+                    "REFRESH_TRANSACTION CREATE_STATE LOADING ${it}"
+                )
+
+                is AmResult.Success -> Log.d(
+                    "com.awesome.manager",
+                    "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it"
+                )
+            }
+        }.collect()
     }
 
     override fun returnTransactions(): Flow<List<AmTransaction>> =
@@ -76,24 +91,24 @@ class OfflineFirstTransactionRepository @Inject constructor(
 }
 
 private fun createTransactionEntity(
-    creatorUserId:String,
+    creatorUserId: String,
     accountId: String,
-    transactionTypeId:String,
+    transactionTypeId: String,
     title: String,
     subtitle: String,
     amount: Double,
-    paymentTransaction:Boolean
-)=
+    paymentTransaction: Boolean
+) =
     TransactionEntity(
-        id= UUID.randomUUID().toString(),
-        creatorUserId=creatorUserId,
-        accountId=accountId,
-        transactionTypeId=transactionTypeId,
-        title=title,
-        subtitle=subtitle,
-        amount=amount,
-        paymentTransaction=paymentTransaction,
-        createdAt=Clock.System.now().toEpochMilliseconds(),
-        updatedAt= Clock.System.now().toEpochMilliseconds(),
+        id = UUID.randomUUID().toString(),
+        creatorUserId = creatorUserId,
+        accountId = accountId,
+        transactionTypeId = transactionTypeId,
+        title = title,
+        subtitle = subtitle,
+        amount = amount,
+        paymentTransaction = paymentTransaction,
+        createdAt = Clock.System.now().toEpochMilliseconds(),
+        updatedAt = Clock.System.now().toEpochMilliseconds(),
         pending = true
     )

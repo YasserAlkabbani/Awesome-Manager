@@ -39,15 +39,14 @@ fun Throwable.asAmError(): AmResult.Error = AmResult.Error(
 inline fun <T> Flow<T>.asAmResult(
     crossinline taskToDo: suspend (T) -> Unit,
     crossinline doOnSuccess: suspend () -> Unit,
-    crossinline doOnError: suspend () -> Unit
 ): Flow<AmResult<T>> =
     map<T, AmResult<T>> {
         taskToDo(it)
         AmResult.Success(data = it, freshData = true)
+            .apply { doOnSuccess() }
     }
         .onStart { emit(AmResult.Loading()) }
         .catch { throwable -> emit(throwable.asAmError()) }
-        .onCompletion { it?.let { delay(1000 * 60 * 2); doOnError() } ?: doOnSuccess() }
         .flowOn(Dispatchers.Default)
 
 suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmResult<T>> {

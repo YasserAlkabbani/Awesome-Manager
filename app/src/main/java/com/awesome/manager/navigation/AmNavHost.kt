@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.feature.account.details.navigation.accountDetailsScreen
 import com.awesome.manager.feature.account.editor.navigation.accountEditorScreen
 import com.awesome.manager.feature.account.accounts.navigation.accountsScreen
@@ -27,16 +28,17 @@ import com.awesome.manager.ui.AmAppState
 fun AmNavHost(
     modifier: Modifier,
     amAppState: AmAppState,
-    startDistinction: String= introRoute
-){
+    startDistinction: String = introRoute,
+    updateAppBarState: (appBarData: AppBarData?) -> Unit
+) {
 
-    val navController=amAppState.navHostController
+    val navController = amAppState.navHostController
 
     NavHost(
-        modifier=modifier,
+        modifier = modifier,
         navController = navController,
         startDestination = startDistinction,
-    ){
+    ) {
 
         introScreen()
         authScreen()
@@ -44,18 +46,45 @@ fun AmNavHost(
 
         accountsScreen(
             navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
-            navigateToAccountDetails = { accountId->navController.navigateToAccountDetails(accountId = accountId,navOptions = null) },
-            navigateToCreateTransaction = {accountId-> navController.navigateToCreateTransaction(accountId=accountId,navOptions = null)}
+            navigateToAccountDetails = { accountId ->
+                navController.navigateToAccountDetails(
+                    accountId = accountId,
+                    navOptions = null
+                )
+            },
+            navigateToCreateTransaction = { accountId ->
+                navController.navigateToCreateTransaction(
+                    accountId = accountId,
+                    navOptions = null
+                )
+            },
+            updateAppBarState = updateAppBarState
         )
-        accountEditorScreen(navController::popBackStack)
+        accountEditorScreen(
+            navController::popBackStack,
+            updateAppBarState = updateAppBarState
+        )
         accountDetailsScreen(
             navigateBack = navController::popBackStack,
-            navigateToTransaction = {transcationId->navController.navigateToTransactionDetails(transactionId = transcationId,navOptions = null)}
+            navigateToEditAccount = { transactionId ->
+                navController.navigateToEditAccount(
+                    accountId = transactionId,
+                    navOptions = null
+                )
+            },
+            navigateToTransaction = { transactionId ->
+                navController.navigateToTransactionDetails(
+                    transactionId = transactionId,
+                    navOptions = null
+                )
+            },
+            updateAppBarState = updateAppBarState
         )
 
-        transactionsScreen({},{})
+        transactionsScreen({}, {})
         transactionEditorScreen(
-            onBack = {navController.popBackStack()}
+            onBack = { navController.popBackStack() },
+            updateAppBarState = updateAppBarState
         )
         transactionDetailsScreen()
 
