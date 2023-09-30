@@ -85,7 +85,7 @@ fun AccountsScreen(
                         imageUrl = account.imageUrl,
                         creditor = account.creditor,
                         debtor = account.debtor,
-                        currency = account.currency.currencySymbol,
+                        currency = account.currency.currencyCode,
                         loading = account.pending,
                         onClick = { accountsState.startAccountDetailsNavigation(account.id) },
                         onAddTransaction = { accountsState.startCreateTransactionNavigation(account.id) },

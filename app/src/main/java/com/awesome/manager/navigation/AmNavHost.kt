@@ -72,6 +72,12 @@ fun AmNavHost(
                     navOptions = null
                 )
             },
+            navigateCreateTransaction = {
+                navController.navigateToCreateTransaction(
+                    accountId = it,
+                    navOptions = null
+                )
+            },
             navigateToTransaction = { transactionId ->
                 navController.navigateToTransactionDetails(
                     transactionId = transactionId,

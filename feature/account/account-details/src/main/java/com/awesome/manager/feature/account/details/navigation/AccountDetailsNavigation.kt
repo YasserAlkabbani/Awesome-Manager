@@ -26,6 +26,7 @@ fun NavHostController.navigateToAccountDetails(accountId: String, navOptions: Na
 fun NavGraphBuilder.accountDetailsScreen(
     navigateBack: () -> Unit,
     navigateToEditAccount: (accountId: String) -> Unit,
+    navigateCreateTransaction: (accountId: String) -> Unit,
     navigateToTransaction: (transactionId: String) -> Unit,
     updateAppBarState: (appBarData: AppBarData?) -> Unit
 ) {
@@ -35,6 +36,7 @@ fun NavGraphBuilder.accountDetailsScreen(
             AccountDetailsRoute(
                 navigateBack = navigateBack,
                 navigateToEditAccount = navigateToEditAccount,
+                navigateCreateTransaction = navigateCreateTransaction,
                 navigateToTransaction = navigateToTransaction,
                 updateAppBarState = updateAppBarState
             )

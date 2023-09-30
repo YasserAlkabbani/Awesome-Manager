@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.House
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
@@ -75,6 +77,9 @@ object AmIcons {
 
     val Visibility = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Visibility)
     val VisibilityOff = AmIconsType.ImageVictorAmIconsType(Icons.Filled.VisibilityOff)
+
+    val Input = AmIconsType.ImageVictorAmIconsType(Icons.Filled.KeyboardDoubleArrowDown)
+    val Output = AmIconsType.ImageVictorAmIconsType(Icons.Filled.KeyboardDoubleArrowUp)
 
 }
 

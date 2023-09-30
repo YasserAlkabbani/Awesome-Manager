@@ -13,31 +13,53 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.icon.AmIcons
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionCard(
     modifier: Modifier,
-    title:String,subTitle:String,amount:Double,pending:Boolean,
-    date:String,transactionType:String, isPay:Boolean,currency:String,
-    createdBy:String, onClick:()->Unit
+    title: String, subTitle: String, amount: Double, pending: Boolean,
+    date: String, transactionType: String, isPay: Boolean, currency: String,
+    createdBy: String, onClick: () -> Unit
 ) {
 
     AmCard(
-        modifier=modifier,
+        modifier = modifier,
         content = {
             Row(modifier = Modifier.fillMaxWidth()) {
-                AmText(modifier = Modifier.fillMaxWidth().weight(1f),text = title, style = MaterialTheme.typography.titleLarge)
-                AmText(modifier = Modifier.wrapContentWidth(),text = amount.toString()+currency, style = MaterialTheme.typography.titleLarge)
+                AmText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = title, style = MaterialTheme.typography.titleLarge
+                )
+                AmText(
+                    modifier = Modifier.wrapContentWidth(),
+                    text = amount.toString() + currency,
+                    style = MaterialTheme.typography.titleLarge
+                )
             }
             AmText(text = subTitle)
             Row {
-                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Type", subtitle = transactionType)
-//                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Creator", subtitle = createdBy)
-                AmTitleWithSubtitle(modifier = Modifier.fillMaxWidth().weight(1f),title = "Date", subtitle = date)
+                AmTitleWithSubtitle(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    title = "Type", subtitle = transactionType,
+                    amIconsType = AmIcons.Input,
+                    positive = true
+                )
+                AmTitleWithSubtitle(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    title = "Date", subtitle = date,
+                    amIconsType = AmIcons.Output,
+                    positive = true
+                )
             }
         },
-        positive= isPay,
+        positive = isPay,
         loading = pending,
         onClick = onClick
     )
@@ -46,7 +68,7 @@ fun TransactionCard(
 
 @Preview
 @Composable
-fun TransactionCardPreview(){
+fun TransactionCardPreview() {
     TransactionCard(
         modifier = Modifier.width(400.dp),
         title = "TRANSACTION TITLE",

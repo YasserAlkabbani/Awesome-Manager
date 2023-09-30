@@ -19,37 +19,37 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmCard(
-    modifier: Modifier=Modifier,
-    shape: Shape=MaterialTheme.shapes.medium,
-    positive:Boolean?, loading:Boolean,
-    onClick:()->Unit,
-    content:@Composable ColumnScope.()->Unit
-){
-    val primary = MaterialTheme.colorScheme.primary
+    modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.medium,
+    positive: Boolean?, loading: Boolean,
+    onClick: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val primary = MaterialTheme.colorScheme.secondaryContainer
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val cardColors= remember(positive) {
+    val cardColors = remember(positive) {
         when (positive) {
-            null->primary
-            true->primaryContainer
-            false->errorContainer
+            null -> primary
+            true -> primaryContainer
+            false -> errorContainer
         }
     }
     Card(
         modifier = modifier,
         onClick = onClick,
-        content={
+        content = {
             Column(
-                modifier=modifier.padding(8.dp),
+                modifier = modifier.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 content()
             }
             AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier=Modifier.fillMaxWidth(),positive=positive==true)
+                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive == true)
             }
         },
-        colors =CardDefaults.cardColors(containerColor = cardColors),
+        colors = CardDefaults.cardColors(containerColor = cardColors),
         shape = shape
     )
 
@@ -57,25 +57,25 @@ fun AmCard(
 
 @Composable
 fun AmCard(
-    modifier: Modifier=Modifier,
-    positive:Boolean?, shape: Shape=MaterialTheme.shapes.medium,
-    content:@Composable ColumnScope.()->Unit
-){
-    val primary = MaterialTheme.colorScheme.primary
+    modifier: Modifier = Modifier,
+    positive: Boolean?, shape: Shape = MaterialTheme.shapes.medium,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val primary = MaterialTheme.colorScheme.secondaryContainer
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val cardColors= remember(positive) {
+    val cardColors = remember(positive) {
         when (positive) {
-            null->primary
-            true->primaryContainer
-            false->errorContainer
+            null -> primary
+            true -> primaryContainer
+            false -> errorContainer
         }
     }
     Card(
         modifier = modifier,
-        colors=CardDefaults.cardColors(containerColor = cardColors),
-        content={
-            Column(modifier=modifier.padding(8.dp)){
+        colors = CardDefaults.cardColors(containerColor = cardColors),
+        content = {
+            Column(modifier = modifier.padding(6.dp)) {
                 content()
             }
         },

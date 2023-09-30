@@ -32,6 +32,16 @@ class AccountDetailsState(
         _editAccountNavigation.update { null }
     }
 
+    private val _createTransactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
+    val createTransactionNavigation: StateFlow<String?> = _createTransactionNavigation
+    fun startCreateTransactionNavigation(accountId: String) {
+        _createTransactionNavigation.update { accountId }
+    }
+
+    fun doneCreateTransactionNavigation() {
+        _createTransactionNavigation.update { null }
+    }
+
     private val _transactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
     val transactionNavigation: StateFlow<String?> = _transactionNavigation
     fun startTransactionNavigation(transactionId: String) {
@@ -41,5 +51,6 @@ class AccountDetailsState(
     fun doneTransactionNavigation() {
         _transactionNavigation.update { null }
     }
+
 
 }

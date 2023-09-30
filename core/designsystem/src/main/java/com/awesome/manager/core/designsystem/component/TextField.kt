@@ -130,12 +130,16 @@ fun AmTextField(
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
                 visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
-                trailingIcon =  if (password){{
-                    AmIconButton(
-                        onClick = { passwordHidden = !passwordHidden },
-                        amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
-                    )
-                }} else null,
+                trailingIcon = if (password) {
+                    {
+                        AmIconButton(
+                            modifier = Modifier,
+                            onClick = { passwordHidden = !passwordHidden },
+                            positive = false,
+                            amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
+                        )
+                    }
+                } else null,
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,

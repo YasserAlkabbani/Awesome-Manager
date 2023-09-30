@@ -8,15 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.model.AmAccount
@@ -28,6 +25,7 @@ import com.awesome.manager.core.ui.TransactionCard
 fun AccountDetailsRoute(
     navigateBack: () -> Unit,
     navigateToEditAccount: (accountId: String) -> Unit,
+    navigateCreateTransaction: (accountId: String) -> Unit,
     navigateToTransaction: (transactionId: String) -> Unit,
     updateAppBarState: (appBarData: AppBarData?) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
@@ -61,6 +59,16 @@ fun AccountDetailsRoute(
             accountDetailsState.doneTransactionNavigation()
         }
     })
+
+    val createTransactionNavigation =
+        accountDetailsState.createTransactionNavigation.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = createTransactionNavigation, block = {
+        createTransactionNavigation?.let {
+            navigateCreateTransaction(it)
+            accountDetailsState.doneCreateTransactionNavigation()
+        }
+    })
+
 
     LaunchedEffect(key1 = account, block = {
         if (account != null) {
@@ -96,10 +104,10 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                 imageUrl = account.imageUrl,
                 creditor = account.creditor,
                 debtor = account.debtor,
-                currency = account.currency.currencyName,
+                currency = account.currency.currencyCode,
                 loading = account.pending,
                 onClick = { },
-                onAddTransaction = null,
+                onAddTransaction = { accountDetailsState.startCreateTransactionNavigation(account.id) },
                 onEditTransaction = null
             )
 
