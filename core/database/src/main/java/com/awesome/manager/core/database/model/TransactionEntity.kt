@@ -23,4 +23,8 @@ data class TransactionEntity(
 data class TransactionEntityWithData(
     @Embedded val transactionEntity:TransactionEntity,
     @Relation (parentColumn = "transaction_type_id", entityColumn ="transaction_type_id") val transactionTypeEntity: TransactionTypeEntity,
+    @Relation (
+        parentColumn = "account_id", entityColumn = "account_id",
+        entity = AccountEntity::class
+    ) val accountEntityWithBasic: AccountEntityWithBasic
 )

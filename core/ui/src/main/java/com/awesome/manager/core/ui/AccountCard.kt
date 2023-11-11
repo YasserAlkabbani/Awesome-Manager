@@ -22,7 +22,6 @@ import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import kotlin.math.absoluteValue
 
 @Composable
 fun AccountCard(
@@ -46,14 +45,14 @@ fun AccountCard(
             Row(
                 verticalAlignment = Alignment.Top
             ) {
-                AmImage(modifier = Modifier.size(50.dp), imageUrl = imageUrl)
+                AmImage(modifier = Modifier.size(42.dp), imageUrl = imageUrl)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    AmText(text = title, style = MaterialTheme.typography.titleLarge)
+                    AmText(text = title, style = MaterialTheme.typography.titleMedium)
                     AmText(text = "$total $currency", style = MaterialTheme.typography.titleMedium)
                 }
                 onAddTransaction?.let {
@@ -78,33 +77,25 @@ fun AccountCard(
                 }
             }
 
-            Spacer(
-                modifier = Modifier.height(4.dp),
-            )
-
-//            AmSurface(positive=positive){
             Row {
-                AmTitleWithSubtitle(
+                AmTextWithIcon(
                     Modifier
                         .padding(horizontal = 4.dp)
                         .fillMaxWidth()
                         .weight(1f),
-                    title = stringResource(R.string.pay),
-                    subtitle = creditor.toString(),
+                    text = creditor.toString(),
                     amIconsType = AmIcons.Output,
                     positive = false
                 )
-                AmTitleWithSubtitle(
+                AmTextWithIcon(
                     Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    title = stringResource(R.string.receive),
-                    subtitle = debtor.toString(),
+                    text = debtor.toString(),
                     amIconsType = AmIcons.Input,
                     positive = true
                 )
             }
-//            }
         }
     )
 }

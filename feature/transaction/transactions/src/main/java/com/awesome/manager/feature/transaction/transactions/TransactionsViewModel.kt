@@ -21,7 +21,7 @@ class TransactionsViewModel @Inject constructor(
         savedStateHandle = savedStateHandle,
         asTransactions = {
             flatMapLatest {
-                transactionRepository.returnTransactions()
+                transactionRepository.returnTransactions(it)
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
         }
     )

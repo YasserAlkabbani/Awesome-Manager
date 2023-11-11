@@ -22,8 +22,13 @@ data class AccountEntity (
 
 data class AccountEntityWithData (
     @Embedded val accountEntity:AccountEntity,
-    @Relation (parentColumn = "currency_id", entityColumn ="currency_id") val defaultCurrencyEntity:CurrencyEntity,
+    @Relation (parentColumn = "currency_id", entityColumn ="currency_id") val currencyEntity:CurrencyEntity,
     @Relation (parentColumn = "default_transaction_type_id", entityColumn ="transaction_type_id") val defaultTransactionTypeEntity:TransactionTypeEntity,
     @ColumnInfo("incoming") val incoming:Double,
     @ColumnInfo("outgoing") val outgoing:Double,
+)
+
+data class AccountEntityWithBasic (
+    @Embedded val accountEntity:AccountEntity,
+    @Relation (parentColumn = "currency_id", entityColumn ="currency_id") val currencyEntity:CurrencyEntity
 )

@@ -203,7 +203,8 @@ fun AuthScreen(
 
         AmSurface(
             modifier = Modifier.fillMaxWidth(),
-            positive = true,loading = false
+            positive = true,loading = false,
+            highPadding = true
         ) {
             Column (modifier = Modifier.fillMaxWidth()){
 
@@ -217,6 +218,7 @@ fun AuthScreen(
                 AmSurface(
                     modifier = Modifier,
                     positive = null,loading = false,
+                    highPadding = true,
                     content = {
                         Column (Modifier.fillMaxWidth()){
                             AmTextField(

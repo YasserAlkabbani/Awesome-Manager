@@ -51,7 +51,7 @@ fun AmChipsContainer (
                     )
                 }
             }
-            AmSurface(modifier = Modifier.padding(4.dp),positive = null,loading = false) {
+            AmSurface(modifier = Modifier.padding(4.dp),positive = null,loading = false, highPadding = true) {
                 content?.invoke()
             }
         }

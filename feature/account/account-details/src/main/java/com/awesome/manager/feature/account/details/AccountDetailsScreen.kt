@@ -124,6 +124,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                         itemContent = { transaction ->
                             TransactionCard(
                                 modifier = Modifier.animateItemPlacement(),
+                                account="ACCOUNT",
                                 title = transaction.title,
                                 subTitle = transaction.subtitle,
                                 amount = transaction.amount,

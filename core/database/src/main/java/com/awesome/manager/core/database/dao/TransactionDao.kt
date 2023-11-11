@@ -21,12 +21,12 @@ interface TransactionDao {
     fun returnPendingTransaction(): Flow<TransactionEntity?>
 
     @Transaction
-    @Query("SELECT * FROM transactions")
-    fun returnTransactions(): Flow<List<TransactionEntityWithData>>
+    @Query("SELECT * FROM transactions WHERE transactions.title LIKE '%' || :searchKey || '%' ")
+    fun returnTransactions(searchKey:String): Flow<List<TransactionEntityWithData>>
 
     @Transaction
-    @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId")
-    fun returnTransactionsByAccountId(accountId: String): Flow<List<TransactionEntityWithData>>
+    @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId AND transactions.title LIKE '%' || :searchKey || '%'")
+    fun returnTransactionsByAccountId(accountId: String,searchKey:String): Flow<List<TransactionEntityWithData>>
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transaction_id=:transactionId")

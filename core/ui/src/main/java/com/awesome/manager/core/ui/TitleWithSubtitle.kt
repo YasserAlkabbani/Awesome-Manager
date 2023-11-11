@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -20,26 +21,28 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
-fun AmTitleWithSubtitle(
-    modifier: Modifier = Modifier, title: String, subtitle: String,
-    amIconsType: AmIconsType, positive: Boolean
+fun AmTextWithIcon(
+    modifier: Modifier = Modifier,
+    text: String, amIconsType: AmIconsType, positive: Boolean
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
+        Spacer(modifier = Modifier.height(6.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            AmText(text = title, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.width(8.dp))
-            AmSurface(positive = positive) {
-                AmIcon(Modifier.size(14.dp), amIconsType = amIconsType)
+            AmSurface(positive = positive, highPadding = false) {
+                AmIcon(
+                    Modifier.size(14.dp), amIconsType = amIconsType,
+                )
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            AmText(text = text, style = MaterialTheme.typography.bodyMedium)
         }
-        AmText(text = subtitle, style = MaterialTheme.typography.titleSmall)
     }
 }
 
@@ -47,9 +50,8 @@ fun AmTitleWithSubtitle(
 @Composable
 fun AmTitleWithSubtitlePreview() {
     Surface {
-        AmTitleWithSubtitle(
-            title = "TITLE",
-            subtitle = "SUBTITLE",
+        AmTextWithIcon(
+            text = "TITLE",
             amIconsType = AmIcons.AwesomeManagerIcon,
             positive = true
         )

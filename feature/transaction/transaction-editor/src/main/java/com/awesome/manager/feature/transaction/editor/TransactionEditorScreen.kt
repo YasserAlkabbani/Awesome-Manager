@@ -184,7 +184,10 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                            AmSurface(modifier = Modifier, positive = null,loading = false) {
+                            AmSurface(
+                                modifier = Modifier, positive = null,loading = false,
+                                highPadding = true
+                            ) {
                                 AmIcon(
                                     modifier = Modifier
                                         .padding(2.dp)

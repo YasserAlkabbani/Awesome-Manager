@@ -58,33 +58,37 @@ class OfflineFirstTransactionRepository @Inject constructor(
     override suspend fun synTransactions() {
         transactionDao.returnPendingTransaction().filterNotNull().distinctUntilChanged()
             .map { it.asNetwork() }.asAmResult(
-            taskToDo = transactionNetworkDataSource::createTransaction,
-            doOnSuccess = ::refreshTransactions
-        ).map {
-            when (it) {
-                is AmResult.Error -> Log.d(
-                    "com.awesome.manager",
-                    "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.amError.message}"
-                )
+                taskToDo = transactionNetworkDataSource::createTransaction,
+                doOnSuccess = ::refreshTransactions
+            ).map {
+                when (it) {
+                    is AmResult.Error -> Log.d(
+                        "com.awesome.manager",
+                        "REFRESH_TRANSACTION CREATE_STATE ERROR ${it.amError.message}"
+                    )
 
-                is AmResult.Loading -> Log.d(
-                    "com.awesome.manager",
-                    "REFRESH_TRANSACTION CREATE_STATE LOADING ${it}"
-                )
+                    is AmResult.Loading -> Log.d(
+                        "com.awesome.manager",
+                        "REFRESH_TRANSACTION CREATE_STATE LOADING ${it}"
+                    )
 
-                is AmResult.Success -> Log.d(
-                    "com.awesome.manager",
-                    "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it"
-                )
-            }
-        }.collect()
+                    is AmResult.Success -> Log.d(
+                        "com.awesome.manager",
+                        "REFRESH_TRANSACTION CREATE_STATE SUCCESS $it"
+                    )
+                }
+            }.collect()
     }
 
-    override fun returnTransactions(): Flow<List<AmTransaction>> =
-        transactionDao.returnTransactions().map { it.map { it.asDomain() } }
+    override fun returnTransactions(searchKey: String): Flow<List<AmTransaction>> =
+        transactionDao.returnTransactions(searchKey).map { it.map { it.asDomain() } }
 
-    override fun returnTransactionsByAccountId(accountId: String): Flow<List<AmTransaction>> =
-        transactionDao.returnTransactionsByAccountId(accountId).map { it.map { it.asDomain() } }
+    override fun returnTransactionsByAccountId(
+        accountId: String,
+        searchKey: String
+    ): Flow<List<AmTransaction>> =
+        transactionDao.returnTransactionsByAccountId(accountId, searchKey)
+            .map { it.map { it.asDomain() } }
 
     override fun returnTransactionById(id: String): Flow<AmTransaction> =
         transactionDao.returnTransactionById(id).map { it.asDomain() }

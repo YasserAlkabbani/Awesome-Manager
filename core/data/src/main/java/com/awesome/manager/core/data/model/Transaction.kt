@@ -1,5 +1,6 @@
 package com.awesome.manager.core.data.model
 
+import com.awesome.manager.core.common.asData
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
@@ -30,8 +31,10 @@ fun TransactionEntityWithData.asDomain()=AmTransaction(
     subtitle=transactionEntity.subtitle,
     amount=transactionEntity.amount,
     paymentTransaction=transactionEntity.paymentTransaction,
-    createdAt=transactionEntity.createdAt.toString(),
-    updatedAt=transactionEntity.updatedAt.toString(),
+    createdAt=transactionEntity.createdAt.asData(),
+    updatedAt=transactionEntity.updatedAt.asData(),
+    accountName = accountEntityWithBasic.accountEntity.name,
+    currency = accountEntityWithBasic.currencyEntity.asModel()
 )
 
 fun TransactionEntity.asNetwork()=TransactionNetworkRequest(

@@ -1,5 +1,6 @@
 package com.awesome.manager.core.data.model
 
+import com.awesome.manager.core.common.asData
 import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.network.model.CurrencyNetwork
@@ -23,7 +24,7 @@ fun CurrencyEntity.asModel()=AmCurrency(
     currencyCode=currencyCode,
     currencyName=currencyName,
     currencySymbol=currencySymbol,
-    createdAt=createdAt.toString(),
-    updatedAt=updatedAt.toString()
+    createdAt=createdAt.asData(),
+    updatedAt=updatedAt.asData()
 )
 

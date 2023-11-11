@@ -9,15 +9,19 @@ import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
-fun SearchBox(searchKey:String,onSearchKeyChange:(String)->Unit,errorMessage:String?) {
-    val focusRequester: FocusRequester = FocusRequester()
+fun SearchBox(
+    searchKey: String, label: String,
+    onSearchKeyChange: (String) -> Unit, errorMessage: String?
+) {
+//    val focusRequester: FocusRequester = FocusRequester()
     AmTextField(
         modifier = Modifier
-            .focusRequester(focusRequester)
-            .onGloballyPositioned {
-                focusRequester.requestFocus()
-            },
-        hint = "Search For Account", icon = AmIcons.Search, label = "Something..",
+//            .focusRequester(focusRequester)
+//            .onGloballyPositioned {
+//                focusRequester.requestFocus()
+//            }
+        ,
+        hint = "Search For Account", icon = AmIcons.Search, label = label,
         text = searchKey,
         onTextChange = onSearchKeyChange,
         error = errorMessage

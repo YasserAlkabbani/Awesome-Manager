@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -80,6 +82,9 @@ object AmIcons {
 
     val Input = AmIconsType.ImageVictorAmIconsType(Icons.Filled.KeyboardDoubleArrowDown)
     val Output = AmIconsType.ImageVictorAmIconsType(Icons.Filled.KeyboardDoubleArrowUp)
+
+    val Date = AmIconsType.ImageVictorAmIconsType(Icons.Filled.DateRange)
+    val Category = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Category)
 
 }
 

@@ -10,27 +10,49 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
+const val ACCOUNT_SEARCH_KEY: String = "ACCOUNT_SEARCH_KEY"
+
+
 class AccountsState(
     private val savedStateHandle: SavedStateHandle,
-    coroutineScope: CoroutineScope,
-    amAccountsAsStateFlow:Flow<List<AmAccount>>
-){
-    val accounts:StateFlow<List<AmAccount>> =amAccountsAsStateFlow
-        .stateIn(scope = coroutineScope, started = SharingStarted.WhileSubscribed(5000), initialValue = listOf())
+    asAccounts: StateFlow<String>.() -> StateFlow<List<AmAccount>>
+) {
 
-    private val _createAccountNavigation:MutableStateFlow<Unit?> =MutableStateFlow(null)
-    val createAccountNavigation:StateFlow<Unit?> =_createAccountNavigation
-    fun startCreateAccountNavigation(){_createAccountNavigation.update {  }}
-    fun doneCreateAccountNavigation(){_createAccountNavigation.update { null }}
+    private val _createAccountNavigation: MutableStateFlow<Unit?> = MutableStateFlow(null)
+    val createAccountNavigation: StateFlow<Unit?> = _createAccountNavigation
+    fun startCreateAccountNavigation() {
+        _createAccountNavigation.update { }
+    }
 
-    private val _accountDetailsNavigation:MutableStateFlow<String?> =MutableStateFlow(null)
-    val accountDetailsNavigation:StateFlow<String?> =_accountDetailsNavigation
-    fun startAccountDetailsNavigation(accountId:String){_accountDetailsNavigation.update { accountId }}
-    fun doneAccountDetailsNavigation(){_accountDetailsNavigation.update { null }}
+    fun doneCreateAccountNavigation() {
+        _createAccountNavigation.update { null }
+    }
 
-    private val _createTransactionNavigation:MutableStateFlow<String?> =MutableStateFlow(null)
-    val createTransactionNavigation:StateFlow<String?> =_createTransactionNavigation
-    fun startCreateTransactionNavigation(accountId:String?){_createTransactionNavigation.update { accountId }}
-    fun doneCreateTransactionNavigation(){_createTransactionNavigation.update { null }}
+    private val _accountDetailsNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
+    val accountDetailsNavigation: StateFlow<String?> = _accountDetailsNavigation
+    fun startAccountDetailsNavigation(accountId: String) {
+        _accountDetailsNavigation.update { accountId }
+    }
+
+    fun doneAccountDetailsNavigation() {
+        _accountDetailsNavigation.update { null }
+    }
+
+    private val _createTransactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
+    val createTransactionNavigation: StateFlow<String?> = _createTransactionNavigation
+    fun startCreateTransactionNavigation(accountId: String?) {
+        _createTransactionNavigation.update { accountId }
+    }
+
+    fun doneCreateTransactionNavigation() {
+        _createTransactionNavigation.update { null }
+    }
+
+    val accountSearchKey: StateFlow<String> = savedStateHandle.getStateFlow(ACCOUNT_SEARCH_KEY, "")
+    fun updateAccountSearchKey(newSearchKey: String) {
+        savedStateHandle[ACCOUNT_SEARCH_KEY] = newSearchKey
+    }
+
+    val accounts: StateFlow<List<AmAccount>> = accountSearchKey.asAccounts()
 
 }

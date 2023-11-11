@@ -1,5 +1,6 @@
 package com.awesome.manager.core.data.model
 
+import com.awesome.manager.core.common.asData
 import com.awesome.manager.core.database.model.TransactionTypeEntity
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.network.model.TransactionTypesNetwork
@@ -21,6 +22,6 @@ fun TransactionTypeEntity.asModel() = AmTransactionType(
     deadTransaction = deadTransaction,
     defaultPaymentTransaction = defaultPaymentTransaction,
     switchPaymentTransaction = switchPaymentTransaction,
-    updatedAt = updatedAt.toString(),
-    createdAt = createdAt.toString()
+    updatedAt = updatedAt.asData(),
+    createdAt = createdAt.asData()
 )

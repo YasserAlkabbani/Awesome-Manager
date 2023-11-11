@@ -10,5 +10,7 @@ data class AmTransaction(
     val pending:Boolean,
     val paymentTransaction:Boolean,
     val createdAt:String,
-    val updatedAt:String
+    val updatedAt:String,
+    val accountName: String,
+    val currency: AmCurrency
 )
