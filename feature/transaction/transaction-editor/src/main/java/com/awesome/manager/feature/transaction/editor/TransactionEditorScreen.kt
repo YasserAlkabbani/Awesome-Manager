@@ -43,23 +43,26 @@ import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmSwitch
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
+import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TransactionEditorRoute(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
-    onBack:()->Unit
-){
+    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    onBack: () -> Unit
+) {
 
-    val transactionEditorState:TransactionEditorState =transactionEditorViewModel.transactionEditorState
+    val transactionEditorState: TransactionEditorState =
+        transactionEditorViewModel.transactionEditorState
 
-    val popup=transactionEditorState.navigatePopup.collectAsStateWithLifecycle().value
+    val popup = transactionEditorState.navigatePopup.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = popup, block = {
         popup?.let {
             transactionEditorState.donePop()
@@ -68,29 +71,32 @@ fun TransactionEditorRoute(
     })
 
     val searchForAccountSheetState: AmBottomSheetState = rememberAmBottomSheetState()
-    val searchForAccount=transactionEditorState.searchForAnAccountBottomSheet.collectAsStateWithLifecycle().value
+    val searchForAccount =
+        transactionEditorState.searchForAnAccountBottomSheet.collectAsStateWithLifecycle().value
 
-    val focusManager=LocalFocusManager.current
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = searchForAccount, block = {
-        if (searchForAccount){
+        if (searchForAccount) {
             focusManager.clearFocus()
             searchForAccountSheetState.open()
-        }else{
+        } else {
             searchForAccountSheetState.close()
         }
     })
     LaunchedEffect(key1 = searchForAccountSheetState.isOpenButtonSheet.value, block = {
-        if (!searchForAccountSheetState.isOpenButtonSheet.value){
+        if (!searchForAccountSheetState.isOpenButtonSheet.value) {
             transactionEditorState.doneSearchForAnAccount()
         }
     })
 
-    val accountSearchKey=transactionEditorState.accountSearchKey.collectAsStateWithLifecycle().value
-    val accountSearchResult=transactionEditorState.accountSearchResult.collectAsStateWithLifecycle().value
+    val accountSearchKey =
+        transactionEditorState.accountSearchKey.collectAsStateWithLifecycle().value
+    val accountSearchResult =
+        transactionEditorState.accountSearchResult.collectAsStateWithLifecycle().value
     AmModelBottomSheet(
         amBottomSheetState = searchForAccountSheetState,
         content = {
-            val focusRequester:FocusRequester=FocusRequester()
+            val focusRequester: FocusRequester = FocusRequester()
             AmTextField(
                 modifier = Modifier
                     .focusRequester(focusRequester)
@@ -98,7 +104,7 @@ fun TransactionEditorRoute(
                         focusRequester.requestFocus()
                     },
                 hint = "Search For Account", icon = AmIcons.Search, label = "Something..",
-                text = accountSearchKey,error = null ,
+                text = accountSearchKey, error = null,
                 onTextChange = transactionEditorState::updateAccountSearchKey
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -122,6 +128,7 @@ fun TransactionEditorRoute(
                                 loading = account.pending,
                                 onClick = {
                                     transactionEditorState.updateAccountId(account.id)
+                                    transactionEditorState.updateTransactionTypeId(account.defaultTransactionType.id)
                                     transactionEditorState.doneSearchForAnAccount()
                                 },
                                 onAddTransaction = null,
@@ -134,129 +141,144 @@ fun TransactionEditorRoute(
         }
     )
 
+    val createTransactionText = stringResource(id = R.string.create_transaction)
+    val editTransactionText = stringResource(R.string.edit_account)
+    val transaction = transactionEditorState.account.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = transaction, block = {
+        delay(100)
+        val title = when (transaction) {
+            null -> createTransactionText
+            else -> editTransactionText
+        }
+        updateAppBarState(
+            AppBarData(
+                title = title,
+                startIcon = AmIcons.Close to transactionEditorState::startPop,
+                endIcon = AmIcons.Save to transactionEditorState.createTransaction
+            )
+        )
+    })
 
 
     TransactionEditorScreen(transactionEditorState)
 }
 
 @Composable
-fun TransactionEditorScreen(transactionEditorState: TransactionEditorState){
+fun TransactionEditorScreen(transactionEditorState: TransactionEditorState) {
 
-    val account=transactionEditorState.account.collectAsStateWithLifecycle().value
-    val transactionTypes=transactionEditorState.transactionTypes.collectAsStateWithLifecycle().value
-    val transactionTypeChip= remember(transactionTypes) { transactionTypes.map { ChipData(id=it.id, title = it.title) } }
-    val selectedTransactionType=transactionEditorState.transactionType.collectAsStateWithLifecycle().value
-    val title=transactionEditorState.title.collectAsStateWithLifecycle().value
-    val subtitle=transactionEditorState.subtitle.collectAsStateWithLifecycle().value
-    val amount=transactionEditorState.amount.collectAsStateWithLifecycle().value
-    val paymentTransaction=transactionEditorState.paymentTransaction.collectAsStateWithLifecycle().value
+    val account = transactionEditorState.account.collectAsStateWithLifecycle().value
+    val transactionTypes =
+        transactionEditorState.transactionTypes.collectAsStateWithLifecycle().value
+    val transactionTypeChip = remember(transactionTypes) {
+        transactionTypes.map {
+            ChipData(
+                id = it.id,
+                title = it.title
+            )
+        }
+    }
+    val selectedTransactionType =
+        transactionEditorState.transactionType.collectAsStateWithLifecycle().value
+    val title = transactionEditorState.title.collectAsStateWithLifecycle().value
+    val subtitle = transactionEditorState.subtitle.collectAsStateWithLifecycle().value
+    val amount = transactionEditorState.amount.collectAsStateWithLifecycle().value
+    val paymentTransaction =
+        transactionEditorState.paymentTransaction.collectAsStateWithLifecycle().value
 
     Column(
-
+        modifier = Modifier.padding(horizontal = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AmFilledTonalIconButton(amIconsType = AmIcons.ArrowBack, positive = false, onClick = transactionEditorState::startPop)
-            AmText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .weight(1f),
-                text = stringResource(R.string.create_transaction),
-                style = MaterialTheme.typography.titleMedium
-            )
-            AmFilledTonalIconButton(amIconsType = AmIcons.Save, positive = true, onClick = transactionEditorState.createTransaction)
-        }
-
-        Column(
-            modifier = Modifier.padding(horizontal = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-
-            AnimatedVisibility(account==null){
-                    AmCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        loading = false, positive = null,
-                        onClick = transactionEditorState::startSearchForAnAccount,
-                        content = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                            AmSurface(
-                                modifier = Modifier, positive = null,loading = false,
-                                highPadding = true
-                            ) {
-                                AmIcon(
-                                    modifier = Modifier
-                                        .padding(2.dp)
-                                        .size(30.dp),
-                                    amIconsType = AmIcons.Search
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                                AmText(
-                                    modifier = Modifier.padding(8.dp),
-                                    text = "Search For An Account",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                            }
-                        }
-                    )
-            }
-
-            AnimatedVisibility(account!=null){
-                if (account!=null){
-                    AccountCard(
-                        modifier = Modifier,
-                        title = account.name,
-                        imageUrl = account.imageUrl,
-                        creditor = account.creditor,
-                        debtor = account.debtor,
-                        currency = account.currency.currencySymbol,
-                        loading = account.pending,
-                        onClick = transactionEditorState::startSearchForAnAccount,
-                        onAddTransaction = null,onEditTransaction = null
-                    )
-                }
-            }
-
-            AmTextField(hint = "Title", icon = AmIcons.Title, label = "Transaction Subject",
-                text = title, onTextChange = transactionEditorState::updateTitle,
-                keyboardActions = KeyboardActions(),error = null ,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next,)
-            )
-            AmTextField(hint = "Subtitle", icon = AmIcons.SubTitle, label = "Transaction Description",
-                text = subtitle, onTextChange = transactionEditorState::updateSubTitle,error = null ,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
-            )
-            AmTextField(hint = "Amount", icon = AmIcons.Money, label = "5000.0",
-                text = amount, onTextChange = transactionEditorState::updateAmount,error = null ,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
-                ),
-            )
-
-            AmChipsContainer(
-                title = "Transaction Type",
-                chipDataList = transactionTypeChip,
-                onSelect = transactionEditorState::updateTransactionTypeId,
-                selectedItem = selectedTransactionType?.id,
+        AnimatedVisibility(account == null) {
+            AmCard(
+                modifier = Modifier.fillMaxWidth(),
+                loading = false, positive = null,
+                onClick = transactionEditorState::startSearchForAnAccount,
                 content = {
-                    AmSwitch(
-                        title="Payment Type", checkSubtitle = "Pay", unCheckSubtitle = "Receive",
-                        checked = paymentTransaction,
-                        onCheck = transactionEditorState::updateTransactionPayment
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AmSurface(
+                            modifier = Modifier, positive = null, loading = false,
+                            highPadding = false
+                        ) {
+                            AmIcon(
+                                modifier = Modifier.size(26.dp),
+                                amIconsType = AmIcons.Search
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        AmText(
+                            modifier = Modifier.padding(8.dp),
+                            text = "Search For An Account ..",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 }
             )
         }
 
-        Spacer(modifier = Modifier
-            .fillMaxHeight()
-            .weight(1f))
+        AnimatedVisibility(account != null) {
+            if (account != null) {
+                AccountCard(
+                    modifier = Modifier,
+                    title = account.name,
+                    imageUrl = account.imageUrl,
+                    creditor = account.creditor,
+                    debtor = account.debtor,
+                    currency = account.currency.currencyCode,
+                    loading = account.pending,
+                    onClick = transactionEditorState::startSearchForAnAccount,
+                    onAddTransaction = null, onEditTransaction = null
+                )
+            }
+        }
 
+        AmTextField(
+            hint = "Title", icon = AmIcons.Title, label = "Transaction Subject",
+            text = title, onTextChange = transactionEditorState::updateTitle,
+            keyboardActions = KeyboardActions(), error = null,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+        )
+        AmTextField(
+            hint = "Subtitle",
+            icon = AmIcons.SubTitle,
+            label = "Transaction Description",
+            text = subtitle,
+            onTextChange = transactionEditorState::updateSubTitle,
+            error = null,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+        )
+        AmTextField(
+            hint = "Amount", icon = AmIcons.Money, label = "5000.0",
+            text = amount, onTextChange = transactionEditorState::updateAmount, error = null,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
+            ),
+        )
+
+        AmChipsContainer(
+            title = stringResource(R.string.transaction_type),
+            chipDataList = transactionTypeChip,
+            onSelect = transactionEditorState::updateTransactionTypeId,
+            selectedItem = selectedTransactionType?.id,
+            content = {
+                AmSurface(
+                    modifier = Modifier,
+                    positive = paymentTransaction,
+                    loading = false,
+                    highPadding = false
+                ) {
+                    AmSwitch(
+                        title = stringResource(R.string.payment_transaction),
+                        checkSubtitle = "Pay",
+                        unCheckSubtitle = "Receive",
+                        checked = paymentTransaction,
+                        onCheck = { transactionEditorState.updateTransactionPayment(it) }
+                    )
+                }
+            }
+        )
     }
 }
 

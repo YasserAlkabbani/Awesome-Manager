@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -20,9 +22,9 @@ class AccountsViewModel @Inject constructor(
         AccountsState(
             savedStateHandle = savedStateHandle,
             asAccounts = {
-                flatMapLatest {
-                    accountRepository.returnAccounts(it)
-                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+                flatMapLatest { accountRepository.returnAccounts(it) }
+                    .flowOn(Dispatchers.Default)
+                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
             }
         )
 

@@ -36,7 +36,7 @@ fun AmSurface(
         content = {
             Column {
                 Column(
-                    modifier = modifier.padding(8.dp),
+                    modifier = modifier.padding(6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     content()
@@ -56,7 +56,7 @@ fun AmSurface(
 @Composable
 fun AmSurface(
     modifier: Modifier = Modifier, positive: Boolean? = null, loading: Boolean = false,
-    shape: Shape = MaterialTheme.shapes.medium, highPadding:Boolean,
+    shape: Shape = MaterialTheme.shapes.medium, highPadding: Boolean,
     content: @Composable () -> Unit
 ) {
     val surface = MaterialTheme.colorScheme.secondary
@@ -69,7 +69,7 @@ fun AmSurface(
             false -> error
         }
     }
-    val padding= remember(highPadding) {
+    val padding = remember(highPadding) {
         if (highPadding) 6.dp else 3.dp
     }
     Surface(

@@ -9,22 +9,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.AccountCard
 import com.awesome.manager.core.ui.SearchBox
-import timber.log.Timber
 
 @Composable
 fun AccountsRoute(
     navigateToCreateAccount: () -> Unit,
-    navigateToAccountDetails: (String) -> Unit,
-    navigateToCreateTransaction: (String) -> Unit,
+    navigateToAccountDetails: (AmAccount) -> Unit,
+    navigateToCreateTransaction: (AmAccount) -> Unit,
     updateAppBarState: (appBarData: AppBarData?) -> Unit,
     accountsViewModel: AccountsViewModel = hiltViewModel()
 ) {
@@ -83,7 +82,7 @@ fun AccountsScreen(
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp, top = 4.dp),
+            contentPadding = PaddingValues(bottom = 36.dp, top = 4.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             content = {
                 items(
@@ -99,8 +98,12 @@ fun AccountsScreen(
                             debtor = account.debtor,
                             currency = account.currency.currencyCode,
                             loading = account.pending,
-                            onClick = { accountsState.startAccountDetailsNavigation(account.id) },
-                            onAddTransaction = { accountsState.startCreateTransactionNavigation(account.id) },
+                            onClick = { accountsState.startAccountDetailsNavigation(account) },
+                            onAddTransaction = {
+                                accountsState.startCreateTransactionNavigation(
+                                    account
+                                )
+                            },
                             onEditTransaction = null
                         )
                     }

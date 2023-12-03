@@ -24,9 +24,9 @@ import com.awesome.manager.core.ui.TransactionCard
 @Composable
 fun AccountDetailsRoute(
     navigateBack: () -> Unit,
-    navigateToEditAccount: (accountId: String) -> Unit,
-    navigateCreateTransaction: (accountId: String) -> Unit,
-    navigateToTransaction: (transactionId: String) -> Unit,
+    navigateToEditAccount: (AmAccount) -> Unit,
+    navigateCreateTransaction: (AmAccount) -> Unit,
+    navigateToTransactionDetails: (AmTransaction) -> Unit,
     updateAppBarState: (appBarData: AppBarData?) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
@@ -55,7 +55,7 @@ fun AccountDetailsRoute(
         accountDetailsState.transactionNavigation.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = transactionNavigation, block = {
         transactionNavigation?.let {
-            navigateToTransaction(it)
+            navigateToTransactionDetails(it)
             accountDetailsState.doneTransactionNavigation()
         }
     })
@@ -107,7 +107,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                 currency = account.currency.currencyCode,
                 loading = account.pending,
                 onClick = { },
-                onAddTransaction = { accountDetailsState.startCreateTransactionNavigation(account.id) },
+                onAddTransaction = { accountDetailsState.startCreateTransactionNavigation(account) },
                 onEditTransaction = null
             )
 
@@ -124,7 +124,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                         itemContent = { transaction ->
                             TransactionCard(
                                 modifier = Modifier.animateItemPlacement(),
-                                account="ACCOUNT",
+                                account = "ACCOUNT",
                                 title = transaction.title,
                                 subTitle = transaction.subtitle,
                                 amount = transaction.amount,
@@ -134,7 +134,11 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                 isPay = transaction.paymentTransaction,
                                 currency = account.currency.currencySymbol,
                                 createdBy = transaction.creatorUserId,
-                                onClick = {}
+                                onClick = {
+                                    accountDetailsState.startTransactionNavigation(
+                                        transaction
+                                    )
+                                }
                             )
                         }
                     )

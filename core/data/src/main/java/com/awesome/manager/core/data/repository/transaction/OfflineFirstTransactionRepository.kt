@@ -90,8 +90,8 @@ class OfflineFirstTransactionRepository @Inject constructor(
         transactionDao.returnTransactionsByAccountId(accountId, searchKey)
             .map { it.map { it.asDomain() } }
 
-    override fun returnTransactionById(id: String): Flow<AmTransaction> =
-        transactionDao.returnTransactionById(id).map { it.asDomain() }
+    override fun returnTransactionById(id: String?): Flow<AmTransaction?> =
+        transactionDao.returnTransactionById(id).map { it?.asDomain() }
 }
 
 private fun createTransactionEntity(

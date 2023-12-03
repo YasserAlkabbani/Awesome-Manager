@@ -39,10 +39,7 @@ fun AmCard(
         modifier = modifier,
         onClick = onClick,
         content = {
-            Column(
-                modifier = modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(modifier = modifier.padding(6.dp)) {
                 content()
             }
             AnimatedVisibility(visible = loading) {

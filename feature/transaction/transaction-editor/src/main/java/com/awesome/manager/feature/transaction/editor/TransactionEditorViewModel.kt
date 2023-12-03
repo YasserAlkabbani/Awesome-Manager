@@ -7,15 +7,11 @@ import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.feature.transaction.editor.navigation.TransactionEditorArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,7 +26,7 @@ class TransactionEditorViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
-    private val transactionEditorArg= TransactionEditorArg(savedStateHandle)
+    private val transactionEditorArg = TransactionEditorArg(savedStateHandle)
 
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(
@@ -38,39 +34,42 @@ class TransactionEditorViewModel @Inject constructor(
             transactionTypes = transactionTypeRepository.returnTransactionTypes()
                 .flowOn(Dispatchers.Default)
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()),
+            createTransaction = ::saveTransaction,
             asAccountsSearchResult = {
                 flatMapLatest { accountRepository.returnAccounts(it) }
+                    .flowOn(Dispatchers.Default)
                     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
             },
             asAccount = {
-                    flatMapLatest { accountRepository.returnAccountById(it) }
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+                flatMapLatest { accountRepository.returnAccountById(it) }
+                    .flowOn(Dispatchers.Default)
+                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
             },
-            asTransactionType={
-                    flatMapLatest { transactionTypeRepository.returnTransactionTypeById(it) }
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+            asTransactionType = {
+                flatMapLatest { transactionTypeRepository.returnTransactionTypeById(it) }
+                    .flowOn(Dispatchers.Default)
+                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
             },
-            createTransaction = ::createTransaction,
         )
 
 
-    private fun createTransaction(){
+    private fun saveTransaction() {
         viewModelScope.launch {
-            val currentUserId:String=authRepository.returnCurrentUserId()!!
-            val account=transactionEditorState.account.value
-            val transactionType=transactionEditorState.transactionType.value
-            val title=transactionEditorState.title.value
-            val subtitle=transactionEditorState.subtitle.value
-            val amount=transactionEditorState.amount.value
-            val paymentTransaction=transactionEditorState.paymentTransaction.value
+            val currentUserId: String = authRepository.returnCurrentUserId()!!
+            val account = transactionEditorState.account.value
+            val transactionType = transactionEditorState.transactionType.value
+            val title = transactionEditorState.title.value
+            val subtitle = transactionEditorState.subtitle.value
+            val amount = transactionEditorState.amount.value
+            val paymentTransaction = transactionEditorState.paymentTransaction.value
 
-            if (account!=null&&transactionType!=null){
+            if (account != null && transactionType != null) {
                 transactionRepository.createTransaction(
-                    creatorUserId =currentUserId,
-                    accountId=account.id,
-                    title=title,
-                    subtitle=subtitle,
-                    amount=amount.toDoubleOrNull()?:0.0,
+                    creatorUserId = currentUserId,
+                    accountId = account.id,
+                    title = title,
+                    subtitle = subtitle,
+                    amount = amount.toDoubleOrNull() ?: 0.0,
                     transactionTypeId = transactionType.id,
                     paymentTransaction = paymentTransaction
                 )

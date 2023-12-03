@@ -17,23 +17,25 @@ import com.awesome.manager.core.designsystem.component.AmChip
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 
-data class ChipData(val id:String,val title:String)
+data class ChipData(val id: String, val title: String)
 
 @Composable
-fun AmChipsContainer (
-    title:String,
+fun AmChipsContainer(
+    title: String,
     chipDataList: List<ChipData>,
-    selectedItem:String?,
-    onSelect:(String)->Unit,
-    content:(@Composable ()->Unit)?
-){
+    selectedItem: String?,
+    onSelect: (String) -> Unit,
+    content: (@Composable () -> Unit)?
+) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
-        Column (modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+        ) {
             AmText(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 text = title,
@@ -44,16 +46,17 @@ fun AmChipsContainer (
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
-                items(items = chipDataList, key = {it.id}, contentType = {"CHIP_DATA"}){chipData->
+                items(
+                    items = chipDataList,
+                    key = { it.id },
+                    contentType = { "CHIP_DATA" }) { chipData ->
                     AmChip(
-                        selected = chipData.id==selectedItem, label = chipData.title,
-                        onClick = {onSelect(chipData.id)}
+                        selected = chipData.id == selectedItem, label = chipData.title,
+                        onClick = { onSelect(chipData.id) }
                     )
                 }
             }
-            AmSurface(modifier = Modifier.padding(4.dp),positive = null,loading = false, highPadding = true) {
-                content?.invoke()
-            }
+            content?.invoke()
         }
     }
 

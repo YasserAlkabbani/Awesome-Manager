@@ -18,12 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AmSwitch(
-    modifier: Modifier=Modifier,
-    title:String,
-    checkSubtitle:String,unCheckSubtitle:String,
-    checked:Boolean,
-    onCheck:(Boolean)->Unit
-){
+    modifier: Modifier = Modifier, title: String,
+    checkSubtitle: String, unCheckSubtitle: String,
+    checked: Boolean, onCheck: (Boolean) -> Unit
+) {
     val icon: (@Composable () -> Unit)? = if (checked) {
         {
             Icon(
@@ -35,21 +33,21 @@ fun AmSwitch(
     } else {
         null
     }
-    val subtitle:String= remember(checked) {
-        if (checked)checkSubtitle else unCheckSubtitle
+    val subtitle: String = remember(checked) {
+        if (checked) checkSubtitle else unCheckSubtitle
     }
     AmCard(
-        modifier=modifier.fillMaxWidth(),
-        loading=false, positive = !checked,
-        onClick ={ onCheck(!checked) }
+        modifier = modifier.fillMaxWidth(),
+        loading = false, positive = checked,
+        onClick = { onCheck(!checked) }
     ) {
         Row(
-            modifier=Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
-                AmText(text=title, style = MaterialTheme.typography.titleMedium)
-                AmText(text = subtitle , style = MaterialTheme.typography.bodyMedium)
+                AmText(text = title, style = MaterialTheme.typography.titleMedium)
+                AmText(text = subtitle, style = MaterialTheme.typography.bodyMedium)
             }
             Switch(
                 modifier = modifier,
@@ -63,9 +61,9 @@ fun AmSwitch(
 
 @Preview
 @Composable
-fun AmSwitchPreview(){
+fun AmSwitchPreview() {
     AmSwitch(
-        title="TEST",
+        title = "TEST",
         checkSubtitle = "CHECKED",
         unCheckSubtitle = "UN_CHECKED",
         checked = true,

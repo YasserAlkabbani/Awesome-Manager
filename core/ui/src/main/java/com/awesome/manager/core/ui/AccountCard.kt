@@ -22,6 +22,7 @@ import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import kotlin.math.absoluteValue
 
 @Composable
 fun AccountCard(
@@ -33,8 +34,11 @@ fun AccountCard(
     onEditTransaction: (() -> Unit)?
 ) {
 
-    val total = remember(creditor, debtor) { (creditor - debtor) }
-    val positive = remember(total) { total >= 0 }
+    val (total, positive) = remember(creditor, debtor) {
+        (creditor - debtor).let { amount ->
+            amount.absoluteValue to (amount >= 0)
+        }
+    }
 
     AmCard(
         modifier = modifier,

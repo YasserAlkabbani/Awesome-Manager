@@ -47,13 +47,13 @@ fun AccountEditorRoute(
         }
     })
 
-    val createAccountTest = stringResource(id = R.string.create_account)
+    val createAccountText = stringResource(id = R.string.create_account)
     val editAccountText = stringResource(R.string.edit_account)
     val account = accountEditorState.account.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = account, block = {
         delay(100)
         val title = when (account) {
-            null -> createAccountTest
+            null -> createAccountText
             else -> editAccountText
         }
         updateAppBarState(

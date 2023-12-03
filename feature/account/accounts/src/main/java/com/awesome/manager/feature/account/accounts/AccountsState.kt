@@ -2,12 +2,8 @@ package com.awesome.manager.feature.account.accounts
 
 import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.model.AmAccount
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 const val ACCOUNT_SEARCH_KEY: String = "ACCOUNT_SEARCH_KEY"
@@ -28,20 +24,20 @@ class AccountsState(
         _createAccountNavigation.update { null }
     }
 
-    private val _accountDetailsNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
-    val accountDetailsNavigation: StateFlow<String?> = _accountDetailsNavigation
-    fun startAccountDetailsNavigation(accountId: String) {
-        _accountDetailsNavigation.update { accountId }
+    private val _accountDetailsNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
+    val accountDetailsNavigation: StateFlow<AmAccount?> = _accountDetailsNavigation
+    fun startAccountDetailsNavigation(amAccount: AmAccount) {
+        _accountDetailsNavigation.update { amAccount }
     }
 
     fun doneAccountDetailsNavigation() {
         _accountDetailsNavigation.update { null }
     }
 
-    private val _createTransactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
-    val createTransactionNavigation: StateFlow<String?> = _createTransactionNavigation
-    fun startCreateTransactionNavigation(accountId: String?) {
-        _createTransactionNavigation.update { accountId }
+    private val _createTransactionNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
+    val createTransactionNavigation: StateFlow<AmAccount?> = _createTransactionNavigation
+    fun startCreateTransactionNavigation(amAccount: AmAccount?) {
+        _createTransactionNavigation.update { amAccount }
     }
 
     fun doneCreateTransactionNavigation() {

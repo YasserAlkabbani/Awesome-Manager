@@ -8,23 +8,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.SearchBox
 import com.awesome.manager.core.ui.TransactionCard
 
 
 @Composable
 fun TransactionsRoute(
+    navigateToTransactionDetails: (AmTransaction) -> Unit,
+    updateAppBarState: (AppBarData?) -> Unit,
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ) {
 
-    val transactionState = transactionsViewModel.transactionsState
+    val transactionsState = transactionsViewModel.transactionsState
 
-    TransactionScreen(transactionState)
+
+    LaunchedEffect(key1 = Unit, block = {
+        updateAppBarState(null)
+    })
+
+    val transactionDetailsNavigation =
+        transactionsState.transactionNavigation.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = transactionDetailsNavigation, block = {
+        transactionDetailsNavigation?.let {
+            transactionsState.doneTransactionNavigation()
+            navigateToTransactionDetails(it)
+        }
+    })
+
+    TransactionScreen(transactionsState)
 }
 
 
@@ -43,7 +62,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp, top = 4.dp),
+            contentPadding = PaddingValues(bottom = 36.dp, top = 4.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             content = {
                 items(
@@ -63,7 +82,11 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                             isPay = transaction.paymentTransaction,
                             currency = transaction.currency.currencyCode,
                             createdBy = transaction.creatorUserId,
-                            onClick = {}
+                            onClick = {
+                                transactionsState.navigationToTransactionNavigation(
+                                    transaction
+                                )
+                            }
                         )
                     }
                 )

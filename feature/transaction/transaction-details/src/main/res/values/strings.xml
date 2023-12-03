@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amount">Amount</string>
+    <string name="payment_type">Payment Type</string>
+    <string name="transaction_subject">Transaction Subject</string>
+    <string name="transaction_description">Transaction Description</string>
+</resources>

@@ -1,7 +1,6 @@
 package com.awesome.manager.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.awesome.manager.core.designsystem.component.AppBarData
@@ -46,15 +45,15 @@ fun AmNavHost(
 
         accountsScreen(
             navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
-            navigateToAccountDetails = { accountId ->
+            navigateToAccountDetails = { amAccount ->
                 navController.navigateToAccountDetails(
-                    accountId = accountId,
+                    accountId = amAccount.id,
                     navOptions = null
                 )
             },
-            navigateToCreateTransaction = { accountId ->
+            navigateToCreateTransaction = { amAccount ->
                 navController.navigateToCreateTransaction(
-                    accountId = accountId,
+                    accountId = amAccount.id,
                     navOptions = null
                 )
             },
@@ -66,33 +65,59 @@ fun AmNavHost(
         )
         accountDetailsScreen(
             navigateBack = navController::popBackStack,
-            navigateToEditAccount = { transactionId ->
+            navigateToEditAccount = { amAccount ->
                 navController.navigateToEditAccount(
-                    accountId = transactionId,
+                    accountId = amAccount.id,
                     navOptions = null
                 )
             },
-            navigateCreateTransaction = {
+            navigateCreateTransaction = { amAccount ->
                 navController.navigateToCreateTransaction(
-                    accountId = it,
+                    accountId = amAccount.id,
                     navOptions = null
                 )
             },
-            navigateToTransaction = { transactionId ->
+            navigateToTransactionDetails = { amTransaction ->
                 navController.navigateToTransactionDetails(
-                    transactionId = transactionId,
+                    transactionId = amTransaction.id,
                     navOptions = null
                 )
             },
             updateAppBarState = updateAppBarState
         )
 
-        transactionsScreen({}, {})
+        transactionsScreen(
+            navigateToTransactionDetails = { amTransaction ->
+                navController.navigateToTransactionDetails(
+                    transactionId = amTransaction.id,
+                    navOptions = null
+                )
+            },
+            updateAppBarState = updateAppBarState
+        )
         transactionEditorScreen(
             onBack = { navController.popBackStack() },
             updateAppBarState = updateAppBarState
         )
-        transactionDetailsScreen()
+        transactionDetailsScreen(
+            navigateToAccount = { amAccount ->
+                navController.navigateToEditAccount(amAccount.id, navOptions = null)
+            },
+            navigateToCreateTransaction = { amAccount ->
+                navController.navigateToCreateTransaction(
+                    accountId = amAccount.id,
+                    navOptions = null
+                )
+            },
+            navigateToEditTransaction = { amTransaction ->
+                navController.navigateToEditTransaction(
+                    transactionId = amTransaction.id,
+                    navOptions = null
+                )
+            },
+            navigateBack = navController::popBackStack,
+            updateAppBarState = updateAppBarState,
+        )
 
         menuScreen()
 

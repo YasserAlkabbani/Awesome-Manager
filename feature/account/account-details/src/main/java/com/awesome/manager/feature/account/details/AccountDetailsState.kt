@@ -22,30 +22,30 @@ class AccountDetailsState(
         _backNavigation.update { null }
     }
 
-    private val _editAccountNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
-    val editAccountNavigation: StateFlow<String?> = _editAccountNavigation
+    private val _editAccountNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
+    val editAccountNavigation: StateFlow<AmAccount?> = _editAccountNavigation
     fun startEditAccountNavigation() {
-        amAccount.value?.let { account -> _editAccountNavigation.update { account.id } }
+        amAccount.value?.let { account -> _editAccountNavigation.update { account } }
     }
 
     fun doneEditAccountNavigation() {
         _editAccountNavigation.update { null }
     }
 
-    private val _createTransactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
-    val createTransactionNavigation: StateFlow<String?> = _createTransactionNavigation
-    fun startCreateTransactionNavigation(accountId: String) {
-        _createTransactionNavigation.update { accountId }
+    private val _createTransactionNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
+    val createTransactionNavigation: StateFlow<AmAccount?> = _createTransactionNavigation
+    fun startCreateTransactionNavigation(amAccount: AmAccount) {
+        _createTransactionNavigation.update { amAccount  }
     }
 
     fun doneCreateTransactionNavigation() {
         _createTransactionNavigation.update { null }
     }
 
-    private val _transactionNavigation: MutableStateFlow<String?> = MutableStateFlow(null)
-    val transactionNavigation: StateFlow<String?> = _transactionNavigation
-    fun startTransactionNavigation(transactionId: String) {
-        _transactionNavigation.update { transactionId }
+    private val _transactionNavigation: MutableStateFlow<AmTransaction?> = MutableStateFlow(null)
+    val transactionNavigation: StateFlow<AmTransaction?> = _transactionNavigation
+    fun startTransactionNavigation(amTransaction: AmTransaction) {
+        _transactionNavigation.update { amTransaction }
     }
 
     fun doneTransactionNavigation() {

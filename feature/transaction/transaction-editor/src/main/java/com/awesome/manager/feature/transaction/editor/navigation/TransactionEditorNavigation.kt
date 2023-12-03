@@ -28,11 +28,10 @@ fun NavHostController.navigateToCreateTransaction(accountId: String?, navOptions
 }
 
 fun NavHostController.navigateToEditTransaction(
-    accountId: String,
     transactionId: String,
     navOptions: NavOptions?
 ) {
-    navigate(route = "$transactionEditorRoute/$accountId/$transactionId", navOptions = navOptions)
+    navigate(route = "$transactionEditorRoute/${null}/$transactionId", navOptions = navOptions)
 }
 
 fun NavGraphBuilder.transactionEditorScreen(
@@ -53,7 +52,8 @@ fun NavGraphBuilder.transactionEditorScreen(
         )
     ) {
         TransactionEditorRoute(
-            onBack = onBack
+            onBack = onBack,
+            updateAppBarState = updateAppBarState
         )
     }
 }
