@@ -5,8 +5,8 @@ import com.awesome.manager.core.network.model.TransactionNetworkResponse
 
 interface TransactionNetworkDataSource {
 
-    suspend fun createTransaction(transactionNetworkResponse: TransactionNetworkRequest): TransactionNetworkResponse
+    suspend fun upsertTransaction(transactionNetworkResponse: TransactionNetworkRequest): Any
 
-    suspend fun returnUpdatedTransactions(): List<TransactionNetworkResponse>
+    suspend fun returnUpdatedTransactions(updatedAt: String): List<TransactionNetworkResponse>
 
 }

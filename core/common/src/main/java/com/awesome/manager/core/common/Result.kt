@@ -14,8 +14,8 @@ import kotlinx.coroutines.withContext
 import java.net.UnknownHostException
 
 sealed class AmError : Throwable() {
-    object Unauthorized : AmError()
-    object ConnectionError : AmError()
+    data object Unauthorized : AmError()
+    data object ConnectionError : AmError()
     data class BadRequest(val errorMessage: String) : AmError()
     data class OtherError(val errorMessage: String?) : AmError()
 }
@@ -28,12 +28,12 @@ sealed interface AmResult<out T> {
 }
 
 fun Throwable.asAmError(): AmResult.Error = AmResult.Error(
-        when (this) {
-            is AmError -> this
-            is UnknownHostException -> AmError.ConnectionError
-            else -> AmError.OtherError(message)
-        }
-    )
+    when (this) {
+        is AmError -> this
+        is UnknownHostException -> AmError.ConnectionError
+        else -> AmError.OtherError(message)
+    }
+)
 
 
 inline fun <T> Flow<T>.asAmResult(
@@ -41,12 +41,21 @@ inline fun <T> Flow<T>.asAmResult(
     crossinline doOnSuccess: suspend () -> Unit,
 ): Flow<AmResult<T>> =
     map<T, AmResult<T>> {
+        Log.d("com.awesome.manager", "REFRESH_TRANSACTION TO_DO")
         taskToDo(it)
+        Log.d("com.awesome.manager", "REFRESH_TRANSACTION TASK_TO_DO")
+        doOnSuccess()
+        Log.d("com.awesome.manager", "REFRESH_TRANSACTION DO_ON_SUCCESS")
         AmResult.Success(data = it, freshData = true)
-            .apply { doOnSuccess() }
     }
-        .onStart { emit(AmResult.Loading()) }
-        .catch { throwable -> emit(throwable.asAmError()) }
+        .onStart {
+            Log.d("com.awesome.manager", "REFRESH_TRANSACTION ON_START")
+            emit(AmResult.Loading())
+        }
+        .catch { throwable ->
+            Log.d("com.awesome.manager", "REFRESH_TRANSACTION ON_ERROR ${throwable.message}")
+            emit(throwable.asAmError())
+        }
         .flowOn(Dispatchers.Default)
 
 suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmResult<T>> {

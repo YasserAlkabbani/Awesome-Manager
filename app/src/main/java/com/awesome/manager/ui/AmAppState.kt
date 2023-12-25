@@ -9,6 +9,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.get
 import androidx.navigation.navOptions
 import com.awesome.manager.feature.account.accounts.navigation.accountsRoute
 import com.awesome.manager.feature.account.accounts.navigation.navigateToAccounts
@@ -62,26 +63,26 @@ class AmAppState(
         @Composable get() = currentMainDestination != null
 
     val shouldShowFloatingActionButton
-        @Composable get() = when(currentDestination?.route){
-            accountsRoute, transactionsRoute ->true
+        @Composable get() = when (currentDestination?.route) {
+            accountsRoute, transactionsRoute -> true
             else -> false
         }
 
     val shouldShowShowTopBar
-        @Composable get() = when(currentDestination?.route){
-            transactionEditorRoute, transactionDetailsRoute, accountDetailsRoute, accountEditorRoute ->true
+        @Composable get() = when (currentDestination?.route) {
+            transactionEditorRoute, transactionDetailsRoute, accountDetailsRoute, accountEditorRoute -> true
             else -> false
         }
 
     val shouldShowShowTopBarSave
-        @Composable get() = when(currentDestination?.route){
-            accountEditorRoute, transactionEditorRoute ->true
+        @Composable get() = when (currentDestination?.route) {
+            accountEditorRoute, transactionEditorRoute -> true
             else -> false
         }
 
     val shouldShowShowTopBarEdit
-        @Composable get() = when(currentDestination?.route){
-            accountDetailsRoute, transactionDetailsRoute ->true
+        @Composable get() = when (currentDestination?.route) {
+            accountDetailsRoute, transactionDetailsRoute -> true
             else -> false
         }
 
@@ -89,7 +90,7 @@ class AmAppState(
 
     fun navigateToMainDestination(mainDestination: MainDestination) {
         val mainDestinationNavOption = navOptions {
-            popUpTo(navHostController.graph.findStartDestination().id) {
+            popUpTo(navHostController.graph[homeRoute].id) {
                 saveState = true
             }
             launchSingleTop = true
@@ -114,8 +115,9 @@ class AmAppState(
                     val homeNavOption = navOptions {
                         popUpTo(authRoute) { this.inclusive = true }
                     }
-                    navHostController.navigateToHome( homeNavOption)
+                    navHostController.navigateToHome(homeNavOption)
                 }
+
                 introRoute -> {
                     val navOption = navOptions {
                         popUpTo(introRoute) { this.inclusive = true }
@@ -123,6 +125,7 @@ class AmAppState(
                     navHostController.navigateToHome(navOption)
                 }
             }
+
             false -> {
                 when (currentDestinationRoute) {
                     authRoute -> {}
@@ -132,12 +135,14 @@ class AmAppState(
                         }
                         navHostController.navigateToAuth(navOption)
                     }
+
                     homeRoute -> {
                         val authNavOption = navOptions {
                             popUpTo(homeRoute) { this.inclusive = true }
                         }
                         navHostController.navigateToIntro(authNavOption)
                     }
+
                     else -> {
                         navHostController.popBackStack()
                     }
@@ -146,11 +151,11 @@ class AmAppState(
         }
     }
 
-    fun navigateToAddByCurrentNavigation(currentDestinationRoute: String){
-        when(currentDestinationRoute){
-            homeRoute->navHostController.navigateToCreateAccount(null)
-            accountsRoute->navHostController.navigateToCreateAccount(null)
-            transactionsRoute->navHostController.navigateToCreateTransaction(null,null)
+    fun navigateToAddByCurrentNavigation(currentDestinationRoute: String) {
+        when (currentDestinationRoute) {
+            homeRoute -> navHostController.navigateToCreateAccount(null)
+            accountsRoute -> navHostController.navigateToCreateAccount(null)
+            transactionsRoute -> navHostController.navigateToCreateTransaction(null, null)
         }
     }
 

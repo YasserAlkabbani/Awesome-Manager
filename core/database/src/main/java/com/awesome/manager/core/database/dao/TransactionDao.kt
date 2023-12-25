@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +18,6 @@ interface TransactionDao {
     @Upsert
     fun upsertTransaction(transactionEntity: List<TransactionEntity>)
 
-    @Query("SELECT * FROM transactions WHERE pending=1")
-    fun returnPendingTransaction(): Flow<TransactionEntity?>
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transactions.title LIKE '%' || :searchKey || '%' ")
@@ -30,6 +29,12 @@ interface TransactionDao {
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transaction_id=:transactionId")
-    fun returnTransactionById(transactionId: String?): Flow<TransactionEntityWithData?>
+    fun returnTransactionById(transactionId: String): Flow<TransactionEntityWithData>
+
+    @Query("SELECT * FROM transactions WHERE pending=1")
+    fun returnPendingTransaction(): Flow<TransactionEntity?>
+
+    @Query("SELECT * FROM transactions WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
+    fun returnLastUpdatedTransaction(): TransactionEntity?
 
 }

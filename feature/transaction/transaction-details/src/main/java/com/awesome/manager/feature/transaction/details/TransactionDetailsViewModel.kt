@@ -9,10 +9,9 @@ import com.awesome.manager.feature.transaction.details.navigation.TransactionDet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -27,13 +26,15 @@ class TransactionDetailsViewModel @Inject constructor(
 
     val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
         transaction = transactionRepository.returnTransactionById(transactionId)
-            .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), null),
+            .stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, null),
         asAccount = {
-            flatMapLatest { accountRepository.returnAccountById(it?.accountId) }
+            flatMapLatest {
+                it?.accountId?.let { accountRepository.returnAccountById(it) } ?: flowOf(null)
+            }
                 .flowOn(Dispatchers.Default)
                 .stateIn(
                     scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5000),
+                    started = SharingStarted.Eagerly,
                     null
                 )
         }

@@ -4,6 +4,6 @@ import com.awesome.manager.core.network.model.CurrencyNetwork
 
 interface CurrencyNetworkDataSource {
 
-    suspend fun returnUpdatedCurrency():List<CurrencyNetwork>
+    suspend fun returnUpdatedCurrency(updatedAt: String): List<CurrencyNetwork>
 
 }

@@ -4,6 +4,6 @@ import com.awesome.manager.core.network.model.TransactionTypesNetwork
 
 interface TransactionTypeNetworkDataSource {
 
-   suspend fun returnUpdatedTransactionType():List<TransactionTypesNetwork>
+    suspend fun returnUpdatedTransactionType(updatedAt: String): List<TransactionTypesNetwork>
 
 }

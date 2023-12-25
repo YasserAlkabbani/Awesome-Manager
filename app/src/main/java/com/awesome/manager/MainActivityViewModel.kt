@@ -29,13 +29,12 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     val mainActivityState = MainActivityState(
-        isLogin = authRepository.isLogin().distinctUntilChanged()
+        isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     )
 
     private fun refreshData() {
-        Timber.d("TEST_AUTH REFRESH_DATA")
         viewModelScope.launch {
             launch { authRepository.refreshUserInfo() }
             launch { currencyRepository.refreshCurrency() }

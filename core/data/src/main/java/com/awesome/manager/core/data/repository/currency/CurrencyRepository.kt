@@ -9,6 +9,6 @@ interface CurrencyRepository {
 
     fun returnCurrencies(): Flow<List<AmCurrency>>
 
-    fun returnCurrencyById(currencyId: String?): Flow<AmCurrency?>
+    fun returnCurrencyById(currencyId: String): Flow<AmCurrency>
 
 }

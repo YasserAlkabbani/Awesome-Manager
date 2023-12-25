@@ -18,15 +18,13 @@ class AccountsViewModel @Inject constructor(
     private val accountRepository: AccountRepository
 ) : ViewModel() {
 
-    val accountsState: AccountsState =
-        AccountsState(
-            savedStateHandle = savedStateHandle,
-            asAccounts = {
-                flatMapLatest { accountRepository.returnAccounts(it) }
-                    .flowOn(Dispatchers.Default)
-                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
-            }
-        )
-
+    val accountsState: AccountsState = AccountsState(
+        savedStateHandle = savedStateHandle,
+        asAccounts = {
+            flatMapLatest { accountRepository.returnAccounts(it) }
+                .flowOn(Dispatchers.Default)
+                .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
+        }
+    )
 
 }

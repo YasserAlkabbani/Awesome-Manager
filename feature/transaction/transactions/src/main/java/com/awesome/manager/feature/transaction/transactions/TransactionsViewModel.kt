@@ -24,7 +24,7 @@ class TransactionsViewModel @Inject constructor(
         asTransactions = {
             flatMapLatest { transactionRepository.returnTransactions(it) }
                 .flowOn(Dispatchers.Default)
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
+                .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
         }
     )
 

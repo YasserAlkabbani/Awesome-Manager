@@ -7,6 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.request.get
 import io.ktor.resources.Resource
+import kotlinx.serialization.SerialName
 import javax.inject.Inject
 
 @Resource("rest/v1/transaction_types")
@@ -14,14 +15,15 @@ private class TransactionTypeRequest {
     @Resource("")
     class ReturnAccount(
         val parent: TransactionTypeRequest = TransactionTypeRequest(),
+        @SerialName("updated_at") val updatedAt: String,
         val select: String = "*"
     )
 }
 
-class KtorTransactionTypeNetworkDataSource @Inject constructor(private val httpClient: HttpClient):TransactionTypeNetworkDataSource {
+class KtorTransactionTypeNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
+    TransactionTypeNetworkDataSource {
 
-    override suspend fun returnUpdatedTransactionType(): List<TransactionTypesNetwork> =httpClient.get(
-        TransactionTypeRequest.ReturnAccount()
-    ).asResult()
+    override suspend fun returnUpdatedTransactionType(updatedAt: String): List<TransactionTypesNetwork> =
+        httpClient.get(TransactionTypeRequest.ReturnAccount(updatedAt = "gt.$updatedAt")).asResult()
 
 }

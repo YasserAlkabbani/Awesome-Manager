@@ -16,7 +16,7 @@ const val transactionEditorRoute: String = "transaction_editor_route"
 private const val TRANSACTION_ID: String = "transaction_id"
 private const val ACCOUNT_ID: String = "account_id"
 
-internal class TransactionEditorArg(val accountId: String?, transactionId: String?) {
+internal class TransactionEditorArg(val accountId: String?, val transactionId: String?) {
     constructor(savedStateHandle: SavedStateHandle) : this(
         Uri.encode(savedStateHandle[ACCOUNT_ID]),
         Uri.encode(savedStateHandle[TRANSACTION_ID])

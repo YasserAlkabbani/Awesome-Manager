@@ -2,18 +2,11 @@ package com.awesome.manager.feature.account.editor
 
 import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.model.AmUser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 private const val NAME: String = "NAME"
@@ -23,7 +16,6 @@ private const val DEFAULT_TRANSACTION_TYPE_ID: String = "DEFAULT_TRANSACTION_TYP
 
 class AccountEditorState(
     private val savedStateHandle: SavedStateHandle,
-    val account: StateFlow<AmAccount?>,
     val currencies: StateFlow<List<AmCurrency>>,
     val asSelectedCurrencies: StateFlow<String?>.() -> StateFlow<AmCurrency?>,
     val transactionTypes: StateFlow<List<AmTransactionType>>,
@@ -43,10 +35,33 @@ class AccountEditorState(
     fun updateCurrency(currencyId: String) = savedStateHandle.set(CURRENCY_ID, currencyId)
 
     val defaultTransactionType: StateFlow<AmTransactionType?> =
-        savedStateHandle.getStateFlow(DEFAULT_TRANSACTION_TYPE_ID, "").asSelectedTransactionTypes()
+        savedStateHandle.getStateFlow(DEFAULT_TRANSACTION_TYPE_ID, null)
+            .asSelectedTransactionTypes()
 
     fun updateDefaultTransactionType(transactionTypeId: String) =
         savedStateHandle.set(DEFAULT_TRANSACTION_TYPE_ID, transactionTypeId)
+
+    fun fillAccountData(amAccount: AmAccount) {
+        updateName(amAccount.name)
+        updateDefaultTransactionType(amAccount.defaultTransactionType.id)
+        updateCurrency(amAccount.currency.id)
+        updateImageUrl(amAccount.imageUrl)
+    }
+
+    fun validateAccount(accountId: String, creatorUserId: String?) =
+        if (
+            accountId.isNotBlank() && !creatorUserId.isNullOrBlank() &&
+            name.value.isNotBlank() &&
+            selectedCurrency.value != null &&
+            defaultTransactionType.value != null
+        ) {
+            UpsertAccount(
+                id = accountId, creatorUserId = creatorUserId,
+                name = name.value, imageUrl = imageUrl.value,
+                currencyId = selectedCurrency.value!!.id,
+                defaultTransactionTypeId = defaultTransactionType.value!!.id
+            )
+        } else null
 
     private val _navigationBack: MutableStateFlow<Unit?> = MutableStateFlow(null)
     val navigationBack: StateFlow<Unit?> = _navigationBack
@@ -56,18 +71,6 @@ class AccountEditorState(
 
     fun doneNavigationBack() {
         _navigationBack.update { null }
-    }
-
-    fun validateData() =
-        name.value.isBlank().not() &&
-                selectedCurrency.value != null &&
-                defaultTransactionType.value != null
-
-    fun fillAccountData(amAccount: AmAccount) {
-        updateName(amAccount.name)
-        updateDefaultTransactionType(amAccount.defaultTransactionType.id)
-        updateCurrency(amAccount.currency.id)
-        updateImageUrl(amAccount.imageUrl)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.awesome.manager.core.data.repository.currency
 
 import com.awesome.manager.core.common.amRequest
+import com.awesome.manager.core.common.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.CurrencyDao
@@ -18,16 +19,19 @@ class OfflineFirstCurrencyRepository @Inject constructor(
 
     override suspend fun refreshCurrency() {
         amRequest {
-            val currencies = currencyNetworkDataSource.returnUpdatedCurrency().map { it.asEntity() }
+            val lastUpdateCurrencyTime =
+                (currencyDao.returnLastUpdatedCurrencyType()?.updatedAt ?: 0) + 1
+            val lastUpdatedCurrencyDateTime = lastUpdateCurrencyTime.asDateTime().toString()
+            val currencies = currencyNetworkDataSource
+                .returnUpdatedCurrency(lastUpdatedCurrencyDateTime).map { it.asEntity() }
             currencyDao.upsertCurrency(currencies)
-            currencies
         }.collect()
     }
 
     override fun returnCurrencies(): Flow<List<AmCurrency>> =
         currencyDao.returnCurrencies().map { it.map { it.asModel() } }
 
-    override fun returnCurrencyById(currencyId: String?): Flow<AmCurrency?> =
-        currencyDao.returnCurrencyById(currencyId).map { it?.asModel() }
+    override fun returnCurrencyById(currencyId: String): Flow<AmCurrency> =
+        currencyDao.returnCurrencyById(currencyId).map { it.asModel() }
 
 }

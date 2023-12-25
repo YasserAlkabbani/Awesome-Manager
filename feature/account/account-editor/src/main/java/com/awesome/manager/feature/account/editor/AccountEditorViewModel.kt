@@ -11,12 +11,13 @@ import com.awesome.manager.feature.account.editor.navigation.AccountEditorArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,36 +29,36 @@ class AccountEditorViewModel @Inject constructor(
     transactionTypeRepository: TransactionTypeRepository,
 ) : ViewModel() {
 
+    private val accountEditorArg: AccountEditorArg = AccountEditorArg(savedStateHandle)
+
     val accountEditorState: AccountEditorState = AccountEditorState(
         savedStateHandle = savedStateHandle,
-        account = accountRepository.returnAccountById(AccountEditorArg(savedStateHandle).accountId)
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null),
         currencies = currencyRepository.returnCurrencies()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, listOf()),
         asSelectedCurrencies = {
-            flatMapLatest { currencyRepository.returnCurrencyById(it) }
+            flatMapLatest {
+                it?.let { currencyRepository.returnCurrencyById(it) } ?: flowOf(null)
+            }
                 .flowOn(Dispatchers.Default)
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+                .stateIn(viewModelScope, SharingStarted.Eagerly, null)
         },
         transactionTypes = transactionTypeRepository.returnTransactionTypes()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, listOf()),
         asSelectedTransactionTypes = {
-            flatMapLatest { transactionTypeRepository.returnTransactionTypeById(it) }
+            flatMapLatest {
+                it?.let { transactionTypeRepository.returnTransactionTypeById(it) } ?: flowOf(null)
+            }
                 .flowOn(Dispatchers.Default)
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+                .stateIn(viewModelScope, SharingStarted.Eagerly, null)
         },
         onSave = ::onSave,
-    )
-
-
-    init {
-        fillAccountData()
-    }
+    ).apply { fillAccountData() }
 
     private fun fillAccountData() {
         viewModelScope.launch {
-            accountEditorState.account.filterNotNull().collect { account ->
-                accountEditorState.fillAccountData(account)
+            accountEditorArg.accountId?.let { initAccountId ->
+                accountRepository.returnAccountById(initAccountId).firstOrNull()
+                    ?.let(accountEditorState::fillAccountData)
             }
         }
     }
@@ -65,73 +66,27 @@ class AccountEditorViewModel @Inject constructor(
     private fun onSave() {
         viewModelScope.launch {
 
-            if (accountEditorState.validateData()) {
-                val account =
-                    accountRepository.returnAccountById(accountEditorState.account.value?.id)
-                        .firstOrNull()
-                val currentUserId: String = authRepository.returnCurrentUserId()!!
-                val name: String = accountEditorState.name.value
-                val imageUrl: String = accountEditorState.imageUrl.value
-                val selectedCurrency: String = accountEditorState.selectedCurrency.value?.id!!
-                val defaultTransactionType: String =
-                    accountEditorState.defaultTransactionType.value?.id!!
+            val initAccountId = accountEditorArg.accountId
+            val currentUserId = authRepository.returnCurrentUserId()!!
 
-                if (currentUserId == account?.creatorUserId) {
-                    updateAccount(
-                        account.id,
-                        currentUserId,
-                        name,
-                        imageUrl,
-                        selectedCurrency,
-                        defaultTransactionType
-                    )
-                } else {
-                    createAccount(
-                        currentUserId,
-                        name,
-                        imageUrl,
-                        selectedCurrency,
-                        defaultTransactionType
-                    )
+            val (accountId: String, creatorUserId: String?) = when (initAccountId) {
+                null -> UUID.randomUUID().toString() to currentUserId
+                else -> {
+                    val creatorUserId = accountRepository
+                        .returnAccountById(initAccountId).firstOrNull()?.creatorUserId!!
+                    if (creatorUserId == currentUserId)
+                        initAccountId to creatorUserId else initAccountId to null
                 }
-                accountEditorState.onNavigationBack()
             }
 
+            accountEditorState.validateAccount(accountId = accountId, creatorUserId = creatorUserId)
+                ?.let { upsertAccount ->
+                    accountRepository.upsertAccount(upsertAccount)
+                    accountEditorState.onNavigationBack()
+                }
+
         }
-    }
 
-    private suspend fun createAccount(
-        currentUserId: String,
-        name: String,
-        imageUrl: String,
-        selectedCurrency: String,
-        defaultTransactionType: String,
-    ) {
-        accountRepository.upsertAccount(
-            creatorUserId = currentUserId,
-            accountName = name,
-            imageUrl = imageUrl,
-            currencyId = selectedCurrency,
-            defaultTransactionTypeId = defaultTransactionType
-        )
-    }
-
-    private suspend fun updateAccount(
-        accountId: String,
-        currentUserId: String,
-        name: String,
-        imageUrl: String,
-        selectedCurrency: String,
-        defaultTransactionType: String,
-    ) {
-        accountRepository.upsertAccount(
-            accountId = accountId,
-            creatorUserId = currentUserId,
-            accountName = name,
-            imageUrl = imageUrl,
-            currencyId = selectedCurrency,
-            defaultTransactionTypeId = defaultTransactionType
-        )
     }
 
 }

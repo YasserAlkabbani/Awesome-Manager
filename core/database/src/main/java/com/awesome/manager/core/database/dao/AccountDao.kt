@@ -18,22 +18,19 @@ interface AccountDao {
     suspend fun upsertAccount(accountEntity: AccountEntity)
 
     @Transaction
-    @Query (
+    @Query(
         "SELECT accounts.* ," +
-        "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
-        "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
-        "FROM accounts " +
-        "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
-        "WHERE accounts.name LIKE '%' || :searchKey || '%' " +
-        "GROUP BY accounts.account_id "
+                "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
+                "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
+                "FROM accounts " +
+                "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
+                "WHERE accounts.name LIKE '%' || :searchKey || '%' " +
+                "GROUP BY accounts.account_id "
     )
-    fun returnAccounts(searchKey:String):Flow<List<AccountEntityWithData>>
-
-    @Query("SELECT * FROM accounts WHERE pending=1")
-    fun returnPendingAccount():Flow<AccountEntity?>
+    fun returnAccounts(searchKey: String): Flow<List<AccountEntityWithData>>
 
     @Transaction
-    @Query (
+    @Query(
         "SELECT accounts.* ," +
                 "IFNULL(SUM( IIF(transactions.payment_transaction=1, transactions.amount, 0)),0) AS incoming ," +
                 "IFNULL(SUM( IIF(transactions.payment_transaction=0, transactions.amount, 0)),0) AS outgoing " +
@@ -42,6 +39,13 @@ interface AccountDao {
                 "WHERE accounts.account_id=:accountId " +
                 "GROUP BY accounts.account_id "
     )
-    fun returnAccountById(accountId:String?):Flow<AccountEntityWithData?>
+    fun returnAccountById(accountId: String): Flow<AccountEntityWithData>
+
+
+    @Query("SELECT * FROM accounts WHERE pending=1")
+    fun returnPendingAccount(): Flow<AccountEntity?>
+
+    @Query("SELECT * FROM accounts WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
+    fun returnLastUpdatedAccount(): AccountEntity?
 
 }

@@ -4,8 +4,11 @@ import com.awesome.manager.core.common.asData
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.UpsertAccount
+import com.awesome.manager.core.model.UpsertTransaction
 import com.awesome.manager.core.network.model.TransactionNetworkRequest
 import com.awesome.manager.core.network.model.TransactionNetworkResponse
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 fun TransactionNetworkResponse.asEntity() = TransactionEntity(
@@ -47,4 +50,18 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     subtitle = subtitle,
     amount = amount,
     paymentTransaction = paymentTransaction
+)
+
+fun UpsertTransaction.asEntity() = TransactionEntity(
+    id = id,
+    creatorUserId = creatorUserId,
+    accountId = accountId,
+    transactionTypeId = transactionTypeId,
+    title = title,
+    subtitle = subtitle,
+    amount = amount,
+    paymentTransaction = paymentTransaction,
+    createdAt = Clock.System.now().toEpochMilliseconds(),
+    updatedAt = Clock.System.now().toEpochMilliseconds(),
+    pending = true,
 )

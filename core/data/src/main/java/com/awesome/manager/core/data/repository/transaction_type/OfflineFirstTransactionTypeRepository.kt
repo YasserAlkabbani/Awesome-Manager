@@ -3,6 +3,7 @@ package com.awesome.manager.core.data.repository.transaction_type
 import android.util.Log
 import com.awesome.manager.core.common.AmResult
 import com.awesome.manager.core.common.amRequest
+import com.awesome.manager.core.common.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.TransactionTypeDao
@@ -19,21 +20,19 @@ class OfflineFirstTransactionTypeRepository @Inject constructor(
 ) : TransactionTypeRepository {
 
     override suspend fun refreshTransactionType() = amRequest {
-        val transactionTypes=transactionTypesNetworkDataSource.returnUpdatedTransactionType().map { it.asEntity() }
+        val lastUpdateTransactionTypeTime =
+            (transactionTypeDao.returnLastUpdatedTransactionType()?.updatedAt ?: 0) + 1
+        val lastUpdatedTransactionTypeDateTime =
+            lastUpdateTransactionTypeTime.asDateTime().toString()
+        val transactionTypes = transactionTypesNetworkDataSource
+            .returnUpdatedTransactionType(lastUpdatedTransactionTypeDateTime).map { it.asEntity() }
         transactionTypeDao.upsertTransactionType(transactionTypes)
-        transactionTypes
-    }.map {
-        when(it){
-            is AmResult.Error -> Log.d("TRANSACTION_TYPE","ERROR ${it.amError.message}")
-            is AmResult.Loading -> Log.d("TRANSACTION_TYPE","LOADING")
-            is AmResult.Success -> Log.d("TRANSACTION_TYPE","SUCCESS ${it.data}")
-        }
     }.collect()
 
     override fun returnTransactionTypes(): Flow<List<AmTransactionType>> =
         transactionTypeDao.returnTransactionTypes().map { it.map { it.asModel() } }
 
-    override fun returnTransactionTypeById(transactionTypeId:String?) :Flow<AmTransactionType?> =
-        transactionTypeDao.returnTransactionTypes(transactionTypeId).map { it?.asModel() }
+    override fun returnTransactionTypeById(transactionTypeId: String): Flow<AmTransactionType> =
+        transactionTypeDao.returnTransactionTypeById(transactionTypeId).map { it.asModel() }
 
 }

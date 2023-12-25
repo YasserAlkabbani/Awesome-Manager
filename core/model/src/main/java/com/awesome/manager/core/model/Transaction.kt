@@ -15,3 +15,14 @@ data class AmTransaction(
     val accountName: String,
     val currency: AmCurrency
 )
+
+data class UpsertTransaction(
+    val id: String,
+    val accountId: String,
+    val creatorUserId: String,
+    val title: String,
+    val subtitle: String,
+    val amount: Double,
+    val transactionTypeId: String,
+    val paymentTransaction: Boolean,
+)

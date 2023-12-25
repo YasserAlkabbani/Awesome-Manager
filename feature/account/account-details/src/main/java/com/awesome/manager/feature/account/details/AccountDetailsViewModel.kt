@@ -22,9 +22,9 @@ class AccountDetailsViewModel @Inject constructor(
 
     val accountDetailsState: AccountDetailsState = AccountDetailsState(
         amAccount = accountRepository.returnAccountById(accountDetailsArg.accountId)
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null),
         amTransactions = transactionRepository.returnTransactionsByAccountId(accountDetailsArg.accountId,"")
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, listOf()),
     )
 
 }

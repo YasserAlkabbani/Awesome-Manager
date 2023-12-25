@@ -49,7 +49,7 @@ fun AccountEditorRoute(
 
     val createAccountText = stringResource(id = R.string.create_account)
     val editAccountText = stringResource(R.string.edit_account)
-    val account = accountEditorState.account.collectAsStateWithLifecycle().value
+    val account = null
     LaunchedEffect(key1 = account, block = {
         delay(100)
         val title = when (account) {

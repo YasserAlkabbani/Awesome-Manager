@@ -5,7 +5,7 @@ import com.awesome.manager.core.network.model.AccountNetworkResponse
 
 interface AccountNetworkDataSource {
 
-    suspend fun returnUpdatedAccount(): List<AccountNetworkResponse>
+    suspend fun returnUpdatedAccount(updatedAt: String): List<AccountNetworkResponse>
 
     suspend fun upsertAccount(accountNetwork: AccountNetworkRequest)
 

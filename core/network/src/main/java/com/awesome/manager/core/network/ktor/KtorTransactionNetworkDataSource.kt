@@ -7,8 +7,10 @@ import com.awesome.manager.core.network.model.TransactionNetworkResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
+import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.resources.Resource
+import kotlinx.serialization.SerialName
 import javax.inject.Inject
 
 @Resource("rest/v1/transactions")
@@ -16,6 +18,7 @@ private class TransactionRequest {
     @Resource("")
     class ReturnTransactions(
         val parent: TransactionRequest = TransactionRequest(),
+        @SerialName("updated_at") val updatedAt: String,
         val select: String = "*"
     )
 }
@@ -23,12 +26,14 @@ private class TransactionRequest {
 class KtorTransactionNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     TransactionNetworkDataSource {
 
-    override suspend fun createTransaction(transactionNetworkResponse: TransactionNetworkRequest): TransactionNetworkResponse =
+    override suspend fun upsertTransaction(transactionNetworkResponse: TransactionNetworkRequest) =
         httpClient.post(TransactionRequest()) {
+            header("Prefer", "resolution=merge-duplicates")
             setBody(transactionNetworkResponse)
-        }.asResult()
+        }.asResult<Any>()
 
-    override suspend fun returnUpdatedTransactions(): List<TransactionNetworkResponse> =
-        httpClient.get(TransactionRequest.ReturnTransactions()).asResult()
+    override suspend fun returnUpdatedTransactions(updatedAt: String): List<TransactionNetworkResponse> =
+        httpClient.get(TransactionRequest.ReturnTransactions(updatedAt = "gt.$updatedAt"))
+            .asResult()
 
 }

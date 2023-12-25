@@ -6,6 +6,7 @@ import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -47,7 +48,9 @@ class OfflineFirstAuthRepository @Inject constructor(
         }
 
     override fun isLogin(): Flow<Boolean> =
-        authPreferencesDataStore.returnAccessToken().map { it.isNullOrBlank().not() }
+        authPreferencesDataStore.returnAccessToken()
+            .map { it.isNullOrBlank().not() }
+            .distinctUntilChanged()
 
     override suspend fun returnCurrentUserId(): String? =
         authPreferencesDataStore.returnCurrentUserId().firstOrNull()

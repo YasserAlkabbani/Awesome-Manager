@@ -15,19 +15,21 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val authRepository: AuthRepository,
-):ViewModel(){
+) : ViewModel() {
 
-    val authScreenState:AuthScreenState=AuthScreenState(
-        savedStateHandle=savedStateHandle,
-        asStateFlow = {stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = true)},
-        login=::login, register =::register ,resetPassword=::resetPassword
+    val authScreenState: AuthScreenState = AuthScreenState(
+        savedStateHandle = savedStateHandle,
+        asStateFlow = {
+            stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = true)
+        },
+        login = ::login, register = ::register, resetPassword = ::resetPassword
     )
 
-    private fun login(){
-        val email=authScreenState.email.value
-        val password=authScreenState.password.value
+    private fun login() {
+        val email = authScreenState.email.value
+        val password = authScreenState.password.value
         viewModelScope.launch {
-            authRepository.login(email,password).collectLatest { amResult ->
+            authRepository.login(email, password).collectLatest { amResult ->
                 authScreenState.updateStateBasedOnResult(
                     amResult = amResult, onSuccess = {},
                 )
@@ -35,25 +37,27 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun register(){
+    private fun register() {
         viewModelScope.launch {
-            authRepository.signUp(authScreenState.email.value,authScreenState.password.value).collectLatest {amResult->
-                authScreenState.updateStateBasedOnResult(
-                    amResult = amResult,
-                    onSuccess = { authScreenState.showBottomSheetMessage(MessageType.RegisterSuccess) },
-                )
-            }
+            authRepository.signUp(authScreenState.email.value, authScreenState.password.value)
+                .collectLatest { amResult ->
+                    authScreenState.updateStateBasedOnResult(
+                        amResult = amResult,
+                        onSuccess = { authScreenState.showBottomSheetMessage(MessageType.RegisterSuccess) },
+                    )
+                }
         }
     }
 
-    private fun resetPassword(){
+    private fun resetPassword() {
         viewModelScope.launch {
-            authRepository.signUp(authScreenState.email.value,authScreenState.password.value).collectLatest {amResult->
-                authScreenState.updateStateBasedOnResult(
-                    amResult = amResult,
-                    onSuccess = { authScreenState.showBottomSheetMessage(MessageType.ResetPasswordSuccess) },
-                )
-            }
+            authRepository.signUp(authScreenState.email.value, authScreenState.password.value)
+                .collectLatest { amResult ->
+                    authScreenState.updateStateBasedOnResult(
+                        amResult = amResult,
+                        onSuccess = { authScreenState.showBottomSheetMessage(MessageType.ResetPasswordSuccess) },
+                    )
+                }
         }
     }
 

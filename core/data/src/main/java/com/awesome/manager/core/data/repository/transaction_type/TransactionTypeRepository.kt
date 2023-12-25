@@ -9,6 +9,6 @@ interface TransactionTypeRepository {
 
     fun returnTransactionTypes(): Flow<List<AmTransactionType>>
 
-    fun returnTransactionTypeById(transactionTypeId:String?) :Flow<AmTransactionType?>
+    fun returnTransactionTypeById(transactionTypeId: String): Flow<AmTransactionType>
 
 }

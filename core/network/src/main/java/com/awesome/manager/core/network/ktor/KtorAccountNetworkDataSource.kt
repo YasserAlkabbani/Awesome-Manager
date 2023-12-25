@@ -23,21 +23,16 @@ private class AccountRequest {
     @Resource("")
     class ReturnAccount(
         val parent: AccountRequest = AccountRequest(),
+        @SerialName("updated_at") val updatedAt: String,
         val select: String = "*"
-    )
-
-    @Resource("")
-    class UpdateAccount(
-        val parent: AccountRequest = AccountRequest(),
-        val id: String
     )
 }
 
 class KtorAccountNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     AccountNetworkDataSource {
 
-    override suspend fun returnUpdatedAccount(): List<AccountNetworkResponse> =
-        httpClient.get(AccountRequest.ReturnAccount()).asResult()
+    override suspend fun returnUpdatedAccount(updatedAt: String): List<AccountNetworkResponse> =
+        httpClient.get(AccountRequest.ReturnAccount(updatedAt = "gt.$updatedAt")).asResult()
 
 
     override suspend fun upsertAccount(accountNetwork: AccountNetworkRequest) {

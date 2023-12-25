@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -93,6 +92,7 @@ fun TransactionEditorRoute(
         transactionEditorState.accountSearchKey.collectAsStateWithLifecycle().value
     val accountSearchResult =
         transactionEditorState.accountSearchResult.collectAsStateWithLifecycle().value
+
     AmModelBottomSheet(
         amBottomSheetState = searchForAccountSheetState,
         content = {
@@ -126,11 +126,7 @@ fun TransactionEditorRoute(
                                 debtor = account.debtor,
                                 currency = account.currency.currencySymbol,
                                 loading = account.pending,
-                                onClick = {
-                                    transactionEditorState.updateAccountId(account.id)
-                                    transactionEditorState.updateTransactionTypeId(account.defaultTransactionType.id)
-                                    transactionEditorState.doneSearchForAnAccount()
-                                },
+                                onClick = { transactionEditorState.selectAccount(account) },
                                 onAddTransaction = null,
                                 onEditTransaction = null
                             )
@@ -143,7 +139,7 @@ fun TransactionEditorRoute(
 
     val createTransactionText = stringResource(id = R.string.create_transaction)
     val editTransactionText = stringResource(R.string.edit_account)
-    val transaction = transactionEditorState.account.collectAsStateWithLifecycle().value
+    val transaction = transactionEditorState.selectedAccount.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = transaction, block = {
         delay(100)
         val title = when (transaction) {
@@ -166,7 +162,7 @@ fun TransactionEditorRoute(
 @Composable
 fun TransactionEditorScreen(transactionEditorState: TransactionEditorState) {
 
-    val account = transactionEditorState.account.collectAsStateWithLifecycle().value
+    val account = transactionEditorState.selectedAccount.collectAsStateWithLifecycle().value
     val transactionTypes =
         transactionEditorState.transactionTypes.collectAsStateWithLifecycle().value
     val transactionTypeChip = remember(transactionTypes) {
@@ -178,7 +174,7 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState) {
         }
     }
     val selectedTransactionType =
-        transactionEditorState.transactionType.collectAsStateWithLifecycle().value
+        transactionEditorState.selectedTransactionType.collectAsStateWithLifecycle().value
     val title = transactionEditorState.title.collectAsStateWithLifecycle().value
     val subtitle = transactionEditorState.subtitle.collectAsStateWithLifecycle().value
     val amount = transactionEditorState.amount.collectAsStateWithLifecycle().value
@@ -263,20 +259,14 @@ fun TransactionEditorScreen(transactionEditorState: TransactionEditorState) {
             onSelect = transactionEditorState::updateTransactionTypeId,
             selectedItem = selectedTransactionType?.id,
             content = {
-                AmSurface(
-                    modifier = Modifier,
-                    positive = paymentTransaction,
-                    loading = false,
-                    highPadding = false
-                ) {
-                    AmSwitch(
-                        title = stringResource(R.string.payment_transaction),
-                        checkSubtitle = "Pay",
-                        unCheckSubtitle = "Receive",
-                        checked = paymentTransaction,
-                        onCheck = { transactionEditorState.updateTransactionPayment(it) }
-                    )
-                }
+                AmSwitch(
+                    modifier = Modifier.padding(6.dp),
+                    title = stringResource(R.string.payment_type),
+                    checkSubtitle = stringResource(R.string.receive),
+                    unCheckSubtitle = stringResource(R.string.pay),
+                    checked = paymentTransaction,
+                    onCheck = { transactionEditorState.updateTransactionPayment(it) }
+                )
             }
         )
     }
