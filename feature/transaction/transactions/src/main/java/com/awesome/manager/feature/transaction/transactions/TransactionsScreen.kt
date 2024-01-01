@@ -14,9 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
+import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
+import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.ui.SearchBox
+import com.awesome.manager.core.ui.AmSearch
 import com.awesome.manager.core.ui.TransactionCard
 
 
@@ -55,15 +58,18 @@ fun TransactionScreen(transactionsState: TransactionsState) {
     val searchKey = transactionsState.searchKey.collectAsStateWithLifecycle().value
 
     Column(Modifier.fillMaxSize()) {
-        SearchBox(
-            searchKey = searchKey, label = stringResource(R.string.search_for_transaction),
+        AmSearch(
+            searchKey = searchKey, searchLabel = stringResource(R.string.search_for_transaction),
             onSearchKeyChange = transactionsState::onUpdateSearchKey,
-            errorMessage = null
+            errorMessage = null,
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 36.dp, top = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = PaddingValues(
+                top = SCROLL_CONTENT_PADDING_TOP.dp,
+                bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),
             content = {
                 items(
                     items = transactions,

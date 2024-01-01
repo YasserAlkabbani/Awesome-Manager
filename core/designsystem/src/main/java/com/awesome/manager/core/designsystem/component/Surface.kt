@@ -12,11 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.UIConstant.HEIGH_PADDING
+import com.awesome.manager.core.designsystem.UIConstant.LOW_PADDING
 
 @Composable
 fun AmSurface(
     modifier: Modifier = Modifier, positive: Boolean?, loading: Boolean = false,
-    shape: Shape = MaterialTheme.shapes.medium, onClick: () -> Unit,
+    shape: Shape = MaterialTheme.shapes.medium, highPadding: Boolean, onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val surface = MaterialTheme.colorScheme.secondary
@@ -29,6 +31,9 @@ fun AmSurface(
             false -> error
         }
     }
+    val padding = remember(highPadding) {
+        if (highPadding) HEIGH_PADDING.dp else LOW_PADDING.dp
+    }
     Surface(
         modifier = modifier,
         shape = shape,
@@ -36,7 +41,7 @@ fun AmSurface(
         content = {
             Column {
                 Column(
-                    modifier = modifier.padding(6.dp),
+                    modifier = modifier.padding(padding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     content()
@@ -70,7 +75,7 @@ fun AmSurface(
         }
     }
     val padding = remember(highPadding) {
-        if (highPadding) 6.dp else 3.dp
+        if (highPadding) HEIGH_PADDING.dp else LOW_PADDING.dp
     }
     Surface(
         modifier = modifier,

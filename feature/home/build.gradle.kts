@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "com.awesome.manager.feature.home"
 }
-
-dependencies {
-
-}

@@ -14,10 +14,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
+import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
+import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.AccountCard
-import com.awesome.manager.core.ui.SearchBox
+import com.awesome.manager.core.ui.AmSearch
 
 @Composable
 fun AccountsRoute(
@@ -74,16 +77,19 @@ fun AccountsScreen(
     val accountSearchKey = accountsState.accountSearchKey.collectAsStateWithLifecycle().value
 
     Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox(
+        AmSearch(
             searchKey = accountSearchKey,
-            label = stringResource(R.string.search_for_account),
+            searchLabel = stringResource(R.string.search_for_account),
             onSearchKeyChange = accountsState::updateAccountSearchKey,
             errorMessage = null
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 36.dp, top = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = PaddingValues(
+                top = SCROLL_CONTENT_PADDING_TOP.dp,
+                bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),
             content = {
                 items(
                     items = accounts,

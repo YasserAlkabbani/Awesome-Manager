@@ -43,7 +43,7 @@ fun AmCard(
                 content()
             }
             AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive == true)
+                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive != false)
             }
         },
         colors = CardDefaults.cardColors(containerColor = cardColors),

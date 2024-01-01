@@ -1,11 +1,6 @@
 package com.awesome.manager.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +17,6 @@ import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
-import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
 
@@ -72,22 +66,20 @@ fun AmApp(
                 }
             },
             floatingActionButton = {
-                if (maAppState.shouldShowFloatingActionButton) {
-                    maAppState.currentMainDestination?.let {
-                        AmExtendedFloatingActionButton(
-                            modifier = Modifier,
-                            expanded = true,
-                            text = it.title.asText(),
-                            icon = it.addIcon,
-                            onClick = {
-                                currentDestination?.route?.let {
-                                    maAppState.navigateToAddByCurrentNavigation(
-                                        it
-                                    )
-                                }
+                maAppState.currentMainDestination?.addButton?.let { addButton ->
+                    AmExtendedFloatingActionButton(
+                        modifier = Modifier,
+                        expanded = true,
+                        text = addButton.title.asText(),
+                        icon = addButton.icon,
+                        onClick = {
+                            currentDestination?.route?.let {
+                                maAppState.navigateToAddByCurrentNavigation(
+                                    it
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             },
         ) { padding ->

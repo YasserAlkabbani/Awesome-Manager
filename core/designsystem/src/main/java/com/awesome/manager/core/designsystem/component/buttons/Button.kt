@@ -14,15 +14,13 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmButton(
-    modifier: Modifier=Modifier,
-    text:String,positive:Boolean?,
-    onClick:()->Unit
-){
+    modifier: Modifier = Modifier,
+    text: String, positive: Boolean?,
+    onClick: () -> Unit
+) {
     AmSurface(
-        modifier=modifier,
-        onClick = onClick,
-        positive = positive,
-        loading = false
+        modifier = modifier, onClick = onClick,
+        positive = positive, loading = false, highPadding = true
     ) {
         AmText(text = text)
     }
@@ -30,7 +28,7 @@ fun AmButton(
 
 @Preview
 @Composable
-fun AmButtonPreview(){
+fun AmButtonPreview() {
     AmButton(
         text = "CLICK ME !!",
         onClick = {}, positive = null
