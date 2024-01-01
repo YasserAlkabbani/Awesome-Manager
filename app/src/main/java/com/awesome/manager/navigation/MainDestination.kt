@@ -8,35 +8,40 @@ import com.awesome.manager.feature.home.R as homeR
 import com.awesome.manager.feature.account.accounts.R as accountsR
 import com.awesome.manager.feature.transaction.transactions.R as transactionsR
 
+data class AddButton(val title: AmTextManager, val icon: AmIconsType)
 
 enum class MainDestination(
-    val selectedAmIconsType:AmIconsType,
+    val selectedAmIconsType: AmIconsType,
     val unSelectedAmIconsType: AmIconsType,
-    val addIcon:AmIconsType,
-    val addTitle:AmTextManager,
-    val title:AmTextManager,
-){
-
+    val addButton: AddButton?,
+    val title: AmTextManager,
+) {
     Home(
-        selectedAmIconsType=AmIcons.HomeSelected,
+        selectedAmIconsType = AmIcons.HomeSelected,
         unSelectedAmIconsType = AmIcons.HomeUnSelected,
-        addIcon = AmIcons.HomeUnSelected,
-        addTitle = "ADD".asAmText(),
+        addButton = null,
         title = homeR.string.home.asAmText()
     ),
     Accounts(
-        selectedAmIconsType=AmIcons.AccountsSelected,
+        selectedAmIconsType = AmIcons.AccountsSelected,
         unSelectedAmIconsType = AmIcons.AccountsUnSelected,
-        addIcon = AmIcons.AccountAdd,
-        addTitle = "ADD".asAmText(),
+        addButton = AddButton(title = "Create Account".asAmText(), icon = AmIcons.AccountAdd),
         title = accountsR.string.accounts.asAmText()
     ),
     Transactions(
-        selectedAmIconsType=AmIcons.TransactionsSelected,
+        selectedAmIconsType = AmIcons.TransactionsSelected,
         unSelectedAmIconsType = AmIcons.TransactionsUnSelected,
-        addIcon = AmIcons.TransactionAdd,
-        addTitle = "ADD".asAmText(),
+        addButton = AddButton(
+            title = "Create Transaction".asAmText(),
+            icon = AmIcons.TransactionAdd
+        ),
         title = transactionsR.string.transactions.asAmText()
     ),
+//    Menu(
+//        selectedAmIconsType = AmIcons.MenuSelected,
+//        unSelectedAmIconsType = AmIcons.MenuUnSelected,
+//        addButton = null,
+//        title = menuR.string.menu.asAmText()
+//    ),
 
 }

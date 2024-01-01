@@ -22,6 +22,8 @@ import com.awesome.manager.feature.home.navigation.homeRoute
 import com.awesome.manager.feature.home.navigation.navigateToHome
 import com.awesome.manager.feature.intro.navigation.introRoute
 import com.awesome.manager.feature.intro.navigation.navigateToIntro
+import com.awesome.manager.feature.menu.navigation.menuRoute
+import com.awesome.manager.feature.menu.navigation.navigateToMenu
 import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsRoute
 import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
 import com.awesome.manager.feature.transaction.editor.navigation.transactionEditorRoute
@@ -56,6 +58,7 @@ class AmAppState(
             homeRoute -> MainDestination.Home
             accountsRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
+            menuRoute -> MainDestination.Menu
             else -> null
         }
 
@@ -105,6 +108,9 @@ class AmAppState(
 
             MainDestination.Transactions ->
                 navHostController.navigateToTransactions(navOptions = mainDestinationNavOption)
+
+            MainDestination.Menu ->
+                navHostController.navigateToMenu(navOptions = mainDestinationNavOption)
         }
     }
 
@@ -153,7 +159,6 @@ class AmAppState(
 
     fun navigateToAddByCurrentNavigation(currentDestinationRoute: String) {
         when (currentDestinationRoute) {
-            homeRoute -> navHostController.navigateToCreateAccount(null)
             accountsRoute -> navHostController.navigateToCreateAccount(null)
             transactionsRoute -> navHostController.navigateToCreateTransaction(null, null)
         }

@@ -109,10 +109,6 @@ fun AmTextField(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .defaultMinSize(
-//                        minWidth = 0.dp,
-//                        minHeight = 0.dp
-//                    )
                     .wrapContentHeight()
                     .onFocusChanged { isFocus.value = it.hasFocus },
                 value = text,
@@ -190,79 +186,79 @@ fun AmTextFieldPreview() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CustomTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    prefix: @Composable (() -> Unit)? = null,
-    suffix: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = TextFieldDefaults.shape,
-    colors: TextFieldColors = TextFieldDefaults.colors()
-) {
-    // If color is not provided via the text style, use content color as a default
-    val textColor = textStyle.color.takeOrElse {
-        if (isError) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onSurface
-    }
-    val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
-
-    CompositionLocalProvider() {
-        BasicTextField(
-            value = value,
-            modifier = modifier.wrapContentHeight()
-//                .defaultMinSize(minWidth = TextFieldDefaults.MinWidth, minHeight = TextFieldDefaults.MinHeight)
-            ,
-            onValueChange = onValueChange,
-            enabled = enabled,
-            readOnly = readOnly,
-            textStyle = mergedTextStyle,
-            cursorBrush = SolidColor(if (isError) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error),
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            interactionSource = interactionSource,
-            singleLine = singleLine,
-            maxLines = maxLines,
-            minLines = minLines,
-            decorationBox = @Composable { innerTextField ->
-                // places leading icon, text field with label and placeholder, trailing icon
-                TextFieldDefaults.DecorationBox(
-                    value = value,
-                    visualTransformation = visualTransformation,
-                    innerTextField = innerTextField,
-                    placeholder = placeholder,
-                    label = label,
-                    leadingIcon = leadingIcon,
-                    trailingIcon = trailingIcon,
-                    prefix = prefix,
-                    suffix = suffix,
-                    supportingText = supportingText,
-                    shape = shape,
-                    singleLine = singleLine,
-                    enabled = enabled,
-                    isError = isError,
-                    interactionSource = interactionSource,
-                    colors = colors,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
-        )
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun CustomTextField(
+//    value: String,
+//    onValueChange: (String) -> Unit,
+//    modifier: Modifier = Modifier,
+//    enabled: Boolean = true,
+//    readOnly: Boolean = false,
+//    textStyle: TextStyle = LocalTextStyle.current,
+//    label: @Composable (() -> Unit)? = null,
+//    placeholder: @Composable (() -> Unit)? = null,
+//    leadingIcon: @Composable (() -> Unit)? = null,
+//    trailingIcon: @Composable (() -> Unit)? = null,
+//    prefix: @Composable (() -> Unit)? = null,
+//    suffix: @Composable (() -> Unit)? = null,
+//    supportingText: @Composable (() -> Unit)? = null,
+//    isError: Boolean = false,
+//    visualTransformation: VisualTransformation = VisualTransformation.None,
+//    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+//    keyboardActions: KeyboardActions = KeyboardActions.Default,
+//    singleLine: Boolean = false,
+//    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+//    minLines: Int = 1,
+//    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+//    shape: Shape = TextFieldDefaults.shape,
+//    colors: TextFieldColors = TextFieldDefaults.colors()
+//) {
+//    // If color is not provided via the text style, use content color as a default
+//    val textColor = textStyle.color.takeOrElse {
+//        if (isError) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onSurface
+//    }
+//    val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
+//
+//    CompositionLocalProvider() {
+//        BasicTextField(
+//            value = value,
+//            modifier = modifier.wrapContentHeight()
+////                .defaultMinSize(minWidth = TextFieldDefaults.MinWidth, minHeight = TextFieldDefaults.MinHeight)
+//            ,
+//            onValueChange = onValueChange,
+//            enabled = enabled,
+//            readOnly = readOnly,
+//            textStyle = mergedTextStyle,
+//            cursorBrush = SolidColor(if (isError) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error),
+//            visualTransformation = visualTransformation,
+//            keyboardOptions = keyboardOptions,
+//            keyboardActions = keyboardActions,
+//            interactionSource = interactionSource,
+//            singleLine = singleLine,
+//            maxLines = maxLines,
+//            minLines = minLines,
+//            decorationBox = @Composable { innerTextField ->
+//                // places leading icon, text field with label and placeholder, trailing icon
+//                TextFieldDefaults.DecorationBox(
+//                    value = value,
+//                    visualTransformation = visualTransformation,
+//                    innerTextField = innerTextField,
+//                    placeholder = placeholder,
+//                    label = label,
+//                    leadingIcon = leadingIcon,
+//                    trailingIcon = trailingIcon,
+//                    prefix = prefix,
+//                    suffix = suffix,
+//                    supportingText = supportingText,
+//                    shape = shape,
+//                    singleLine = singleLine,
+//                    enabled = enabled,
+//                    isError = isError,
+//                    interactionSource = interactionSource,
+//                    colors = colors,
+//                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+//                )
+//            }
+//        )
+//    }
+//}

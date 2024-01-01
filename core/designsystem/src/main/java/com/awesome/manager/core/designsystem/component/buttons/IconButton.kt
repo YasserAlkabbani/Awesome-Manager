@@ -16,7 +16,10 @@ fun AmIconButton(
     positive: Boolean?,
     onClick: () -> Unit
 ) {
-    AmSurface(modifier = modifier, positive = positive, onClick = onClick) {
+    AmSurface(
+        modifier = modifier, positive = positive,
+        highPadding = true, onClick = onClick
+    ) {
         AmIcon(amIconsType = amIconsType)
     }
 }

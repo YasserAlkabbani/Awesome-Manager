@@ -6,15 +6,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.awesome.manager.feature.menu.MenuRoute
 
-private const val menuRoute:String="menu_route"
+const val menuRoute: String = "menu_route"
 
-fun NavHostController.navigateToMenu(navOptions: NavOptions?){
-    navigate(route = menuRoute,navOptions=navOptions)
+fun NavHostController.navigateToMenu(navOptions: NavOptions?) {
+    navigate(route = menuRoute, navOptions = navOptions)
 }
 
 
-fun NavGraphBuilder.menuScreen(){
-    composable(menuRoute){
+fun NavGraphBuilder.menuScreen() {
+    composable(menuRoute) {
         MenuRoute()
     }
 }

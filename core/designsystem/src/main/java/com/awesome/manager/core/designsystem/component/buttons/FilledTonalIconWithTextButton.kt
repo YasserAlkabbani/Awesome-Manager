@@ -22,19 +22,19 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmFilledTonalIconWithTextButton(
-    modifier: Modifier=Modifier,
-    text:String, amIconsType: AmIconsType,
-    positive:Boolean, loading:Boolean,
-    onClick:()->Unit
-){
+    modifier: Modifier = Modifier,
+    text: String, amIconsType: AmIconsType,
+    positive: Boolean, loading: Boolean,
+    onClick: () -> Unit
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         AmSurface(
-            modifier=modifier,
-            onClick = onClick,
-            positive = positive, loading = loading
+            modifier = modifier, onClick = onClick,
+            positive = positive, loading = loading,
+            highPadding = true
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -42,11 +42,14 @@ fun AmFilledTonalIconWithTextButton(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 AmText(text = text, style = MaterialTheme.typography.titleLarge)
-                AmCard(modifier=Modifier.size(50.dp),positive = positive, shape = MaterialTheme.shapes.extraLarge) {
-                    if(loading) {
-                        AmCircularProgress(modifier = Modifier.fillMaxSize(),positive = true)
-                    }else{
-                        AmIcon(modifier=Modifier.fillMaxSize(),amIconsType = amIconsType)
+                AmCard(
+                    modifier = Modifier.size(50.dp), positive = positive,
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    if (loading) {
+                        AmCircularProgress(modifier = Modifier.fillMaxSize(), positive = true)
+                    } else {
+                        AmIcon(modifier = Modifier.fillMaxSize(), amIconsType = amIconsType)
                     }
                 }
             }
@@ -58,21 +61,22 @@ fun AmFilledTonalIconWithTextButton(
 
 @Preview
 @Composable
-fun AmFilledTonalIconButtonWithPositivePreview(){
+fun AmFilledTonalIconButtonWithPositivePreview() {
     AmFilledTonalIconWithTextButton(
         modifier = Modifier,
-        text = "TEST TEXT",amIconsType = AmIcons.Save,
-        positive = true,loading = true,
+        text = "TEST TEXT", amIconsType = AmIcons.Save,
+        positive = true, loading = true,
         onClick = {}
     )
 }
+
 @Preview
 @Composable
-fun AmFilledTonalIconButtonWithNegativePreview(){
+fun AmFilledTonalIconButtonWithNegativePreview() {
     AmFilledTonalIconWithTextButton(
         modifier = Modifier,
-        text = "TEST TEXT",amIconsType = AmIcons.Save,
-        positive = false,loading = false,
+        text = "TEST TEXT", amIconsType = AmIcons.Save,
+        positive = false, loading = false,
         onClick = {}
     )
 }
