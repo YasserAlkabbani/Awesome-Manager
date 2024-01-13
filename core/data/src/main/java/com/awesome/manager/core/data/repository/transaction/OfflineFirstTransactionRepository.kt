@@ -59,5 +59,6 @@ class OfflineFirstTransactionRepository @Inject constructor(
             ).collect()
     }
 
+    override suspend fun deleteTransactions() = transactionDao.deleteTransactions()
 
 }

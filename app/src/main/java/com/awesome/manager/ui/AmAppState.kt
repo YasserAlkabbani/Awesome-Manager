@@ -58,7 +58,7 @@ class AmAppState(
             homeRoute -> MainDestination.Home
             accountsRoute -> MainDestination.Accounts
             transactionsRoute -> MainDestination.Transactions
-            menuRoute -> MainDestination.Menu
+//            menuRoute -> MainDestination.Menu
             else -> null
         }
 
@@ -109,8 +109,8 @@ class AmAppState(
             MainDestination.Transactions ->
                 navHostController.navigateToTransactions(navOptions = mainDestinationNavOption)
 
-            MainDestination.Menu ->
-                navHostController.navigateToMenu(navOptions = mainDestinationNavOption)
+//            MainDestination.Menu ->
+//                navHostController.navigateToMenu(navOptions = mainDestinationNavOption)
         }
     }
 

@@ -32,4 +32,9 @@ class TransactionsState(
         _transactionNavigation.update { null }
     }
 
+    private val _profileBottomSheet:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val profileBottomSheet:StateFlow<Boolean> =_profileBottomSheet
+    fun showProfileBottomSheet(){_profileBottomSheet.update { true }}
+    fun doneProfileBottomSheet(){_profileBottomSheet.update { false }}
+
 }

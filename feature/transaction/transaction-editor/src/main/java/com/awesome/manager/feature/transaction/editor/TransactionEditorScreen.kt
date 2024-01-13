@@ -54,7 +54,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TransactionEditorRoute(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    updateAppBarState: (appBarData: AppBarData) -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -63,7 +63,7 @@ fun TransactionEditorRoute(
 
     val popup = transactionEditorState.navigatePopup.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = popup, block = {
-        popup?.let {
+        if (popup) {
             transactionEditorState.donePop()
             onBack()
         }

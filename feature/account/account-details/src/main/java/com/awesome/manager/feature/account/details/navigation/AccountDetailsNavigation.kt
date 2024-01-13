@@ -30,7 +30,7 @@ fun NavGraphBuilder.accountDetailsScreen(
     navigateToEditAccount: (AmAccount) -> Unit,
     navigateCreateTransaction: (AmAccount) -> Unit,
     navigateToTransactionDetails: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit
+    updateAppBarState: (appBarData: AppBarData) -> Unit
 ) {
     composable(
         route = "$accountDetailsRoute/{$ARG_ACCOUNT_ID}",

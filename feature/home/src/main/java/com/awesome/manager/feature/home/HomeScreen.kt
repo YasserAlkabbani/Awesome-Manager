@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import com.awesome.manager.core.ui.ScreenPlaceHolder
 
 @Composable
-fun HomeRoute() {
+fun HomeRoute(showProfile: () -> Unit) {
     HomeScreen()
 }
 

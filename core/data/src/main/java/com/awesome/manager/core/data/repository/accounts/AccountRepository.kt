@@ -16,4 +16,6 @@ interface AccountRepository {
 
     suspend fun syncAccount()
 
+    suspend fun deleteAccounts()
+
 }

@@ -36,7 +36,7 @@ fun NavHostController.navigateToEditAccount(accountId: String, navOptions: NavOp
 
 fun NavGraphBuilder.accountEditorScreen(
     onBack: () -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit
+    updateAppBarState: (appBarData: AppBarData) -> Unit
 ) {
     composable(
         route = "$accountEditorRoute/{$ARG_ACCOUNT_ID}",

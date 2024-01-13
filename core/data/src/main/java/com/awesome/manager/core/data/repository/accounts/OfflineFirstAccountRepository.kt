@@ -52,4 +52,6 @@ class OfflineFirstAccountRepository @Inject constructor(
             ).collect()
     }
 
+    override suspend fun deleteAccounts() = accountDao.deleteAccounts()
+
 }

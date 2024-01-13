@@ -27,6 +27,7 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 fun AmSearch(
     searchKey: String, searchLabel: String,
     onSearchKeyChange: (String) -> Unit, errorMessage: String?,
+    showProfileBottomSheet: () -> Unit
 ) {
     Row(
         modifier = Modifier.padding(horizontal = SPACE_SMALL.dp),
@@ -42,7 +43,8 @@ fun AmSearch(
         Spacer(modifier = Modifier.width(SPACE_MEDIUM.dp))
         AmSurface(
             positive = null, shape = MaterialTheme.shapes.extraLarge,
-            highPadding = false, onClick = {}) {
+            highPadding = false, onClick = showProfileBottomSheet
+        ) {
             AmIcon(
                 modifier = Modifier.size(UIConstant.IMAGE_SIZE_MEDIUM.dp),
                 amIconsType = AmIcons.Profile

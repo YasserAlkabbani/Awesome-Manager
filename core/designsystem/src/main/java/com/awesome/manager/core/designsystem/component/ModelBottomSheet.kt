@@ -24,50 +24,61 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+enum class AmBottomSheetMainState {
+    Open, Close, Idl
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 class AmBottomSheetState(
     internal val sheetState: SheetState,
     val isOpenButtonSheet: MutableState<Boolean>,
-    internal val coroutineScope:CoroutineScope,
-    internal val onDismiss:()->Unit,internal val onOpen:()->Unit
-){
-    fun close(){
-        when(sheetState.currentValue){
+    internal val coroutineScope: CoroutineScope,
+    internal val onDismiss: () -> Unit, internal val onOpen: () -> Unit
+) {
+    fun close() {
+        when (sheetState.currentValue) {
             SheetValue.Hidden -> {}
             SheetValue.Expanded -> coroutineScope.launch {
                 sheetState.hide()
                 onDismiss()
             }
+
             SheetValue.PartiallyExpanded -> coroutineScope.launch {
                 sheetState.hide()
                 onDismiss()
             }
         }
     }
-    fun open(){
-        when(sheetState.currentValue){
-            SheetValue.Hidden -> { onOpen()}
-            SheetValue.PartiallyExpanded -> { onOpen() }
+
+    fun open() {
+        when (sheetState.currentValue) {
+            SheetValue.Hidden -> {
+                onOpen()
+            }
+
+            SheetValue.PartiallyExpanded -> {
+                onOpen()
+            }
+
             SheetValue.Expanded -> {}
         }
     }
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun rememberAmBottomSheetState(
-    sheetState:SheetState= rememberModalBottomSheetState(),
-    coroutineScope:CoroutineScope= rememberCoroutineScope(),
-    openBottomSheet: MutableState<Boolean> =  rememberSaveable { mutableStateOf(false) }
-):AmBottomSheetState{
-    return remember(sheetState,coroutineScope,openBottomSheet) {
+    sheetState: SheetState = rememberModalBottomSheetState(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    openBottomSheet: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+): AmBottomSheetState {
+    return remember(sheetState, coroutineScope, openBottomSheet) {
         AmBottomSheetState(
-            sheetState =sheetState,
-            isOpenButtonSheet =openBottomSheet,
-            coroutineScope =coroutineScope,
-            onDismiss ={ openBottomSheet.value=false },
+            sheetState = sheetState,
+            isOpenButtonSheet = openBottomSheet,
+            coroutineScope = coroutineScope,
+            onDismiss = { openBottomSheet.value = false },
             onOpen = {
                 openBottomSheet.value = true
             }
@@ -78,8 +89,8 @@ fun rememberAmBottomSheetState(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmModelBottomSheet(
-    amBottomSheetState:AmBottomSheetState,
-    content:@Composable ColumnScope.()->Unit,
+    amBottomSheetState: AmBottomSheetState,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     if (amBottomSheetState.isOpenButtonSheet.value) {
         ModalBottomSheet(
@@ -89,7 +100,7 @@ fun AmModelBottomSheet(
             content = {
                 Column(
                     modifier = Modifier.padding(6.dp),
-                    content=content
+                    content = content
                 )
             }
         )

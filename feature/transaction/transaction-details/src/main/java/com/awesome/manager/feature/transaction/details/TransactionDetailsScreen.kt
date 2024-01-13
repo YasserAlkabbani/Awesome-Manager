@@ -25,7 +25,7 @@ fun TransactionDetailsRoute(
     navigateToAccount: (AmAccount) -> Unit,
     navigateToCreateTransaction: (AmAccount) -> Unit,
     navigateToEditTransaction: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    updateAppBarState: (appBarData: AppBarData) -> Unit,
     transactionDetailsViewModel: TransactionDetailsViewModel = hiltViewModel()
 ) {
 

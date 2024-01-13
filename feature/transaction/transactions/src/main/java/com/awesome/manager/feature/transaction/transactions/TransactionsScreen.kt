@@ -17,7 +17,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
-import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.AmSearch
 import com.awesome.manager.core.ui.TransactionCard
@@ -26,16 +25,11 @@ import com.awesome.manager.core.ui.TransactionCard
 @Composable
 fun TransactionsRoute(
     navigateToTransactionDetails: (AmTransaction) -> Unit,
-    updateAppBarState: (AppBarData?) -> Unit,
+    showProfileBottomSheet: () -> Unit,
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ) {
 
     val transactionsState = transactionsViewModel.transactionsState
-
-
-    LaunchedEffect(key1 = Unit, block = {
-        updateAppBarState(null)
-    })
 
     val transactionDetailsNavigation =
         transactionsState.transactionNavigation.collectAsStateWithLifecycle().value
@@ -43,6 +37,15 @@ fun TransactionsRoute(
         transactionDetailsNavigation?.let {
             transactionsState.doneTransactionNavigation()
             navigateToTransactionDetails(it)
+        }
+    })
+
+    val profileBottomSheet =
+        transactionsState.profileBottomSheet.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = profileBottomSheet, block = {
+        if (profileBottomSheet) {
+            showProfileBottomSheet()
+            transactionsState.doneProfileBottomSheet()
         }
     })
 
@@ -62,6 +65,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
             searchKey = searchKey, searchLabel = stringResource(R.string.search_for_transaction),
             onSearchKeyChange = transactionsState::onUpdateSearchKey,
             errorMessage = null,
+            showProfileBottomSheet = transactionsState::showProfileBottomSheet
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

@@ -25,26 +25,30 @@ private class AuthRequest {
     @Resource("token")
     class RefreshToken(
         val parent: AuthRequest = AuthRequest(),
-        val grant_type:String="refresh_token"
+        val grant_type: String = "refresh_token"
     )
+
     @Resource("token")
     class Login(
         val parent: AuthRequest = AuthRequest(),
-        val grant_type:String="password"
+        val grant_type: String = "password"
     )
+
     @Resource("signup")
     class SignUp(
         val parent: AuthRequest = AuthRequest(),
     )
+
     @Resource("user")
     class RefreshUser(
-        val parent:AuthRequest=AuthRequest()
+        val parent: AuthRequest = AuthRequest()
     )
 
     @Resource("recover")
     class RecoverPassword(
         val parent: AuthRequest = AuthRequest()
     )
+
     @Resource("logout")
     class Logout(
         val parent: AuthRequest = AuthRequest()
@@ -52,43 +56,45 @@ private class AuthRequest {
 }
 
 @Serializable
-data class LoginRequest(val email: String,val password: String)
+data class LoginRequest(val email: String, val password: String)
 
 @Serializable
-data class SignupRequest(val email: String,val password: String)
-
+data class SignupRequest(val email: String, val password: String)
 
 
 class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     AuthNetworkDataSource {
 
-    override suspend fun login(email: String, password: String) : AuthNetwork =
-        httpClient.post(AuthRequest.Login()){
-            setBody(LoginRequest(email=email,password=password))
-        }.asResult<AuthNetwork>().also {authNetwork->
+    override suspend fun login(email: String, password: String): AuthNetwork =
+        httpClient.post(AuthRequest.Login()) {
+            setBody(LoginRequest(email = email, password = password))
+        }.asResult<AuthNetwork>().also { authNetwork ->
             httpClient.plugin(Auth).bearer {
                 loadTokens { BearerTokens(authNetwork.accessToken, authNetwork.refreshToken) }
             }
         }
 
-    override suspend fun signUp(email: String, password: String) : AuthUserNetwork =
-        httpClient.post(AuthRequest.SignUp()){
-            setBody(SignupRequest(email = email,password=password))
+    override suspend fun signUp(email: String, password: String): AuthUserNetwork =
+        httpClient.post(AuthRequest.SignUp()) {
+            setBody(SignupRequest(email = email, password = password))
         }.asResult()
 
-    override suspend fun refreshUser():AuthNetwork= httpClient.get(AuthRequest.RefreshUser()).asResult()
+    override suspend fun refreshUser(): AuthNetwork =
+        httpClient.get(AuthRequest.RefreshUser()).asResult()
+
+    override suspend fun logout() =
+        httpClient.post(AuthRequest.Logout()).asResult<Unit>()
 
 //    suspend fun recoverPassword() =httpClient.get(AuthRequest.RefreshUser()).asResult()
 
-    suspend fun logout(){}
 
     suspend fun refreshToken() {
-        val token=httpClient.get("").body<String>()
+        val token = httpClient.get("").body<String>()
         httpClient.config {
-            install(Auth){
+            install(Auth) {
                 bearer {
                     refreshTokens {
-                        BearerTokens("","")
+                        BearerTokens("", "")
                     }
                 }
             }

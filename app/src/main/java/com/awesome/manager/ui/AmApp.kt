@@ -14,9 +14,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.component.AmAppBar
+import com.awesome.manager.core.designsystem.component.AmBottomSheetMainState
 import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
+import com.awesome.manager.core.designsystem.component.AmModelBottomSheet
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
+import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
+import com.awesome.manager.core.ui.BottomSheetProfile
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
 
@@ -29,17 +33,42 @@ fun AmApp(
     val mainActivityViewModel: MainActivityViewModel = viewModel()
     val mainActivityState = mainActivityViewModel.mainActivityState
 
+    val currentUserEmail = mainActivityState.currentUserEmail.collectAsStateWithLifecycle().value
     val loginState = mainActivityState.isLogin.collectAsStateWithLifecycle().value
     val appBarState = mainActivityState.appBarState.collectAsStateWithLifecycle().value
 
     val currentDestination = maAppState.currentDestination
-
     val currentMainDestination = maAppState.currentMainDestination
 
 
     LaunchedEffect(key1 = loginState, key2 = currentDestination, block = {
         currentDestination?.route?.let {
             maAppState.navigateByAuthState(loginState, it)
+        }
+    })
+
+    val profileBottomSheet =
+        mainActivityState.profileBottomSheet.collectAsStateWithLifecycle().value
+    val amBottomSheetState = rememberAmBottomSheetState()
+    AmModelBottomSheet(amBottomSheetState = amBottomSheetState) {
+        BottomSheetProfile(
+            email = currentUserEmail,
+            logout = mainActivityState.logout
+        )
+    }
+    LaunchedEffect(key1 = profileBottomSheet, block = {
+        when (profileBottomSheet) {
+            AmBottomSheetMainState.Open -> {
+                amBottomSheetState.open()
+                mainActivityState.resetBottomSheet()
+            }
+
+            AmBottomSheetMainState.Close -> {
+                amBottomSheetState.close()
+                mainActivityState.resetBottomSheet()
+            }
+
+            AmBottomSheetMainState.Idl -> {}
         }
     })
 
@@ -86,7 +115,8 @@ fun AmApp(
             AmNavHost(
                 modifier = Modifier.padding(padding),
                 amAppState = maAppState,
-                updateAppBarState = mainActivityState::updateAppBarState
+                updateAppBarState = mainActivityState::updateAppBarState,
+                showProfileBottomSheet = mainActivityState::showProfileBottomSheet
             )
         }
     }

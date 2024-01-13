@@ -1,7 +1,7 @@
 package com.awesome.manager
 
+import com.awesome.manager.core.designsystem.component.AmBottomSheetMainState
 import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class MainActivityState(
-    val isLogin: StateFlow<Boolean>
+    val isLogin: StateFlow<Boolean>,
+    val currentUserEmail: StateFlow<String>,
+    val logout: () -> Unit,
 ) {
 
     private val _selectedAccount: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
@@ -24,20 +26,35 @@ class MainActivityState(
         _selectedTransaction.update { amTransaction }
     }
 
-    private val _navigationBack: MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val navigationBack: StateFlow<Unit?> = _navigationBack
+    private val _navigationBack: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val navigationBack: StateFlow<Boolean> = _navigationBack
     fun onNavigationBack() {
-        _navigationBack.update { }
+        _navigationBack.update { true }
     }
 
     fun doneNavigationBack() {
-        _navigationBack.update { null }
+        _navigationBack.update { false }
     }
 
     private val _appBarState: MutableStateFlow<AppBarData?> = MutableStateFlow(null)
     val appBarState: StateFlow<AppBarData?> = _appBarState
     fun updateAppBarState(appBarData: AppBarData?) {
         _appBarState.update { appBarData }
+    }
+
+    private val _profileBottomSheet: MutableStateFlow<AmBottomSheetMainState> =
+        MutableStateFlow(AmBottomSheetMainState.Idl)
+    val profileBottomSheet: StateFlow<AmBottomSheetMainState> = _profileBottomSheet
+    fun showProfileBottomSheet() {
+        _profileBottomSheet.update { AmBottomSheetMainState.Open }
+    }
+
+    fun hideProfileBottomSheet() {
+        _profileBottomSheet.update { AmBottomSheetMainState.Close }
+    }
+
+    fun resetBottomSheet() {
+        _profileBottomSheet.update { AmBottomSheetMainState.Idl }
     }
 
 }

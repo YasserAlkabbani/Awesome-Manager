@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface TransactionTypeDao {
 
     @Upsert
-    fun upsertTransactionType(currencyEntity: List<TransactionTypeEntity>)
+    suspend fun upsertTransactionType(currencyEntity: List<TransactionTypeEntity>)
 
     @Query("SELECT * FROM transaction_types")
     fun returnTransactionTypes(): Flow<List<TransactionTypeEntity>>
@@ -20,6 +20,6 @@ interface TransactionTypeDao {
     fun returnTransactionTypeById(transactionTypeId: String): Flow<TransactionTypeEntity>
 
     @Query("SELECT * FROM transaction_types ORDER BY updated_at DESC LIMIT 1")
-    fun returnLastUpdatedTransactionType(): TransactionTypeEntity?
+    suspend fun returnLastUpdatedTransactionType(): TransactionTypeEntity?
 
 }

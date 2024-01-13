@@ -11,6 +11,7 @@ import com.awesome.manager.feature.account.editor.navigation.AccountEditorArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -67,7 +68,7 @@ class AccountEditorViewModel @Inject constructor(
         viewModelScope.launch {
 
             val initAccountId = accountEditorArg.accountId
-            val currentUserId = authRepository.returnCurrentUserId()!!
+            val currentUserId = authRepository.currentUserId().first()
 
             val (accountId: String, creatorUserId: String?) = when (initAccountId) {
                 null -> UUID.randomUUID().toString() to currentUserId

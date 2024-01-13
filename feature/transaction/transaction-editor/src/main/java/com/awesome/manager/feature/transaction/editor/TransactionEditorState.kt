@@ -120,14 +120,14 @@ class TransactionEditorState(
             )
         } else null
 
-    private val _navigatePopup: MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val navigatePopup: StateFlow<Unit?> = _navigatePopup
+    private val _navigatePopup: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val navigatePopup: StateFlow<Boolean> = _navigatePopup
     fun startPop() {
-        _navigatePopup.update { }
+        _navigatePopup.update { true }
     }
 
     fun donePop() {
-        _navigatePopup.update { null }
+        _navigatePopup.update { false }
     }
 
 }

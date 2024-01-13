@@ -20,5 +20,6 @@ interface TransactionRepository {
 
     suspend fun synTransactions()
 
+    suspend fun deleteTransactions()
 
 }

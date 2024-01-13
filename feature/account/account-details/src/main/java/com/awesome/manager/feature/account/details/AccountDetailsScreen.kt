@@ -27,7 +27,7 @@ fun AccountDetailsRoute(
     navigateToEditAccount: (AmAccount) -> Unit,
     navigateCreateTransaction: (AmAccount) -> Unit,
     navigateToTransactionDetails: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    updateAppBarState: (appBarData: AppBarData) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
     val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
@@ -36,7 +36,7 @@ fun AccountDetailsRoute(
 
     val backNavigationState = accountDetailsState.backNavigation.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = backNavigationState, block = {
-        backNavigationState?.let {
+        if (backNavigationState) {
             accountDetailsState.doneBackNavigation()
             navigateBack()
         }
@@ -79,8 +79,6 @@ fun AccountDetailsRoute(
                     endIcon = AmIcons.Edit to accountDetailsState::startEditAccountNavigation
                 )
             )
-        } else {
-            updateAppBarState(null)
         }
     })
 

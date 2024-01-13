@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.Flow
 interface TransactionDao {
 
     @Upsert
-    fun upsertTransaction(transactionEntity: TransactionEntity)
+    suspend fun upsertTransaction(transactionEntity: TransactionEntity)
 
     @Upsert
-    fun upsertTransaction(transactionEntity: List<TransactionEntity>)
+    suspend fun upsertTransaction(transactionEntity: List<TransactionEntity>)
 
 
     @Transaction
@@ -25,7 +25,9 @@ interface TransactionDao {
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId AND transactions.title LIKE '%' || :searchKey || '%'")
-    fun returnTransactionsByAccountId(accountId: String, searchKey: String): Flow<List<TransactionEntityWithData>>
+    fun returnTransactionsByAccountId(
+        accountId: String, searchKey: String
+    ): Flow<List<TransactionEntityWithData>>
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE transaction_id=:transactionId")
@@ -35,6 +37,9 @@ interface TransactionDao {
     fun returnPendingTransaction(): Flow<TransactionEntity?>
 
     @Query("SELECT * FROM transactions WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
-    fun returnLastUpdatedTransaction(): TransactionEntity?
+    suspend fun returnLastUpdatedTransaction(): TransactionEntity?
+
+    @Query("DELETE FROM transactions")
+    suspend fun deleteTransactions()
 
 }

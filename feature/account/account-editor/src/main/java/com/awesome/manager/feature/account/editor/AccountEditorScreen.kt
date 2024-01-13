@@ -33,7 +33,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun AccountEditorRoute(
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    updateAppBarState: (appBarData: AppBarData) -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -41,7 +41,7 @@ fun AccountEditorRoute(
 
     val navigationBack = accountEditorState.navigationBack.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = navigationBack, block = {
-        navigationBack?.let {
+        if (navigationBack) {
             accountEditorState.doneNavigationBack()
             onBack()
         }

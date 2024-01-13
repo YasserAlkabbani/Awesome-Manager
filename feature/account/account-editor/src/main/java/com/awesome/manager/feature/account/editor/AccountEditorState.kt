@@ -63,14 +63,14 @@ class AccountEditorState(
             )
         } else null
 
-    private val _navigationBack: MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val navigationBack: StateFlow<Unit?> = _navigationBack
+    private val _navigationBack: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val navigationBack: StateFlow<Boolean> = _navigationBack
     fun onNavigationBack() {
-        _navigationBack.update { }
+        _navigationBack.update { true }
     }
 
     fun doneNavigationBack() {
-        _navigationBack.update { null }
+        _navigationBack.update { false }
     }
 
 }

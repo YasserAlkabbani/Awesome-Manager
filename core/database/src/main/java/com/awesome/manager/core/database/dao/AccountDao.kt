@@ -46,6 +46,9 @@ interface AccountDao {
     fun returnPendingAccount(): Flow<AccountEntity?>
 
     @Query("SELECT * FROM accounts WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
-    fun returnLastUpdatedAccount(): AccountEntity?
+    suspend fun returnLastUpdatedAccount(): AccountEntity?
+
+    @Query("DELETE FROM accounts")
+    suspend fun deleteAccounts()
 
 }

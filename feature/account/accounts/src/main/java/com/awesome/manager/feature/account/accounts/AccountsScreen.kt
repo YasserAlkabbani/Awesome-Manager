@@ -27,7 +27,7 @@ fun AccountsRoute(
     navigateToCreateAccount: () -> Unit,
     navigateToAccountDetails: (AmAccount) -> Unit,
     navigateToCreateTransaction: (AmAccount) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    showProfileBottomSheet: () -> Unit,
     accountsViewModel: AccountsViewModel = hiltViewModel()
 ) {
 
@@ -36,7 +36,7 @@ fun AccountsRoute(
     val createAccountNavigation =
         accountsState.createAccountNavigation.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = createAccountNavigation, block = {
-        createAccountNavigation?.let {
+        if (createAccountNavigation) {
             navigateToCreateAccount()
             accountsState.doneCreateAccountNavigation()
         }
@@ -60,9 +60,15 @@ fun AccountsRoute(
         }
     })
 
-    LaunchedEffect(key1 = Unit, block = {
-        updateAppBarState(null)
+    val profileBottomSheet =
+        accountsState.profileBottomSheet.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = profileBottomSheet, block = {
+        if (profileBottomSheet) {
+            showProfileBottomSheet()
+            accountsState.doneProfileBottomSheet()
+        }
     })
+
 
     AccountsScreen(accountsState)
 }
@@ -81,7 +87,8 @@ fun AccountsScreen(
             searchKey = accountSearchKey,
             searchLabel = stringResource(R.string.search_for_account),
             onSearchKeyChange = accountsState::updateAccountSearchKey,
-            errorMessage = null
+            errorMessage = null,
+            showProfileBottomSheet = accountsState::showProfileBottomSheet
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

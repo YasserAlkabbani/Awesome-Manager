@@ -36,7 +36,7 @@ fun NavHostController.navigateToEditTransaction(
 
 fun NavGraphBuilder.transactionEditorScreen(
     onBack: () -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit
+    updateAppBarState: (appBarData: AppBarData) -> Unit
 ) {
     composable(
         route = "$transactionEditorRoute/{$ACCOUNT_ID}/{$TRANSACTION_ID}",

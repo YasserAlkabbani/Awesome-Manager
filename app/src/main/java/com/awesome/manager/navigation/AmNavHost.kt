@@ -28,7 +28,8 @@ fun AmNavHost(
     modifier: Modifier,
     amAppState: AmAppState,
     startDistinction: String = introRoute,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit
+    updateAppBarState: (appBarData: AppBarData) -> Unit,
+    showProfileBottomSheet: () -> Unit,
 ) {
 
     val navController = amAppState.navHostController
@@ -41,7 +42,9 @@ fun AmNavHost(
 
         introScreen()
         authScreen()
-        homeScreen()
+        homeScreen(
+            showProfileBottomSheet = showProfileBottomSheet
+        )
 
         accountsScreen(
             navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
@@ -57,7 +60,7 @@ fun AmNavHost(
                     navOptions = null
                 )
             },
-            updateAppBarState = updateAppBarState
+            showProfileBottomSheet = showProfileBottomSheet
         )
         accountEditorScreen(
             navController::popBackStack,
@@ -93,7 +96,7 @@ fun AmNavHost(
                     navOptions = null
                 )
             },
-            updateAppBarState = updateAppBarState
+            showProfileBottomSheet = showProfileBottomSheet
         )
         transactionEditorScreen(
             onBack = { navController.popBackStack() },

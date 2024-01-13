@@ -5,10 +5,12 @@ import com.awesome.manager.core.network.model.AuthUserNetwork
 
 interface AuthNetworkDataSource {
 
-    suspend fun login(email:String,password: String): AuthNetwork
+    suspend fun login(email: String, password: String): AuthNetwork
 
-    suspend fun signUp(email: String,password:String): AuthUserNetwork
+    suspend fun signUp(email: String, password: String): AuthUserNetwork
 
     suspend fun refreshUser(): AuthNetwork
+
+    suspend fun logout()
 
 }

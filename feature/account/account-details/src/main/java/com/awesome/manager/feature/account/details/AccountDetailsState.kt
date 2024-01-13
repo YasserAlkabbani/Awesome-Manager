@@ -12,14 +12,14 @@ class AccountDetailsState(
     val amTransactions: StateFlow<List<AmTransaction>>
 ) {
 
-    private val _backNavigation: MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val backNavigation: StateFlow<Unit?> = _backNavigation
+    private val _backNavigation: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val backNavigation: StateFlow<Boolean> = _backNavigation
     fun startBackNavigation() {
-        _backNavigation.update { }
+        _backNavigation.update { true }
     }
 
     fun doneBackNavigation() {
-        _backNavigation.update { null }
+        _backNavigation.update { false }
     }
 
     private val _editAccountNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
@@ -35,7 +35,7 @@ class AccountDetailsState(
     private val _createTransactionNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
     val createTransactionNavigation: StateFlow<AmAccount?> = _createTransactionNavigation
     fun startCreateTransactionNavigation(amAccount: AmAccount) {
-        _createTransactionNavigation.update { amAccount  }
+        _createTransactionNavigation.update { amAccount }
     }
 
     fun doneCreateTransactionNavigation() {

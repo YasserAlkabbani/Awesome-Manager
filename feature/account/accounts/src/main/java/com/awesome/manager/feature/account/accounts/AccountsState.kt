@@ -14,14 +14,14 @@ class AccountsState(
     asAccounts: StateFlow<String>.() -> StateFlow<List<AmAccount>>
 ) {
 
-    private val _createAccountNavigation: MutableStateFlow<Unit?> = MutableStateFlow(null)
-    val createAccountNavigation: StateFlow<Unit?> = _createAccountNavigation
+    private val _createAccountNavigation: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val createAccountNavigation: StateFlow<Boolean> = _createAccountNavigation
     fun startCreateAccountNavigation() {
-        _createAccountNavigation.update { }
+        _createAccountNavigation.update { true }
     }
 
     fun doneCreateAccountNavigation() {
-        _createAccountNavigation.update { null }
+        _createAccountNavigation.update { false }
     }
 
     private val _accountDetailsNavigation: MutableStateFlow<AmAccount?> = MutableStateFlow(null)
@@ -50,5 +50,10 @@ class AccountsState(
     }
 
     val accounts: StateFlow<List<AmAccount>> = accountSearchKey.asAccounts()
+
+    private val _profileBottomSheet:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val profileBottomSheet:StateFlow<Boolean> =_profileBottomSheet
+    fun showProfileBottomSheet(){_profileBottomSheet.update { true }}
+    fun doneProfileBottomSheet(){_profileBottomSheet.update { false }}
 
 }

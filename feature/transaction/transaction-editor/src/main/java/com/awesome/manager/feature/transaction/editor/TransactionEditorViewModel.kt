@@ -11,6 +11,7 @@ import com.awesome.manager.feature.transaction.editor.navigation.TransactionEdit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -80,7 +81,7 @@ class TransactionEditorViewModel @Inject constructor(
         viewModelScope.launch {
 
             val initTransactionId: String? = transactionEditorArg.transactionId
-            val currentUserId = authRepository.returnCurrentUserId()!!
+            val currentUserId = authRepository.currentUserId().first()
 
             val (transactionId: String, creatorUserId: String?) =
                 when (initTransactionId) {
