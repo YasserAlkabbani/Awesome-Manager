@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *>
+    commonExtension: CommonExtension<*, *, *, *, *, *>
 ) {
 
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -24,8 +24,8 @@ internal fun Project.configureAndroidCompose(
 
         dependencies {
             val composeBom = libs.findLibrary("compose-bom").get()
-            add("implementation" , platform(composeBom))
-            add("androidTestImplementation",platform(composeBom))
+            add("implementation", platform(composeBom))
+            add("androidTestImplementation", platform(composeBom))
         }
     }
 

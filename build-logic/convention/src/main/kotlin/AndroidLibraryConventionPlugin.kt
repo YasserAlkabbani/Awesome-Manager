@@ -24,10 +24,14 @@ class AndroidLibraryConventionPlugin:Plugin<Project> {
                 defaultConfig.targetSdk = 34
             }
 
-
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
+
+                add("implementation",libs.findLibrary("junit").get())
+                add("implementation",libs.findLibrary("androidx.junit").get())
+
             }
 
         }

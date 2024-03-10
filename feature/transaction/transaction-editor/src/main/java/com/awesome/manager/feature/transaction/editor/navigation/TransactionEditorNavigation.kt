@@ -7,9 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
-import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.feature.transaction.editor.TransactionEditorRoute
 
 const val transactionEditorRoute: String = "transaction_editor_route"
@@ -34,10 +33,7 @@ fun NavHostController.navigateToEditTransaction(
     navigate(route = "$transactionEditorRoute/${null}/$transactionId", navOptions = navOptions)
 }
 
-fun NavGraphBuilder.transactionEditorScreen(
-    onBack: () -> Unit,
-    updateAppBarState: (appBarData: AppBarData) -> Unit
-) {
+fun NavGraphBuilder.transactionEditorScreen(sendMainAction :(MainActions)->Unit) {
     composable(
         route = "$transactionEditorRoute/{$ACCOUNT_ID}/{$TRANSACTION_ID}",
         arguments = listOf(
@@ -51,9 +47,6 @@ fun NavGraphBuilder.transactionEditorScreen(
             }
         )
     ) {
-        TransactionEditorRoute(
-            onBack = onBack,
-            updateAppBarState = updateAppBarState
-        )
+        TransactionEditorRoute(sendMainAction =sendMainAction)
     }
 }

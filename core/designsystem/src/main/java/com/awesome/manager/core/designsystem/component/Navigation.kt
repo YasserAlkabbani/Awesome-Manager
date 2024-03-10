@@ -16,7 +16,7 @@ fun AmNavigationBar(
 
     NavigationBar(
         modifier=modifier,
-        content=content
+        content=content,
     )
 
 }

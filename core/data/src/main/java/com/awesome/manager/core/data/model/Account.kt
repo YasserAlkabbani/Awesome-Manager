@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.asData
+import com.awesome.manager.core.common.extentions.asDate
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
@@ -33,8 +33,8 @@ fun AccountEntityWithData.asModel() = AmAccount(
     debtor = incoming,
     creditor = outgoing,
     pending = accountEntity.pending,
-    createdAt = accountEntity.createdAt.asData(),
-    updatedAt = accountEntity.updatedAt.asData()
+    createdAt = accountEntity.createdAt.asDate(),
+    updatedAt = accountEntity.updatedAt.asDate()
 )
 
 fun AccountEntity.asNetwork() = AccountNetworkRequest(

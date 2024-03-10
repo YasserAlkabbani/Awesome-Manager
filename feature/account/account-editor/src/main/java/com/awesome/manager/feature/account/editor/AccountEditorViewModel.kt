@@ -83,7 +83,7 @@ class AccountEditorViewModel @Inject constructor(
             accountEditorState.validateAccount(accountId = accountId, creatorUserId = creatorUserId)
                 ?.let { upsertAccount ->
                     accountRepository.upsertAccount(upsertAccount)
-                    accountEditorState.onNavigationBack()
+                    accountEditorState.navigatePopBack()
                 }
 
         }

@@ -1,9 +1,7 @@
 package com.awesome.manager.core.data.repository.transaction_type
 
-import android.util.Log
-import com.awesome.manager.core.common.AmResult
-import com.awesome.manager.core.common.amRequest
-import com.awesome.manager.core.common.asDateTime
+import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.common.extentions.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.TransactionTypeDao

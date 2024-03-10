@@ -1,8 +1,8 @@
 package com.awesome.manager.feature.auth
 
 import androidx.lifecycle.SavedStateHandle
-import com.awesome.manager.core.common.AmError
-import com.awesome.manager.core.common.AmResult
+import com.awesome.manager.core.common.results.AmError
+import com.awesome.manager.core.common.results.AmResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

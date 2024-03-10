@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.auth
 
-import com.awesome.manager.core.common.AmResult
-import com.awesome.manager.core.common.amRequest
+import com.awesome.manager.core.common.results.AmResult
+import com.awesome.manager.core.common.results.amRequest
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.AuthNetwork
@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

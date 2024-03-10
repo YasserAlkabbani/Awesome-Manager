@@ -6,9 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.feature.account.details.AccountDetailsRoute
 
 const val accountDetailsRoute: String = "account_details_route"
@@ -25,23 +23,11 @@ fun NavHostController.navigateToAccountDetails(accountId: String, navOptions: Na
     )
 }
 
-fun NavGraphBuilder.accountDetailsScreen(
-    navigateBack: () -> Unit,
-    navigateToEditAccount: (AmAccount) -> Unit,
-    navigateCreateTransaction: (AmAccount) -> Unit,
-    navigateToTransactionDetails: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData) -> Unit
-) {
+fun NavGraphBuilder.accountDetailsScreen(sendMainAction :(MainActions)->Unit) {
     composable(
         route = "$accountDetailsRoute/{$ARG_ACCOUNT_ID}",
         content = {
-            AccountDetailsRoute(
-                navigateBack = navigateBack,
-                navigateToEditAccount = navigateToEditAccount,
-                navigateCreateTransaction = navigateCreateTransaction,
-                navigateToTransactionDetails = navigateToTransactionDetails,
-                updateAppBarState = updateAppBarState
-            )
+            AccountDetailsRoute(sendMainAction =sendMainAction)
         }
     )
 }

@@ -3,13 +3,11 @@ package com.awesome.manager.feature.transaction.transactions
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -20,12 +18,9 @@ class TransactionsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val transactionsState: TransactionsState = TransactionsState(
-        savedStateHandle = savedStateHandle,
-        asTransactions = {
-            flatMapLatest { transactionRepository.returnTransactions(it) }
-                .flowOn(Dispatchers.Default)
-                .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
-        }
+        transactions = transactionRepository.returnTransactions("").map {
+            DataState.Success(it)
+        }.asDataStateFlow(viewModelScope)
     )
 
 }

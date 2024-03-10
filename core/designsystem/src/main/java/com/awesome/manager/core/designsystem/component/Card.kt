@@ -72,7 +72,7 @@ fun AmCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = cardColors),
         content = {
-            Column(modifier = modifier.padding(6.dp)) {
+            Column(modifier = Modifier.padding(6.dp)) {
                 content()
             }
         },

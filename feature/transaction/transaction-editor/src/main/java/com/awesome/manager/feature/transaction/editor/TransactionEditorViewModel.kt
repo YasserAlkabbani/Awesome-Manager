@@ -97,7 +97,7 @@ class TransactionEditorViewModel @Inject constructor(
                 .validateTransaction(transactionId = transactionId, creatorUserId = creatorUserId)
                 ?.let { upsertTransaction ->
                     transactionRepository.upsertTransaction(upsertTransaction)
-                    transactionEditorState.startPop()
+                    transactionEditorState.navigatePopBack()
                 }
 
         }

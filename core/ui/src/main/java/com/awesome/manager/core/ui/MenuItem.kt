@@ -11,11 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.UIConstant.IMAGE_SIZE_MEDIUM
-import com.awesome.manager.core.designsystem.UIConstant.SPACE_MEDIUM
-import com.awesome.manager.core.designsystem.UIConstant.SPACE_SMALL
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmImage
+import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.designsystem.text.AmTextManager
@@ -38,10 +37,10 @@ fun MenuItem(
                     modifier = Modifier.size(IMAGE_SIZE_MEDIUM.dp), amIconsType = it
                 )
             }
-            Spacer(modifier = Modifier.width(SPACE_MEDIUM.dp))
+            AmSpacerSmallWidth()
             Column {
                 AmText(text = title.asText(), style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.width(SPACE_SMALL.dp))
+                AmSpacerSmallWidth()
                 AmText(text = subTitle.asText(), style = MaterialTheme.typography.labelMedium)
             }
         }

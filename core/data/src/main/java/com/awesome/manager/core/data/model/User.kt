@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.asData
+import com.awesome.manager.core.common.extentions.asDate
 import com.awesome.manager.core.database.model.UserEntity
 import com.awesome.manager.core.model.AmUser
 import com.awesome.manager.core.network.model.UserNetwork
@@ -20,6 +20,6 @@ fun UserEntity.asDomain() = AmUser(
     email=email,
     name = name,
     imageUrl = imageUrl,
-    createdAt = createdAt.asData(),
-    updatedAt = updatedAt.asData()
+    createdAt = createdAt.asDate(),
+    updatedAt = updatedAt.asDate()
 )

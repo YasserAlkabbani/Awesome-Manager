@@ -32,6 +32,10 @@ class AndroidFeatureConventionPlugin:Plugin<Project>{
                 add("implementation",libs.findLibrary("timber").get())
 
 
+                add("implementation",libs.findLibrary("junit").get())
+                add("implementation",libs.findLibrary("androidx.junit").get())
+
+
 //                add("testImplementation",libs.lifecycle.runtime.testing)
 //                add("androidTestImplementation",(libs.compose.ui.test.junit4)
             }

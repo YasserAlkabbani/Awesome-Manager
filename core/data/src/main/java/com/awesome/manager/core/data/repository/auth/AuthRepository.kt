@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.repository.auth
 
-import com.awesome.manager.core.common.AmResult
+import com.awesome.manager.core.common.results.AmResult
 import com.awesome.manager.core.network.model.AuthNetwork
 import kotlinx.coroutines.flow.Flow
 

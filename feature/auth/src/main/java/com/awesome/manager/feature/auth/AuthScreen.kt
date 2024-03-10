@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmModelBottomSheet
@@ -48,7 +48,7 @@ fun AuthRoute(
     authViewModel: AuthViewModel= hiltViewModel(),
 ){
     val authScreenState=authViewModel.authScreenState
-    val authScreenMainState=authScreenState.authScreenMainState.collectAsStateWithLifecycle().value
+    val authScreenMainState=authScreenState.authScreenMainState.collectAsState().value
 
 
 
@@ -138,20 +138,20 @@ fun AuthRoute(
 fun AuthScreen(
     authScreenState: AuthScreenState
 ){
-    val email=authScreenState.email.collectAsStateWithLifecycle().value
-    val emailValidate=authScreenState.validateEmail.collectAsStateWithLifecycle().value
+    val email=authScreenState.email.collectAsState().value
+    val emailValidate=authScreenState.validateEmail.collectAsState().value
     val emailErrorMessage= remember(email,emailValidate) {
         if (!emailValidate&&email.isNotBlank()) "Invalidate Email" else null
     }
-    val password=authScreenState.password.collectAsStateWithLifecycle().value
-    val passwordValidate=authScreenState.validatePassword.collectAsStateWithLifecycle().value
+    val password=authScreenState.password.collectAsState().value
+    val passwordValidate=authScreenState.validatePassword.collectAsState().value
     val passwordErrorMessage= remember(password,passwordValidate) {
         if (!passwordValidate&&password.isNotBlank()) "Invalidate Password" else null
     }
     val validateCredentials= remember(emailErrorMessage,passwordErrorMessage) {
         emailErrorMessage==null&&passwordErrorMessage==null
     }
-    val authMainState=authScreenState.authScreenMainState.collectAsStateWithLifecycle().value
+    val authMainState=authScreenState.authScreenMainState.collectAsState().value
 
     Column(
         Modifier
@@ -224,7 +224,7 @@ fun AuthScreen(
                             AmTextField(
                                 modifier = Modifier,
                                 label = stringResource(R.string.email), icon = AmIcons.Email, hint = "Example@Example.com",
-                                text = email, error = emailErrorMessage ,onTextChange = authScreenState::updateEmail,
+                                error = emailErrorMessage ,onTextChange = authScreenState::updateEmail,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Next,
                                     keyboardType = KeyboardType.Email
@@ -236,7 +236,7 @@ fun AuthScreen(
                             AmTextField(
                                 modifier = Modifier,
                                 label = stringResource(R.string.password), icon = AmIcons.Password, hint = "123456789",
-                                text = password, error = passwordErrorMessage ,onTextChange = authScreenState::updatePassword,
+                                error = passwordErrorMessage ,onTextChange = authScreenState::updatePassword,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Done,
                                     keyboardType = KeyboardType.Password

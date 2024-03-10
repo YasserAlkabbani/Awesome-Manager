@@ -1,9 +1,9 @@
 package com.awesome.manager.core.data.repository.accounts
 
-import com.awesome.manager.core.common.amInsert
-import com.awesome.manager.core.common.amRequest
-import com.awesome.manager.core.common.asAmResult
-import com.awesome.manager.core.common.asDateTime
+import com.awesome.manager.core.common.results.amInsert
+import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.common.results.asAmResult
+import com.awesome.manager.core.common.extentions.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork

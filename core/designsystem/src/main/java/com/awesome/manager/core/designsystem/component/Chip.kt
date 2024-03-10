@@ -32,7 +32,7 @@ fun AmChip(
         selected = selected,
         label = { Text(text = label) },
         shape=shape,
-        border = FilterChipDefaults.filterChipBorder(borderWidth = 1.5.dp),
+        border = FilterChipDefaults.filterChipBorder(borderWidth = 1.5.dp, enabled = false, selected = true),
         leadingIcon = { if (selected) AmIcon(amIconsType = AmIcons.Done)},
         onClick = onClick,
         colors = FilterChipDefaults.filterChipColors(

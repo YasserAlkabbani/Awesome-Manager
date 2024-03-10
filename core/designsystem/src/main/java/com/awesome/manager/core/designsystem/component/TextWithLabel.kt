@@ -27,7 +27,6 @@ fun AmTextWithLabel(
         )
         AmCard(modifier = Modifier.fillMaxWidth(), positive = positive) {
             AmText(
-                modifier = modifier,
                 text = text.orEmpty(),
                 maxLines = maxLines,
                 style = style,

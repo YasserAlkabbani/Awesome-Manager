@@ -19,6 +19,7 @@ object UIConstant {
 
     const val LOW_PADDING: Int = 2
     const val MEDIUM_PADDING: Int = 4
-    const val HEIGH_PADDING: Int = 6
+    const val HIGH_PADDING: Int = 6
+    const val VERY_HIGH_PADDING: Int = 18
 
 }

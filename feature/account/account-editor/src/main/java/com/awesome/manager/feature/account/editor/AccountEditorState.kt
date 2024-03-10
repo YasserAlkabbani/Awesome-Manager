@@ -1,13 +1,12 @@
 package com.awesome.manager.feature.account.editor
 
 import androidx.lifecycle.SavedStateHandle
+import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 private const val NAME: String = "NAME"
 private const val IMAGE_URL: String = "IMAGE_URL"
@@ -21,7 +20,7 @@ class AccountEditorState(
     val transactionTypes: StateFlow<List<AmTransactionType>>,
     val asSelectedTransactionTypes: StateFlow<String?>.() -> StateFlow<AmTransactionType?>,
     val onSave: () -> Unit,
-) {
+): MainActionsState() {
 
     val name: StateFlow<String> = savedStateHandle.getStateFlow(NAME, "")
     fun updateName(newValue: String) = savedStateHandle.set(NAME, newValue)
@@ -63,18 +62,10 @@ class AccountEditorState(
             )
         } else null
 
-    private val _navigationBack: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val navigationBack: StateFlow<Boolean> = _navigationBack
-    fun onNavigationBack() {
-        _navigationBack.update { true }
-    }
-
-    fun doneNavigationBack() {
-        _navigationBack.update { false }
-    }
-
 }
 
+
+/// TEMP LIST
 private val images: List<String> = listOf(
     "https://cdn.pixabay.com/photo/2023/06/11/13/14/boathouse-8055954_1280.jpg",
     "https://cdn.pixabay.com/photo/2023/05/28/09/24/south-tyrol-8023224_1280.jpg",

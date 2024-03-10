@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *>) {
+internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *, *, *>) {
 
     commonExtension.apply {
 
@@ -21,8 +21,8 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
         }
 
         compileOptions {
-            sourceCompatibility=JavaVersion.VERSION_17
-            targetCompatibility=JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
 //            isCoreLibraryDesugaringEnabled=true
         }
 
@@ -32,16 +32,16 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
                 jvmTarget = JavaVersion.VERSION_17.toString()
 
 //                val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-    //            val warningsAsErrors:String? by project
-    //            allWarningsAsErrors=warningsAsErrors.toBoolean()
-    //
-    //            freeCompilerArgs = freeCompilerArgs + listOf(
-    //                "-opt-in=kotlin.RequiresOptIn",
-    //                // Enable experimental coroutines APIs, including Flow
-    //                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    //                "-opt-in=kotlinx.coroutines.FlowPreview",
-    //                "-opt-in=kotlin.Experimental",
-    //            )
+                //            val warningsAsErrors:String? by project
+                //            allWarningsAsErrors=warningsAsErrors.toBoolean()
+                //
+                //            freeCompilerArgs = freeCompilerArgs + listOf(
+                //                "-opt-in=kotlin.RequiresOptIn",
+                //                // Enable experimental coroutines APIs, including Flow
+                //                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                //                "-opt-in=kotlinx.coroutines.FlowPreview",
+                //                "-opt-in=kotlin.Experimental",
+                //            )
 
 
             }

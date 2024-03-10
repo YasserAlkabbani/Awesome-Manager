@@ -1,28 +1,34 @@
 package com.awesome.manager.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
+import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmAppBar
-import com.awesome.manager.core.designsystem.component.AmBottomSheetMainState
 import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
-import com.awesome.manager.core.designsystem.component.AmModelBottomSheet
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
-import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
-import com.awesome.manager.core.ui.BottomSheetProfile
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -33,9 +39,12 @@ fun AmApp(
     val mainActivityViewModel: MainActivityViewModel = viewModel()
     val mainActivityState = mainActivityViewModel.mainActivityState
 
-    val currentUserEmail = mainActivityState.currentUserEmail.collectAsStateWithLifecycle().value
-    val loginState = mainActivityState.isLogin.collectAsStateWithLifecycle().value
-    val appBarState = mainActivityState.appBarState.collectAsStateWithLifecycle().value
+    val currentUserEmail = mainActivityState.currentUserEmail.collectAsState().value
+    val loginState = mainActivityState.isLogin.collectAsState().value
+
+    val navigationState = mainActivityState.navigationState.collectAsState().value
+    val appBarState = mainActivityState.appBarState.collectAsState().value
+    val bottomSheetState = mainActivityState.bottomSheetState.collectAsState().value
 
     val currentDestination = maAppState.currentDestination
     val currentMainDestination = maAppState.currentMainDestination
@@ -47,47 +56,61 @@ fun AmApp(
         }
     })
 
-    val profileBottomSheet =
-        mainActivityState.profileBottomSheet.collectAsStateWithLifecycle().value
-    val amBottomSheetState = rememberAmBottomSheetState()
-    AmModelBottomSheet(amBottomSheetState = amBottomSheetState) {
-        BottomSheetProfile(
-            email = currentUserEmail,
-            logout = mainActivityState.logout
-        )
-    }
-    LaunchedEffect(key1 = profileBottomSheet, block = {
-        when (profileBottomSheet) {
-            AmBottomSheetMainState.Open -> {
-                amBottomSheetState.open()
-                mainActivityState.resetBottomSheet()
-            }
 
-            AmBottomSheetMainState.Close -> {
-                amBottomSheetState.close()
-                mainActivityState.resetBottomSheet()
+    val sheetState: SheetState = rememberModalBottomSheetState(true)
+    Timber.d("TEST_BOTTOM_SHEET ${bottomSheetState} ${bottomSheetState.isOpen} ${sheetState.currentValue}")
+    LaunchedEffect(key1 = bottomSheetState, block = {
+        this.launch {
+            when (bottomSheetState) {
+                BottomSheetAction.Empty -> sheetState.hide()
+                is BottomSheetAction.SearchForAccount -> when(bottomSheetState.isOpen){
+                    true -> sheetState.show()
+                    false -> sheetState.hide()
+                }
             }
-
-            AmBottomSheetMainState.Idl -> {}
+        }.invokeOnCompletion {
+            if (!sheetState.isVisible) mainActivityState.resetBottomSheet()
         }
+
     })
+    when(bottomSheetState){
+        BottomSheetAction.Empty -> {}
+        else -> {
+            ModalBottomSheet(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                onDismissRequest = {
+                    mainActivityState.closeBottomSheet()
+                },
+                sheetState = sheetState,
+                content = {
+                    Column(
+                        modifier = Modifier.padding(6.dp),
+                        content = {
+                            when (bottomSheetState) {
+                                BottomSheetAction.Empty -> {}
+                                is BottomSheetAction.SearchForAccount -> {}
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
-                appBarState?.let { appBarData ->
-                    AmAppBar(
-                        modifier = Modifier,
-                        appBarData = appBarData
-                    )
-                }
+                AmAppBar(
+                    modifier = Modifier.statusBarsPadding(),
+                    appBarAction = appBarState
+                )
             },
             bottomBar = {
                 if (maAppState.shouldShowBottomBar) {
                     MaBottomBar(
-                        modifier = Modifier,
+                        modifier = Modifier.navigationBarsPadding(),
                         mainDestinations = maAppState.mainDestination,
                         onNavigationToDestination = maAppState::navigateToMainDestination,
                         selectedMainDestination = maAppState.currentMainDestination
@@ -114,9 +137,8 @@ fun AmApp(
         ) { padding ->
             AmNavHost(
                 modifier = Modifier.padding(padding),
-                amAppState = maAppState,
-                updateAppBarState = mainActivityState::updateAppBarState,
-                showProfileBottomSheet = mainActivityState::showProfileBottomSheet
+                navHostController = maAppState.navHostController,
+                sendMainAction = mainActivityState::sendMainAction
             )
         }
     }

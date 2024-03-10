@@ -1,4 +1,4 @@
-package com.awesome.manager.core.ui
+package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,8 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.UIConstant.SPACE_EXTRA_SMALL
-import com.awesome.manager.core.designsystem.UIConstant.SPACE_MEDIUM
+import com.awesome.manager.core.designsystem.UIConstant.MEDIUM_PADDING
 import com.awesome.manager.core.designsystem.UIConstant.SPACE_SMALL
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
@@ -25,22 +24,22 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
 fun AmSearch(
-    searchKey: String, searchLabel: String,
-    onSearchKeyChange: (String) -> Unit, errorMessage: String?,
+    modifier: Modifier,
+    searchLabel: String,
+    syncSearchKey: (String) -> Unit, errorMessage: String?,
     showProfileBottomSheet: () -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = SPACE_SMALL.dp),
+        modifier = modifier.padding(horizontal = MEDIUM_PADDING.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AmTextField(
             modifier = Modifier.weight(1f),
             hint = "Search For Account", icon = AmIcons.Search, label = searchLabel,
-            text = searchKey,
-            onTextChange = onSearchKeyChange,
+            onTextChange = syncSearchKey,
             error = errorMessage
         )
-        Spacer(modifier = Modifier.width(SPACE_MEDIUM.dp))
+        AmSpacerMediumWidth()
         AmSurface(
             positive = null, shape = MaterialTheme.shapes.extraLarge,
             highPadding = false, onClick = showProfileBottomSheet

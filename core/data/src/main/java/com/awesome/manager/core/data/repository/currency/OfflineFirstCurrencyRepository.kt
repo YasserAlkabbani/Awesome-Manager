@@ -1,11 +1,13 @@
 package com.awesome.manager.core.data.repository.currency
 
-import com.awesome.manager.core.common.amRequest
-import com.awesome.manager.core.common.asDateTime
+import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.common.extentions.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.CurrencyDao
+import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency
+import com.awesome.manager.core.model.CurrencyWithBalance
 import com.awesome.manager.core.network.datasource.CurrencyNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -33,5 +35,8 @@ class OfflineFirstCurrencyRepository @Inject constructor(
 
     override fun returnCurrencyById(currencyId: String): Flow<AmCurrency> =
         currencyDao.returnCurrencyById(currencyId).map { it.asModel() }
+
+    override fun returnCurrenciesBalance(): Flow<List<CurrencyWithBalance>> =
+        currencyDao.returnCurrenciesBalance().map { it.map { it.asModel() } }
 
 }

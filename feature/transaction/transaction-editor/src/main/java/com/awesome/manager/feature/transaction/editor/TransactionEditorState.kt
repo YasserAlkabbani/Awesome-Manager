@@ -1,6 +1,7 @@
 package com.awesome.manager.feature.transaction.editor
 
 import androidx.lifecycle.SavedStateHandle
+import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
@@ -15,7 +16,6 @@ private const val ACCOUNT_ID: String = "ACCOUNT_ID"
 private const val TRANSACTION_TYPE_ID = "TRANSACTION_TYPE_ID"
 private const val PAYMENT_TRANSACTION = "PAYMENT_TRANSACTION"
 private const val AMOUNT = "AMOUNT"
-private const val ACCOUNT_SEARCH_KEY = "ACCOUNT_SEARCH_KEY"
 
 class TransactionEditorState(
     private val savedStateHandle: SavedStateHandle,
@@ -24,7 +24,7 @@ class TransactionEditorState(
     asAccountsSearchResult: StateFlow<String>.() -> StateFlow<List<AmAccount>>,
     asAccount: StateFlow<String?>.() -> StateFlow<AmAccount?>,
     asTransactionType: StateFlow<String?>.() -> StateFlow<AmTransactionType?>,
-) {
+): MainActionsState() {
 
     val title: StateFlow<String> = savedStateHandle.getStateFlow(TITLE, "")
     fun updateTitle(newTitle: String) {
@@ -77,12 +77,6 @@ class TransactionEditorState(
         doneSearchForAnAccount()
     }
 
-    val accountSearchKey: StateFlow<String> = savedStateHandle.getStateFlow(ACCOUNT_SEARCH_KEY, "")
-    val accountSearchResult: StateFlow<List<AmAccount>> = accountSearchKey.asAccountsSearchResult()
-    fun updateAccountSearchKey(newSearchKey: String) {
-        savedStateHandle[ACCOUNT_SEARCH_KEY] = newSearchKey
-    }
-
     private val _searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val searchForAnAccountBottomSheet: StateFlow<Boolean> = _searchForAnAccountBottomSheet
     fun startSearchForAnAccount() {
@@ -119,15 +113,5 @@ class TransactionEditorState(
                 paymentTransaction = paymentTransaction.value,
             )
         } else null
-
-    private val _navigatePopup: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val navigatePopup: StateFlow<Boolean> = _navigatePopup
-    fun startPop() {
-        _navigatePopup.update { true }
-    }
-
-    fun donePop() {
-        _navigatePopup.update { false }
-    }
 
 }

@@ -3,16 +3,14 @@ package com.awesome.manager.feature.transaction.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.feature.transaction.details.navigation.TransactionDetailsArg
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,19 +23,15 @@ class TransactionDetailsViewModel @Inject constructor(
     private val transactionId: String = TransactionDetailsArg(savedStateHandle).transactionId
 
     val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
+
         transaction = transactionRepository.returnTransactionById(transactionId)
-            .stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, null),
-        asAccount = {
-            flatMapLatest {
-                it?.accountId?.let { accountRepository.returnAccountById(it) } ?: flowOf(null)
-            }
-                .flowOn(Dispatchers.Default)
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    null
-                )
-        }
+            .map { transaction -> DataState.Success(transaction) }
+            .asDataStateFlow(viewModelScope),
+        account = transactionRepository.returnTransactionById(transactionId)
+            .flatMapLatest { transaction ->
+                accountRepository.returnAccountById(transaction.accountId)
+                    .map { account -> DataState.Success(account) }
+            }.asDataStateFlow(viewModelScope)
     )
 
 

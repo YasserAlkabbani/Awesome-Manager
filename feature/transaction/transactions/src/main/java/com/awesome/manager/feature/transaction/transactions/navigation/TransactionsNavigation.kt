@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
 
 const val transactionsRoute: String = "transactions_route"
@@ -14,14 +14,8 @@ fun NavHostController.navigateToTransactions(navOptions: NavOptions?) {
 }
 
 
-fun NavGraphBuilder.transactionsScreen(
-    navigateToTransactionDetails: (AmTransaction) -> Unit,
-    showProfileBottomSheet: () -> Unit,
-) {
+fun NavGraphBuilder.transactionsScreen(sendMainAction :(MainActions)->Unit) {
     composable(transactionsRoute) {
-        TransactionsRoute(
-            navigateToTransactionDetails = navigateToTransactionDetails,
-            showProfileBottomSheet = showProfileBottomSheet,
-        )
+        TransactionsRoute(sendMainAction = sendMainAction)
     }
 }

@@ -8,7 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.feature.account.editor.AccountEditorRoute
 
 const val accountEditorRoute: String = "account_editor_Route"
@@ -35,8 +35,7 @@ fun NavHostController.navigateToEditAccount(accountId: String, navOptions: NavOp
 }
 
 fun NavGraphBuilder.accountEditorScreen(
-    onBack: () -> Unit,
-    updateAppBarState: (appBarData: AppBarData) -> Unit
+    sendMainAction : (MainActions)->Unit
 ) {
     composable(
         route = "$accountEditorRoute/{$ARG_ACCOUNT_ID}",
@@ -46,10 +45,7 @@ fun NavGraphBuilder.accountEditorScreen(
             defaultValue = null
         }),
         content = {
-            AccountEditorRoute(
-                onBack = onBack,
-                updateAppBarState = updateAppBarState
-            )
+            AccountEditorRoute(sendMainAction = sendMainAction)
         }
     )
 }

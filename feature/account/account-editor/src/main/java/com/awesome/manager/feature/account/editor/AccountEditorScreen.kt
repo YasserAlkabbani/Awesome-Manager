@@ -16,53 +16,49 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.component.AmChip
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.AppBarData
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import kotlinx.coroutines.delay
 
 @Composable
 fun AccountEditorRoute(
+    sendMainAction :(MainActions)->Unit,
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
-    updateAppBarState: (appBarData: AppBarData) -> Unit,
-    onBack: () -> Unit
 ) {
 
     val accountEditorState = accountEditorViewModel.accountEditorState
 
-    val navigationBack = accountEditorState.navigationBack.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = navigationBack, block = {
-        if (navigationBack) {
-            accountEditorState.doneNavigationBack()
-            onBack()
-        }
+    val navigationAction = accountEditorState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendAction(
+            sendMainAction = sendMainAction,
+            resetNavigation =accountEditorState::resetNavigationAction
+            )
     })
 
     val createAccountText = stringResource(id = R.string.create_account)
     val editAccountText = stringResource(R.string.edit_account)
     val account = null
     LaunchedEffect(key1 = account, block = {
-        delay(100)
         val title = when (account) {
             null -> createAccountText
             else -> editAccountText
         }
-        updateAppBarState(
-            AppBarData(
-                title = title,
-                startIcon = AmIcons.Close to accountEditorState::onNavigationBack,
-                endIcon = AmIcons.Save to accountEditorState.onSave
-            )
-        )
+        AppBarAction.Edit(
+            title = title,
+            onCancel = accountEditorState::navigatePopBack,
+            onSave = accountEditorState.onSave
+        ).sendAction(sendMainAction)
     })
 
     AccountEditorScreen(accountEditorState)
@@ -72,13 +68,13 @@ fun AccountEditorRoute(
 @Composable
 fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
-    val accountName: String = accountEditorState.name.collectAsStateWithLifecycle().value
-    val accountImage: String = accountEditorState.imageUrl.collectAsStateWithLifecycle().value
-    val currencies = accountEditorState.currencies.collectAsStateWithLifecycle().value
-    val selectedCurrency = accountEditorState.selectedCurrency.collectAsStateWithLifecycle().value
-    val transactionTypes = accountEditorState.transactionTypes.collectAsStateWithLifecycle().value
+    val accountName: String = accountEditorState.name.collectAsState().value
+    val accountImage: String = accountEditorState.imageUrl.collectAsState().value
+    val currencies = accountEditorState.currencies.collectAsState().value
+    val selectedCurrency = accountEditorState.selectedCurrency.collectAsState().value
+    val transactionTypes = accountEditorState.transactionTypes.collectAsState().value
     val defaultTransactionType =
-        accountEditorState.defaultTransactionType.collectAsStateWithLifecycle().value
+        accountEditorState.defaultTransactionType.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -100,7 +96,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 label = "Name", icon = AmIcons.Title, hint = "Account Name",
-                text = accountName, error = null, onTextChange = accountEditorState::updateName
+                error = null, onTextChange = accountEditorState::updateName
             )
         }
         Spacer(modifier = Modifier.height(6.dp))

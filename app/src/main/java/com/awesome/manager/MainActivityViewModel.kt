@@ -7,17 +7,16 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
+import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,7 +41,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun logout() {
         viewModelScope.launch {
-            mainActivityState.hideProfileBottomSheet()
+//            mainActivityState.sendMainAction(mainAction = BottomSheetAction.Close().asMainAction())
             authRepository.logout().collect()
         }
     }

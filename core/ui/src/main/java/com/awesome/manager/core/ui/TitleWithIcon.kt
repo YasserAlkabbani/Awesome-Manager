@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
@@ -46,9 +48,30 @@ fun AmTextWithIcon(
     }
 }
 
+@Composable
+fun AmTextWithIconLarge(
+    modifier: Modifier = Modifier,
+    text: String,
+    amIconsType: AmIconsType, positive: Boolean
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        AmSurface(positive = positive, highPadding = false) {
+            AmIcon(
+                Modifier.size(18.dp), amIconsType = amIconsType,
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        AmText(text = text, style = MaterialTheme.typography.titleSmall)
+    }
+}
+
 @Preview
 @Composable
-fun AmTitleWithSubtitlePreview() {
+fun AmTitleWithIconPreview() {
     Surface {
         AmTextWithIcon(
             text = "TITLE",

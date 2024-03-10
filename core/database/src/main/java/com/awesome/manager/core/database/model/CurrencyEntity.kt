@@ -1,6 +1,7 @@
 package com.awesome.manager.core.database.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -15,4 +16,12 @@ data class CurrencyEntity(
     @ColumnInfo("currency_symbol") val currencySymbol:String,
     @ColumnInfo("created_at") val createdAt:Long,
     @ColumnInfo("updated_at") val updatedAt:Long,
+)
+
+data class CurrencyEntityWithData(
+    @Embedded val currencyEntity: CurrencyEntity,
+    @ColumnInfo("incoming") val incoming:Double,
+    @ColumnInfo("outgoing") val outgoing:Double,
+    @ColumnInfo("borrow") val borrow:Double,
+    @ColumnInfo("lent") val lent:Double,
 )

@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text2.BasicTextField2
+import androidx.compose.foundation.text2.input.forEachTextValue
+import androidx.compose.foundation.text2.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +41,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,13 +64,13 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import kotlinx.coroutines.newSingleThreadContext
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AmTextField(
     modifier: Modifier = Modifier,
     hint: String,
     icon: AmIconsType,
     label: String,
-    text: String,
     singleLine: Boolean = true, error: String?, password: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -83,7 +88,12 @@ fun AmTextField(
         label = "1"
     ).value
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
-
+    val textFieldState= rememberTextFieldState()
+    LaunchedEffect(key1 = textFieldState, block = {
+        textFieldState.forEachTextValue {
+            onTextChange(it.compositionInChars.toString())
+        }
+    })
 
 
     Card(
@@ -106,46 +116,49 @@ fun AmTextField(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            TextField(
+            BasicTextField2(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .onFocusChanged { isFocus.value = it.hasFocus },
-                value = text,
-                onValueChange = onTextChange,
-                placeholder = {
-                    AmText(
-                        modifier,
-                        text = hint,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                },
+                    .onFocusChanged { isFocus.value = it.hasFocus }
+                    .background(
+                        color=MaterialTheme.colorScheme.surface,
+                        shape = MaterialTheme.shapes.small
+                    ),
+                state = textFieldState,
+//                placeholder = {
+//                    AmText(
+//                        modifier,
+//                        text = hint,
+//                        style = MaterialTheme.typography.bodyLarge
+//                    )
+//                },
                 textStyle = MaterialTheme.typography.titleMedium,
-                shape = shape,
-                singleLine = singleLine,
+//                shape = shape,
+//                singleLine = singleLine,
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
-                visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
-                trailingIcon = if (password) {
-                    {
-                        AmIconButton(
-                            modifier = Modifier,
-                            onClick = { passwordHidden = !passwordHidden },
-                            positive = false,
-                            amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
-                        )
-                    }
-                } else null,
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    errorContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                ),
+//                visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
+//                trailingIcon = if (password) {
+//                    {
+//                        AmIconButton(
+//                            modifier = Modifier,
+//                            onClick = { passwordHidden = !passwordHidden },
+//                            positive = false,
+//                            amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
+//                        )
+//                    }
+//                } else null,
+//                colors = TextFieldDefaults.colors(
+//                    unfocusedIndicatorColor = Color.Transparent,
+//                    disabledIndicatorColor = Color.Transparent,
+//                    errorIndicatorColor = Color.Transparent,
+//                    focusedIndicatorColor = Color.Transparent,
+//                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+//                    errorContainerColor = MaterialTheme.colorScheme.surface,
+//                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+//                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+//                ),
             )
             AnimatedVisibility(visible = error != null) {
                 Row(
@@ -178,7 +191,6 @@ fun AmTextFieldPreview() {
         modifier = Modifier,
         hint = "HINT",
         icon = AmIcons.Email,
-        text = "TEXT",
         label = "LABEL",
         onTextChange = {},
         error = "ERROR MESSAGE"
