@@ -3,10 +3,10 @@ package com.awesome.manager.ui
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
@@ -22,11 +22,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmAppBar
-import com.awesome.manager.core.designsystem.component.AmExtendedFloatingActionButton
-import com.awesome.manager.core.designsystem.component.AmNavigationBar
-import com.awesome.manager.core.designsystem.component.AmNavigationItem
+import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
+import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
 import com.awesome.manager.navigation.AmNavHost
-import com.awesome.manager.navigation.MainDestination
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -63,7 +61,7 @@ fun AmApp(
         this.launch {
             when (bottomSheetState) {
                 BottomSheetAction.Empty -> sheetState.hide()
-                is BottomSheetAction.SearchForAccount -> when(bottomSheetState.isOpen){
+                is BottomSheetAction.SearchForAccount -> when (bottomSheetState.isOpen) {
                     true -> sheetState.show()
                     false -> sheetState.hide()
                 }
@@ -73,7 +71,7 @@ fun AmApp(
         }
 
     })
-    when(bottomSheetState){
+    when (bottomSheetState) {
         BottomSheetAction.Empty -> {}
         else -> {
             ModalBottomSheet(
@@ -107,33 +105,33 @@ fun AmApp(
                     appBarAction = appBarState
                 )
             },
-            bottomBar = {
-                if (maAppState.shouldShowBottomBar) {
-                    MaBottomBar(
-                        modifier = Modifier.navigationBarsPadding(),
-                        mainDestinations = maAppState.mainDestination,
-                        onNavigationToDestination = maAppState::navigateToMainDestination,
-                        selectedMainDestination = maAppState.currentMainDestination
-                    )
-                }
-            },
             floatingActionButton = {
                 maAppState.currentMainDestination?.addButton?.let { addButton ->
-                    AmExtendedFloatingActionButton(
+                    AmCustomBottomBarWithFab(
                         modifier = Modifier,
-                        expanded = true,
-                        text = addButton.title.asText(),
-                        icon = addButton.icon,
-                        onClick = {
+                        fabIcon = addButton.icon,
+                        onClickFab = {
                             currentDestination?.route?.let {
                                 maAppState.navigateToAddByCurrentNavigation(
                                     it
+                                )
+                            }
+                        },
+                        bottomBarItems = {
+                            maAppState.mainDestination.forEach { destination ->
+                                AmNavigationCustomItem(
+                                    modifier = Modifier,
+                                    isSelected = destination == maAppState.currentMainDestination,
+                                    selectedIcon = destination.selectedAmIconsType,
+                                    unSelectedIcon = destination.unSelectedAmIconsType,
+                                    onSelect = { maAppState.navigateToMainDestination(destination) }
                                 )
                             }
                         }
                     )
                 }
             },
+            floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             AmNavHost(
                 modifier = Modifier.padding(padding),
@@ -142,29 +140,5 @@ fun AmApp(
             )
         }
     }
-}
 
-
-@Composable
-fun MaBottomBar(
-    modifier: Modifier,
-    mainDestinations: List<MainDestination>,
-    onNavigationToDestination: (MainDestination) -> Unit,
-    selectedMainDestination: MainDestination?
-) {
-    AmNavigationBar(
-        modifier = modifier,
-        content = {
-            mainDestinations.forEach { destination ->
-                AmNavigationItem(
-                    modifier = Modifier,
-                    isSelected = destination == selectedMainDestination,
-                    selectedIcon = destination.selectedAmIconsType,
-                    unSelectedIcon = destination.unSelectedAmIconsType,
-                    label = destination.title.asText(),
-                    onSelect = { onNavigationToDestination(destination) }
-                )
-            }
-        }
-    )
 }

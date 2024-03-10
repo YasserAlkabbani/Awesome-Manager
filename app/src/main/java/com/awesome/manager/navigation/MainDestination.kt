@@ -13,13 +13,13 @@ data class AddButton(val title: AmTextManager, val icon: AmIconsType)
 enum class MainDestination(
     val selectedAmIconsType: AmIconsType,
     val unSelectedAmIconsType: AmIconsType,
-    val addButton: AddButton?,
+    val addButton: AddButton,
     val title: AmTextManager,
 ) {
     Home(
         selectedAmIconsType = AmIcons.HomeSelected,
         unSelectedAmIconsType = AmIcons.HomeUnSelected,
-        addButton = null,
+        addButton = AddButton(title = "Create Account".asAmText(), icon = AmIcons.HomeAdd),
         title = homeR.string.home.asAmText()
     ),
     Accounts(
