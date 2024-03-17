@@ -1,4 +1,4 @@
-package com.awesome.manager.core.ui
+package com.awesome.manager.core.ui.bottom_sheets
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
+import com.awesome.manager.core.ui.R
 
 @Composable
 fun BottomSheetProfile(email: String, logout: () -> Unit) {

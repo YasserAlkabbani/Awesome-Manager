@@ -19,14 +19,14 @@ internal class AccountEditorArg(val accountId: String?) {
     constructor(savedStateHandle: SavedStateHandle) : this(Uri.decode(savedStateHandle[ARG_ACCOUNT_ID]))
 }
 
-fun NavHostController.navigateToCreateAccount(navOptions: NavOptions?) {
+fun NavHostController.navigateToCreateAccount(navOptions: NavOptions? = null) {
     navigate(
         route = "$accountEditorRoute/${null}",
         navOptions = navOptions,
     )
 }
 
-fun NavHostController.navigateToEditAccount(accountId: String, navOptions: NavOptions?) {
+fun NavHostController.navigateToEditAccount(accountId: String, navOptions: NavOptions? = null) {
     val encodedId = Uri.encode(accountId)
     navigate(
         route = "$accountEditorRoute/$encodedId",
@@ -34,9 +34,7 @@ fun NavHostController.navigateToEditAccount(accountId: String, navOptions: NavOp
     )
 }
 
-fun NavGraphBuilder.accountEditorScreen(
-    sendMainAction : (MainActions)->Unit
-) {
+fun NavGraphBuilder.accountEditorScreen(sendMainAction: (MainActions) -> Unit) {
     composable(
         route = "$accountEditorRoute/{$ARG_ACCOUNT_ID}",
         arguments = listOf(navArgument(ARG_ACCOUNT_ID) {

@@ -16,18 +16,18 @@ internal class AccountDetailsArg(val accountId: String) {
     constructor(savedStateHandle: SavedStateHandle) : this(Uri.decode(savedStateHandle[ARG_ACCOUNT_ID]))
 }
 
-fun NavHostController.navigateToAccountDetails(accountId: String, navOptions: NavOptions?) {
+fun NavHostController.navigateToAccountDetails(accountId: String, navOptions: NavOptions? = null) {
     navigate(
         route = "$accountDetailsRoute/${accountId}",
         navOptions = navOptions
     )
 }
 
-fun NavGraphBuilder.accountDetailsScreen(sendMainAction :(MainActions)->Unit) {
+fun NavGraphBuilder.accountDetailsScreen(sendMainAction: (MainActions) -> Unit) {
     composable(
         route = "$accountDetailsRoute/{$ARG_ACCOUNT_ID}",
         content = {
-            AccountDetailsRoute(sendMainAction =sendMainAction)
+            AccountDetailsRoute(sendMainAction = sendMainAction)
         }
     )
 }

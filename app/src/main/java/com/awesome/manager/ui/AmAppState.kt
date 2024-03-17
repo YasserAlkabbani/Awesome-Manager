@@ -89,7 +89,7 @@ class AmAppState(
             else -> false
         }
 
-    val mainDestination = MainDestination.values().toList()
+    val mainDestination = MainDestination.entries
 
     fun navigateToMainDestination(mainDestination: MainDestination) {
         val mainDestinationNavOption = navOptions {

@@ -1,5 +1,6 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +13,7 @@ abstract class MainActionsState {
         MutableStateFlow(NavigationAction.Idle)
     val navigationAction: StateFlow<NavigationAction> = _navigationAction
 
-    private fun NavigationAction.sendAction() = _navigationAction.update { this }
+    fun NavigationAction.sendAction() = _navigationAction.update { this }
     fun resetNavigationAction() = NavigationAction.Idle.sendAction()
     fun navigatePopBack() = NavigationAction.PopBack.sendAction()
 
@@ -34,12 +35,13 @@ abstract class MainActionsState {
     fun navigateToTransaction(transactionId: String) =
         NavigationAction.ReadTransaction(transactionId).sendAction()
 
+
     /////////********* APP_BAR  *********/////////
 
     private val _appBarAction: MutableStateFlow<AppBarAction> = MutableStateFlow(AppBarAction.Idle)
     val appBarAction: StateFlow<AppBarAction> = _appBarAction
 
-    private fun AppBarAction.sendAction() = _appBarAction.update { this }
+    fun AppBarAction.sendAction() = _appBarAction.update { this }
 
     fun showSearchAppBar(syncString: (String) -> Unit) =
         AppBarAction.Search(syncString, false).sendAction()
@@ -53,15 +55,18 @@ abstract class MainActionsState {
     fun showReadAppBar(title: String, onBack: () -> Unit, onEdit: () -> Unit) =
         AppBarAction.Read(title, onBack, onEdit)
 
+
     /////////********* BOTTOM_SHEET  *********/////////
 
     private val _bottomSheetState: MutableStateFlow<BottomSheetAction> =
         MutableStateFlow(BottomSheetAction.Empty)
-    val bottomSheetAction: StateFlow<BottomSheetAction> = MutableStateFlow(BottomSheetAction.Empty)
+    val bottomSheetAction: StateFlow<BottomSheetAction> = _bottomSheetState
 
-    fun BottomSheetAction.sendAction() = _bottomSheetState.update { this }
+    fun BottomSheetAction.sendAction() =_bottomSheetState.update { this }
 
     fun closeBottomSheet() = _bottomSheetState.update { it.asClose() }
-    fun resetBottomSheet() = _bottomSheetState.update { BottomSheetAction.Empty }
+    fun resetBottomSheet() = BottomSheetAction.Empty.sendAction()
+
+    fun showProfileBottomSheet() = BottomSheetAction.Profile(true).sendAction()
 
 }

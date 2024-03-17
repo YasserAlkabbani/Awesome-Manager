@@ -41,7 +41,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun logout() {
         viewModelScope.launch {
-//            mainActivityState.sendMainAction(mainAction = BottomSheetAction.Close().asMainAction())
+            mainActivityState.closeBottomSheet()
             authRepository.logout().collect()
         }
     }
@@ -69,7 +69,6 @@ class MainActivityViewModel @Inject constructor(
                 transactionRepository.synTransactions()
             }
         }
-
     }
 
 }

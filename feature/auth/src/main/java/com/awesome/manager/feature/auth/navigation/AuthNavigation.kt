@@ -7,14 +7,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.awesome.manager.feature.auth.AuthRoute
 
-const val authRoute:String="auth_route"
+const val authRoute: String = "auth_route"
 
-fun NavController.navigateToAuth(navOptions: NavOptions?){
-    navigate(route = authRoute,navOptions = navOptions)
+fun NavController.navigateToAuth(navOptions: NavOptions? = null) {
+    navigate(route = authRoute, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.authScreen(){
-    composable(authRoute){
+fun NavGraphBuilder.authScreen() {
+    composable(authRoute) {
         AuthRoute()
     }
 }

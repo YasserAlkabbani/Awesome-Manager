@@ -9,13 +9,11 @@ import com.awesome.manager.feature.account.accounts.AccountsRoute
 
 const val accountsRoute = "accounts_route"
 
-fun NavHostController.navigateToAccounts(navOptions: NavOptions?) {
+fun NavHostController.navigateToAccounts(navOptions: NavOptions? = null) {
     navigate(route = accountsRoute, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.accountsScreen(
-    sendMainAction :(MainActions)->Unit
-) {
+fun NavGraphBuilder.accountsScreen(sendMainAction: (MainActions) -> Unit) {
     composable(route = accountsRoute) {
         AccountsRoute(
             sendMainAction = sendMainAction

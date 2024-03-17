@@ -9,7 +9,7 @@ import com.awesome.manager.feature.home.HomeRoute
 
 const val homeRoute: String = "home_route"
 
-fun NavHostController.navigateToHome(navOptions: NavOptions?) {
+fun NavHostController.navigateToHome(navOptions: NavOptions? = null) {
     navigate(route = homeRoute, navOptions = navOptions)
 }
 

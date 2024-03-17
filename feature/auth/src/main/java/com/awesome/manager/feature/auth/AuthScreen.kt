@@ -39,8 +39,8 @@ import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.AmBottomSheetMessage
-import com.awesome.manager.core.ui.MessageBottomData
+import com.awesome.manager.core.ui.bottom_sheets.AmBottomSheetMessage
+import com.awesome.manager.core.ui.bottom_sheets.MessageBottomData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

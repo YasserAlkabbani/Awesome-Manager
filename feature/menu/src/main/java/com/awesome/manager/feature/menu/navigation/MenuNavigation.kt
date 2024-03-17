@@ -8,7 +8,7 @@ import com.awesome.manager.feature.menu.MenuRoute
 
 const val menuRoute: String = "menu_route"
 
-fun NavHostController.navigateToMenu(navOptions: NavOptions?) {
+fun NavHostController.navigateToMenu(navOptions: NavOptions? = null) {
     navigate(route = menuRoute, navOptions = navOptions)
 }
 

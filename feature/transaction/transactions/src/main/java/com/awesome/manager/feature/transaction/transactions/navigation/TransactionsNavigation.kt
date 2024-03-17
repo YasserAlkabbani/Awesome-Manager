@@ -9,12 +9,12 @@ import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
 
 const val transactionsRoute: String = "transactions_route"
 
-fun NavHostController.navigateToTransactions(navOptions: NavOptions?) {
+fun NavHostController.navigateToTransactions(navOptions: NavOptions? = null) {
     navigate(route = transactionsRoute, navOptions = navOptions)
 }
 
 
-fun NavGraphBuilder.transactionsScreen(sendMainAction :(MainActions)->Unit) {
+fun NavGraphBuilder.transactionsScreen(sendMainAction: (MainActions) -> Unit) {
     composable(transactionsRoute) {
         TransactionsRoute(sendMainAction = sendMainAction)
     }

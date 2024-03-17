@@ -27,7 +27,7 @@ fun AmCustomBottomBarWithFab(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.1f)
+        color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.05f)
     ) {
         Row(
             modifier = Modifier.padding(10.dp),

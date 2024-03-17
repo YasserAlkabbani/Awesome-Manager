@@ -6,14 +6,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.awesome.manager.feature.intro.IntroRoute
 
-const val introRoute:String="intro_route"
+const val introRoute: String = "intro_route"
 
-fun NavHostController.navigateToIntro(navOptions: NavOptions?){
-    navigate(route = introRoute,navOptions=navOptions)
+fun NavHostController.navigateToIntro(navOptions: NavOptions? = null) {
+    navigate(route = introRoute, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.introScreen(){
-    composable(introRoute){
+fun NavGraphBuilder.introScreen() {
+    composable(introRoute) {
         IntroRoute()
     }
 

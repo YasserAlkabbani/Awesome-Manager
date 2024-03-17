@@ -24,6 +24,17 @@ import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
+import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
+import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
+import com.awesome.manager.feature.account.details.navigation.navigateToAccountDetails
+import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
+import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
+import com.awesome.manager.feature.auth.navigation.navigateToAuth
+import com.awesome.manager.feature.home.navigation.navigateToHome
+import com.awesome.manager.feature.intro.navigation.navigateToIntro
+import com.awesome.manager.feature.transaction.details.navigation.navigateToTransactionDetails
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
+import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
 import com.awesome.manager.navigation.AmNavHost
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -40,12 +51,11 @@ fun AmApp(
     val currentUserEmail = mainActivityState.currentUserEmail.collectAsState().value
     val loginState = mainActivityState.isLogin.collectAsState().value
 
-    val navigationState = mainActivityState.navigationState.collectAsState().value
-    val appBarState = mainActivityState.appBarState.collectAsState().value
-    val bottomSheetState = mainActivityState.bottomSheetState.collectAsState().value
+    val appBarState = mainActivityState.appBarAction.collectAsState().value
 
     val currentDestination = maAppState.currentDestination
     val currentMainDestination = maAppState.currentMainDestination
+    val navHostController = maAppState.navHostController
 
 
     LaunchedEffect(key1 = loginState, key2 = currentDestination, block = {
@@ -55,21 +65,46 @@ fun AmApp(
     })
 
 
+    val navigationState = mainActivityState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationState, block = {
+        if (navigationState !is NavigationAction.Idle) mainActivityState.resetNavigationAction()
+        when (navigationState) {
+            NavigationAction.Idle -> {}
+            NavigationAction.PopBack -> navHostController.popBackStack()
+            NavigationAction.Auth -> navHostController.navigateToAuth()
+            NavigationAction.CreateAccount -> navHostController.navigateToCreateAccount()
+            NavigationAction.Home -> navHostController.navigateToHome()
+            NavigationAction.Intro -> navHostController.navigateToIntro()
+            is NavigationAction.CreateTransaction ->
+                navHostController.navigateToCreateTransaction(navigationState.accountId)
+
+            is NavigationAction.EditAccount ->
+                navHostController.navigateToEditAccount(navigationState.accountId)
+
+            is NavigationAction.EditTransaction ->
+                navHostController.navigateToEditTransaction(navigationState.transactionId)
+
+            is NavigationAction.ReadAccount ->
+                navHostController.navigateToAccountDetails(navigationState.accountId)
+
+            is NavigationAction.ReadTransaction ->
+                navHostController.navigateToTransactionDetails(navigationState.transactionId)
+        }
+    })
+
+    val bottomSheetState = mainActivityState.bottomSheetAction.collectAsState().value
     val sheetState: SheetState = rememberModalBottomSheetState(true)
-    Timber.d("TEST_BOTTOM_SHEET ${bottomSheetState} ${bottomSheetState.isOpen} ${sheetState.currentValue}")
     LaunchedEffect(key1 = bottomSheetState, block = {
-        this.launch {
-            when (bottomSheetState) {
-                BottomSheetAction.Empty -> sheetState.hide()
-                is BottomSheetAction.SearchForAccount -> when (bottomSheetState.isOpen) {
+        if (bottomSheetState !is BottomSheetAction.Empty) {
+            this.launch {
+                when (bottomSheetState.isOpen) {
                     true -> sheetState.show()
                     false -> sheetState.hide()
                 }
+            }.invokeOnCompletion {
+                if (!bottomSheetState.isOpen) mainActivityState.resetBottomSheet()
             }
-        }.invokeOnCompletion {
-            if (!sheetState.isVisible) mainActivityState.resetBottomSheet()
         }
-
     })
     when (bottomSheetState) {
         BottomSheetAction.Empty -> {}
@@ -87,6 +122,10 @@ fun AmApp(
                             when (bottomSheetState) {
                                 BottomSheetAction.Empty -> {}
                                 is BottomSheetAction.SearchForAccount -> {}
+                                is BottomSheetAction.Profile -> BottomSheetProfile(
+                                    email = "EMAIL",
+                                    logout = {}
+                                )
                             }
                         }
                     )
@@ -102,7 +141,9 @@ fun AmApp(
             topBar = {
                 AmAppBar(
                     modifier = Modifier.statusBarsPadding(),
-                    appBarAction = appBarState
+                    appBarAction = appBarState,
+                    onClickProfile = mainActivityState::showProfileBottomSheet,
+                    onSearchKeyChange = {},
                 )
             },
             floatingActionButton = {
@@ -136,7 +177,7 @@ fun AmApp(
             AmNavHost(
                 modifier = Modifier.padding(padding),
                 navHostController = maAppState.navHostController,
-                sendMainAction = mainActivityState::sendMainAction
+                sendMainAction = mainActivityState::updateMainState
             )
         }
     }

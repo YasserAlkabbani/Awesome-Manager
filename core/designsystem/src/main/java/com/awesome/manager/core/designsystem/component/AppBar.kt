@@ -18,16 +18,18 @@ import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 fun AmAppBar(
     modifier: Modifier,
     appBarAction: AppBarAction,
+    onClickProfile: () -> Unit,
+    onSearchKeyChange: (String) -> Unit
 ) {
-    when(appBarAction){
+    when (appBarAction) {
         AppBarAction.Idle -> {}
         is AppBarAction.Search -> {
             AmSearch(
-                modifier=modifier,
+                modifier = modifier,
                 searchLabel = "Search For .. ",
                 syncSearchKey = appBarAction.syncSearchKey,
                 errorMessage = null,
-                showProfileBottomSheet = {}
+                showProfileBottomSheet = onClickProfile
             )
 //            Text(modifier=modifier,text = "APPBAR")
 //            TopAppBar(
@@ -46,6 +48,7 @@ fun AmAppBar(
 //                actions = {},
 //            )
         }
+
         is AppBarAction.Create -> {
             TopAppBar(
                 modifier = modifier,
@@ -72,6 +75,7 @@ fun AmAppBar(
                 },
             )
         }
+
         is AppBarAction.Read -> {
             TopAppBar(
                 modifier = modifier,
@@ -92,6 +96,7 @@ fun AmAppBar(
                 actions = {},
             )
         }
+
         is AppBarAction.Edit -> {
             TopAppBar(
                 modifier = modifier,
@@ -127,6 +132,8 @@ fun AmAppBar(
 fun CustomAppBarPreview() {
     AmAppBar(
         modifier = Modifier,
-        appBarAction = AppBarAction.Create("TITLE",{},{})
+        appBarAction = AppBarAction.Create("TITLE", {}, {}),
+        onClickProfile = {},
+        onSearchKeyChange = {}
     )
 }

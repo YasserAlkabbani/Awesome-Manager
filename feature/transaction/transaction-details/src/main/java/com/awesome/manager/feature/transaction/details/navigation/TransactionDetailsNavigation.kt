@@ -16,19 +16,19 @@ internal class TransactionDetailsArg(val transactionId: String) {
     constructor(savedStateHandle: SavedStateHandle) : this(Uri.decode(savedStateHandle[ARG_TRANSACTION_ID]))
 }
 
-fun NavHostController.navigateToTransactionDetails(transactionId: String, navOptions: NavOptions?) {
+fun NavHostController.navigateToTransactionDetails(
+    transactionId: String, navOptions: NavOptions? = null
+) {
     navigate(
         route = "$transactionDetailsRoute/$transactionId",
         navOptions = navOptions
     )
 }
 
-fun NavGraphBuilder.transactionDetailsScreen(
-    sendMainAction :(MainActions)->Unit
-) {
+fun NavGraphBuilder.transactionDetailsScreen(sendMainAction: (MainActions) -> Unit) {
     composable("$transactionDetailsRoute/{$ARG_TRANSACTION_ID}") {
         TransactionDetailsRoute(
-            sendMainAction=sendMainAction
+            sendMainAction = sendMainAction
         )
     }
 }

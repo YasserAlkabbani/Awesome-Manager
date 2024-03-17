@@ -22,18 +22,19 @@ internal class TransactionEditorArg(val accountId: String?, val transactionId: S
     )
 }
 
-fun NavHostController.navigateToCreateTransaction(accountId: String?, navOptions: NavOptions?) {
+fun NavHostController.navigateToCreateTransaction(
+    accountId: String?, navOptions: NavOptions? = null
+) {
     navigate(route = "$transactionEditorRoute/${accountId}/${null}", navOptions = navOptions)
 }
 
 fun NavHostController.navigateToEditTransaction(
-    transactionId: String,
-    navOptions: NavOptions?
+    transactionId: String, navOptions: NavOptions? = null
 ) {
     navigate(route = "$transactionEditorRoute/${null}/$transactionId", navOptions = navOptions)
 }
 
-fun NavGraphBuilder.transactionEditorScreen(sendMainAction :(MainActions)->Unit) {
+fun NavGraphBuilder.transactionEditorScreen(sendMainAction: (MainActions) -> Unit) {
     composable(
         route = "$transactionEditorRoute/{$ACCOUNT_ID}/{$TRANSACTION_ID}",
         arguments = listOf(
@@ -47,6 +48,6 @@ fun NavGraphBuilder.transactionEditorScreen(sendMainAction :(MainActions)->Unit)
             }
         )
     ) {
-        TransactionEditorRoute(sendMainAction =sendMainAction)
+        TransactionEditorRoute(sendMainAction = sendMainAction)
     }
 }
