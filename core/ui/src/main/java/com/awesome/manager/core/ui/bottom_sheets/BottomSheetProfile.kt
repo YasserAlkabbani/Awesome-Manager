@@ -12,17 +12,22 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
+import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.ui.R
 
 @Composable
-fun BottomSheetProfile(email: String, logout: () -> Unit) {
+fun BottomSheetProfile(profile: BottomSheetAction.Profile) {
     AmCard(modifier = Modifier.padding(vertical = 5.dp), positive = false) {
-        AmTextWithLabel(label = stringResource(R.string.email), text = email, positive = false)
+        AmTextWithLabel(
+            label = stringResource(R.string.email),
+            text = profile.email,
+            positive = false
+        )
         Spacer(modifier = Modifier.height(30.dp))
         AmButton(
             modifier = Modifier.fillMaxWidth(),
             text = "LOGOUT", positive = false,
-            onClick = logout
+            onClick = profile.logout
         )
     }
 }
@@ -31,5 +36,5 @@ fun BottomSheetProfile(email: String, logout: () -> Unit) {
 @Preview
 @Composable
 fun BottomSheetProfilePreview() {
-    BottomSheetProfile("YASSER@GMAIL.COM", {})
+    BottomSheetProfile(BottomSheetAction.Profile(true, "YASSER@GMAIL.COM", {}))
 }

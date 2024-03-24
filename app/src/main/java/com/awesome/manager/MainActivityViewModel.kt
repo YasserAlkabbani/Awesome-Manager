@@ -7,15 +7,11 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,9 +26,7 @@ class MainActivityViewModel @Inject constructor(
 
     val mainActivityState = MainActivityState(
         isLogin = authRepository.isLogin()
-            .onEach {
-                if (it) refreshData() else clearData()
-            }
+            .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, false),
         currentUserEmail = authRepository.currentUserEmail()
             .stateIn(viewModelScope, SharingStarted.Eagerly, ""),
@@ -41,7 +35,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun logout() {
         viewModelScope.launch {
-            mainActivityState.closeBottomSheet()
+            mainActivityState.dismissBottomSheet()
             authRepository.logout().collect()
         }
     }

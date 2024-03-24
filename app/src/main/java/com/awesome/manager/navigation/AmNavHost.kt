@@ -31,8 +31,8 @@ fun AmNavHost(
         startDestination = startDistinction,
     ) {
 
-        introScreen()
-        authScreen()
+        introScreen(sendMainAction = sendMainAction)
+        authScreen(sendMainAction = sendMainAction)
         homeScreen(sendMainAction = sendMainAction)
 
         accountsScreen(sendMainAction = sendMainAction)

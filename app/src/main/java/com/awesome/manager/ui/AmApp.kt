@@ -1,6 +1,5 @@
 package com.awesome.manager.ui
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -26,6 +26,13 @@ import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
 import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
+import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAuthError
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetConnectionError
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestered
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
 import com.awesome.manager.feature.account.details.navigation.navigateToAccountDetails
 import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
 import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
@@ -37,10 +44,9 @@ import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreat
 import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
 import com.awesome.manager.navigation.AmNavHost
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmApp(
     maAppState: AmAppState = rememberAmAppState()
@@ -112,22 +118,14 @@ fun AmApp(
             ModalBottomSheet(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onDismissRequest = {
-                    mainActivityState.closeBottomSheet()
+                    mainActivityState.dismissBottomSheet()
                 },
                 sheetState = sheetState,
+                properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetState.isDismissible),
                 content = {
                     Column(
                         modifier = Modifier.padding(6.dp),
-                        content = {
-                            when (bottomSheetState) {
-                                BottomSheetAction.Empty -> {}
-                                is BottomSheetAction.SearchForAccount -> {}
-                                is BottomSheetAction.Profile -> BottomSheetProfile(
-                                    email = "EMAIL",
-                                    logout = {}
-                                )
-                            }
-                        }
+                        content = { bottomSheetState.content() }
                     )
                 }
             )
@@ -142,7 +140,7 @@ fun AmApp(
                 AmAppBar(
                     modifier = Modifier.statusBarsPadding(),
                     appBarAction = appBarState,
-                    onClickProfile = mainActivityState::showProfileBottomSheet,
+                    onClickProfile = {},
                     onSearchKeyChange = {},
                 )
             },
@@ -183,3 +181,40 @@ fun AmApp(
     }
 
 }
+
+@Composable
+private fun BottomSheetAction.content(): Unit =
+    when (this) {
+        BottomSheetAction.Empty -> {}
+        is BottomSheetAction.Profile -> {
+            BottomSheetProfile(this)
+        }
+
+        is BottomSheetAction.SearchForAccount -> {
+            BottomSheetSearchForAccount(this)
+        }
+
+        is BottomSheetAction.AccountCreated -> {
+            BottomSheetAccountCreated(this)
+        }
+
+        is BottomSheetAction.PasswordRested -> {
+            BottomSheetPasswordRestered(this)
+        }
+
+        is BottomSheetAction.AuthError -> {
+            BottomSheetAuthError(this)
+        }
+
+        is BottomSheetAction.UnknownError -> {
+            BottomSheetUnknownError(this)
+        }
+
+        is BottomSheetAction.ConnectionError -> {
+            BottomSheetConnectionError(this)
+        }
+
+        is BottomSheetAction.CustomError -> {
+            BottomSheetCustomError(this)
+        }
+    }

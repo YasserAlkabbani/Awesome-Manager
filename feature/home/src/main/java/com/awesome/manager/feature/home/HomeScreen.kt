@@ -1,23 +1,15 @@
 package com.awesome.manager.feature.home
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -29,24 +21,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.UIConstant.LOW_PADDING
-import com.awesome.manager.core.designsystem.UIConstant.VERY_HIGH_PADDING
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallHight
+import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.model.CurrencyWithBalance
-import com.awesome.manager.core.ui.AmTextWithIcon
 import com.awesome.manager.core.ui.AmTextWithIconLarge
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import timber.log.Timber
 import kotlin.math.absoluteValue
 
 @Composable
@@ -66,11 +52,11 @@ fun HomeScreen(homeState: HomeState) {
 
     if (currencyWithBalance is DataState.Success) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(LOW_PADDING.dp),
+            verticalArrangement = Arrangement.spacedBy(PADDING_LOW.dp),
             contentPadding = PaddingValues(
-                start = LOW_PADDING.dp,
-                end = LOW_PADDING.dp,
-                bottom = VERY_HIGH_PADDING.dp
+                start = PADDING_LOW.dp,
+                end = PADDING_LOW.dp,
+                bottom = PADDING_LARGE_EXTRA.dp
             ),
             content = {
                 items(
@@ -117,9 +103,9 @@ fun HomeCard(currencyWithBalance: CurrencyWithBalance) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                positiveValue = currencyWithBalance.lent ,
+                positiveValue = currencyWithBalance.lent,
                 positiveLabel = stringResource(id = R.string.lent),
-                negativeValue = currencyWithBalance.borrow ,
+                negativeValue = currencyWithBalance.borrow,
                 negativeLabel = stringResource(id = R.string.borrow),
                 netValue = currencyWithBalance.netLent
             )
@@ -147,11 +133,11 @@ fun HomeCardResults(
     negativeLabel: String,
     netValue: Double
 ) {
-    val (isPositiveNetValue,absoluteNetValue) = remember {
+    val (isPositiveNetValue, absoluteNetValue) = remember {
         derivedStateOf {
-            when{
-                netValue >= 0 ->true to netValue.absoluteValue
-                else->false to netValue.absoluteValue
+            when {
+                netValue >= 0 -> true to netValue.absoluteValue
+                else -> false to netValue.absoluteValue
             }
         }
     }.value
@@ -163,13 +149,13 @@ fun HomeCardResults(
                 text = positiveValue.toString(),
                 amIconsType = AmIcons.Input, positive = true,
             )
-            AmSpacerSmallHight()
+            AmSpacerSmallHeight()
             AmTextWithIconLarge(
                 modifier = Modifier.fillMaxWidth(),
                 text = negativeValue.toString(),
                 amIconsType = AmIcons.Output, positive = false
             )
-            AmSpacerSmallHight()
+            AmSpacerSmallHeight()
             AmTextWithIconLarge(
                 modifier = Modifier.fillMaxWidth(),
                 text = absoluteNetValue.toString(),

@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHost
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.feature.auth.AuthRoute
 
 const val authRoute: String = "auth_route"
@@ -13,8 +14,8 @@ fun NavController.navigateToAuth(navOptions: NavOptions? = null) {
     navigate(route = authRoute, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.authScreen() {
+fun NavGraphBuilder.authScreen(sendMainAction: (MainActions) -> Unit) {
     composable(authRoute) {
-        AuthRoute()
+        AuthRoute(sendMainAction)
     }
 }

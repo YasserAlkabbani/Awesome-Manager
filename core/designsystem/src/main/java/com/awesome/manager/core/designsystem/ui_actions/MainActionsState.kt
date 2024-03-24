@@ -1,6 +1,5 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
-import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -62,11 +61,42 @@ abstract class MainActionsState {
         MutableStateFlow(BottomSheetAction.Empty)
     val bottomSheetAction: StateFlow<BottomSheetAction> = _bottomSheetState
 
-    fun BottomSheetAction.sendAction() =_bottomSheetState.update { this }
+    fun BottomSheetAction.sendAction() = _bottomSheetState.update { this }
 
-    fun closeBottomSheet() = _bottomSheetState.update { it.asClose() }
+    fun dismissBottomSheet() = _bottomSheetState.update { it.asClose() }
     fun resetBottomSheet() = BottomSheetAction.Empty.sendAction()
 
-    fun showProfileBottomSheet() = BottomSheetAction.Profile(true).sendAction()
+    fun showProfileBottomSheet(email: String, logout: () -> Unit) =
+        BottomSheetAction.Profile(email = email, logout = logout).sendAction()
+
+    fun showSearchForAccountBottomSheet() =
+        BottomSheetAction.SearchForAccount().sendAction()
+
+    fun showAccountCreatedBottomSheet() =
+        BottomSheetAction.AccountCreated(dismiss = ::dismissBottomSheet).sendAction()
+
+    fun showPasswordRestedBottomSheet() =
+        BottomSheetAction.PasswordRested(dismiss = ::dismissBottomSheet).sendAction()
+
+    fun showUnknownErrorBottomSheet() =
+        BottomSheetAction.UnknownError(dismiss = ::dismissBottomSheet).sendAction()
+
+    fun showAuthErrorBottomSheet() =
+        BottomSheetAction.AuthError(dismiss = ::dismissBottomSheet).sendAction()
+
+    fun showConnectionErrorBottomSheet() =
+        BottomSheetAction.ConnectionError(dismiss = ::dismissBottomSheet).sendAction()
+
+    fun showCustomErrorMessage(errorMessage: String) =
+        BottomSheetAction.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
+            .sendAction()
+
+
+    /////////********* OTHER  *********/////////
+
+    private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+    fun startLoading() = _loading.update { true }
+    fun stopLoading() = _loading.update { false }
 
 }

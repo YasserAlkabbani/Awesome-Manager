@@ -13,13 +13,16 @@ object UIConstant {
     const val SCROLL_CONTENT_PADDING_TOP: Int = 4
     const val SCROLL_CONTENT_PADDING_BOTTOM: Int = 36
 
-    const val IMAGE_SIZE_SMALL: Int = 30
-    const val IMAGE_SIZE_MEDIUM: Int = 50
-    const val IMAGE_SIZE_LARG: Int = 80
+    const val SIZE_EXTRA_SMALL: Int = 20
+    const val SIZE_SMALL: Int = 30
+    const val SIZE_MEDIUM: Int = 40
+    const val SIZE_LARGE: Int = 50
+    const val SIZE_EXTRA_LARGE: Int = 60
 
-    const val LOW_PADDING: Int = 2
-    const val MEDIUM_PADDING: Int = 4
-    const val HIGH_PADDING: Int = 6
-    const val VERY_HIGH_PADDING: Int = 18
+    const val PADDING_LOW_EXTRA: Int = 2
+    const val PADDING_LOW: Int = 4
+    const val PADDING_MEDIUM: Int = 6
+    const val PADDING_LARGE: Int = 8
+    const val PADDING_LARGE_EXTRA: Int = 16
 
 }

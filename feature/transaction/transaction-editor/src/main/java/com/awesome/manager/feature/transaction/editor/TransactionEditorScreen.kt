@@ -30,20 +30,16 @@ import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
 import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmBottomSheetState
 import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.AmModelBottomSheet
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmSwitch
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.rememberAmBottomSheetState
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TransactionEditorRoute(
     sendMainAction: (MainActions) -> Unit,
@@ -53,36 +49,36 @@ fun TransactionEditorRoute(
     val transactionEditorState: TransactionEditorState =
         transactionEditorViewModel.transactionEditorState
 
-    val searchForAccountSheetState: AmBottomSheetState = rememberAmBottomSheetState()
+//    val searchForAccountSheetState: AmBottomSheetState = rememberAmBottomSheetState()
     val searchForAccount =
         transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
 
-    val focusManager = LocalFocusManager.current
-    LaunchedEffect(key1 = searchForAccount, block = {
-        if (searchForAccount) {
-            focusManager.clearFocus()
-            searchForAccountSheetState.open()
-        } else {
-            searchForAccountSheetState.close()
-        }
-    })
-    LaunchedEffect(key1 = searchForAccountSheetState.isOpenButtonSheet.value, block = {
-        if (!searchForAccountSheetState.isOpenButtonSheet.value) {
-            transactionEditorState.doneSearchForAnAccount()
-        }
-    })
+//    val focusManager = LocalFocusManager.current
+//    LaunchedEffect(key1 = searchForAccount, block = {
+//        if (searchForAccount) {
+//            focusManager.clearFocus()
+//            searchForAccountSheetState.open()
+//        } else {
+//            searchForAccountSheetState.close()
+//        }
+//    })
+//    LaunchedEffect(key1 = searchForAccountSheetState.isOpenButtonSheet.value, block = {
+//        if (!searchForAccountSheetState.isOpenButtonSheet.value) {
+//            transactionEditorState.doneSearchForAnAccount()
+//        }
+//    })
 
 //    val accountSearchKey =
 //        transactionEditorState.accountSearchKey.collectAsState().value
 //    val accountSearchResult =
 //        transactionEditorState.accountSearchResult.collectAsState().value
 
-    AmModelBottomSheet(
-        amBottomSheetState = searchForAccountSheetState,
-        content = {
-
-        }
-    )
+//    AmModelBottomSheet(
+//        amBottomSheetState = searchForAccountSheetState,
+//        content = {
+//
+//        }
+//    )
 
     val createTransactionText = stringResource(id = R.string.create_transaction)
     val editTransactionText = stringResource(R.string.edit_account)
@@ -90,16 +86,16 @@ fun TransactionEditorRoute(
     LaunchedEffect(key1 = transaction, block = {
         when (transaction) {
             null -> transactionEditorState.showCreateAppBar(
-                    title = createTransactionText,
-                    onSave = transactionEditorState.createTransaction,
-                    onCancel = transactionEditorState::navigatePopBack
-                )
+                title = createTransactionText,
+                onSave = transactionEditorState.createTransaction,
+                onCancel = transactionEditorState::navigatePopBack
+            )
 
             else -> transactionEditorState.showEditAppBar(
-                    title = editTransactionText,
-                    onSave = transactionEditorState.createTransaction,
-                    onCancel = transactionEditorState::navigatePopBack
-                )
+                title = editTransactionText,
+                onSave = transactionEditorState.createTransaction,
+                onCancel = transactionEditorState::navigatePopBack
+            )
         }
     })
 

@@ -36,6 +36,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -59,27 +62,31 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
+import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_SMALL
+import com.awesome.manager.core.designsystem.UIConstant.SIZE_MEDIUM
+import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import kotlinx.coroutines.newSingleThreadContext
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AmTextField(
     modifier: Modifier = Modifier,
-    hint: String,
-    icon: AmIconsType,
-    label: String,
-    singleLine: Boolean = true, error: String?, password: Boolean = false,
+    initTextValue: String = "", onTextChange: (String) -> Unit,
+    icon: AmIconsType, label: String, hint: String,
+    singleLine: Boolean = true, error: String?, password: Boolean = false, enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    onTextChange: (String) -> Unit
 ) {
+
+    var text by rememberSaveable { mutableStateOf(initTextValue) }
+    LaunchedEffect(key1 = text, block = { onTextChange(text) })
+
     val isFocus = remember { mutableStateOf(false) }
-    val shape = if (isFocus.value) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
-    val padding =
-        animateDpAsState(targetValue = if (isFocus.value) 4.dp else 3.dp, label = "0").value
     val color = animateColorAsState(
         targetValue = if (isFocus.value)
             if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
@@ -88,94 +95,86 @@ fun AmTextField(
         label = "1"
     ).value
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    val textFieldState= rememberTextFieldState()
-    LaunchedEffect(key1 = textFieldState, block = {
-        textFieldState.forEachTextValue {
-            onTextChange(it.compositionInChars.toString())
-        }
-    })
 
 
-    Card(
+    Surface(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = color),
-        shape = shape
+        color = color,
+        shape = MaterialTheme.shapes.medium
     ) {
-        Column(Modifier.padding(padding)) {
+        Column(Modifier.padding(PADDING_LOW.dp)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(padding),
+                    .padding(horizontal = PADDING_MEDIUM.dp)
+                    .padding(bottom = PADDING_LOW.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
-                Spacer(modifier = Modifier.width(4.dp))
+                AmSpacerMediumWidth()
                 AmText(
                     modifier = Modifier.wrapContentHeight(),
                     text = label,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            BasicTextField2(
+            TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .onFocusChanged { isFocus.value = it.hasFocus }
                     .background(
-                        color=MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.small
                     ),
-                state = textFieldState,
-//                placeholder = {
-//                    AmText(
-//                        modifier,
-//                        text = hint,
-//                        style = MaterialTheme.typography.bodyLarge
-//                    )
-//                },
+                value = text,
+                enabled = enabled,
+                placeholder = { AmText(text = hint) },
+                onValueChange = { text = it },
                 textStyle = MaterialTheme.typography.titleMedium,
-//                shape = shape,
-//                singleLine = singleLine,
+                shape = MaterialTheme.shapes.medium,
+                singleLine = singleLine,
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
-//                visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
-//                trailingIcon = if (password) {
-//                    {
-//                        AmIconButton(
-//                            modifier = Modifier,
-//                            onClick = { passwordHidden = !passwordHidden },
-//                            positive = false,
-//                            amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
-//                        )
-//                    }
-//                } else null,
-//                colors = TextFieldDefaults.colors(
-//                    unfocusedIndicatorColor = Color.Transparent,
-//                    disabledIndicatorColor = Color.Transparent,
-//                    errorIndicatorColor = Color.Transparent,
-//                    focusedIndicatorColor = Color.Transparent,
-//                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-//                    errorContainerColor = MaterialTheme.colorScheme.surface,
-//                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-//                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
-//                ),
+                visualTransformation = if (passwordHidden && password) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = if (password) {
+                    {
+                        AmIconButton(
+                            modifier = Modifier.size(SIZE_SMALL.dp),
+                            onClick = { passwordHidden = !passwordHidden },
+                            positive = null,
+                            amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
+                        )
+                    }
+                } else null,
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    errorContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                ),
             )
             AnimatedVisibility(visible = error != null) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(padding),
+                        .padding(horizontal = PADDING_MEDIUM.dp)
+                        .padding(top = PADDING_LOW.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AmIcon(
-                        modifier = Modifier.height(IntrinsicSize.Max),
+                        modifier = Modifier.height(SIZE_EXTRA_SMALL.dp),
                         amIconsType = AmIcons.Error
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    AmSpacerMediumWidth()
                     AmText(
                         modifier = Modifier.wrapContentHeight(),
                         text = error.orEmpty(),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
@@ -192,8 +191,8 @@ fun AmTextFieldPreview() {
         hint = "HINT",
         icon = AmIcons.Email,
         label = "LABEL",
-        onTextChange = {},
-        error = "ERROR MESSAGE"
+        error = "ERROR MESSAGE",
+        onTextChange = {}
     )
 }
 

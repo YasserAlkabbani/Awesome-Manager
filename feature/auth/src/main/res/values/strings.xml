@@ -13,4 +13,7 @@
     <string name="ok">OK</string>
     <string name="there_is_unknown_error_try_again_later">There Is Unknown Error\nTry Again Later</string>
     <string name="there_is_something_wrong">There is Something Wrong</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="invalid_password">Invalid Password</string>
+    <string name="awesome_manager">Awesome Manager</string>
 </resources>

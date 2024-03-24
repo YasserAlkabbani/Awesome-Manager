@@ -14,10 +14,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.AccountCard
+import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 
 @Composable
-fun SearchForAccount() {
+fun BottomSheetSearchForAccount(searchForAccount: BottomSheetAction.SearchForAccount) {
     val focusRequester: FocusRequester = FocusRequester()
     AmTextField(
         modifier = Modifier
@@ -26,7 +26,7 @@ fun SearchForAccount() {
                 focusRequester.requestFocus()
             },
         hint = "Search For Account", icon = AmIcons.Search, label = "Something..",
-         error = null,
+        error = null,
         onTextChange = {/*transactionEditorState::updateAccountSearchKey*/ }
     )
     Spacer(modifier = Modifier.height(8.dp))

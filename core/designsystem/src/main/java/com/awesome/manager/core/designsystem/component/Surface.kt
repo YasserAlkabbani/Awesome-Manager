@@ -12,8 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.HIGH_PADDING
-import com.awesome.manager.core.designsystem.UIConstant.LOW_PADDING
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
 
 @Composable
 fun AmSurface(
@@ -32,7 +34,7 @@ fun AmSurface(
         }
     }
     val padding = remember(highPadding) {
-        if (highPadding) HIGH_PADDING.dp else LOW_PADDING.dp
+        if (highPadding) PADDING_LARGE.dp else PADDING_LOW.dp
     }
     Surface(
         modifier = modifier,
@@ -75,7 +77,7 @@ fun AmSurface(
         }
     }
     val padding = remember(highPadding) {
-        if (highPadding) HIGH_PADDING.dp else LOW_PADDING.dp
+        if (highPadding) PADDING_MEDIUM.dp else PADDING_LOW.dp
     }
     Surface(
         modifier = modifier,

@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.UIConstant.MEDIUM_PADDING
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
@@ -20,7 +20,7 @@ fun AmSearch(
     showProfileBottomSheet: () -> Unit
 ) {
     Row(
-        modifier = modifier.padding(horizontal = MEDIUM_PADDING.dp),
+        modifier = modifier.padding(horizontal = PADDING_MEDIUM.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AmTextField(
@@ -35,7 +35,7 @@ fun AmSearch(
             highPadding = false, onClick = showProfileBottomSheet
         ) {
             AmIcon(
-                modifier = Modifier.size(UIConstant.IMAGE_SIZE_MEDIUM.dp),
+                modifier = Modifier.size(UIConstant.SIZE_MEDIUM.dp),
                 amIconsType = AmIcons.Profile
             )
         }

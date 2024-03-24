@@ -8,32 +8,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AmSpacerSmallWidth(){
+fun AmSpacerSmallWidth() {
     Spacer(modifier = Modifier.width(4.dp))
 }
 
 @Composable
-fun AmSpacerMediumWidth(){
+fun AmSpacerMediumWidth() {
     Spacer(modifier = Modifier.width(8.dp))
 }
 
 @Composable
-fun AmSpacerLargeWidth(){
+fun AmSpacerLargeWidth() {
     Spacer(modifier = Modifier.width(16.dp))
 }
 
 
 @Composable
-fun AmSpacerSmallHight(){
+fun AmSpacerSmallHeight() {
     Spacer(modifier = Modifier.height(4.dp))
 }
 
 @Composable
-fun AmSpacerMediumHight(){
+fun AmSpacerMediumHight() {
     Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable
-fun AmSpacerLargeHight(){
+fun AmSpacerLargeHeight() {
     Spacer(modifier = Modifier.height(16.dp))
 }
