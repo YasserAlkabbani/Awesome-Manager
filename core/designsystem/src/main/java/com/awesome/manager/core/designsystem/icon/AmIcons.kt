@@ -2,6 +2,9 @@ package com.awesome.manager.core.designsystem.icon
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
@@ -57,11 +60,11 @@ object AmIcons {
     val TransactionsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
     val TransactionAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.AddCard)
 
-    val MenuSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.MenuOpen)
+    val MenuSelected = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.MenuOpen)
     val MenuUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
-    val ArrowBack = AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBack)
-    val ArrowForward = AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowForward)
+    val ArrowBack = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.ArrowBackIos)
+    val ArrowForward = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.ArrowForwardIos)
     val Edit = AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
     val Save = AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
     val Close = AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)

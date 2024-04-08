@@ -33,8 +33,10 @@ sealed class BottomSheetAction(
     data class PasswordRested(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
         BottomSheetAction()
 
-    data class AuthError(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
-        BottomSheetAction()
+    data class AuthError(
+        override val isOpen: Boolean = true,
+        val errorMessage:String,val createNewAccount: () -> Unit, val editCredentials: () -> Unit
+    ) : BottomSheetAction()
 
     data class UnknownError(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
         BottomSheetAction()

@@ -2,6 +2,7 @@ package com.awesome.manager.core.ui.bottom_sheets.auth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.ui.R
 import com.awesome.manager.core.ui.bottom_sheets.AmBottomSheetMessage
@@ -12,19 +13,28 @@ fun BottomSheetAuthError(
     bottomSheetAction: BottomSheetAction.AuthError
 ) {
     AmBottomSheetMessage(
-        title = "ERROR TITLE",
-        subtitle = "ERROR SUBTITLE",
-        positive = null,
+        title = stringResource(R.string.something_wrong),
+        subtitle = bottomSheetAction.errorMessage,
+        positive = false,
         button1 = MessageBottomData(
-            text = stringResource(R.string.create_a_new_account),
+            text = stringResource(R.string.create_and_confirm_account),
             positive = true,
-            onClick = {}
+            onClick = bottomSheetAction.createNewAccount
         ),
         button2 = MessageBottomData(
             text = stringResource(R.string.edit_credentials),
             positive = true,
-            onClick = bottomSheetAction.dismiss
+            onClick = bottomSheetAction.editCredentials
         ),
-        button3 = null, /*MessageBottomData(text="Reset Password", positive = false, onClick = authScreenState.resetPassword)*/
+        button3 = null,
+    )
+}
+
+
+@Preview
+@Composable
+fun BottomSheetAuthErrorPreview(){
+    BottomSheetAuthError(
+        BottomSheetAction.AuthError(true,"",{},{})
     )
 }

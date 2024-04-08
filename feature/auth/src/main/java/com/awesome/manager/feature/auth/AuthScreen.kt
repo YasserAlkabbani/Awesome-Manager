@@ -36,6 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
+import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_LARGE
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_LARGE
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
@@ -67,8 +71,7 @@ fun AuthRoute(
 
     val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        Timber.d("TEST_AUTH SEND_BOTTOM_SHEET $bottomSheetAction")
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendAction(sendMainAction = sendMainAction)
     })
 
     val appBarAction = authScreenState.appBarAction.collectAsState().value
@@ -130,59 +133,61 @@ fun AuthScreen(
                 }
             }
 
-            AmCard(
-                modifier = Modifier.fillMaxWidth(), positive = null,
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(PADDING_LARGE.dp)
+            Column(Modifier.fillMaxWidth()) {
+                AmText(
+                    text = "Welcome Back !",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                AmCard(
+                    modifier = Modifier.fillMaxWidth(), positive = null,
                 ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = PADDING_LARGE_EXTRA.dp,
+                                horizontal = PADDING_LOW_EXTRA.dp
+                            )
+                    ) {
+                        Column(Modifier.fillMaxWidth()) {
+                            AmTextField(
+                                modifier = Modifier,
+                                initTextValue = "yasser@gmail.com",
+                                label = stringResource(R.string.email),
+                                icon = AmIcons.Email,
+                                hint = "Example@Example.com",
+                                error = emailErrorMessage,
+                                onTextChange = authScreenState::updateEmail,
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Next,
+                                    keyboardType = KeyboardType.Email
+                                ),
+                                enabled = !isLoading
+                            )
 
-                    AmText(
-                        text = "Welcome Back !",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                            AmSpacerSmallHeight()
 
-                    AmSpacerLargeHeight()
+                            AmTextField(
+                                modifier = Modifier,
+                                initTextValue = "123456",
+                                label = stringResource(R.string.password),
+                                icon = AmIcons.Password,
+                                hint = "Your Top Secret Password",
+                                error = passwordErrorMessage,
+                                onTextChange = authScreenState::updatePassword,
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Done,
+                                    keyboardType = KeyboardType.Password
+                                ),
+                                enabled = !isLoading,
+                                password = true
+                            )
+                        }
 
-                    Column(Modifier.fillMaxWidth()) {
-                        AmTextField(
-                            modifier = Modifier,
-                            initTextValue = "yasser@gmail.com",
-                            label = stringResource(R.string.email),
-                            icon = AmIcons.Email,
-                            hint = "Example@Example.com",
-                            error = emailErrorMessage,
-                            onTextChange = authScreenState::updateEmail,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next,
-                                keyboardType = KeyboardType.Email
-                            ),
-                            enabled = !isLoading
-                        )
-
-                        AmSpacerSmallHeight()
-
-                        AmTextField(
-                            modifier = Modifier,
-                            initTextValue = "123456",
-                            label = stringResource(R.string.password),
-                            icon = AmIcons.Password,
-                            hint = "Your Top Secret Password",
-                            error = passwordErrorMessage,
-                            onTextChange = authScreenState::updatePassword,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Done,
-                                keyboardType = KeyboardType.Password
-                            ),
-                            enabled = !isLoading,
-                            password = true
-                        )
                     }
-
                 }
             }
+
         }
         AnimatedVisibility(visible = authData.validateData) {
             AmFilledTonalIconWithTextButton(

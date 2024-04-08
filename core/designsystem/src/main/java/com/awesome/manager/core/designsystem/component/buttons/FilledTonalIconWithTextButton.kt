@@ -33,7 +33,7 @@ fun AmFilledTonalIconWithTextButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AmSurface(
-            modifier = modifier, onClick = onClick,
+            modifier = Modifier, onClick = onClick,
             positive = positive, loading = loading,
             highPadding = true
         ) {

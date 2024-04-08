@@ -81,8 +81,8 @@ abstract class MainActionsState {
     fun showUnknownErrorBottomSheet() =
         BottomSheetAction.UnknownError(dismiss = ::dismissBottomSheet).sendAction()
 
-    fun showAuthErrorBottomSheet() =
-        BottomSheetAction.AuthError(dismiss = ::dismissBottomSheet).sendAction()
+    fun showAuthErrorBottomSheet(errorMessage: String,onCreateAccount:()->Unit,editCredentials:()->Unit) =
+        BottomSheetAction.AuthError(errorMessage=errorMessage,createNewAccount = onCreateAccount,editCredentials = editCredentials).sendAction()
 
     fun showConnectionErrorBottomSheet() =
         BottomSheetAction.ConnectionError(dismiss = ::dismissBottomSheet).sendAction()

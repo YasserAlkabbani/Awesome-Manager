@@ -21,8 +21,8 @@ class AuthViewModel @Inject constructor(
     )
     private val authData: AmAuthData get() = authScreenState.authData.value
     private val isValidateData: Boolean get() = authData.validateData
-    private val email: String get() = authData.password
-    private val password: String get() = authData.email
+    private val email: String get() = authData.email
+    private val password: String get() = authData.password
 
     private fun login() {
         viewModelScope.launch {
@@ -39,7 +39,7 @@ class AuthViewModel @Inject constructor(
     private fun register() {
         viewModelScope.launch {
             if (isValidateData) {
-                authRepository.signUp(email, password).collectLatest { amResult ->
+                authRepository.signUp(email=email,password= password).collectLatest { amResult ->
                     authScreenState.updateStateBasedOnResult(
                         amResult = amResult,
                         onSuccess = authScreenState::showAccountCreatedBottomSheet,

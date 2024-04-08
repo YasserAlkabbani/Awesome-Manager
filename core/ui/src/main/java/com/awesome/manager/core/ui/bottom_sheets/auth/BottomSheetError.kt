@@ -15,7 +15,10 @@ fun BottomSheetUnknownError(
         title = stringResource(R.string.there_is_something_wrong),
         subtitle = stringResource(R.string.there_is_unknown_error_try_again_later),
         positive = false,
-        button1 = MessageBottomData(text = "Ok", positive = true, onClick = unknownError.dismiss),
+        button1 = MessageBottomData(
+            text = stringResource(R.string.i_understand),
+            positive = null, onClick = unknownError.dismiss
+        ),
         button2 = null, button3 = null,
     )
 }
@@ -26,9 +29,12 @@ fun BottomSheetCustomError(
 ) {
     AmBottomSheetMessage(
         title = stringResource(R.string.there_is_something_wrong),
-        subtitle = stringResource(R.string.there_is_unknown_error_try_again_later),
+        subtitle = unknownError.errorMessage,
         positive = false,
-        button1 = MessageBottomData(text = "Ok", positive = true, onClick = unknownError.dismiss),
+        button1 = MessageBottomData(
+            text = stringResource(R.string.i_understand),
+            positive = true, onClick = unknownError.dismiss
+        ),
         button2 = null, button3 = null,
     )
 }

@@ -1,10 +1,12 @@
 package com.awesome.manager.feature.auth
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.common.extentions.isValiedEmail
 import com.awesome.manager.core.common.extentions.isValiedPassword
 import com.awesome.manager.core.common.results.AmError
 import com.awesome.manager.core.common.results.AmResult
+import com.awesome.manager.core.common.results.asAmError
 import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,19 +26,30 @@ class AuthScreenState(
     fun updateStateBasedOnResult(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
-        Timber.d("TEST_AUTH STATE $amResult")
         stopLoading()
         when (amResult) {
             is AmResult.Error -> when (val amError = amResult.amError) {
 
-                is AmError.BadRequest -> showAuthErrorBottomSheet()
+                is AmError.BadRequest -> {
+                    showAuthErrorBottomSheet(
+                        errorMessage = amError.errorMessage,
+                        onCreateAccount = {
+                            register()
+                            dismissBottomSheet()
+                        },
+                        editCredentials = ::dismissBottomSheet
+                    )
+                }
 
-                is AmError.OtherError -> showCustomErrorMessage(errorMessage = amError.message.orEmpty())
+                is AmError.OtherError -> {
+                    Timber.d("TEST_ERROR_MESSAGE ${amError.message}")
+                    showCustomErrorMessage(errorMessage = amError.errorMessage.orEmpty())
+                }
 
                 AmError.Unauthorized -> showCustomErrorMessage(errorMessage = amError.message.orEmpty())
 
                 AmError.ConnectionError -> showConnectionErrorBottomSheet()
-
+                AmError.UnknownError -> {}
             }
 
             is AmResult.Loading -> startLoading()

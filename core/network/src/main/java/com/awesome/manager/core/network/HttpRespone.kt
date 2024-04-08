@@ -1,5 +1,6 @@
 package com.awesome.manager.core.network
 
+import android.util.Log
 import com.awesome.manager.core.common.results.AmError
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
@@ -25,7 +26,7 @@ suspend inline fun <reified T> HttpResponse.asResult():T{
         HttpStatusCode.BadRequest,-> body<ErrorResponse>().let {
             val errorMessage=it.errorDescription?:it.error?:it.message
             throw when(errorMessage){
-                null-> AmError.OtherError(null)
+                null-> AmError.UnknownError
                 else -> AmError.BadRequest(errorMessage = errorMessage)
             }
         }

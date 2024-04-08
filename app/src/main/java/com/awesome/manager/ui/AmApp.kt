@@ -2,6 +2,7 @@ package com.awesome.manager.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -103,6 +104,7 @@ fun AmApp(
     LaunchedEffect(key1 = bottomSheetState, block = {
         if (bottomSheetState !is BottomSheetAction.Empty) {
             this.launch {
+                sheetState.hide()
                 when (bottomSheetState.isOpen) {
                     true -> sheetState.show()
                     false -> sheetState.hide()
@@ -173,7 +175,7 @@ fun AmApp(
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             AmNavHost(
-                modifier = Modifier.padding(padding),
+                modifier = Modifier.padding(padding).imePadding(),
                 navHostController = maAppState.navHostController,
                 sendMainAction = mainActivityState::updateMainState
             )

@@ -14,6 +14,7 @@ import java.net.UnknownHostException
 sealed class AmError : Throwable() {
     data object Unauthorized : AmError()
     data object ConnectionError : AmError()
+    data object UnknownError : AmError()
     data class BadRequest(val errorMessage: String) : AmError()
     data class OtherError(val errorMessage: String?) : AmError()
 }

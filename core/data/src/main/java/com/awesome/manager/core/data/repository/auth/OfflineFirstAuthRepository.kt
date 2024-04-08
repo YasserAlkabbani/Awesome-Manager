@@ -23,6 +23,8 @@ class OfflineFirstAuthRepository @Inject constructor(
             val authNetwork = authNetworkDataSource.login(email, password)
             updateToken(authNetwork)
             true
+        }.map {
+            it
         }
 
     override suspend fun signUp(email: String, password: String): Flow<AmResult<Boolean>> =

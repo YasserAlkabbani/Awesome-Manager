@@ -5,7 +5,6 @@ import java.util.Properties
 plugins {
     id("awesomemanager.android.library")
     id("awesomemanager.android.hilt")
-    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 val networkFile = rootProject.file("local.properties")
