@@ -152,7 +152,6 @@ fun AuthScreen(
                         Column(Modifier.fillMaxWidth()) {
                             AmTextField(
                                 modifier = Modifier,
-                                initTextValue = "yasser@gmail.com",
                                 label = stringResource(R.string.email),
                                 icon = AmIcons.Email,
                                 hint = "Example@Example.com",
@@ -169,7 +168,6 @@ fun AuthScreen(
 
                             AmTextField(
                                 modifier = Modifier,
-                                initTextValue = "123456",
                                 label = stringResource(R.string.password),
                                 icon = AmIcons.Password,
                                 hint = "Your Top Secret Password",

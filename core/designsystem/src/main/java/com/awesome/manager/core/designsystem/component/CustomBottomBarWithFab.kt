@@ -1,5 +1,8 @@
 package com.awesome.manager.core.designsystem.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -22,6 +25,7 @@ fun AmCustomBottomBarWithFab(
     modifier: Modifier,
     onClickFab: () -> Unit,
     fabIcon: AmIconsType,
+    showFab: Boolean,
     bottomBarItems: @Composable RowScope.() -> Unit
 ) {
     Surface(
@@ -38,15 +42,19 @@ fun AmCustomBottomBarWithFab(
                 content = bottomBarItems,
             )
             AmSpacerMediumWidth()
-            FloatingActionButton(
-                modifier = Modifier,
-                onClick = onClickFab,
-                content = { AmIcon(amIconsType = fabIcon) },
-                elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                shape = MaterialTheme.shapes.extraLarge,
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.secondaryContainer
-            )
+            Row {
+                AnimatedVisibility(visible = showFab) {
+                    FloatingActionButton(
+                        modifier = Modifier,
+                        onClick = onClickFab,
+                        content = { AmIcon(amIconsType = fabIcon) },
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+                }
+            }
         }
     }
 

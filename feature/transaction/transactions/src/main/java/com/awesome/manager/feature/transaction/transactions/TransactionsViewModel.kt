@@ -13,13 +13,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     transactionRepository: TransactionRepository
 ) : ViewModel() {
 
     val transactionsState: TransactionsState = TransactionsState(
         transactions = transactionRepository.returnTransactions("").map {
-            DataState.Success(it)
+            if (it.isNotEmpty()) DataState.Success(it)
+            else DataState.Error
         }.asDataStateFlow(viewModelScope)
     )
 

@@ -1,5 +1,10 @@
 package com.awesome.manager.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -138,6 +143,7 @@ fun AmApp(
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 AmAppBar(
                     modifier = Modifier.statusBarsPadding(),
@@ -151,6 +157,7 @@ fun AmApp(
                     AmCustomBottomBarWithFab(
                         modifier = Modifier,
                         fabIcon = addButton.icon,
+                        showFab = addButton.visible,
                         onClickFab = {
                             currentDestination?.route?.let {
                                 maAppState.navigateToAddByCurrentNavigation(
@@ -175,7 +182,9 @@ fun AmApp(
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             AmNavHost(
-                modifier = Modifier.padding(padding).imePadding(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
                 navHostController = maAppState.navHostController,
                 sendMainAction = mainActivityState::updateMainState
             )

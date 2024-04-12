@@ -2,4 +2,6 @@
 <resources>
     <string name="transactions">Transactions</string>
     <string name="search_for_transaction">"Search For Transaction .. "</string>
+    <string name="theres_no_transactions_yet">Theres no transactions yet</string>
+    <string name="create_a_transaction">Create a transaction</string>
 </resources>

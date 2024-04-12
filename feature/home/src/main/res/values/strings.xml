@@ -5,4 +5,6 @@
     <string name="incoming">Incoming</string>
     <string name="lent">Lent</string>
     <string name="borrow">Borrow</string>
+    <string name="theres_no_accounts_yet">Theres no accounts yet</string>
+    <string name="create_an_account">Create an account</string>
 </resources>

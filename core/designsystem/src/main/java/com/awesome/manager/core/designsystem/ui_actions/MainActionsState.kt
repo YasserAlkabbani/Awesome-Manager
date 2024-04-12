@@ -16,8 +16,8 @@ abstract class MainActionsState {
     fun resetNavigationAction() = NavigationAction.Idle.sendAction()
     fun navigatePopBack() = NavigationAction.PopBack.sendAction()
 
-    fun navigateToAccount(accountId: String) =
-        NavigationAction.ReadAccount(accountId).sendAction()
+    fun navigateToCreateAccount() =
+        NavigationAction.CreateAccount.sendAction()
 
     fun navigateToAccountDetails(accountId: String) =
         NavigationAction.ReadAccount(accountId).sendAction()
@@ -25,7 +25,7 @@ abstract class MainActionsState {
     fun navigateToEditAccount(accountId: String) =
         NavigationAction.EditAccount(accountId).sendAction()
 
-    fun navigateToCreateTransaction(accountId: String) =
+    fun navigateToCreateTransaction(accountId: String?) =
         NavigationAction.CreateTransaction(accountId).sendAction()
 
     fun navigateToEditTransaction(transactionId: String) =
@@ -81,8 +81,14 @@ abstract class MainActionsState {
     fun showUnknownErrorBottomSheet() =
         BottomSheetAction.UnknownError(dismiss = ::dismissBottomSheet).sendAction()
 
-    fun showAuthErrorBottomSheet(errorMessage: String,onCreateAccount:()->Unit,editCredentials:()->Unit) =
-        BottomSheetAction.AuthError(errorMessage=errorMessage,createNewAccount = onCreateAccount,editCredentials = editCredentials).sendAction()
+    fun showAuthErrorBottomSheet(
+        errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
+    ) =
+        BottomSheetAction.AuthError(
+            errorMessage = errorMessage,
+            createNewAccount = onCreateAccount,
+            editCredentials = editCredentials
+        ).sendAction()
 
     fun showConnectionErrorBottomSheet() =
         BottomSheetAction.ConnectionError(dismiss = ::dismissBottomSheet).sendAction()

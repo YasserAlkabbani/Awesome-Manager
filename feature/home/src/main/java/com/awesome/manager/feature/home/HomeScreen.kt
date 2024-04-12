@@ -4,18 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +32,10 @@ import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
+import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.model.CurrencyWithBalance
 import com.awesome.manager.core.ui.AmTextWithIconLarge
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +47,23 @@ fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeState = homeViewModel.homeState
+
+    val navigationAction=homeState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendAction(
+            sendMainAction = sendMainAction,
+            resetNavigation = homeState::resetNavigationAction
+        )
+    })
+    val currencyWithBalance=homeState.currencyWithData.collectAsState().value
+    LaunchedEffect(key1 = homeState, block = {
+        when (currencyWithBalance){
+            is DataState.Success -> AppBarAction.Idle.sendAction(sendMainAction)
+            DataState.Error -> AppBarAction.Idle.sendAction(sendMainAction)
+            DataState.Loading -> AppBarAction.Idle.sendAction(sendMainAction)
+        }
+    })
+    
     HomeScreen(homeState)
 }
 
@@ -48,10 +71,8 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(homeState: HomeState) {
 
-    val currencyWithBalance = homeState.currencyWithData.collectAsState().value
-
-    if (currencyWithBalance is DataState.Success) {
-        LazyColumn(
+    when (val currencyWithBalance = homeState.currencyWithData.collectAsState().value) {
+        is DataState.Success -> LazyColumn(
             verticalArrangement = Arrangement.spacedBy(PADDING_LOW.dp),
             contentPadding = PaddingValues(
                 start = PADDING_LOW.dp,
@@ -68,6 +89,28 @@ fun HomeScreen(homeState: HomeState) {
                     }
                 )
             })
+
+        DataState.Error -> {
+            Column(
+                modifier = Modifier
+                    .padding(PADDING_LARGE_EXTRA.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AmText(
+                    text = stringResource(R.string.theres_no_accounts_yet),
+                    maxLines = 3, textAlign = TextAlign.Center
+                )
+                AmFilledTonalButton(
+                    text = stringResource(R.string.create_an_account),
+                    onClick = homeState::navigateToCreateAccount,
+                    positive = null
+                )
+            }
+        }
+
+        DataState.Loading -> {}
     }
 }
 
@@ -79,7 +122,6 @@ fun HomeScreenPreview() {
 
 @Composable
 fun HomeCard(currencyWithBalance: CurrencyWithBalance) {
-
     val positiveCash = remember { derivedStateOf { currencyWithBalance.netCash >= 0 } }.value
     AmSurface(modifier = Modifier.fillMaxWidth(), highPadding = false, positive = positiveCash) {
         Row(

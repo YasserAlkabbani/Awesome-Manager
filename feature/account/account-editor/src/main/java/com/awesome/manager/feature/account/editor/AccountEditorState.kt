@@ -1,69 +1,132 @@
 package com.awesome.manager.feature.account.editor
 
-import androidx.lifecycle.SavedStateHandle
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.setData
+import com.awesome.manager.core.common.states.updateData
 import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
+import com.awesome.manager.core.model.UpsertAccount
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-private const val NAME: String = "NAME"
-private const val IMAGE_URL: String = "IMAGE_URL"
-private const val CURRENCY_ID: String = "CURRENCY_ID"
-private const val DEFAULT_TRANSACTION_TYPE_ID: String = "DEFAULT_TRANSACTION_TYPE_ID"
+import java.util.UUID
 
 class AccountEditorState(
-    private val savedStateHandle: SavedStateHandle,
     val currencies: StateFlow<List<AmCurrency>>,
-    val asSelectedCurrencies: StateFlow<String?>.() -> StateFlow<AmCurrency?>,
     val transactionTypes: StateFlow<List<AmTransactionType>>,
-    val asSelectedTransactionTypes: StateFlow<String?>.() -> StateFlow<AmTransactionType?>,
     val onSave: () -> Unit,
-): MainActionsState() {
+) : MainActionsState() {
 
-    val name: StateFlow<String> = savedStateHandle.getStateFlow(NAME, "")
-    fun updateName(newValue: String) = savedStateHandle.set(NAME, newValue)
+    private val _Edit_accountData: MutableStateFlow<DataState<EditAccountData>> =
+        MutableStateFlow(DataState.Loading)
+    val editAccountData: StateFlow<DataState<EditAccountData>> = _Edit_accountData
+    fun asCreateAccount(creatorUserId: String) = _Edit_accountData
+        .setData { EditAccountData.CreateEditAccountData(creatorUserId = creatorUserId) }
 
-    val imageUrl: StateFlow<String> = savedStateHandle.getStateFlow(IMAGE_URL, generateImageUrl())
-    fun updateImageUrl(newValue: String) = savedStateHandle.set(IMAGE_URL, newValue)
-
-    val selectedCurrency: StateFlow<AmCurrency?> =
-        savedStateHandle.getStateFlow<String?>(CURRENCY_ID, null).asSelectedCurrencies()
-
-    fun updateCurrency(currencyId: String) = savedStateHandle.set(CURRENCY_ID, currencyId)
-
-    val defaultTransactionType: StateFlow<AmTransactionType?> =
-        savedStateHandle.getStateFlow(DEFAULT_TRANSACTION_TYPE_ID, null)
-            .asSelectedTransactionTypes()
-
-    fun updateDefaultTransactionType(transactionTypeId: String) =
-        savedStateHandle.set(DEFAULT_TRANSACTION_TYPE_ID, transactionTypeId)
-
-    fun fillAccountData(amAccount: AmAccount) {
-        updateName(amAccount.name)
-        updateDefaultTransactionType(amAccount.defaultTransactionType.id)
-        updateCurrency(amAccount.currency.id)
-        updateImageUrl(amAccount.imageUrl)
+    fun asEditAccount(currentUserId: String, amAccount: AmAccount) {
+        if (currentUserId == amAccount.id) _Edit_accountData.setData {
+            EditAccountData.EditEditAccountData(
+                id = amAccount.id, creatorUserId = amAccount.creatorUserId,
+                name = amAccount.name, imageUrl = amAccount.imageUrl,
+                currency = amAccount.currency,
+                defaultTransactionType = amAccount.defaultTransactionType,
+            )
+        }
+        else navigatePopBack()
     }
 
-    fun validateAccount(accountId: String, creatorUserId: String?) =
-        if (
-            accountId.isNotBlank() && !creatorUserId.isNullOrBlank() &&
-            name.value.isNotBlank() &&
-            selectedCurrency.value != null &&
-            defaultTransactionType.value != null
-        ) {
-            UpsertAccount(
-                id = accountId, creatorUserId = creatorUserId,
-                name = name.value, imageUrl = imageUrl.value,
-                currencyId = selectedCurrency.value!!.id,
-                defaultTransactionTypeId = defaultTransactionType.value!!.id
-            )
-        } else null
+    fun updateName(name: String) = _Edit_accountData.updateData { it.updateName(name) }
+    fun updateImageUrl(imageUrl: String) = _Edit_accountData.updateData { it.updateImageUrl(imageUrl) }
+    fun updateCurrency(amCurrency: AmCurrency) =
+        _Edit_accountData.updateData { it.updateSelectedCurrency(amCurrency) }
+
+    fun updateDefaultTransactionType(transactionType: AmTransactionType) =
+        _Edit_accountData.updateData { it.updateDefaultTransactionType(transactionType) }
+
+    fun checkValidateAccount(): UpsertAccount? =
+        (editAccountData.value as? DataState.Success)?.data?.validateAccountData()
 
 }
 
+sealed class EditAccountData {
+
+    abstract fun updateName(name: String): EditAccountData
+    abstract fun updateImageUrl(imageUrl: String): EditAccountData
+    abstract fun updateSelectedCurrency(currency: AmCurrency): EditAccountData
+    abstract fun updateDefaultTransactionType(transactionType: AmTransactionType): EditAccountData
+    abstract fun validateAccountData(): UpsertAccount?
+
+    abstract val id: String
+    abstract val creatorUserId: String
+    abstract val name: String
+    abstract val imageUrl: String
+    abstract val currency: AmCurrency?
+    abstract val defaultTransactionType: AmTransactionType?
+
+    data class CreateEditAccountData(
+        override val id: String = UUID.randomUUID().toString(),
+        override val creatorUserId: String,
+        override val name: String="",
+        override val imageUrl: String= images.random(),
+        override val currency: AmCurrency?=null,
+        override val defaultTransactionType: AmTransactionType?=null,
+    ) : EditAccountData() {
+
+        override fun updateName(name: String): CreateEditAccountData =
+            copy(name = name)
+
+        override fun updateImageUrl(imageUrl: String): CreateEditAccountData =
+            copy(imageUrl = imageUrl)
+
+        override fun updateSelectedCurrency(currency: AmCurrency): CreateEditAccountData =
+            copy(currency = currency)
+
+        override fun updateDefaultTransactionType(transactionType: AmTransactionType): CreateEditAccountData =
+            copy(defaultTransactionType = transactionType)
+
+        override fun validateAccountData(): UpsertAccount? =
+            if (name.isNotEmpty() && currency != null && defaultTransactionType != null)
+                UpsertAccount(
+                    id = id, creatorUserId = creatorUserId, name = name,
+                    imageUrl = imageUrl, currencyId = currency.id,
+                    defaultTransactionTypeId = defaultTransactionType.id,
+                ) else null
+
+    }
+
+    data class EditEditAccountData(
+        override val id: String,
+        override val creatorUserId: String,
+        override val name: String,
+        override val imageUrl: String,
+        override val currency: AmCurrency,
+        override val defaultTransactionType: AmTransactionType
+    ) : EditAccountData() {
+
+        override fun updateName(name: String): EditEditAccountData =
+            copy(name = name)
+
+        override fun updateImageUrl(imageUrl: String): EditEditAccountData =
+            copy(imageUrl = imageUrl)
+
+        override fun updateSelectedCurrency(currency: AmCurrency): EditEditAccountData =
+            copy(currency = currency)
+
+        override fun updateDefaultTransactionType(transactionType: AmTransactionType): EditEditAccountData =
+            copy(defaultTransactionType = transactionType)
+
+        override fun validateAccountData(): UpsertAccount? =
+            if (name.isNotEmpty())
+                UpsertAccount(
+                    id = id, creatorUserId = creatorUserId, name = name,
+                    imageUrl = imageUrl, currencyId = currency.id,
+                    defaultTransactionTypeId = defaultTransactionType.id,
+                ) else null
+
+    }
+
+}
 
 /// TEMP LIST
 private val images: List<String> = listOf(
@@ -83,5 +146,3 @@ private val images: List<String> = listOf(
     "https://cdn.pixabay.com/photo/2023/05/22/22/18/common-blue-butterfly-8011569_1280.jpg",
     "https://cdn.pixabay.com/photo/2023/04/18/15/52/flower-7935433_1280.jpg",
 )
-
-private fun generateImageUrl(): String = images.random()

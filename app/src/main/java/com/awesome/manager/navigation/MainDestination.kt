@@ -8,34 +8,37 @@ import com.awesome.manager.feature.home.R as homeR
 import com.awesome.manager.feature.account.accounts.R as accountsR
 import com.awesome.manager.feature.transaction.transactions.R as transactionsR
 
-data class AddButton(val title: AmTextManager, val icon: AmIconsType)
+data class AddButton(val title: AmTextManager, val icon: AmIconsType,val visible:Boolean)
 
 enum class MainDestination(
     val selectedAmIconsType: AmIconsType,
     val unSelectedAmIconsType: AmIconsType,
-    val addButton: AddButton,
+    val addButton: AddButton,val searchAppBar:Boolean,
     val title: AmTextManager,
 ) {
     Home(
         selectedAmIconsType = AmIcons.HomeSelected,
         unSelectedAmIconsType = AmIcons.HomeUnSelected,
-        addButton = AddButton(title = "Create Account".asAmText(), icon = AmIcons.HomeAdd),
-        title = homeR.string.home.asAmText()
+        addButton = AddButton(
+            title = "Create Account".asAmText(), icon = AmIcons.HomeAdd,visible = false
+        ),
+        searchAppBar=false,title = homeR.string.home.asAmText()
     ),
     Accounts(
         selectedAmIconsType = AmIcons.AccountsSelected,
         unSelectedAmIconsType = AmIcons.AccountsUnSelected,
-        addButton = AddButton(title = "Create Account".asAmText(), icon = AmIcons.AccountAdd),
-        title = accountsR.string.accounts.asAmText()
+        addButton = AddButton(
+            title = "Create Account".asAmText(), icon = AmIcons.AccountAdd,visible = true
+        ),
+        searchAppBar=true,title = accountsR.string.accounts.asAmText()
     ),
     Transactions(
         selectedAmIconsType = AmIcons.TransactionsSelected,
         unSelectedAmIconsType = AmIcons.TransactionsUnSelected,
         addButton = AddButton(
-            title = "Create Transaction".asAmText(),
-            icon = AmIcons.TransactionAdd
+            title = "Create Transaction".asAmText(), icon = AmIcons.TransactionAdd, visible = true
         ),
-        title = transactionsR.string.transactions.asAmText()
+        searchAppBar=false,title = transactionsR.string.transactions.asAmText()
     ),
 //    Menu(
 //        selectedAmIconsType = AmIcons.MenuSelected,

@@ -37,7 +37,7 @@ fun TransactionDetailsRoute(
     LaunchedEffect(key1 = transactionState, block = {
         when (transactionState) {
             is DataState.Success -> {
-                val transaction=transactionState.data
+                val transaction = transactionState.data
                 AppBarAction.Read(
                     onBack = transactionDetailsState::navigatePopBack,
                     title = transaction.title,
@@ -46,6 +46,7 @@ fun TransactionDetailsRoute(
                     }
                 ).sendAction(sendMainAction)
             }
+
             DataState.Error, DataState.Loading -> {}
         }
     })
@@ -67,7 +68,7 @@ fun TransactionDetailsScreen(
     ) {
         when (accountState) {
             is DataState.Success -> {
-                val account=accountState.data
+                val account = accountState.data
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
@@ -76,7 +77,7 @@ fun TransactionDetailsScreen(
                     debtor = account.debtor,
                     currency = account.currency.currencyCode,
                     loading = account.pending,
-                    onClick = { transactionDetailsState.navigateToAccount(account.id) },
+                    onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
                     onAddTransaction = {
                         transactionDetailsState.navigateToCreateTransaction(
                             account.id
@@ -86,11 +87,12 @@ fun TransactionDetailsScreen(
                 )
 
             }
-            DataState.Error , DataState.Loading -> {}
+
+            DataState.Error, DataState.Loading -> {}
         }
         when (transactionState) {
             is DataState.Success -> {
-                val transaction=transactionState.data
+                val transaction = transactionState.data
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.transaction_subject),
@@ -117,7 +119,8 @@ fun TransactionDetailsScreen(
                     positive = transaction.paymentTransaction
                 )
             }
-            DataState.Error , DataState.Loading -> {}
+
+            DataState.Error, DataState.Loading -> {}
         }
 
     }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.UIConstant
 
 @Composable
 fun AmCard(
@@ -36,7 +37,7 @@ fun AmCard(
         modifier = modifier,
         onClick = onClick,
         content = {
-            Column(modifier = modifier.padding(6.dp)) {
+            Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
                 content()
             }
             AnimatedVisibility(visible = loading) {
@@ -69,7 +70,7 @@ fun AmCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = cardColors),
         content = {
-            Column(modifier = Modifier.padding(6.dp)) {
+            Column(modifier = Modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
                 content()
             }
         },

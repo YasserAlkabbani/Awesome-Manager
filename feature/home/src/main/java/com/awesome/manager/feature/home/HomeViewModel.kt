@@ -18,7 +18,10 @@ class HomeViewModel @Inject constructor(
 
     val homeState: HomeState = HomeState(
         currencyRepository.returnCurrenciesBalance()
-            .map { DataState.Success(it) }
+            .map {
+                if (it.isNotEmpty()) DataState.Success(it)
+                else DataState.Error
+            }
             .asDataStateFlow(viewModelScope)
     )
 

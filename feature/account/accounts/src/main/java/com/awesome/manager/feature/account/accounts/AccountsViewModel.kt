@@ -12,14 +12,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
-    private val accountRepository: AccountRepository,
-    private val currencyRepository: CurrencyRepository
+    accountRepository: AccountRepository,
 ) : ViewModel() {
 
     val accountsState: AccountsState = AccountsState(
         accounts = accountRepository.returnAccounts("")
-                .map { DataState.Success(it) }
-                .asDataStateFlow(viewModelScope)
+            .map {
+                if (it.isNotEmpty()) DataState.Success(it)
+                else DataState.Error
+            }
+            .asDataStateFlow(viewModelScope)
     )
 
 }
