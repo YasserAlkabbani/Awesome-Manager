@@ -1,49 +1,23 @@
 package com.awesome.manager.core.designsystem.component
 
-import android.text.InputType
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.foundation.text2.BasicTextField2
-import androidx.compose.foundation.text2.input.forEachTextValue
-import androidx.compose.foundation.text2.input.rememberTextFieldState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,31 +28,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.takeOrElse
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_SMALL
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_MEDIUM
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import kotlinx.coroutines.newSingleThreadContext
 
 @Composable
 fun AmTextField(
     modifier: Modifier = Modifier,
     initTextValue: String = "", onTextChange: (String) -> Unit,
     icon: AmIconsType, label: String, hint: String,
-    singleLine: Boolean = true, error: String?, password: Boolean = false, enabled: Boolean = true,
+    singleLine: Boolean = true, error: String?, password: Boolean = false,
+    enabled: Boolean = true, reformatText:(String)->String={it},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
@@ -130,7 +98,7 @@ fun AmTextField(
                 value = text,
                 enabled = enabled,
                 placeholder = { AmText(text = hint) },
-                onValueChange = { text = it },
+                onValueChange = { text = reformatText(it) },
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = MaterialTheme.shapes.medium,
                 singleLine = singleLine,

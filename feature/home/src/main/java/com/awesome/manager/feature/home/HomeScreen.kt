@@ -39,6 +39,7 @@ import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.model.CurrencyWithBalance
 import com.awesome.manager.core.ui.AmTextWithIconLarge
 import kotlinx.coroutines.flow.MutableStateFlow
+import timber.log.Timber
 import kotlin.math.absoluteValue
 
 @Composable
@@ -56,13 +57,13 @@ fun HomeRoute(
         )
     })
     val currencyWithBalance=homeState.currencyWithData.collectAsState().value
-    LaunchedEffect(key1 = homeState, block = {
-        when (currencyWithBalance){
-            is DataState.Success -> AppBarAction.Idle.sendAction(sendMainAction)
-            DataState.Error -> AppBarAction.Idle.sendAction(sendMainAction)
-            DataState.Loading -> AppBarAction.Idle.sendAction(sendMainAction)
-        }
-    })
+    Timber.d("TEST_APP_BAR_STATE HOME RE_COMPOSE")
+    when (currencyWithBalance){
+        is DataState.Success,DataState.Error ,DataState.Loading-> AppBarAction.MainNavigation(
+            onAddAccount = homeState::navigateToCreateAccount,
+            onAddTransaction = {homeState.navigateToCreateTransaction(null)}
+        ).sendAction(sendMainAction)
+    }
     
     HomeScreen(homeState)
 }
@@ -73,6 +74,7 @@ fun HomeScreen(homeState: HomeState) {
 
     when (val currencyWithBalance = homeState.currencyWithData.collectAsState().value) {
         is DataState.Success -> LazyColumn(
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(PADDING_LOW.dp),
             contentPadding = PaddingValues(
                 start = PADDING_LOW.dp,

@@ -18,15 +18,15 @@ class AccountEditorState(
     val onSave: () -> Unit,
 ) : MainActionsState() {
 
-    private val _Edit_accountData: MutableStateFlow<DataState<EditAccountData>> =
+    private val _accountEditorData: MutableStateFlow<DataState<AccountEditorData>> =
         MutableStateFlow(DataState.Loading)
-    val editAccountData: StateFlow<DataState<EditAccountData>> = _Edit_accountData
-    fun asCreateAccount(creatorUserId: String) = _Edit_accountData
-        .setData { EditAccountData.CreateEditAccountData(creatorUserId = creatorUserId) }
+    val accountEditorData: StateFlow<DataState<AccountEditorData>> = _accountEditorData
+    fun asCreateAccount(creatorUserId: String) = _accountEditorData
+        .setData { AccountEditorData.AccountEditorCreate(creatorUserId = creatorUserId) }
 
     fun asEditAccount(currentUserId: String, amAccount: AmAccount) {
-        if (currentUserId == amAccount.id) _Edit_accountData.setData {
-            EditAccountData.EditEditAccountData(
+        if (currentUserId == amAccount.creatorUserId) _accountEditorData.setData {
+            AccountEditorData.AccountEditorUpdate(
                 id = amAccount.id, creatorUserId = amAccount.creatorUserId,
                 name = amAccount.name, imageUrl = amAccount.imageUrl,
                 currency = amAccount.currency,
@@ -36,25 +36,25 @@ class AccountEditorState(
         else navigatePopBack()
     }
 
-    fun updateName(name: String) = _Edit_accountData.updateData { it.updateName(name) }
-    fun updateImageUrl(imageUrl: String) = _Edit_accountData.updateData { it.updateImageUrl(imageUrl) }
+    fun updateName(name: String) = _accountEditorData.updateData { it.updateName(name) }
+    fun updateImageUrl(imageUrl: String) = _accountEditorData.updateData { it.updateImageUrl(imageUrl) }
     fun updateCurrency(amCurrency: AmCurrency) =
-        _Edit_accountData.updateData { it.updateSelectedCurrency(amCurrency) }
+        _accountEditorData.updateData { it.updateSelectedCurrency(amCurrency) }
 
     fun updateDefaultTransactionType(transactionType: AmTransactionType) =
-        _Edit_accountData.updateData { it.updateDefaultTransactionType(transactionType) }
+        _accountEditorData.updateData { it.updateDefaultTransactionType(transactionType) }
 
     fun checkValidateAccount(): UpsertAccount? =
-        (editAccountData.value as? DataState.Success)?.data?.validateAccountData()
+        (accountEditorData.value as? DataState.Success)?.data?.validateAccountData()
 
 }
 
-sealed class EditAccountData {
+sealed class AccountEditorData {
 
-    abstract fun updateName(name: String): EditAccountData
-    abstract fun updateImageUrl(imageUrl: String): EditAccountData
-    abstract fun updateSelectedCurrency(currency: AmCurrency): EditAccountData
-    abstract fun updateDefaultTransactionType(transactionType: AmTransactionType): EditAccountData
+    abstract fun updateName(name: String): AccountEditorData
+    abstract fun updateImageUrl(imageUrl: String): AccountEditorData
+    abstract fun updateSelectedCurrency(currency: AmCurrency): AccountEditorData
+    abstract fun updateDefaultTransactionType(transactionType: AmTransactionType): AccountEditorData
     abstract fun validateAccountData(): UpsertAccount?
 
     abstract val id: String
@@ -64,25 +64,25 @@ sealed class EditAccountData {
     abstract val currency: AmCurrency?
     abstract val defaultTransactionType: AmTransactionType?
 
-    data class CreateEditAccountData(
+    data class AccountEditorCreate(
         override val id: String = UUID.randomUUID().toString(),
         override val creatorUserId: String,
         override val name: String="",
         override val imageUrl: String= images.random(),
         override val currency: AmCurrency?=null,
         override val defaultTransactionType: AmTransactionType?=null,
-    ) : EditAccountData() {
+    ) : AccountEditorData() {
 
-        override fun updateName(name: String): CreateEditAccountData =
+        override fun updateName(name: String): AccountEditorCreate =
             copy(name = name)
 
-        override fun updateImageUrl(imageUrl: String): CreateEditAccountData =
+        override fun updateImageUrl(imageUrl: String): AccountEditorCreate =
             copy(imageUrl = imageUrl)
 
-        override fun updateSelectedCurrency(currency: AmCurrency): CreateEditAccountData =
+        override fun updateSelectedCurrency(currency: AmCurrency): AccountEditorCreate =
             copy(currency = currency)
 
-        override fun updateDefaultTransactionType(transactionType: AmTransactionType): CreateEditAccountData =
+        override fun updateDefaultTransactionType(transactionType: AmTransactionType): AccountEditorCreate =
             copy(defaultTransactionType = transactionType)
 
         override fun validateAccountData(): UpsertAccount? =
@@ -95,25 +95,25 @@ sealed class EditAccountData {
 
     }
 
-    data class EditEditAccountData(
+    data class AccountEditorUpdate(
         override val id: String,
         override val creatorUserId: String,
         override val name: String,
         override val imageUrl: String,
         override val currency: AmCurrency,
         override val defaultTransactionType: AmTransactionType
-    ) : EditAccountData() {
+    ) : AccountEditorData() {
 
-        override fun updateName(name: String): EditEditAccountData =
+        override fun updateName(name: String): AccountEditorUpdate =
             copy(name = name)
 
-        override fun updateImageUrl(imageUrl: String): EditEditAccountData =
+        override fun updateImageUrl(imageUrl: String): AccountEditorUpdate =
             copy(imageUrl = imageUrl)
 
-        override fun updateSelectedCurrency(currency: AmCurrency): EditEditAccountData =
+        override fun updateSelectedCurrency(currency: AmCurrency): AccountEditorUpdate =
             copy(currency = currency)
 
-        override fun updateDefaultTransactionType(transactionType: AmTransactionType): EditEditAccountData =
+        override fun updateDefaultTransactionType(transactionType: AmTransactionType): AccountEditorUpdate =
             copy(defaultTransactionType = transactionType)
 
         override fun validateAccountData(): UpsertAccount? =

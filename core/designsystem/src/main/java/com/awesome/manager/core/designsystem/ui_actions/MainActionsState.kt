@@ -46,13 +46,13 @@ abstract class MainActionsState {
         AppBarAction.Search(syncString, false).sendAction()
 
     fun showCreateAppBar(title: String, onCancel: () -> Unit, onSave: () -> Unit) =
-        AppBarAction.Create(title = title, onCancel = onCancel, onSave = onSave)
+        AppBarAction.Create(title = title, onCancel = onCancel, onCreate = onSave).sendAction()
 
     fun showEditAppBar(title: String, onCancel: () -> Unit, onSave: () -> Unit) =
-        AppBarAction.Edit(title, onCancel, onSave)
+        AppBarAction.Edit(title, onCancel, onSave).sendAction()
 
-    fun showReadAppBar(title: String, onBack: () -> Unit, onEdit: () -> Unit) =
-        AppBarAction.Read(title, onBack, onEdit)
+    fun showReadAppBar(title: String,canEdit:Boolean, onBack: () -> Unit, onEdit: () -> Unit,onAddTransaction:()->Unit) =
+        AppBarAction.Read(title = title, canEdit = canEdit, onBack =  onBack, onEdit =  onEdit, onAddTransaction = onAddTransaction).sendAction()
 
 
     /////////********* BOTTOM_SHEET  *********/////////

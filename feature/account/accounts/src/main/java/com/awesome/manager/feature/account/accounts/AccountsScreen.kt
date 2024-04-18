@@ -29,6 +29,7 @@ import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.ui.AccountCard
+import timber.log.Timber
 
 @Composable
 fun AccountsRoute(
@@ -45,15 +46,14 @@ fun AccountsRoute(
             resetNavigation = accountsState::resetNavigationAction
         )
     })
-
+    Timber.d("TEST_APP_BAR_STATE ACCOUNT RE_COMPOSE")
     val accounts = accountsState.accounts.collectAsState().value
-    LaunchedEffect(key1 = accounts, block = {
-        when (accounts) {
-            is DataState.Success -> AppBarAction.Search({}, false).sendAction(sendMainAction)
-            DataState.Error -> AppBarAction.Idle.sendAction(sendMainAction)
-            DataState.Loading -> AppBarAction.Idle.sendAction(sendMainAction)
-        }
-    })
+    when (accounts) {
+        is DataState.Success,DataState.Error,DataState.Loading -> AppBarAction.MainNavigation(
+            onAddAccount = accountsState::navigateToCreateAccount,
+            onAddTransaction = null
+        ).sendAction(sendMainAction)
+    }
 
     AccountsScreen(accountsState)
 }
@@ -76,7 +76,6 @@ fun AccountsScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
-                        top = SCROLL_CONTENT_PADDING_TOP.dp,
                         bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),

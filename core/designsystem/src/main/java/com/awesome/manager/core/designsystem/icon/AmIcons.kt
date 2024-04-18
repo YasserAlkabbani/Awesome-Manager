@@ -9,12 +9,16 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Balance
+import androidx.compose.material.icons.filled.BusinessCenter
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Domain
+import androidx.compose.material.icons.filled.DomainAdd
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -52,9 +56,9 @@ object AmIcons {
     val HomeUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Home)
     val HomeAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
-    val AccountsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.ManageAccounts)
-    val AccountsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Person)
-    val AccountAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.PersonAdd)
+    val AccountsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Domain)
+    val AccountsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.BusinessCenter)
+    val AccountAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.DomainAdd)
 
     val TransactionsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Payments)
     val TransactionsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
@@ -63,7 +67,7 @@ object AmIcons {
     val MenuSelected = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.MenuOpen)
     val MenuUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Menu)
 
-    val ArrowBack = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.ArrowBackIos)
+    val ArrowBack = AmIconsType.ImageVictorAmIconsType(Icons.Default.ArrowBackIosNew)
     val ArrowForward = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.ArrowForwardIos)
     val Edit = AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
     val Save = AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)

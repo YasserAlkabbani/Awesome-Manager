@@ -1,10 +1,7 @@
 package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -70,7 +67,7 @@ fun AmAppBar(
                     AmFilledTonalIconButton(
                         amIconsType = AmIcons.Save,
                         positive = false,
-                        onClick = appBarAction.onSave
+                        onClick = appBarAction.onCreate
                     )
                 },
             )
@@ -118,11 +115,13 @@ fun AmAppBar(
                     AmFilledTonalIconButton(
                         amIconsType = AmIcons.Save,
                         positive = false,
-                        onClick = appBarAction.onSave
+                        onClick = appBarAction.onUpdate
                     )
                 },
             )
         }
+
+        is AppBarAction.MainNavigation -> {}
     }
 
 }

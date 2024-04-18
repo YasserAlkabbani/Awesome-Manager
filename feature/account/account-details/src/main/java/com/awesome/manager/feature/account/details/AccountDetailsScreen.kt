@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
@@ -30,21 +32,6 @@ fun AccountDetailsRoute(
     val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
     val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
 
-
-    LaunchedEffect(key1 = accountState, block = {
-        when(accountState){
-            is DataState.Success -> {
-                val account=accountState.data
-                AppBarAction.Read(
-                    onEdit = {accountDetailsState.navigateToEditAccount(account.id)},
-                    title = account.name,
-                    onBack = accountDetailsState::navigatePopBack
-                )
-            }
-            DataState.Error , DataState.Loading -> {}
-        }
-    })
-
     val navigationAction = accountDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
         navigationAction.sendAction(
@@ -52,6 +39,18 @@ fun AccountDetailsRoute(
             resetNavigation = accountDetailsState::resetNavigationAction
         )
     })
+
+    val account=accountDetailsState.amAccount.collectAsState().value
+    val allowToUpdate=accountDetailsState.allowToUpdate.collectAsState().value
+    if (account is DataState.Success && allowToUpdate is DataState.Success){
+        AppBarAction.Read(
+            title = stringResource(R.string.edit_account_name,account.data.name.limitName()),
+            onBack = accountDetailsState::navigatePopBack,
+            onEdit = {accountDetailsState.navigateToEditAccount(account.data.id)},
+            canEdit = allowToUpdate.data,
+            onAddTransaction = {accountDetailsState.navigateToCreateTransaction(account.data.id)}
+        ).sendAction(sendMainAction)
+    }
 
     AccountDetailsScreen(accountDetailsState)
 }

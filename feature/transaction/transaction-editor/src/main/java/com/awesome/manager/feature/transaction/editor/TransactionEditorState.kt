@@ -1,6 +1,9 @@
 package com.awesome.manager.feature.transaction.editor
 
 import androidx.lifecycle.SavedStateHandle
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.setData
+import com.awesome.manager.core.common.states.updateData
 import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -8,110 +11,151 @@ import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-
-private const val TITLE: String = "TITLE"
-private const val SUBTITLE: String = "SUBTITLE"
-private const val ACCOUNT_ID: String = "ACCOUNT_ID"
-private const val TRANSACTION_TYPE_ID = "TRANSACTION_TYPE_ID"
-private const val PAYMENT_TRANSACTION = "PAYMENT_TRANSACTION"
-private const val AMOUNT = "AMOUNT"
+import java.util.UUID
 
 class TransactionEditorState(
-    private val savedStateHandle: SavedStateHandle,
     val transactionTypes: StateFlow<List<AmTransactionType>>,
+    val accountsSearchResults: (String)->StateFlow<List<AmAccount>>,
     val createTransaction: () -> Unit,
-    asAccountsSearchResult: StateFlow<String>.() -> StateFlow<List<AmAccount>>,
-    asAccount: StateFlow<String?>.() -> StateFlow<AmAccount?>,
-    asTransactionType: StateFlow<String?>.() -> StateFlow<AmTransactionType?>,
-): MainActionsState() {
+) : MainActionsState() {
 
-    val title: StateFlow<String> = savedStateHandle.getStateFlow(TITLE, "")
-    fun updateTitle(newTitle: String) {
-        savedStateHandle[TITLE] = newTitle
+    private val _transactionEditorData: MutableStateFlow<DataState<TransactionEditorData>> =
+        MutableStateFlow(DataState.Loading)
+    val transactionEditorData: StateFlow<DataState<TransactionEditorData>> = _transactionEditorData
+    fun asCreateTransaction(creatorUserId: String) {
+        _transactionEditorData.setData {
+            TransactionEditorData.TransactionEditorCreate(creatorUserId = creatorUserId)
+        }
     }
 
-    val subtitle: StateFlow<String> = savedStateHandle.getStateFlow(SUBTITLE, "")
-    fun updateSubTitle(newSubtitle: String) {
-        savedStateHandle[SUBTITLE] = newSubtitle
+    fun asEditTransaction(transaction: AmTransaction,account: AmAccount) {
+        _transactionEditorData.setData {
+            TransactionEditorData.TransactionEditorCreate(
+                id = transaction.id,
+                creatorUserId = transaction.creatorUserId,
+                title = transaction.title,
+                subtitle = transaction.subtitle,
+                selectedAccount = account,
+                selectedTransactionType = transaction.transactionType,
+                isPaymentTransaction = transaction.paymentTransaction,
+                amount = transaction.amount,
+            )
+        }
     }
 
-    val selectedAccount: StateFlow<AmAccount?> =
-        savedStateHandle.getStateFlow(ACCOUNT_ID, null).asAccount()
+    fun updateTitle(title: String) =
+        _transactionEditorData.updateData { it.updateTitle(title) }
 
-    private fun updateAccountId(newAccountId: String) {
-        savedStateHandle[ACCOUNT_ID] = newAccountId
+    fun updateSubTitle(subtitle: String) =
+        _transactionEditorData.updateData { it.updateSubTitle(subtitle) }
+
+    fun selectAccount(account: AmAccount) {
+        _transactionEditorData.updateData { it.selectAccount(account) }
+        selectTransactionType(account.defaultTransactionType)
+        showSearchForAccountBottomSheet()
     }
 
-    val selectedTransactionType: StateFlow<AmTransactionType?> =
-        savedStateHandle.getStateFlow(TRANSACTION_TYPE_ID, null).asTransactionType()
+    fun selectTransactionType(transactionType: AmTransactionType) =
+        _transactionEditorData.updateData { it.selectTransactionType(transactionType) }
 
-    fun updateTransactionTypeId(newTransactionTypeId: String) {
-        savedStateHandle[TRANSACTION_TYPE_ID] = newTransactionTypeId
+    fun setAsPay() =
+        _transactionEditorData.updateData { it.setAsPay() }
+
+    fun setAsReceive() =
+        _transactionEditorData.updateData { it.setAsReceive() }
+
+
+    fun validateTransaction(): UpsertTransaction? =
+        (transactionEditorData.value as? DataState.Success)?.data?.validateTransactionData()
+
+}
+
+sealed class TransactionEditorData {
+
+    abstract val id: String
+    abstract val creatorUserId: String
+    abstract val title: String
+    abstract val subtitle: String
+    abstract val selectedAccount: AmAccount?
+    abstract val selectedTransactionType: AmTransactionType?
+    abstract val isPaymentTransaction: Boolean
+    abstract val amount: Double
+
+    abstract fun updateTitle(newTitle: String): TransactionEditorData
+    abstract fun updateSubTitle(newSubtitle: String): TransactionEditorData
+    abstract fun selectAccount(newAccount: AmAccount): TransactionEditorData
+    abstract fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData
+    abstract fun setAsPay(): TransactionEditorData
+    abstract fun setAsReceive(): TransactionEditorData
+    abstract fun validateTransactionData(): UpsertTransaction?
+
+    data class TransactionEditorCreate(
+        override val id: String = UUID.randomUUID().toString(),
+        override val creatorUserId: String,
+        override val title: String = "",
+        override val subtitle: String = "",
+        override val selectedAccount: AmAccount? = null,
+        override val selectedTransactionType: AmTransactionType? = null,
+        override val isPaymentTransaction: Boolean = false,
+        override val amount: Double = 0.0
+    ) : TransactionEditorData() {
+        override fun updateTitle(newTitle: String): TransactionEditorData = copy(title = newTitle)
+
+        override fun updateSubTitle(newSubtitle: String): TransactionEditorData =
+            copy(subtitle = newSubtitle)
+
+        override fun selectAccount(newAccount: AmAccount): TransactionEditorData =
+            copy(selectedAccount = newAccount)
+
+        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData =
+            copy(selectedTransactionType = newTransactionType)
+
+        override fun setAsPay(): TransactionEditorData = copy(isPaymentTransaction = true)
+
+        override fun setAsReceive(): TransactionEditorData = copy(isPaymentTransaction = false)
+        override fun validateTransactionData(): UpsertTransaction? =
+            if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
+                UpsertTransaction(
+                    id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
+                    accountId = selectedAccount.id, amount = amount,
+                    transactionTypeId = selectedTransactionType.id,
+                    paymentTransaction = isPaymentTransaction
+                )
+            } else null
     }
 
-    val paymentTransaction: StateFlow<Boolean> =
-        savedStateHandle.getStateFlow(PAYMENT_TRANSACTION, false)
+    data class TransactionEditorUpdate(
+        override val id: String,
+        override val creatorUserId: String,
+        override val title: String,
+        override val subtitle: String,
+        override val selectedAccount: AmAccount,
+        override val selectedTransactionType: AmTransactionType,
+        override val isPaymentTransaction: Boolean,
+        override val amount: Double
+    ) : TransactionEditorData() {
+        override fun updateTitle(newTitle: String): TransactionEditorData = copy(title = newTitle)
 
-    fun updateTransactionPayment(payment: Boolean) {
-        savedStateHandle[PAYMENT_TRANSACTION] = payment
-    }
+        override fun updateSubTitle(newSubtitle: String): TransactionEditorData =
+            copy(subtitle = newSubtitle)
 
-    val amount: StateFlow<String> = savedStateHandle.getStateFlow(AMOUNT, "0")
-    fun updateAmount(newAmount: String) {
-        val lastAmount = newAmount
-            .let { if (newAmount.count { it == '.' } < 2) it else amount.value }
-            .filter { it.isDigit() || it == '.' }
-            .let {
-                val splitNumber = it.split('.')
-                val newBefore = splitNumber.getOrElse(0) { "" }.ifBlank { "0" }.take(20)
-                val newAfter = splitNumber.getOrNull(1)?.take(3)?.let { ".".plus(it) }.orEmpty()
-                "$newBefore$newAfter"
-            }
-        savedStateHandle[AMOUNT] = lastAmount
-    }
+        override fun selectAccount(newAccount: AmAccount): TransactionEditorData =
+            copy(selectedAccount = newAccount)
 
-    fun selectAccount(selectedAccount: AmAccount) {
-        updateAccountId(selectedAccount.id)
-        updateTransactionTypeId(selectedAccount.defaultTransactionType.id)
-        doneSearchForAnAccount()
-    }
+        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData =
+            copy(selectedTransactionType = newTransactionType)
 
-    private val _searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val searchForAnAccountBottomSheet: StateFlow<Boolean> = _searchForAnAccountBottomSheet
-    fun startSearchForAnAccount() {
-        _searchForAnAccountBottomSheet.update { true }
-    }
+        override fun setAsPay(): TransactionEditorData = copy(isPaymentTransaction = true)
 
-    fun doneSearchForAnAccount() {
-        _searchForAnAccountBottomSheet.update { false }
-    }
-
-    fun fillTransactionData(amTransaction: AmTransaction) {
-        updateTitle(amTransaction.title)
-        updateSubTitle(amTransaction.subtitle)
-        updateAccountId(amTransaction.accountId)
-        updateTransactionTypeId(amTransaction.transactionType.id)
-        updateTransactionPayment(amTransaction.paymentTransaction)
-        updateAmount(amTransaction.amount.toString())
-    }
-
-    fun validateTransaction(transactionId: String, creatorUserId: String?): UpsertTransaction? =
-        if (
-            !creatorUserId.isNullOrBlank() &&
-            selectedAccount.value != null &&
-            selectedTransactionType.value != null
-        ) {
+        override fun setAsReceive(): TransactionEditorData = copy(isPaymentTransaction = false)
+        override fun validateTransactionData(): UpsertTransaction? = if (title.isNotEmpty()) {
             UpsertTransaction(
-                id = transactionId,
-                accountId = selectedAccount.value!!.id,
-                creatorUserId = creatorUserId,
-                title = title.value,
-                subtitle = subtitle.value,
-                amount = amount.value.toDoubleOrNull() ?: 0.0,
-                transactionTypeId = selectedTransactionType.value!!.id,
-                paymentTransaction = paymentTransaction.value,
+                id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
+                accountId = selectedAccount.id, amount = amount,
+                transactionTypeId = selectedTransactionType.id,
+                paymentTransaction = isPaymentTransaction
             )
         } else null
+    }
 
 }

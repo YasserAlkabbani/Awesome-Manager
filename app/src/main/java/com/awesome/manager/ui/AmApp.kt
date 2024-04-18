@@ -10,8 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddBusiness
+import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.Scaffold
@@ -30,6 +36,8 @@ import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
+import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
@@ -144,47 +152,26 @@ fun AmApp(
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = {
-                AmAppBar(
-                    modifier = Modifier.statusBarsPadding(),
-                    appBarAction = appBarState,
-                    onClickProfile = {},
-                    onSearchKeyChange = {},
-                )
-            },
             floatingActionButton = {
-                maAppState.currentMainDestination?.addButton?.let { addButton ->
-                    AmCustomBottomBarWithFab(
-                        modifier = Modifier,
-                        fabIcon = addButton.icon,
-                        showFab = addButton.visible,
-                        onClickFab = {
-                            currentDestination?.route?.let {
-                                maAppState.navigateToAddByCurrentNavigation(
-                                    it
-                                )
-                            }
-                        },
-                        bottomBarItems = {
-                            maAppState.mainDestination.forEach { destination ->
-                                AmNavigationCustomItem(
-                                    modifier = Modifier,
-                                    isSelected = destination == maAppState.currentMainDestination,
-                                    selectedIcon = destination.selectedAmIconsType,
-                                    unSelectedIcon = destination.unSelectedAmIconsType,
-                                    onSelect = { maAppState.navigateToMainDestination(destination) }
-                                )
-                            }
+                AmCustomBottomBarWithFab(
+                    modifier = Modifier,
+                    bottomBarItems = {
+                        maAppState.mainDestination.forEach { destination ->
+                            AmNavigationCustomItem(
+                                isSelected = destination == maAppState.currentMainDestination,
+                                selectedIcon = destination.selectedAmIconsType,
+                                unSelectedIcon = destination.unSelectedAmIconsType,
+                                onSelect = { maAppState.navigateToMainDestination(destination) }
+                            )
                         }
-                    )
-                }
+                    },
+                    appBarAction = appBarState
+                )
             },
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             AmNavHost(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                modifier = Modifier.fillMaxSize().padding(padding).statusBarsPadding().imePadding(),
                 navHostController = maAppState.navHostController,
                 sendMainAction = mainActivityState::updateMainState
             )

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
@@ -46,20 +47,22 @@ fun AccountEditorRoute(
         )
     })
 
-    val createAccountText = stringResource(id = R.string.create_account)
-    val editAccountText = stringResource(R.string.edit_account)
-    val account = null
-    LaunchedEffect(key1 = account, block = {
-        val title = when (account) {
-            null -> createAccountText
-            else -> editAccountText
+    val accountEditorData=accountEditorState.accountEditorData.collectAsState().value
+    if (accountEditorData is DataState.Success){
+        when(accountEditorData.data){
+            is AccountEditorData.AccountEditorCreate ->     AppBarAction.Create(
+                title = stringResource(id = R.string.create_account),
+                onCancel = accountEditorState::navigatePopBack,
+                onCreate = accountEditorState.onSave
+            ).sendAction(sendMainAction)
+            is AccountEditorData.AccountEditorUpdate ->     AppBarAction.Edit(
+                title = stringResource(R.string.update_account,accountEditorData.data.name.limitName()),
+                onCancel = accountEditorState::navigatePopBack,
+                onUpdate = accountEditorState.onSave
+            ).sendAction(sendMainAction)
         }
-        AppBarAction.Edit(
-            title = title,
-            onCancel = accountEditorState::navigatePopBack,
-            onSave = accountEditorState.onSave
-        ).sendAction(sendMainAction)
-    })
+    }
+
 
     AccountEditorScreen(accountEditorState)
 
@@ -68,7 +71,7 @@ fun AccountEditorRoute(
 @Composable
 fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
-    val accountData = accountEditorState.editAccountData.collectAsState().value
+    val accountData = accountEditorState.accountEditorData.collectAsState().value
     val currencies = accountEditorState.currencies.collectAsState().value
     val transactionTypes = accountEditorState.transactionTypes.collectAsState().value
 
@@ -85,7 +88,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 Spacer(modifier = Modifier.width(12.dp))
                 AmTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
+                    singleLine = true, initTextValue = account.name,
                     label = "Name", icon = AmIcons.Title, hint = "Account Name",
                     error = null, onTextChange = accountEditorState::updateName
                 )

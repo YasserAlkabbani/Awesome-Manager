@@ -43,7 +43,9 @@ fun TransactionDetailsRoute(
                     title = transaction.title,
                     onEdit = {
                         transactionDetailsState.navigateToEditTransaction(transaction.id)
-                    }
+                    },
+                    canEdit = true,
+                    onAddTransaction = null
                 ).sendAction(sendMainAction)
             }
 
