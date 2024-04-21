@@ -20,6 +20,7 @@ class MainActivityState(
             is MainActions.Navigate -> mainAction.navigationAction.sendAction()
             is MainActions.AppBar -> mainAction.appBarAction.sendAction()
             is MainActions.BottomSheet -> mainAction.bottomSheetAction.sendAction()
+            is MainActions.Other -> mainAction.otherAction.sendAction()
         }
     }
 

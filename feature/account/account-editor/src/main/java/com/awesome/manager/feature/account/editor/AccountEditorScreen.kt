@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +31,9 @@ import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.ui.AmChipsContainer
+import com.awesome.manager.core.ui.ChipData
+import com.awesome.manager.core.ui.getChipData
 
 @Composable
 fun AccountEditorRoute(
@@ -41,25 +45,36 @@ fun AccountEditorRoute(
 
     val navigationAction = accountEditorState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(
-            sendMainAction = sendMainAction,
-            resetNavigation = accountEditorState::resetNavigationAction
-        )
+        navigationAction.sendAction(sendMainAction, accountEditorState::resetNavigationAction)
     })
 
-    val accountEditorData=accountEditorState.accountEditorData.collectAsState().value
-    if (accountEditorData is DataState.Success){
-        when(accountEditorData.data){
-            is AccountEditorData.AccountEditorCreate ->     AppBarAction.Create(
+    val appBarAction = accountEditorState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, accountEditorState::resetAppBar)
+    })
+
+    val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+    val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
+    if (accountEditorData is DataState.Success) {
+        when (accountEditorData.data) {
+            is AccountEditorData.AccountEditorCreate -> accountEditorState.showCreateAppBar(
                 title = stringResource(id = R.string.create_account),
                 onCancel = accountEditorState::navigatePopBack,
-                onCreate = accountEditorState.onSave
-            ).sendAction(sendMainAction)
-            is AccountEditorData.AccountEditorUpdate ->     AppBarAction.Edit(
-                title = stringResource(R.string.update_account,accountEditorData.data.name.limitName()),
+                onSave = accountEditorState.onSave
+            )
+
+            is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
+                title = stringResource(
+                    R.string.update_account,
+                    accountEditorData.data.name.limitName()
+                ),
                 onCancel = accountEditorState::navigatePopBack,
-                onUpdate = accountEditorState.onSave
-            ).sendAction(sendMainAction)
+                onSave = accountEditorState.onSave
+            )
         }
     }
 
@@ -73,7 +88,17 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     val accountData = accountEditorState.accountEditorData.collectAsState().value
     val currencies = accountEditorState.currencies.collectAsState().value
+    val currencyChipData = remember(currencies) {
+        currencies.map {
+            getChipData(id = it.id, title = it.currencyName, data = it)
+        }
+    }
     val transactionTypes = accountEditorState.transactionTypes.collectAsState().value
+    val transactionTypeChipData = remember(transactionTypes) {
+        transactionTypes.map {
+            getChipData(id = it.id, title = it.title, data = it)
+        }
+    }
 
     if (accountData is DataState.Success) {
         val account = accountData.data
@@ -95,55 +120,21 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
             }
             Spacer(modifier = Modifier.height(6.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp)
-            ) {
-                AmText(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = "Currency",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(items = currencies, key = { it.id }, contentType = { "CURRENCY" }) {
-                        AmChip(
-                            selected = account.currency?.id == it.id,
-                            label = it.currencyName,
-                            onClick = { accountEditorState.updateCurrency(it) })
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp)
-            ) {
-                AmText(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = "Default Transaction Type",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(
-                        items = transactionTypes,
-                        key = { it.id },
-                        contentType = { "TRANSACTION_TYPE" }) {
-                        AmChip(
-                            selected = account.defaultTransactionType?.id == it.id,
-                            label = it.title,
-                            onClick = { accountEditorState.updateDefaultTransactionType(it) })
-                    }
-                }
-            }
+            AmChipsContainer(
+                title = "Currency",
+                chipDataList = currencyChipData,
+                selectedItem = account.currency?.id,
+                onSelect = { accountEditorState.updateCurrency(it.data) },
+                content = null
+            )
+            AmChipsContainer(
+                title = "Default Transaction Type",
+                chipDataList = transactionTypeChipData,
+                selectedItem = account.defaultTransactionType?.id,
+                onSelect = { accountEditorState.updateDefaultTransactionType(it.data) },
+                content = null
+            )
+
         }
 
     }

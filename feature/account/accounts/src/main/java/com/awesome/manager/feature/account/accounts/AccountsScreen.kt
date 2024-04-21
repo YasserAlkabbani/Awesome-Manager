@@ -41,18 +41,24 @@ fun AccountsRoute(
 
     val navigationAction = accountsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(
-            sendMainAction = sendMainAction,
-            resetNavigation = accountsState::resetNavigationAction
-        )
+        navigationAction.sendAction(sendMainAction, accountsState::resetNavigationAction)
     })
-    Timber.d("TEST_APP_BAR_STATE ACCOUNT RE_COMPOSE")
-    val accounts = accountsState.accounts.collectAsState().value
-    when (accounts) {
-        is DataState.Success,DataState.Error,DataState.Loading -> AppBarAction.MainNavigation(
+
+    val appBarAction = accountsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, accountsState::resetAppBar)
+    })
+
+    val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+    when (accountsState.accounts.collectAsState().value) {
+        is DataState.Success, DataState.Error, DataState.Loading -> accountsState.showMainAppBar(
             onAddAccount = accountsState::navigateToCreateAccount,
             onAddTransaction = null
-        ).sendAction(sendMainAction)
+        )
     }
 
     AccountsScreen(accountsState)

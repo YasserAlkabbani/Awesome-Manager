@@ -1,5 +1,7 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
+import androidx.compose.foundation.lazy.LazyListScope
+
 sealed class BottomSheetAction(
     open val isOpen: Boolean = false,
     open val isDismissible: Boolean = false
@@ -25,7 +27,11 @@ sealed class BottomSheetAction(
         val logout: () -> Unit
     ) : BottomSheetAction()
 
-    data class SearchForAccount(override val isOpen: Boolean = true) : BottomSheetAction()
+    data class SearchForAccount(
+        override val isOpen: Boolean = true,
+        val items: LazyListScope.() -> Unit,
+        val onReSearch: (String) -> Unit
+    ) : BottomSheetAction()
 
     data class AccountCreated(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
         BottomSheetAction()
@@ -35,7 +41,7 @@ sealed class BottomSheetAction(
 
     data class AuthError(
         override val isOpen: Boolean = true,
-        val errorMessage:String,val createNewAccount: () -> Unit, val editCredentials: () -> Unit
+        val errorMessage: String, val createNewAccount: () -> Unit, val editCredentials: () -> Unit
     ) : BottomSheetAction()
 
     data class UnknownError(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
@@ -51,7 +57,12 @@ sealed class BottomSheetAction(
     ) : BottomSheetAction()
 
     fun sendAction(sendMainAction: (MainActions) -> Unit) {
-        sendMainAction(MainActions.BottomSheet(this))
+        when (this) {
+            Empty -> {}
+            else -> {
+                sendMainAction(MainActions.BottomSheet(this))
+            }
+        }
     }
 
 }

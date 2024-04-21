@@ -7,8 +7,10 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBusiness
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.awesome.manager.MainActivityViewModel
+import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmAppBar
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
@@ -131,7 +134,9 @@ fun AmApp(
         BottomSheetAction.Empty -> {}
         else -> {
             ModalBottomSheet(
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier
+                    .padding(horizontal = UIConstant.PADDING_LOW.dp)
+                    .requiredHeightIn(max = 500.dp),
                 onDismissRequest = {
                     mainActivityState.dismissBottomSheet()
                 },
@@ -171,7 +176,11 @@ fun AmApp(
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             AmNavHost(
-                modifier = Modifier.fillMaxSize().padding(padding).statusBarsPadding().imePadding(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .statusBarsPadding()
+                    .imePadding(),
                 navHostController = maAppState.navHostController,
                 sendMainAction = mainActivityState::updateMainState
             )

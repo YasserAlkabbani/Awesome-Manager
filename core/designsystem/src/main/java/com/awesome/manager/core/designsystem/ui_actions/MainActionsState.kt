@@ -1,5 +1,6 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
+import androidx.compose.foundation.lazy.LazyListScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -42,6 +43,13 @@ abstract class MainActionsState {
 
     fun AppBarAction.sendAction() = _appBarAction.update { this }
 
+    fun resetAppBar() = AppBarAction.Idle.sendAction()
+
+    fun showMainAppBar(onAddAccount: (() -> Unit)?, onAddTransaction: (() -> Unit)?) =
+        AppBarAction.MainNavigation(
+            onAddAccount = onAddAccount, onAddTransaction = onAddTransaction
+        ).sendAction()
+
     fun showSearchAppBar(syncString: (String) -> Unit) =
         AppBarAction.Search(syncString, false).sendAction()
 
@@ -51,26 +59,41 @@ abstract class MainActionsState {
     fun showEditAppBar(title: String, onCancel: () -> Unit, onSave: () -> Unit) =
         AppBarAction.Edit(title, onCancel, onSave).sendAction()
 
-    fun showReadAppBar(title: String,canEdit:Boolean, onBack: () -> Unit, onEdit: () -> Unit,onAddTransaction:()->Unit) =
-        AppBarAction.Read(title = title, canEdit = canEdit, onBack =  onBack, onEdit =  onEdit, onAddTransaction = onAddTransaction).sendAction()
+    fun showReadAppBar(
+        title: String,
+        canEdit: Boolean,
+        onBack: () -> Unit,
+        onEdit: () -> Unit,
+        onAddTransaction: (() -> Unit)?
+    ) =
+        AppBarAction.Read(
+            title = title,
+            canEdit = canEdit,
+            onBack = onBack,
+            onEdit = onEdit,
+            onAddTransaction = onAddTransaction
+        ).sendAction()
 
 
     /////////********* BOTTOM_SHEET  *********/////////
 
-    private val _bottomSheetState: MutableStateFlow<BottomSheetAction> =
+    private val _bottomSheetAction: MutableStateFlow<BottomSheetAction> =
         MutableStateFlow(BottomSheetAction.Empty)
-    val bottomSheetAction: StateFlow<BottomSheetAction> = _bottomSheetState
+    val bottomSheetAction: StateFlow<BottomSheetAction> = _bottomSheetAction
 
-    fun BottomSheetAction.sendAction() = _bottomSheetState.update { this }
+    fun BottomSheetAction.sendAction() = _bottomSheetAction.update { this }
 
-    fun dismissBottomSheet() = _bottomSheetState.update { it.asClose() }
+    fun dismissBottomSheet() = _bottomSheetAction.update { it.asClose() }
     fun resetBottomSheet() = BottomSheetAction.Empty.sendAction()
 
     fun showProfileBottomSheet(email: String, logout: () -> Unit) =
         BottomSheetAction.Profile(email = email, logout = logout).sendAction()
 
-    fun showSearchForAccountBottomSheet() =
-        BottomSheetAction.SearchForAccount().sendAction()
+    fun showSearchForAccountBottomSheet(
+        items: LazyListScope.() -> Unit,
+        searchKey: (String) -> Unit
+    ) =
+        BottomSheetAction.SearchForAccount(items = items, onReSearch = searchKey).sendAction()
 
     fun showAccountCreatedBottomSheet() =
         BottomSheetAction.AccountCreated(dismiss = ::dismissBottomSheet).sendAction()
@@ -99,6 +122,16 @@ abstract class MainActionsState {
 
 
     /////////********* OTHER  *********/////////
+
+    private val _otherAction: MutableStateFlow<OtherAction> = MutableStateFlow(OtherAction.Idle)
+    val otherAction: StateFlow<OtherAction> = _otherAction
+    fun OtherAction.sendAction() {
+        _otherAction.update { this }
+    }
+
+    fun pickDate(date: () -> String) {
+        OtherAction.PickDate(date).sendAction()
+    }
 
     private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading

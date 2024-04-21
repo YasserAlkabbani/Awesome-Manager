@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -30,26 +29,32 @@ fun AccountDetailsRoute(
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
     val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
-    val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
 
     val navigationAction = accountDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(
-            sendMainAction = sendMainAction,
-            resetNavigation = accountDetailsState::resetNavigationAction
-        )
+        navigationAction.sendAction(sendMainAction, accountDetailsState::resetNavigationAction)
     })
 
-    val account=accountDetailsState.amAccount.collectAsState().value
-    val allowToUpdate=accountDetailsState.allowToUpdate.collectAsState().value
-    if (account is DataState.Success && allowToUpdate is DataState.Success){
-        AppBarAction.Read(
-            title = stringResource(R.string.edit_account_name,account.data.name.limitName()),
+    val appBarAction = accountDetailsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, accountDetailsState::resetAppBar)
+    })
+
+    val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+    val accountState = accountDetailsState.amAccount.collectAsState().value
+    val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
+    if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
+        accountDetailsState.showReadAppBar(
+            title = stringResource(R.string.edit_account_name, accountState.data.name.limitName()),
             onBack = accountDetailsState::navigatePopBack,
-            onEdit = {accountDetailsState.navigateToEditAccount(account.data.id)},
+            onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
             canEdit = allowToUpdate.data,
-            onAddTransaction = {accountDetailsState.navigateToCreateTransaction(account.data.id)}
-        ).sendAction(sendMainAction)
+            onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) }
+        )
     }
 
     AccountDetailsScreen(accountDetailsState)
@@ -66,9 +71,9 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
     Column(Modifier.fillMaxSize()) {
 
-        when(accountState){
+        when (accountState) {
             is DataState.Success -> {
-                val account=accountState.data
+                val account = accountState.data
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
@@ -83,14 +88,15 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                 )
 
             }
-            DataState.Error , DataState.Loading -> {}
+
+            DataState.Error, DataState.Loading -> {}
         }
 
-                Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        when(transactionsState){
+        when (transactionsState) {
             is DataState.Success -> {
-                val transactions=transactionsState.data
+                val transactions = transactionsState.data
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 8.dp),
@@ -123,7 +129,8 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                     }
                 )
             }
-            DataState.Error , DataState.Loading -> {}
+
+            DataState.Error, DataState.Loading -> {}
         }
 
     }

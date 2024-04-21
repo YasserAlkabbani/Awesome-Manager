@@ -29,7 +29,7 @@ fun AccountCard(
     modifier: Modifier, title: String, imageUrl: String,
     creditor: Double, debtor: Double, currency: String,
     loading: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     onAddTransaction: (() -> Unit)?,
     onEditTransaction: (() -> Unit)?
 ) {

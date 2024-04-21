@@ -16,8 +16,14 @@ sealed class AppBarAction {
         val onBack: () -> Unit, val onEdit: () -> Unit,val onAddTransaction:(()->Unit)?
     ) : AppBarAction()
 
-    fun sendAction(sendMainAction:(MainActions)->Unit) {
-        sendMainAction(MainActions.AppBar(this))
+    fun sendAction(sendMainAction:(MainActions)->Unit,resetAppBar:()->Unit) {
+        when (this) {
+            Idle -> {}
+            else -> {
+                resetAppBar()
+                sendMainAction(MainActions.AppBar(this))
+            }
+        }
     }
 
 }

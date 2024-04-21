@@ -25,33 +25,38 @@ fun TransactionDetailsRoute(
 
     val transactionDetailsState = transactionDetailsViewModel.transactionDetailsState
 
-    val navigationState = transactionDetailsState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationState, block = {
-        navigationState.sendAction(
-            sendMainAction = sendMainAction,
-            resetNavigation = transactionDetailsState::resetNavigationAction
-        )
+    val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendAction(sendMainAction, transactionDetailsState::resetNavigationAction)
     })
 
-    val transactionState = transactionDetailsState.transaction.collectAsState().value
-    LaunchedEffect(key1 = transactionState, block = {
-        when (transactionState) {
-            is DataState.Success -> {
-                val transaction = transactionState.data
-                AppBarAction.Read(
-                    onBack = transactionDetailsState::navigatePopBack,
-                    title = transaction.title,
-                    onEdit = {
-                        transactionDetailsState.navigateToEditTransaction(transaction.id)
-                    },
-                    canEdit = true,
-                    onAddTransaction = null
-                ).sendAction(sendMainAction)
-            }
+    val appBarAction = transactionDetailsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, transactionDetailsState::resetAppBar)
+    })
 
-            DataState.Error, DataState.Loading -> {}
+    val bottomSheetAction = transactionDetailsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+
+    when (val transactionState = transactionDetailsState.transaction.collectAsState().value) {
+        is DataState.Success -> {
+            val transaction = transactionState.data
+            transactionDetailsState.showReadAppBar(
+                onBack = transactionDetailsState::navigatePopBack,
+                title = transaction.title,
+                onEdit = {
+                    transactionDetailsState.navigateToEditTransaction(transaction.id)
+                },
+                canEdit = true,
+                onAddTransaction = null
+            )
         }
-    })
+
+        DataState.Error, DataState.Loading -> {}
+    }
 
     TransactionDetailsScreen(transactionDetailsState)
 }

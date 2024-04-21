@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -38,7 +39,8 @@ class TransactionEditorViewModel @Inject constructor(
                 .asListDataStateFlow(viewModelScope),
             createTransaction = ::saveTransaction,
             accountsSearchResults = {
-                accountRepository.returnAccounts(it).asListDataStateFlow(viewModelScope)
+                flatMapLatest { accountRepository.returnAccounts(it) }
+                    .asListDataStateFlow(viewModelScope)
             }
         )
 
@@ -56,8 +58,9 @@ class TransactionEditorViewModel @Inject constructor(
             when {
                 transaction != null -> {
                     val account = accountRepository.returnAccountById(transaction.accountId).first()
-                    transactionEditorState.asEditTransaction(transaction,account)
+                    transactionEditorState.asEditTransaction(transaction, account)
                 }
+
                 else -> {
                     val account = transactionEditorArg.accountId?.let {
                         accountRepository.returnAccountById(it).first()

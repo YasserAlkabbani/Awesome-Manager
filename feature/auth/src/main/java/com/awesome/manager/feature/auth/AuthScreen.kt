@@ -69,14 +69,14 @@ fun AuthRoute(
         navigationAction.sendAction(sendMainAction, authScreenState::resetNavigationAction)
     })
 
-    val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction = sendMainAction)
-    })
-
     val appBarAction = authScreenState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction)
+        appBarAction.sendAction(sendMainAction, authScreenState::resetAppBar)
+    })
+
+    val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
     })
 
 

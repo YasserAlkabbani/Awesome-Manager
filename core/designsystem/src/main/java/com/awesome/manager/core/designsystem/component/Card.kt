@@ -20,7 +20,7 @@ fun AmCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
     positive: Boolean?, loading: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
@@ -33,26 +33,53 @@ fun AmCard(
             false -> errorContainer
         }
     }
-    Card(
-        modifier = modifier,
-        onClick = onClick,
-        content = {
-            Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
-                content()
-            }
-            AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive != false)
-            }
-        },
-        colors = CardDefaults.cardColors(containerColor = cardColors),
-        shape = shape
-    )
+    when (onClick) {
+        null -> {
+            Card(
+                modifier = modifier,
+                content = {
+                    Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
+                        content()
+                    }
+                    AnimatedVisibility(visible = loading) {
+                        AmLinearProgress(
+                            modifier = Modifier.fillMaxWidth(),
+                            positive = positive != false
+                        )
+                    }
+                },
+                colors = CardDefaults.cardColors(containerColor = cardColors),
+                shape = shape
+            )
+        }
+
+        else -> {
+            Card(
+                modifier = modifier,
+                onClick = onClick,
+                content = {
+                    Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
+                        content()
+                    }
+                    AnimatedVisibility(visible = loading) {
+                        AmLinearProgress(
+                            modifier = Modifier.fillMaxWidth(),
+                            positive = positive != false
+                        )
+                    }
+                },
+                colors = CardDefaults.cardColors(containerColor = cardColors),
+                shape = shape
+            )
+        }
+    }
+
 
 }
 
 @Composable
 fun AmCard(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier, loading: Boolean = false,
     positive: Boolean?, shape: Shape = MaterialTheme.shapes.medium,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -72,6 +99,9 @@ fun AmCard(
         content = {
             Column(modifier = Modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
                 content()
+            }
+            AnimatedVisibility(visible = loading) {
+                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive != false)
             }
         },
         shape = shape,

@@ -38,21 +38,26 @@ fun TransactionsRoute(
 
     val transactionsState = transactionsViewModel.transactionsState
 
-    val navigationAction =
-        transactionsState.navigationAction.collectAsState().value
+    val navigationAction = transactionsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(
-            sendMainAction=sendMainAction,
-            resetNavigation = transactionsState::resetNavigationAction
-        )
+        navigationAction.sendAction(sendMainAction, transactionsState::resetNavigationAction)
     })
-    Timber.d("TEST_APP_BAR_STATE TRANSACTIONS RE_COMPOSE")
-    val transactions=transactionsState.transactions.collectAsState().value
-    when (transactions){
-        is DataState.Success ,DataState.Loading,DataState.Error-> AppBarAction.MainNavigation(
+
+    val appBarAction = transactionsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, transactionsState::resetAppBar)
+    })
+
+    val bottomSheetAction = transactionsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+    when (transactionsState.transactions.collectAsState().value){
+        is DataState.Success ,DataState.Loading,DataState.Error-> transactionsState.showMainAppBar(
             onAddAccount = null,
             onAddTransaction = {transactionsState.navigateToCreateTransaction(null)}
-        ).sendAction(sendMainAction)
+        )
     }
 
     TransactionScreen(transactionsState)

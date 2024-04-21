@@ -33,13 +33,10 @@ import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.model.CurrencyWithBalance
 import com.awesome.manager.core.ui.AmTextWithIconLarge
 import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
 import kotlin.math.absoluteValue
 
 @Composable
@@ -49,22 +46,34 @@ fun HomeRoute(
 ) {
     val homeState = homeViewModel.homeState
 
-    val navigationAction=homeState.navigationAction.collectAsState().value
+    val navigationAction =
+        homeState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(
-            sendMainAction = sendMainAction,
-            resetNavigation = homeState::resetNavigationAction
-        )
+        navigationAction.sendAction(sendMainAction, homeState::resetNavigationAction)
     })
-    val currencyWithBalance=homeState.currencyWithData.collectAsState().value
-    Timber.d("TEST_APP_BAR_STATE HOME RE_COMPOSE")
-    when (currencyWithBalance){
-        is DataState.Success,DataState.Error ,DataState.Loading-> AppBarAction.MainNavigation(
-            onAddAccount = homeState::navigateToCreateAccount,
-            onAddTransaction = {homeState.navigateToCreateTransaction(null)}
-        ).sendAction(sendMainAction)
+
+    val appBarAction =
+        homeState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendAction(sendMainAction, homeState::resetAppBar)
+    })
+
+    val bottomSheetAction =
+        homeState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendAction(sendMainAction)
+    })
+
+
+
+    when (homeState.currencyWithData.collectAsState().value) {
+        is DataState.Success, DataState.Error, DataState.Loading ->
+            homeState.showMainAppBar(
+                onAddAccount = homeState::navigateToCreateAccount,
+                onAddTransaction = { homeState.navigateToCreateTransaction(null) }
+            )
     }
-    
+
     HomeScreen(homeState)
 }
 
