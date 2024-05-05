@@ -3,6 +3,8 @@ package com.awesome.manager.feature.transaction.editor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
@@ -35,8 +37,11 @@ class TransactionEditorViewModel @Inject constructor(
     private val transactionEditorArg: TransactionEditorArg = TransactionEditorArg(savedStateHandle)
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(
-            transactionTypes = transactionTypeRepository.returnTransactionTypes()
-                .asListDataStateFlow(viewModelScope),
+            transactionEditorData = transactionTypeRepository.returnTransactionTypes()
+                .map { transactionTypes ->
+                    DataState.Success(TransactionEditorData(transactionTypes))
+                }
+                .asDataStateFlow(viewModelScope),
             createTransaction = ::saveTransaction,
             accountsSearchResults = {
                 flatMapLatest { accountRepository.returnAccounts(it) }

@@ -18,7 +18,7 @@ sealed class NavigationAction {
     data class EditAccount(val accountId: String) : NavigationAction()
     data class EditTransaction(val transactionId: String) : NavigationAction()
 
-    fun sendAction(sendMainAction: (MainActions) -> Unit, resetNavigation: () -> Unit) {
+    fun sendMainAction(sendMainAction: (MainActions) -> Unit, resetNavigation: () -> Unit) {
         when (this) {
             Idle -> {}
             else -> {

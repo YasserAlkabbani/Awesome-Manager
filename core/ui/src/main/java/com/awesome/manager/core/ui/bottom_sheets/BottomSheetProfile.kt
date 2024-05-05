@@ -36,5 +36,5 @@ fun BottomSheetProfile(profile: BottomSheetAction.Profile) {
 @Preview
 @Composable
 fun BottomSheetProfilePreview() {
-    BottomSheetProfile(BottomSheetAction.Profile(true, "YASSER@GMAIL.COM", {}))
+    BottomSheetProfile(BottomSheetAction.Profile( "YASSER@GMAIL.COM", {}))
 }

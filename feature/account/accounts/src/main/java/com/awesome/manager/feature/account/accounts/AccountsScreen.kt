@@ -1,7 +1,6 @@
 package com.awesome.manager.feature.account.accounts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,13 +21,10 @@ import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.ui.AccountCard
-import timber.log.Timber
 
 @Composable
 fun AccountsRoute(
@@ -41,17 +36,17 @@ fun AccountsRoute(
 
     val navigationAction = accountsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, accountsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountsState::resetNavigationAction)
     })
 
     val appBarAction = accountsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, accountsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountsState::resetAppBar)
     })
 
     val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,accountsState::idleBottomSheet)
     })
 
     when (accountsState.accounts.collectAsState().value) {

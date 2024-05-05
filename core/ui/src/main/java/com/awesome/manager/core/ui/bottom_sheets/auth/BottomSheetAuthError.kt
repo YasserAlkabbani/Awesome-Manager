@@ -35,6 +35,6 @@ fun BottomSheetAuthError(
 @Composable
 fun BottomSheetAuthErrorPreview(){
     BottomSheetAuthError(
-        BottomSheetAction.AuthError(true,"",{},{})
+        BottomSheetAction.AuthError("",{},{})
     )
 }

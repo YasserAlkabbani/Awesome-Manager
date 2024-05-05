@@ -10,9 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class TransactionDetailsState(
-    val account: StateFlow<DataState<AmAccount>>,
-    val transaction: StateFlow<DataState<AmTransaction>>
+    val transactionDetailsData: StateFlow<DataState<TransactionDetailsData>>
 ) : MainActionsState() {
 
 
 }
+
+data class TransactionDetailsData(
+    val account: AmAccount,
+    val transaction: AmTransaction,
+    val allowToUpdate:Boolean
+)

@@ -21,13 +21,10 @@ import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.ui.TransactionCard
-import timber.log.Timber
 
 
 @Composable
@@ -40,17 +37,17 @@ fun TransactionsRoute(
 
     val navigationAction = transactionsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, transactionsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, transactionsState::resetNavigationAction)
     })
 
     val appBarAction = transactionsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, transactionsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, transactionsState::resetAppBar)
     })
 
     val bottomSheetAction = transactionsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,transactionsState::idleBottomSheet)
     })
 
     when (transactionsState.transactions.collectAsState().value){

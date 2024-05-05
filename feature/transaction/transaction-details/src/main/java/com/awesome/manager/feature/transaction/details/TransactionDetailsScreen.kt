@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
 import com.awesome.manager.core.ui.AccountCard
@@ -27,31 +26,29 @@ fun TransactionDetailsRoute(
 
     val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, transactionDetailsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, transactionDetailsState::resetNavigationAction)
     })
 
     val appBarAction = transactionDetailsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, transactionDetailsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, transactionDetailsState::resetAppBar)
     })
 
     val bottomSheetAction = transactionDetailsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,transactionDetailsState::idleBottomSheet)
     })
 
 
-    when (val transactionState = transactionDetailsState.transaction.collectAsState().value) {
+    when (val transactionState = transactionDetailsState.transactionDetailsData.collectAsState().value) {
         is DataState.Success -> {
-            val transaction = transactionState.data
+            val transactionData=transactionState.data
             transactionDetailsState.showReadAppBar(
+                title = "Edit Transaction",
+                canEdit = transactionData.allowToUpdate,
                 onBack = transactionDetailsState::navigatePopBack,
-                title = transaction.title,
-                onEdit = {
-                    transactionDetailsState.navigateToEditTransaction(transaction.id)
-                },
-                canEdit = true,
-                onAddTransaction = null
+                onEdit = {transactionDetailsState.navigateToEditTransaction(transactionData.transaction.id)},
+                onAddTransaction = null,
             )
         }
 
@@ -66,16 +63,16 @@ fun TransactionDetailsScreen(
     transactionDetailsState: TransactionDetailsState
 ) {
 
-    val transactionState = transactionDetailsState.transaction.collectAsState().value
-    val accountState = transactionDetailsState.account.collectAsState().value
+    val transactionDetailsData = transactionDetailsState.transactionDetailsData.collectAsState().value
 
-    Column(
-        modifier = Modifier.padding(horizontal = 6.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        when (accountState) {
-            is DataState.Success -> {
-                val account = accountState.data
+    when (transactionDetailsData){
+        is DataState.Success -> {
+            val transaction=transactionDetailsData.data.transaction
+            val account=transactionDetailsData.data.account
+            Column(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
@@ -92,14 +89,6 @@ fun TransactionDetailsScreen(
                     },
                     onEditTransaction = null
                 )
-
-            }
-
-            DataState.Error, DataState.Loading -> {}
-        }
-        when (transactionState) {
-            is DataState.Success -> {
-                val transaction = transactionState.data
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.transaction_subject),
@@ -126,11 +115,8 @@ fun TransactionDetailsScreen(
                     positive = transaction.paymentTransaction
                 )
             }
-
-            DataState.Error, DataState.Loading -> {}
         }
-
+        DataState.Error ,DataState.Loading -> {}
     }
-
 
 }

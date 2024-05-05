@@ -1,8 +1,6 @@
 package com.awesome.manager.feature.account.editor
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,9 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,17 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
-import com.awesome.manager.core.designsystem.component.AmChip
 import com.awesome.manager.core.designsystem.component.AmImage
-import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmChipsContainer
-import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.getChipData
 
 @Composable
@@ -45,17 +35,17 @@ fun AccountEditorRoute(
 
     val navigationAction = accountEditorState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, accountEditorState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountEditorState::resetNavigationAction)
     })
 
     val appBarAction = accountEditorState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, accountEditorState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountEditorState::resetAppBar)
     })
 
     val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,accountEditorState::idleBottomSheet)
     })
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
@@ -70,7 +60,7 @@ fun AccountEditorRoute(
             is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
                 title = stringResource(
                     R.string.update_account,
-                    accountEditorData.data.name.limitName()
+                    accountEditorData.data.name
                 ),
                 onCancel = accountEditorState::navigatePopBack,
                 onSave = accountEditorState.onSave

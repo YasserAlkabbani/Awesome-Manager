@@ -1,14 +1,10 @@
 package com.awesome.manager.feature.auth
 
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
-import com.awesome.manager.core.common.extentions.isValiedEmail
-import com.awesome.manager.core.common.extentions.isValiedPassword
+import com.awesome.manager.core.common.extentions.isValidEmail
+import com.awesome.manager.core.common.extentions.isValidPassword
 import com.awesome.manager.core.common.results.AmError
 import com.awesome.manager.core.common.results.AmResult
-import com.awesome.manager.core.common.results.asAmError
 import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -64,7 +60,7 @@ data class AmAuthData(
     val email: String = "",
     val password: String = "",
 ) {
-    val validateEmail: Boolean get() = email.isValiedEmail()
-    val validatePassword: Boolean get() = password.isValiedPassword()
+    val validateEmail: Boolean get() = email.isValidEmail()
+    val validatePassword: Boolean get() = password.isValidPassword()
     val validateData: Boolean get() = validateEmail && validatePassword
 }

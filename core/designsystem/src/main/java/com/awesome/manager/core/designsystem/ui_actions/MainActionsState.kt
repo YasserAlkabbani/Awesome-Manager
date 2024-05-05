@@ -1,5 +1,6 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyListScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,13 +79,24 @@ abstract class MainActionsState {
     /////////********* BOTTOM_SHEET  *********/////////
 
     private val _bottomSheetAction: MutableStateFlow<BottomSheetAction> =
-        MutableStateFlow(BottomSheetAction.Empty)
+        MutableStateFlow(BottomSheetAction.Idle(null))
     val bottomSheetAction: StateFlow<BottomSheetAction> = _bottomSheetAction
 
     fun BottomSheetAction.sendAction() = _bottomSheetAction.update { this }
 
-    fun dismissBottomSheet() = _bottomSheetAction.update { it.asClose() }
-    fun resetBottomSheet() = BottomSheetAction.Empty.sendAction()
+    fun dismissBottomSheet() = _bottomSheetAction.update {
+        if (it is BottomSheetAction.Idle<*>)
+            it.bottomSheet?.let { BottomSheetAction.Dismiss(it) }?: BottomSheetAction.Idle(null)
+            else BottomSheetAction.Dismiss(it)
+    }
+
+    fun idleBottomSheet(clearBottomSheet:Boolean=false) = _bottomSheetAction.update {
+        when (it) {
+            is BottomSheetAction.Idle<*> -> it
+            is BottomSheetAction.Dismiss<*> -> BottomSheetAction.Idle(if (clearBottomSheet) null else it)
+            else -> BottomSheetAction.Idle(it)
+        }
+    }
 
     fun showProfileBottomSheet(email: String, logout: () -> Unit) =
         BottomSheetAction.Profile(email = email, logout = logout).sendAction()
@@ -121,17 +133,17 @@ abstract class MainActionsState {
             .sendAction()
 
 
-    /////////********* OTHER  *********/////////
+    /////////********* PICK  *********/////////
 
-    private val _otherAction: MutableStateFlow<OtherAction> = MutableStateFlow(OtherAction.Idle)
-    val otherAction: StateFlow<OtherAction> = _otherAction
-    fun OtherAction.sendAction() {
-        _otherAction.update { this }
+    private val _pickAction: MutableStateFlow<PickAction> = MutableStateFlow(PickAction.Idle)
+    val pickAction: StateFlow<PickAction> = _pickAction
+    fun PickAction.sendAction() {
+        _pickAction.update { this }
     }
 
-    fun pickDate(date: () -> String) {
-        OtherAction.PickDate(date).sendAction()
-    }
+    fun resetPick() = PickAction.Idle.sendAction()
+    fun pickDate(initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit) =
+        PickAction.PickDate(initTime = initTime, setDate = setDate, dismiss = dismiss).sendAction()
 
     private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading

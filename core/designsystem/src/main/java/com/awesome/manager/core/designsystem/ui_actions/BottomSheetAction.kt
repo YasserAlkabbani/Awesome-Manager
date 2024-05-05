@@ -1,65 +1,53 @@
 package com.awesome.manager.core.designsystem.ui_actions
 
 import androidx.compose.foundation.lazy.LazyListScope
+import kotlinx.coroutines.flow.update
 
 sealed class BottomSheetAction(
-    open val isOpen: Boolean = false,
     open val isDismissible: Boolean = false
 ) {
 
-    fun asClose() = when (this) {
-        Empty -> this
-        is AuthError -> this.copy(isOpen = false)
-        is Profile -> this.copy(isOpen = false)
-        is AccountCreated -> this.copy(isOpen = false)
-        is PasswordRested -> this.copy(isOpen = false)
-        is SearchForAccount -> this.copy(isOpen = false)
-        is UnknownError -> this.copy(isOpen = false)
-        is ConnectionError -> this.copy(isOpen = false)
-        is CustomError -> this.copy(isOpen = false)
-    }
+    data class Idle<T:BottomSheetAction>(val bottomSheet: T?) : BottomSheetAction()
 
-    data object Empty : BottomSheetAction()
+    data class Dismiss<T:BottomSheetAction>(val bottomSheet: T) : BottomSheetAction()
 
     data class Profile(
-        override val isOpen: Boolean = true,
         val email: String,
         val logout: () -> Unit
     ) : BottomSheetAction()
 
     data class SearchForAccount(
-        override val isOpen: Boolean = true,
         val items: LazyListScope.() -> Unit,
         val onReSearch: (String) -> Unit
     ) : BottomSheetAction()
 
-    data class AccountCreated(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
+    data class AccountCreated( val dismiss: () -> Unit) :
         BottomSheetAction()
 
-    data class PasswordRested(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
+    data class PasswordRested( val dismiss: () -> Unit) :
         BottomSheetAction()
 
     data class AuthError(
-        override val isOpen: Boolean = true,
         val errorMessage: String, val createNewAccount: () -> Unit, val editCredentials: () -> Unit
     ) : BottomSheetAction()
 
-    data class UnknownError(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
+    data class UnknownError( val dismiss: () -> Unit) :
         BottomSheetAction()
 
-    data class ConnectionError(override val isOpen: Boolean = true, val dismiss: () -> Unit) :
+    data class ConnectionError( val dismiss: () -> Unit) :
         BottomSheetAction()
 
     data class CustomError(
-        override val isOpen: Boolean = true,
-        val errorMessage: String,
-        val dismiss: () -> Unit
+        val errorMessage: String, val dismiss: () -> Unit
     ) : BottomSheetAction()
 
-    fun sendAction(sendMainAction: (MainActions) -> Unit) {
+    fun isEmpty()=this is Idle<*> && bottomSheet==null
+
+    fun sendMainAction(sendMainAction: (MainActions) -> Unit,resetBottomSheet:()->Unit) {
         when (this) {
-            Empty -> {}
+            is Idle<*> -> {}
             else -> {
+                resetBottomSheet()
                 sendMainAction(MainActions.BottomSheet(this))
             }
         }

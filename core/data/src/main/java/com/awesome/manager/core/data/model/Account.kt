@@ -1,6 +1,8 @@
 package com.awesome.manager.core.data.model
 
 import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.asTimestamp
+import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
@@ -19,8 +21,8 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     defaultTransactionTypeId = defaultTransactionTypeId,
     creatorUserId = creatorUserId,
     pending = false,
-    createdAt = Instant.parse(createdAt.orEmpty()).toEpochMilliseconds(),
-    updatedAt = Instant.parse(updatedAt.orEmpty()).toEpochMilliseconds(),
+    createdAt = createdAt.asTimestamp(),
+    updatedAt = updatedAt.asTimestamp(),
 )
 
 fun AccountEntityWithData.asModel() = AmAccount(
@@ -54,6 +56,6 @@ fun UpsertAccount.asEntity() = AccountEntity(
     currencyId = currencyId,
     defaultTransactionTypeId = defaultTransactionTypeId,
     pending = true,
-    createdAt = Clock.System.now().toEpochMilliseconds(),
-    updatedAt = Clock.System.now().toEpochMilliseconds(),
+    createdAt = currentTime(),
+    updatedAt = currentTime(),
 )

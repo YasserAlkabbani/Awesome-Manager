@@ -1,7 +1,7 @@
 package com.awesome.manager.core.common.extentions
 
-fun String.isValiedEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+fun String.isValidEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
-fun String.isValiedPassword() = this.length > 5
+fun String.isValidPassword() = this.length > 5
 
-fun String.limitName()=this.substringBefore(" ").take(8)
+fun String.limitName()=this.substringBefore(" ").take(7)

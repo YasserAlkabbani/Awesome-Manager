@@ -1,13 +1,9 @@
 package com.awesome.manager
 
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
-import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
-import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import timber.log.Timber
 
 class MainActivityState(
     val isLogin: StateFlow<Boolean>,
@@ -20,7 +16,7 @@ class MainActivityState(
             is MainActions.Navigate -> mainAction.navigationAction.sendAction()
             is MainActions.AppBar -> mainAction.appBarAction.sendAction()
             is MainActions.BottomSheet -> mainAction.bottomSheetAction.sendAction()
-            is MainActions.Other -> mainAction.otherAction.sendAction()
+            is MainActions.Pick -> mainAction.pickAction.sendAction()
         }
     }
 

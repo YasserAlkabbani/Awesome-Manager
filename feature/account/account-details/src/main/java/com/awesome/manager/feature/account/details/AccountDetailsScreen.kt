@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
 import com.awesome.manager.core.model.AmAccount
@@ -32,24 +31,24 @@ fun AccountDetailsRoute(
 
     val navigationAction = accountDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, accountDetailsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountDetailsState::resetNavigationAction)
     })
 
     val appBarAction = accountDetailsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, accountDetailsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountDetailsState::resetAppBar)
     })
 
     val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,accountDetailsState::idleBottomSheet)
     })
 
     val accountState = accountDetailsState.amAccount.collectAsState().value
     val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
     if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
         accountDetailsState.showReadAppBar(
-            title = stringResource(R.string.edit_account_name, accountState.data.name.limitName()),
+            title = stringResource(R.string.edit_account_name, accountState.data.name),
             onBack = accountDetailsState::navigatePopBack,
             onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
             canEdit = allowToUpdate.data,

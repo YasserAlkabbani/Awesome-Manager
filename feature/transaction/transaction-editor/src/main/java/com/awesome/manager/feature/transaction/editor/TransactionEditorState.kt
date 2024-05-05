@@ -1,6 +1,7 @@
 package com.awesome.manager.feature.transaction.editor
 
-import androidx.lifecycle.SavedStateHandle
+import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
@@ -15,17 +16,17 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class TransactionEditorState(
-    val transactionTypes: StateFlow<List<AmTransactionType>>,
+    val transactionEditorData: StateFlow<DataState<TransactionEditorData>>,
     val accountsSearchResults: StateFlow<String>.()->StateFlow<List<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : MainActionsState() {
 
-    private val _transactionEditorData: MutableStateFlow<DataState<TransactionEditorData>> =
+    private val _transactionEditorInput: MutableStateFlow<DataState<TransactionEditorInput>> =
         MutableStateFlow(DataState.Loading)
-    val transactionEditorData: StateFlow<DataState<TransactionEditorData>> = _transactionEditorData
+    val transactionEditorInput: StateFlow<DataState<TransactionEditorInput>> = _transactionEditorInput
     fun asCreateTransaction(creatorUserId: String) {
-        _transactionEditorData.setData {
-            TransactionEditorData.TransactionEditorCreate(creatorUserId = creatorUserId)
+        _transactionEditorInput.setData {
+            TransactionEditorInput.TransactionEditorCreate(creatorUserId = creatorUserId)
         }
     }
 
@@ -39,8 +40,8 @@ class TransactionEditorState(
     fun doneSearchForAnAccountBottomSheet(){_searchForAnAccountBottomSheet.update { false }}
 
     fun asEditTransaction(transaction: AmTransaction,account: AmAccount) {
-        _transactionEditorData.setData {
-            TransactionEditorData.TransactionEditorCreate(
+        _transactionEditorInput.setData {
+            TransactionEditorInput.TransactionEditorUpdate(
                 id = transaction.id,
                 creatorUserId = transaction.creatorUserId,
                 title = transaction.title,
@@ -49,61 +50,75 @@ class TransactionEditorState(
                 selectedTransactionType = transaction.transactionType,
                 paymentTransaction = transaction.paymentTransaction,
                 amount = transaction.amount,
+                transactionAt = transaction.transactionAt
             )
         }
     }
 
     fun updateTitle(title: String) =
-        _transactionEditorData.updateData { it.updateTitle(title) }
+        _transactionEditorInput.updateData { it.updateTitle(title) }
 
     fun updateSubTitle(subtitle: String) =
-        _transactionEditorData.updateData { it.updateSubTitle(subtitle) }
+        _transactionEditorInput.updateData { it.updateSubTitle(subtitle) }
 
     fun updateAmount(amount: String) =
-        _transactionEditorData.updateData {
+        _transactionEditorInput.updateData {
             it.updateAmount(amount.toDoubleOrNull()?:0.0)
         }
 
+    fun updateTransactionAt(transactionAt: Long){
+        _transactionEditorInput.updateData {
+            it.updateTransactionAt(transactionAt)
+        }
+    }
+
     fun selectAccount(account: AmAccount) {
-        _transactionEditorData.updateData { it.selectAccount(account) }
+        _transactionEditorInput.updateData { it.selectAccount(account) }
         selectTransactionType(account.defaultTransactionType)
         dismissBottomSheet()
     }
 
     fun selectTransactionType(transactionType: AmTransactionType) =
-        _transactionEditorData.updateData { it.selectTransactionType(transactionType) }
+        _transactionEditorInput.updateData { it.selectTransactionType(transactionType) }
 
     fun setAsPay() =
-        _transactionEditorData.updateData { it.setAsPay() }
+        _transactionEditorInput.updateData { it.setAsPay() }
 
     fun setAsReceive() =
-        _transactionEditorData.updateData { it.setAsReceive() }
+        _transactionEditorInput.updateData { it.setAsReceive() }
 
 
     fun validateTransaction(): UpsertTransaction? =
-        (transactionEditorData.value as? DataState.Success)?.data?.validateTransactionData()
+        (transactionEditorInput.value as? DataState.Success)?.data?.validateTransactionData()
 
 }
 
-sealed class TransactionEditorData {
+data class TransactionEditorData(
+    val transactionTypes: List<AmTransactionType>
+)
 
-    abstract val id: String
-    abstract val creatorUserId: String
-    abstract val title: String
-    abstract val subtitle: String
-    abstract val selectedAccount: AmAccount?
-    abstract val selectedTransactionType: AmTransactionType?
-    abstract val paymentTransaction: Boolean
-    abstract val amount: Double
+sealed interface TransactionEditorInput {
 
-    abstract fun updateTitle(newTitle: String): TransactionEditorData
-    abstract fun updateSubTitle(newSubtitle: String): TransactionEditorData
-    abstract fun updateAmount(newAmount:Double):TransactionEditorData
-    abstract fun selectAccount(newAccount: AmAccount): TransactionEditorData
-    abstract fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData
-    abstract fun setAsPay(): TransactionEditorData
-    abstract fun setAsReceive(): TransactionEditorData
-    abstract fun validateTransactionData(): UpsertTransaction?
+    val id: String
+    val creatorUserId: String
+    val title: String
+    val subtitle: String
+    val selectedAccount: AmAccount?
+    val selectedTransactionType: AmTransactionType?
+    val paymentTransaction: Boolean
+    val amount: Double
+    val transactionAtTimestamp:Long
+    val transactionAt:String
+
+    fun updateTitle(newTitle: String): TransactionEditorInput
+    fun updateSubTitle(newSubtitle: String): TransactionEditorInput
+    fun updateAmount(newAmount:Double):TransactionEditorInput
+    fun updateTransactionAt(transactionAt:Long):TransactionEditorInput
+    fun selectAccount(newAccount: AmAccount): TransactionEditorInput
+    fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput
+    fun setAsPay(): TransactionEditorInput
+    fun setAsReceive(): TransactionEditorInput
+    fun validateTransactionData(): UpsertTransaction?
 
     data class TransactionEditorCreate(
         override val id: String = UUID.randomUUID().toString(),
@@ -113,32 +128,38 @@ sealed class TransactionEditorData {
         override val selectedAccount: AmAccount? = null,
         override val selectedTransactionType: AmTransactionType? = null,
         override val paymentTransaction: Boolean = false,
-        override val amount: Double = 0.0
-    ) : TransactionEditorData() {
-        override fun updateTitle(newTitle: String): TransactionEditorData = copy(title = newTitle)
+        override val amount: Double = 0.0,
+        override val transactionAtTimestamp:Long=currentTime(),
+        override val transactionAt: String = transactionAtTimestamp.asDate()
+    ) : TransactionEditorInput {
+        override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
 
-        override fun updateSubTitle(newSubtitle: String): TransactionEditorData =
+        override fun updateSubTitle(newSubtitle: String): TransactionEditorInput =
             copy(subtitle = newSubtitle)
 
-        override fun updateAmount(newAmount: Double): TransactionEditorData =
+        override fun updateAmount(newAmount: Double): TransactionEditorInput =
             copy(amount=newAmount)
 
-        override fun selectAccount(newAccount: AmAccount): TransactionEditorData =
+        override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
+            copy(transactionAt = transactionAt.asDate(), transactionAtTimestamp = transactionAtTimestamp)
+
+        override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
             copy(selectedAccount = newAccount)
 
-        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData =
+        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
             copy(selectedTransactionType = newTransactionType)
 
-        override fun setAsPay(): TransactionEditorData = copy(paymentTransaction = true)
+        override fun setAsPay(): TransactionEditorInput = copy(paymentTransaction = true)
 
-        override fun setAsReceive(): TransactionEditorData = copy(paymentTransaction = false)
+        override fun setAsReceive(): TransactionEditorInput = copy(paymentTransaction = false)
         override fun validateTransactionData(): UpsertTransaction? =
             if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
                 UpsertTransaction(
                     id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                     accountId = selectedAccount.id, amount = amount,
                     transactionTypeId = selectedTransactionType.id,
-                    paymentTransaction = paymentTransaction
+                    paymentTransaction = paymentTransaction,
+                    transactionAt = transactionAt
                 )
             } else null
     }
@@ -151,29 +172,37 @@ sealed class TransactionEditorData {
         override val selectedAccount: AmAccount,
         override val selectedTransactionType: AmTransactionType,
         override val paymentTransaction: Boolean,
-        override val amount: Double
-    ) : TransactionEditorData() {
-        override fun updateTitle(newTitle: String): TransactionEditorData = copy(title = newTitle)
+        override val amount: Double,
+        override val transactionAtTimestamp:Long=currentTime(),
+        override val transactionAt: String = transactionAtTimestamp.asDate()
+    ) : TransactionEditorInput {
+        override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
 
-        override fun updateSubTitle(newSubtitle: String): TransactionEditorData =
+        override fun updateSubTitle(newSubtitle: String): TransactionEditorInput =
             copy(subtitle = newSubtitle)
-        override fun updateAmount(newAmount: Double): TransactionEditorData =
+
+        override fun updateAmount(newAmount: Double): TransactionEditorInput =
             copy(amount=amount)
-        override fun selectAccount(newAccount: AmAccount): TransactionEditorData =
+
+        override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
+            copy(transactionAt = transactionAt.asDate(), transactionAtTimestamp = transactionAtTimestamp)
+
+        override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
             copy(selectedAccount = newAccount)
 
-        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorData =
+        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
             copy(selectedTransactionType = newTransactionType)
 
-        override fun setAsPay(): TransactionEditorData = copy(paymentTransaction = true)
+        override fun setAsPay(): TransactionEditorInput = copy(paymentTransaction = true)
 
-        override fun setAsReceive(): TransactionEditorData = copy(paymentTransaction = false)
+        override fun setAsReceive(): TransactionEditorInput = copy(paymentTransaction = false)
         override fun validateTransactionData(): UpsertTransaction? = if (title.isNotEmpty()) {
             UpsertTransaction(
                 id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                 accountId = selectedAccount.id, amount = amount,
                 transactionTypeId = selectedTransactionType.id,
-                paymentTransaction = paymentTransaction
+                paymentTransaction = paymentTransaction,
+                transactionAt = transactionAt
             )
         } else null
     }

@@ -18,6 +18,7 @@ data class TransactionEntity(
     @ColumnInfo("payment_transaction") val paymentTransaction:Boolean,
     @ColumnInfo("created_at") val createdAt:Long,
     @ColumnInfo("updated_at") val updatedAt:Long,
+    @ColumnInfo("transaction_at") val transactionAt:Long,
     @ColumnInfo("pending") val pending:Boolean,
 )
 data class TransactionEntityWithData(

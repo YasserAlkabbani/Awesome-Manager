@@ -1,5 +1,6 @@
 package com.awesome.manager.core.common.extentions
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,6 +14,11 @@ fun Long.asDate() =
 fun Long.asDateTime() =
     Instant.fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.UTC)
+
+fun String?.asTimestamp()=
+    Instant.parse(this.orEmpty()).toEpochMilliseconds()
+
+fun currentTime()= Clock.System.now().toEpochMilliseconds()
 
 
 

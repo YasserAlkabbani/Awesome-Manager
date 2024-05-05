@@ -1,11 +1,13 @@
 package com.awesome.manager.core.designsystem.component
 
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
@@ -99,7 +101,7 @@ fun AmAppBar(
                 modifier = modifier,
                 title = {
                     AmText(
-                        modifier = Modifier,
+                        modifier = Modifier.widthIn(max=200.dp),
                         text = appBarAction.title,
                         style = MaterialTheme.typography.titleLarge
                     )

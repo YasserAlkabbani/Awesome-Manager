@@ -1,6 +1,7 @@
 package com.awesome.manager.core.data.model
 
 import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.asTimestamp
 import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency
@@ -15,8 +16,8 @@ fun CurrencyNetwork.asEntity() = CurrencyEntity(
     currencyCode = currencyCode,
     currencyName = currencyName,
     currencySymbol = currencySymbol,
-    createdAt = Instant.parse(createdAt).toEpochMilliseconds(),
-    updatedAt = Instant.parse(updatedAt).toEpochMilliseconds()
+    createdAt = createdAt.asTimestamp(),
+    updatedAt = updatedAt.asTimestamp()
 )
 
 fun CurrencyEntity.asModel() = AmCurrency(

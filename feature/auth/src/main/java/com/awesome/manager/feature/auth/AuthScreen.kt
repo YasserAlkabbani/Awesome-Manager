@@ -2,20 +2,11 @@ package com.awesome.manager.feature.auth
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -37,25 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
 import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_LARGE
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_LARGE
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
-import com.awesome.manager.core.designsystem.component.AmSpacerMediumHight
-import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
-import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.MainActions
-import timber.log.Timber
 
 @Composable
 fun AuthRoute(
@@ -66,17 +49,17 @@ fun AuthRoute(
 
     val navigationAction = authScreenState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, authScreenState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, authScreenState::resetNavigationAction)
     })
 
     val appBarAction = authScreenState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, authScreenState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, authScreenState::resetAppBar)
     })
 
     val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,authScreenState::idleBottomSheet)
     })
 
 
@@ -107,14 +90,12 @@ fun AuthScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(PADDING_LARGE.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            Modifier
-                .fillMaxSize()
-                .weight(1f),
+            Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Surface(contentColor = MaterialTheme.colorScheme.secondary) {
                 Column(
@@ -132,7 +113,11 @@ fun AuthScreen(
                     )
                 }
             }
-
+            AmSpacerLargeHeight()
+            AmSpacerLargeHeight()
+            AmSpacerLargeHeight()
+            AmSpacerLargeHeight()
+            AmSpacerLargeHeight()
             Column(Modifier.fillMaxWidth()) {
                 AmText(
                     text = "Welcome Back !",
@@ -185,9 +170,9 @@ fun AuthScreen(
                     }
                 }
             }
-
         }
-        AnimatedVisibility(visible = authData.validateData) {
+        AmSpacerLargeHeight()
+        if(authData.validateData) {
             AmFilledTonalIconWithTextButton(
                 text = stringResource(R.string.start_accounting),
                 amIconsType = AmIcons.ArrowForward,

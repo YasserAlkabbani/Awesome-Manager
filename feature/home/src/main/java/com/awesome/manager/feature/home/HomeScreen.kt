@@ -49,30 +49,30 @@ fun HomeRoute(
     val navigationAction =
         homeState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendAction(sendMainAction, homeState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, homeState::resetNavigationAction)
     })
 
     val appBarAction =
         homeState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendAction(sendMainAction, homeState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, homeState::resetAppBar)
     })
 
     val bottomSheetAction =
         homeState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendAction(sendMainAction)
+        bottomSheetAction.sendMainAction(sendMainAction,homeState::idleBottomSheet)
     })
 
 
 
-    when (homeState.currencyWithData.collectAsState().value) {
-        is DataState.Success, DataState.Error, DataState.Loading ->
-            homeState.showMainAppBar(
-                onAddAccount = homeState::navigateToCreateAccount,
-                onAddTransaction = { homeState.navigateToCreateTransaction(null) }
-            )
-    }
+//    when (homeState.currencyWithData.collectAsState().value) {
+//        is DataState.Success, DataState.Error, DataState.Loading ->
+//            homeState.showMainAppBar(
+//                onAddAccount = homeState::navigateToCreateAccount,
+//                onAddTransaction = { homeState.navigateToCreateTransaction(null) }
+//            )
+//    }
 
     HomeScreen(homeState)
 }

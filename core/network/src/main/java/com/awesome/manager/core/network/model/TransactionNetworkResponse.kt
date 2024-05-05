@@ -14,7 +14,8 @@ data class TransactionNetworkResponse(
     @SerialName("amount") val amount:Double,
     @SerialName("payment_transaction") val paymentTransaction:Boolean,
     @SerialName("created_at") val createdAt:String,
-    @SerialName("updated_at") val updatedAt:String
+    @SerialName("updated_at") val updatedAt:String,
+    @SerialName("transaction_at") val transactionAt:String
 )
 
 @Serializable
@@ -27,4 +28,5 @@ data class TransactionNetworkRequest(
     @SerialName("subtitle") val subtitle:String,
     @SerialName("amount") val amount:Double,
     @SerialName("payment_transaction") val paymentTransaction:Boolean,
+    @SerialName("transaction_at") val transactionAt:String,
 )

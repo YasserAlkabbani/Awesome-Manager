@@ -25,7 +25,7 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmFilledTonalIconWithTextButton(
     modifier: Modifier = Modifier,
     text: String, amIconsType: AmIconsType,
-    positive: Boolean, loading: Boolean,
+    positive: Boolean?, loading: Boolean,
     onClick: () -> Unit
 ) {
     Row(

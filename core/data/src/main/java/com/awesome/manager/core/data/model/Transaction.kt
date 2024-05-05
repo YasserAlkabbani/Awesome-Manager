@@ -1,6 +1,8 @@
 package com.awesome.manager.core.data.model
 
 import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.asTimestamp
+import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
@@ -19,8 +21,9 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     subtitle = subtitle,
     amount = amount,
     paymentTransaction = paymentTransaction,
-    createdAt = Instant.parse(createdAt).toEpochMilliseconds(),
-    updatedAt = Instant.parse(updatedAt).toEpochMilliseconds(),
+    createdAt = createdAt.asTimestamp(),
+    updatedAt = updatedAt.asTimestamp(),
+    transactionAt=updatedAt.asTimestamp(),
     pending = false
 )
 
@@ -36,6 +39,7 @@ fun TransactionEntityWithData.asDomain() = AmTransaction(
     paymentTransaction = transactionEntity.paymentTransaction,
     createdAt = transactionEntity.createdAt.asDate(),
     updatedAt = transactionEntity.updatedAt.asDate(),
+    transactionAt = transactionEntity.updatedAt.asDate(),
     accountName = accountEntityWithBasic.accountEntity.name,
     currency = accountEntityWithBasic.currencyEntity.asModel(),
 )
@@ -48,7 +52,8 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     title = title,
     subtitle = subtitle,
     amount = amount,
-    paymentTransaction = paymentTransaction
+    paymentTransaction = paymentTransaction,
+    transactionAt = Instant.fromEpochMilliseconds(transactionAt).toString()
 )
 
 fun UpsertTransaction.asEntity() = TransactionEntity(
@@ -60,7 +65,8 @@ fun UpsertTransaction.asEntity() = TransactionEntity(
     subtitle = subtitle,
     amount = amount,
     paymentTransaction = paymentTransaction,
-    createdAt = Clock.System.now().toEpochMilliseconds(),
-    updatedAt = Clock.System.now().toEpochMilliseconds(),
+    createdAt = currentTime(),
+    updatedAt = currentTime(),
+    transactionAt = transactionAt.asTimestamp(),
     pending = true,
 )
