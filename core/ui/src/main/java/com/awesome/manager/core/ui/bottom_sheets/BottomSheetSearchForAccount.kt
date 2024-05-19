@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
+import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
 
 @Composable
 fun BottomSheetSearchForAccount(searchForAccount: BottomSheetAction.SearchForAccount) {

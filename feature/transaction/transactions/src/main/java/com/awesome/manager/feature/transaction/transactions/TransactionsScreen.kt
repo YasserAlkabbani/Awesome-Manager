@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
@@ -29,7 +29,7 @@ import com.awesome.manager.core.ui.TransactionCard
 
 @Composable
 fun TransactionsRoute(
-    sendMainAction :(MainActions)->Unit,
+    sendMainAction: (MainAction) -> Unit,
     transactionsViewModel: TransactionsViewModel = hiltViewModel()
 ) {
 
@@ -47,14 +47,15 @@ fun TransactionsRoute(
 
     val bottomSheetAction = transactionsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,transactionsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, transactionsState::idleBottomSheet)
     })
 
-    when (transactionsState.transactions.collectAsState().value){
-        is DataState.Success ,DataState.Loading,DataState.Error-> transactionsState.showMainAppBar(
-            onAddAccount = null,
-            onAddTransaction = {transactionsState.navigateToCreateTransaction(null)}
-        )
+    when (transactionsState.transactions.collectAsState().value) {
+        is DataState.Success, DataState.Loading, DataState.Error ->
+            transactionsState.showMainAppBar(
+                onAddAccount = null,
+                onAddTransaction = { transactionsState.navigateToCreateTransaction(null) }
+            )
     }
 
     TransactionScreen(transactionsState)
@@ -67,9 +68,9 @@ fun TransactionScreen(transactionsState: TransactionsState) {
     val transactionsListState = transactionsState.transactions.collectAsState().value
 
     Column(Modifier.fillMaxSize()) {
-        when(transactionsListState){
+        when (transactionsListState) {
             is DataState.Success -> {
-                val transactions=transactionsListState.data
+                val transactions = transactionsListState.data
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
@@ -95,7 +96,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                     currency = transaction.currency.currencyCode,
                                     createdBy = transaction.creatorUserId,
                                     onClick = {
-                                        transactionsState.navigateToTransaction(
+                                        transactionsState.navigateToTransactionDetails(
                                             transaction.id
                                         )
                                     }
@@ -105,6 +106,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                     }
                 )
             }
+
             DataState.Error -> {
                 Column(
                     modifier = Modifier
@@ -119,11 +121,12 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                     )
                     AmFilledTonalButton(
                         text = stringResource(R.string.create_a_transaction),
-                        onClick = {transactionsState.navigateToCreateTransaction(null)},
+                        onClick = { transactionsState.navigateToCreateTransaction(null) },
                         positive = null
                     )
                 }
             }
+
             DataState.Loading -> {}
         }
 

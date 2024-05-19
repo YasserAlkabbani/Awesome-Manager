@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
@@ -28,7 +28,7 @@ import com.awesome.manager.core.ui.AccountCard
 
 @Composable
 fun AccountsRoute(
-    sendMainAction: (MainActions) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     accountsViewModel: AccountsViewModel = hiltViewModel()
 ) {
 
@@ -46,7 +46,7 @@ fun AccountsRoute(
 
     val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,accountsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountsState::idleBottomSheet)
     })
 
     when (accountsState.accounts.collectAsState().value) {

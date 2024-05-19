@@ -20,7 +20,7 @@ import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
+import com.awesome.manager.core.designsystem.ui_actions.appbar.AppBarAction
 
 @Composable
 fun AmCustomBottomBarWithFab(

@@ -4,19 +4,20 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
-class AndroidFeatureConventionPlugin:Plugin<Project>{
+class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        with(target){
+        with(target) {
 
 
-            pluginManager.apply{
+            pluginManager.apply {
                 apply("awesomemanager.android.library")
                 apply("awesomemanager.android.hilt")
+                apply("androidx.navigation.safeargs.kotlin")
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-            dependencies{
+            dependencies {
 
                 add("implementation", project(":core:ui"))
                 add("implementation", project(":core:designsystem"))
@@ -26,14 +27,15 @@ class AndroidFeatureConventionPlugin:Plugin<Project>{
                 add("implementation", project(":core:common"))
 
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+                add("implementation", libs.findLibrary("navigation.compose").get())
                 add("implementation", libs.findLibrary("hilt.navigation.compose").get())
-                add("implementation",libs.findLibrary("lifecycle.runtime.compose").get())
-                add("implementation",libs.findLibrary("lifecycle.viewmodel.compose").get())
-                add("implementation",libs.findLibrary("timber").get())
+                add("implementation", libs.findLibrary("lifecycle.runtime.compose").get())
+                add("implementation", libs.findLibrary("lifecycle.viewmodel.compose").get())
+                add("implementation", libs.findLibrary("timber").get())
 
 
-                add("implementation",libs.findLibrary("junit").get())
-                add("implementation",libs.findLibrary("androidx.junit").get())
+                add("implementation", libs.findLibrary("junit").get())
+                add("implementation", libs.findLibrary("androidx.junit").get())
 
 
 //                add("testImplementation",libs.lifecycle.runtime.testing)

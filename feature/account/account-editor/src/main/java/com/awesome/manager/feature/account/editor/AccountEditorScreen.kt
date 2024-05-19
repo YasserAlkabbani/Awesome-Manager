@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -27,7 +27,7 @@ import com.awesome.manager.core.ui.getChipData
 
 @Composable
 fun AccountEditorRoute(
-    sendMainAction: (MainActions) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
 ) {
 
@@ -45,7 +45,7 @@ fun AccountEditorRoute(
 
     val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,accountEditorState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::idleBottomSheet)
     })
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value

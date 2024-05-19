@@ -26,7 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
 import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
@@ -41,7 +41,7 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun HomeRoute(
-    sendMainAction: (MainActions) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeState = homeViewModel.homeState
@@ -61,9 +61,8 @@ fun HomeRoute(
     val bottomSheetAction =
         homeState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,homeState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, homeState::idleBottomSheet)
     })
-
 
 
 //    when (homeState.currencyWithData.collectAsState().value) {

@@ -1,6 +1,5 @@
 package com.awesome.manager.feature.auth
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,11 +37,11 @@ import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 
 @Composable
 fun AuthRoute(
-    sendMainAction: (MainActions) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val authScreenState = authViewModel.authScreenState
@@ -59,7 +58,7 @@ fun AuthRoute(
 
     val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,authScreenState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, authScreenState::idleBottomSheet)
     })
 
 
@@ -172,7 +171,7 @@ fun AuthScreen(
             }
         }
         AmSpacerLargeHeight()
-        if(authData.validateData) {
+        if (authData.validateData) {
             AmFilledTonalIconWithTextButton(
                 text = stringResource(R.string.start_accounting),
                 amIconsType = AmIcons.ArrowForward,

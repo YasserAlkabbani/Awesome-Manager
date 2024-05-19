@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.AppBarAction
+import com.awesome.manager.core.designsystem.ui_actions.appbar.AppBarAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,7 +101,7 @@ fun AmAppBar(
                 modifier = modifier,
                 title = {
                     AmText(
-                        modifier = Modifier.widthIn(max=200.dp),
+                        modifier = Modifier.widthIn(max = 200.dp),
                         text = appBarAction.title,
                         style = MaterialTheme.typography.titleLarge
                     )

@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.MainActions
+import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.AccountCard
@@ -24,7 +24,7 @@ import com.awesome.manager.core.ui.TransactionCard
 
 @Composable
 fun AccountDetailsRoute(
-    sendMainAction: (MainActions) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
     val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
@@ -41,7 +41,7 @@ fun AccountDetailsRoute(
 
     val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,accountDetailsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountDetailsState::idleBottomSheet)
     })
 
     val accountState = accountDetailsState.amAccount.collectAsState().value
@@ -118,7 +118,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                     currency = transaction.currency.currencySymbol,
                                     createdBy = transaction.creatorUserId,
                                     onClick = {
-                                        accountDetailsState.navigateToTransaction(
+                                        accountDetailsState.navigateToTransactionDetails(
                                             transaction.id
                                         )
                                     }

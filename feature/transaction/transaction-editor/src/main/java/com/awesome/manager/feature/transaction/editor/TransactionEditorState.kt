@@ -5,7 +5,7 @@ import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
-import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
+import com.awesome.manager.core.designsystem.ui_actions.main.MainState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
@@ -19,7 +19,7 @@ class TransactionEditorState(
     val transactionEditorData: StateFlow<DataState<TransactionEditorData>>,
     val accountsSearchResults: StateFlow<String>.()->StateFlow<List<AmAccount>>,
     val createTransaction: () -> Unit,
-) : MainActionsState() {
+) : MainState() {
 
     private val _transactionEditorInput: MutableStateFlow<DataState<TransactionEditorInput>> =
         MutableStateFlow(DataState.Loading)

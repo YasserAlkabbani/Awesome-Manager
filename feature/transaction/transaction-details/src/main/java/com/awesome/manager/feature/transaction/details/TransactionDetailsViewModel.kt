@@ -3,12 +3,13 @@ package com.awesome.manager.feature.transaction.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.feature.transaction.details.navigation.TransactionDetailsArg
+import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -22,10 +23,11 @@ class TransactionDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val transactionId: String = TransactionDetailsArg(savedStateHandle).transactionId
+    private val transactionDetails: NavigationDestination.TransactionDetails =
+        savedStateHandle.toRoute()
 
     val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
-        transactionDetailsData = transactionRepository.returnTransactionById(transactionId)
+        transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
             .flatMapLatest { transaction ->
                 accountRepository.returnAccountById(transaction.accountId)
                     .map { account -> account to transaction }

@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
-import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
+import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
 import com.awesome.manager.core.ui.R
 
 @Composable
@@ -36,5 +36,5 @@ fun BottomSheetProfile(profile: BottomSheetAction.Profile) {
 @Preview
 @Composable
 fun BottomSheetProfilePreview() {
-    BottomSheetProfile(BottomSheetAction.Profile( "YASSER@GMAIL.COM", {}))
+    BottomSheetProfile(BottomSheetAction.Profile("YASSER@GMAIL.COM", {}))
 }

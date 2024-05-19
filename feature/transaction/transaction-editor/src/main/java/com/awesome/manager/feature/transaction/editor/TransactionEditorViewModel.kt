@@ -3,6 +3,7 @@ package com.awesome.manager.feature.transaction.editor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.common.states.asListDataStateFlow
@@ -10,19 +11,12 @@ import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.feature.transaction.editor.navigation.TransactionEditorArg
+import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +28,8 @@ class TransactionEditorViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
-    private val transactionEditorArg: TransactionEditorArg = TransactionEditorArg(savedStateHandle)
+    private val transactionEditorArg: NavigationDestination.TransactionEditor =
+        savedStateHandle.toRoute()
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(
             transactionEditorData = transactionTypeRepository.returnTransactionTypes()

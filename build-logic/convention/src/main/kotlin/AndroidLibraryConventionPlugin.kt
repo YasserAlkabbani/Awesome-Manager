@@ -8,9 +8,9 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.kotlin
 
-class AndroidLibraryConventionPlugin:Plugin<Project> {
+class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        with(target){
+        with(target) {
 
 //            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
@@ -27,11 +27,15 @@ class AndroidLibraryConventionPlugin:Plugin<Project> {
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
+
+                add("implementation", libs.findLibrary("kotlinx.serialization").get())
+
+
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
 
-                add("implementation",libs.findLibrary("junit").get())
-                add("implementation",libs.findLibrary("androidx.junit").get())
+                add("implementation", libs.findLibrary("junit").get())
+                add("implementation", libs.findLibrary("androidx.junit").get())
 
             }
 

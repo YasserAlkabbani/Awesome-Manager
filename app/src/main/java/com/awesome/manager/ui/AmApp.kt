@@ -1,6 +1,5 @@
 package com.awesome.manager.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -19,16 +18,24 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
+import androidx.navigation.toRoute
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.ui_actions.BottomSheetAction
+import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
-import com.awesome.manager.core.designsystem.ui_actions.NavigationAction
-import com.awesome.manager.core.designsystem.ui_actions.PickAction
+import com.awesome.manager.core.designsystem.ui_actions.navigation.MainDistillation
+import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationAction
+import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.ui_actions.picker.PickerAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
@@ -38,25 +45,15 @@ import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestered
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
 import com.awesome.manager.core.ui.dialog.AmDatePickerDialog
-import com.awesome.manager.feature.account.details.navigation.navigateToAccountDetails
-import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
-import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
-import com.awesome.manager.feature.auth.navigation.navigateToAuth
-import com.awesome.manager.feature.home.navigation.navigateToHome
-import com.awesome.manager.feature.intro.navigation.navigateToIntro
-import com.awesome.manager.feature.transaction.details.navigation.navigateToTransactionDetails
-import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
-import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
 import com.awesome.manager.navigation.AmNavHost
+import com.awesome.manager.navigation.asNavigationDestination
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AmApp(
-    maAppState: AmAppState = rememberAmAppState()
-) {
+fun AmApp() {
     val mainActivityViewModel: MainActivityViewModel = viewModel()
     val mainActivityState = mainActivityViewModel.mainActivityState
 
@@ -65,42 +62,99 @@ fun AmApp(
 
     val appBarState = mainActivityState.appBarAction.collectAsState().value
 
-    val currentDestination = maAppState.currentDestination
-    val currentMainDestination = maAppState.currentMainDestination
-    val navHostController = maAppState.navHostController
+    val navHostController = rememberNavController()
+
+    val currentBackStack: NavBackStackEntry? =
+        navHostController.currentBackStackEntryAsState().value
+    val currentNavigationDestination = remember(currentBackStack) {
+        currentBackStack?.asNavigationDestination()
+    }
 
 
-    LaunchedEffect(key1 = loginState, key2 = currentDestination, block = {
-        currentDestination?.route?.let {
-            maAppState.navigateByAuthState(loginState, it)
+    LaunchedEffect(key1 = loginState, key2 = currentNavigationDestination, block = {
+        Timber.d("TEST_NAVIGATION $loginState $currentBackStack")
+        when (loginState) {
+            true -> when (currentNavigationDestination) {
+                NavigationDestination.Auth -> {
+                    val homeNavOption = navOptions {
+                        popUpTo(NavigationDestination.Auth) { this.inclusive = true }
+                    }
+                    navHostController.navigate(
+                        route = NavigationDestination.Home,
+                        navOptions = homeNavOption
+                    )
+                }
+
+                NavigationDestination.Intro -> {
+                    val navOption = navOptions {
+                        popUpTo(NavigationDestination.Intro) { this.inclusive = true }
+                    }
+                    navHostController.navigate(
+                        route = NavigationDestination.Home,
+                        navOptions = navOption
+                    )
+                }
+
+                else -> Unit
+            }
+
+            false -> {
+                when (currentNavigationDestination) {
+                    NavigationDestination.Auth -> {}
+                    NavigationDestination.Intro -> {
+                        val navOption = navOptions {
+                            popUpTo(NavigationDestination.Intro) { this.inclusive = true }
+                        }
+                        navHostController.navigate(
+                            route = NavigationDestination.Auth,
+                            navOptions = navOption
+                        )
+                    }
+
+                    NavigationDestination.Home -> {
+                        val authNavOption = navOptions {
+                            popUpTo(NavigationDestination.Home) { this.inclusive = true }
+                        }
+                        navHostController.navigate(
+                            route = NavigationDestination.Intro,
+                            navOptions = authNavOption
+                        )
+                    }
+
+                    else -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
         }
     })
 
 
     val navigationState = mainActivityState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationState, block = {
-        if (navigationState !is NavigationAction.Idle) mainActivityState.resetNavigationAction()
         when (navigationState) {
-            NavigationAction.Idle -> {}
-            NavigationAction.PopBack -> navHostController.popBackStack()
-            NavigationAction.Auth -> navHostController.navigateToAuth()
-            NavigationAction.CreateAccount -> navHostController.navigateToCreateAccount()
-            NavigationAction.Home -> navHostController.navigateToHome()
-            NavigationAction.Intro -> navHostController.navigateToIntro()
-            is NavigationAction.CreateTransaction ->
-                navHostController.navigateToCreateTransaction(navigationState.accountId)
+            NavigationAction.Idle -> Unit
+            NavigationAction.PopBack -> {
+                mainActivityState.resetNavigationAction()
+                navHostController.popBackStack()
+            }
 
-            is NavigationAction.EditAccount ->
-                navHostController.navigateToEditAccount(navigationState.accountId)
+            is NavigationAction.Navigate -> {
+                mainActivityState.resetNavigationAction()
+                val mainDestinationNavOption =
+                    when (navigationState.navigationDestination.isMainDistinction()) {
+                        true -> navOptions {
+                            popUpTo(NavigationDestination.Home) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
 
-            is NavigationAction.EditTransaction ->
-                navHostController.navigateToEditTransaction(navigationState.transactionId)
-
-            is NavigationAction.ReadAccount ->
-                navHostController.navigateToAccountDetails(navigationState.accountId)
-
-            is NavigationAction.ReadTransaction ->
-                navHostController.navigateToTransactionDetails(navigationState.transactionId)
+                        false -> null
+                    }
+                navHostController.navigate(navigationState, navOptions = mainDestinationNavOption)
+            }
         }
     })
 
@@ -145,8 +199,8 @@ fun AmApp(
 
     val pickActionState = mainActivityState.pickAction.collectAsState().value
     when (pickActionState) {
-        PickAction.Idle -> Unit
-        is PickAction.PickDate -> {
+        PickerAction.Idle -> Unit
+        is PickerAction.PickDate -> {
             AmDatePickerDialog(pickDate = pickActionState)
         }
     }
@@ -160,14 +214,20 @@ fun AmApp(
                 AmCustomBottomBarWithFab(
                     modifier = Modifier,
                     bottomBarItems = {
-                        maAppState.mainDestination.forEach { destination ->
-                            AmNavigationCustomItem(
-                                isSelected = destination == maAppState.currentMainDestination,
-                                selectedIcon = destination.selectedAmIconsType,
-                                unSelectedIcon = destination.unSelectedAmIconsType,
-                                onSelect = { maAppState.navigateToMainDestination(destination) }
-                            )
-                        }
+                        MainDistillation.entries
+                            .forEach { destination ->
+                                val navigationDestination = destination.navigationDestination
+                                AmNavigationCustomItem(
+                                    isSelected = navigationDestination == currentNavigationDestination,
+                                    selectedIcon = destination.selectedAmIconsType,
+                                    unSelectedIcon = destination.unSelectedAmIconsType,
+                                    onSelect = {
+                                        mainActivityState.updateMainState(
+                                            navigationDestination.asMainAction()
+                                        )
+                                    }
+                                )
+                            }
                     },
                     appBarAction = appBarState
                 )
@@ -180,7 +240,7 @@ fun AmApp(
                     .padding(padding)
                     .statusBarsPadding()
                     .imePadding(),
-                navHostController = maAppState.navHostController,
+                navHostController = navHostController,
                 sendMainAction = mainActivityState::updateMainState
             )
         }

@@ -3,12 +3,13 @@ package com.awesome.manager.feature.account.editor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.feature.account.editor.navigation.AccountEditorArg
+import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class AccountEditorViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val accountEditorArg :AccountEditorArg= AccountEditorArg(savedStateHandle)
+    private val accountEditorArg: NavigationDestination.AccountEditor = savedStateHandle.toRoute()
 
     val accountEditorState: AccountEditorState = AccountEditorState(
         currencies = currencyRepository.returnCurrencies().asListDataStateFlow(viewModelScope),
@@ -36,12 +37,6 @@ class AccountEditorViewModel @Inject constructor(
 
     init {
         fillAccountData()
-        Timber.d("TEST_NAVIGATION VIEWMODEL INIT")
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Timber.d("TEST_NAVIGATION VIEWMODEL CLEAR")
     }
 
     private fun fillAccountData() {

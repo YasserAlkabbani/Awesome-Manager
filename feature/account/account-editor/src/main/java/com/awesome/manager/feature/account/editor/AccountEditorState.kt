@@ -3,7 +3,7 @@ package com.awesome.manager.feature.account.editor
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
-import com.awesome.manager.core.designsystem.ui_actions.MainActionsState
+import com.awesome.manager.core.designsystem.ui_actions.main.MainState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
@@ -16,7 +16,7 @@ class AccountEditorState(
     val currencies: StateFlow<List<AmCurrency>>,
     val transactionTypes: StateFlow<List<AmTransactionType>>,
     val onSave: () -> Unit,
-) : MainActionsState() {
+) : MainState() {
 
     private val _accountEditorData: MutableStateFlow<DataState<AccountEditorData>> =
         MutableStateFlow(DataState.Loading)
@@ -37,7 +37,9 @@ class AccountEditorState(
     }
 
     fun updateName(name: String) = _accountEditorData.updateData { it.updateName(name) }
-    fun updateImageUrl(imageUrl: String) = _accountEditorData.updateData { it.updateImageUrl(imageUrl) }
+    fun updateImageUrl(imageUrl: String) =
+        _accountEditorData.updateData { it.updateImageUrl(imageUrl) }
+
     fun updateCurrency(amCurrency: AmCurrency) =
         _accountEditorData.updateData { it.updateSelectedCurrency(amCurrency) }
 
@@ -67,10 +69,10 @@ sealed class AccountEditorData {
     data class AccountEditorCreate(
         override val id: String = UUID.randomUUID().toString(),
         override val creatorUserId: String,
-        override val name: String="",
-        override val imageUrl: String= images.random(),
-        override val currency: AmCurrency?=null,
-        override val defaultTransactionType: AmTransactionType?=null,
+        override val name: String = "",
+        override val imageUrl: String = images.random(),
+        override val currency: AmCurrency? = null,
+        override val defaultTransactionType: AmTransactionType? = null,
     ) : AccountEditorData() {
 
         override fun updateName(name: String): AccountEditorCreate =

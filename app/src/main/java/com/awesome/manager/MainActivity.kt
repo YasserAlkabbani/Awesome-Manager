@@ -14,28 +14,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.awesome.manager.core.designsystem.theme.AwesomeManagerTheme
 import com.awesome.manager.ui.AmApp
-import com.awesome.manager.ui.AmAppState
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    val mainActivityViewModel:MainActivityViewModel by viewModels()
-    
+    val mainActivityViewModel: MainActivityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window,false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             AwesomeManagerTheme {
-               AmApp()
+                AmApp()
             }
         }
     }
 }
-
 
 
 @Preview(showBackground = true)

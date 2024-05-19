@@ -2,34 +2,34 @@
 junit = "4.13.2"
 androidJuint = "1.1.5"
 androidEspresso = "3.5.1"
-androidCore = "1.12.0"
-activity = "1.8.2"
+androidCore = "1.13.1"
+activity = "1.9.0"
 coroutines = "1.7.3"
 timber = "5.0.1"
-composeBom = "2024.03.00"
-lifecycle = "2.7.0"
+composeBom = "2024.05.00"
+lifecycle = "2.8.0"
 room = "2.6.1"
-paging = "3.2.1"
-pagingCompose = "3.2.1"
-navigation = "2.7.7"
-daggerHilt = "2.51"
+paging = "3.3.0"
+pagingCompose = "3.3.0"
+navigation = "2.8.0-beta01"
 hiltNavigation = "1.2.0"
+daggerHilt = "2.51"
 ktor = "2.3.4"
-androidGradlePlugin = "8.3.0"
-serialization = "1.6.0"
-datastore = "1.0.0"
+androidGradlePlugin = "8.3.2"
+serialization = "1.6.3"
+datastore = "1.1.1"
 kotlinxDateTime = "0.5.0"
 coil = "2.5.0"
 chucker = "4.0.0"
 
 androidApplicationPlugin = "8.2.2"
 androidLibraryPlugin = "8.2.2"
-kotlinAndroidPlugin = "1.9.22"
-androidxComposeCompiler = "1.5.10"
-devtoolsKspPlugin = "1.9.22-1.0.18"
+kotlinAndroidPlugin = "1.9.24"
+androidxComposeCompiler = "1.5.14"
+devtoolsKspPlugin = "1.9.24-1.0.20"
 daggerHiltPlugin = "2.51"
 appcompat = "1.6.1"
-material = "1.11.0"
+material = "1.12.0"
 
 
 
@@ -46,6 +46,7 @@ activity-compose = { group = "androidx.activity", name = "activity-compose", ver
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDateTime" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
@@ -83,7 +84,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "daggerHilt" }
 
-coil-compose = { group="io.coil-kt" ,name="coil-compose",version.ref="coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
@@ -111,3 +112,4 @@ android-application = { id = "com.android.application", version.ref = "androidAp
 android-library = { id = "com.android.library", version.ref = "androidLibraryPlugin" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtoolsKspPlugin" }
 google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltPlugin" }
+android-navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
