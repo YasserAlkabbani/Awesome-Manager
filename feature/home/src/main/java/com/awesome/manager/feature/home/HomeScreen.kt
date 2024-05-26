@@ -34,8 +34,10 @@ import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.ui.AmTextWithIconLarge
+import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.absoluteValue
 
@@ -92,7 +94,7 @@ fun HomeScreen(homeState: HomeState) {
             content = {
                 items(
                     items = currencyWithBalance.data,
-                    contentType = { "HOME_CARD" },
+                    contentType = { LAZY_ITEM_HOME },
                     key = { it.currency.id },
                     itemContent = {
                         HomeCard(balanceDetails = it)

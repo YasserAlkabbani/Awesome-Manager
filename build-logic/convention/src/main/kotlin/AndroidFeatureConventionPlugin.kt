@@ -26,11 +26,11 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", project(":core:domain"))
                 add("implementation", project(":core:common"))
 
-                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
                 add("implementation", libs.findLibrary("navigation.compose").get())
                 add("implementation", libs.findLibrary("hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("lifecycle.runtime.compose").get())
                 add("implementation", libs.findLibrary("lifecycle.viewmodel.compose").get())
+                add("implementation", libs.findLibrary("paging.compose").get())
                 add("implementation", libs.findLibrary("timber").get())
 
 

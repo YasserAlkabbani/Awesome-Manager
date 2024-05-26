@@ -1,5 +1,6 @@
 package com.awesome.manager.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -36,7 +37,7 @@ interface AccountDao {
         expenses: TransactionTypeEntity = TransactionTypeEntity.EXPENSES,
         debtor: TransactionTypeEntity = TransactionTypeEntity.DEBTOR,
         creditor: TransactionTypeEntity = TransactionTypeEntity.CREDITOR,
-    ): Flow<List<AccountEntityWithData>>
+    ): PagingSource<Int, AccountEntityWithData>
 
     @Transaction
     @Query(

@@ -30,8 +30,7 @@ class AccountDetailsViewModel @Inject constructor(
             .returnAccountById(accountDetailsArg.accountId)
             .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
         amTransactions = transactionRepository
-            .returnTransactionsByAccountId(accountDetailsArg.accountId, "")
-            .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
+            .returnTransactionsByAccountId(accountDetailsArg.accountId, ""),
         allowToUpdate = accountRepository
             .returnAccountById(accountDetailsArg.accountId).flatMapLatest { account ->
                 authRepository.currentUserId().map { it == account.creatorUserId }

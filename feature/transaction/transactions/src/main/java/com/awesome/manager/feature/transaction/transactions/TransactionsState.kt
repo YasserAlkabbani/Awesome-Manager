@@ -1,13 +1,13 @@
 package com.awesome.manager.feature.transaction.transactions
 
-import com.awesome.manager.core.common.states.DataState
+import androidx.paging.PagingData
 import com.awesome.manager.core.designsystem.ui_actions.main.MainState
 import com.awesome.manager.core.model.AmTransaction
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 
 class TransactionsState(
-    val transactions: StateFlow<DataState<List<AmTransaction>>>
+    val transactions: Flow<PagingData<AmTransaction>>
 ) : MainState() {
 
 

@@ -29,6 +29,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             dependencies {
 
                 add("implementation", libs.findLibrary("kotlinx.serialization").get())
+                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
 
 
                 add("androidTestImplementation", kotlin("test"))

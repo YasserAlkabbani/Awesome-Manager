@@ -22,6 +22,7 @@ import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
 

@@ -7,21 +7,19 @@ import kotlinx.serialization.Serializable
 
 sealed class NavigationAction {
 
-
-    data object Idle : NavigationAction()
     data object PopBack : NavigationAction()
     data class Navigate(val navigationDestination: NavigationDestination) : NavigationAction()
 
-    fun sendMainAction(sendMainAction: (MainAction) -> Unit, resetNavigation: () -> Unit) {
-        when (this) {
-            Idle -> {}
-            else -> {
-                resetNavigation()
-                sendMainAction(MainAction.Navigate(this))
-            }
-        }
-    }
+}
 
+fun NavigationAction?.sendMainAction(
+    sendMainAction: (MainAction) -> Unit,
+    resetNavigation: () -> Unit
+) {
+    this?.let {
+        resetNavigation()
+        sendMainAction(MainAction.Navigate(this))
+    }
 }
 
 @Serializable

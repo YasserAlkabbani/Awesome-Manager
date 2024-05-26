@@ -8,7 +8,7 @@ object UIConstant {
     const val SPACE_LARGE: Int = 12
     const val SPACE_EXTRA_LARGE: Int = 16
 
-    const val VERTICAL_SPACE_BETWEEN_ITEMS: Int = 2
+    const val VERTICAL_SPACE_BETWEEN_ITEMS: Int = 1
 
     const val SCROLL_CONTENT_PADDING_TOP: Int = 4
     const val SCROLL_CONTENT_PADDING_BOTTOM: Int = 36

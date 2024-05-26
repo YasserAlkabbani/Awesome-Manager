@@ -17,11 +17,6 @@ class AccountsViewModel @Inject constructor(
 
     val accountsState: AccountsState = AccountsState(
         accounts = accountRepository.returnAccounts("")
-            .map {
-                if (it.isNotEmpty()) DataState.Success(it)
-                else DataState.Error
-            }
-            .asDataStateFlow(viewModelScope)
     )
 
 }

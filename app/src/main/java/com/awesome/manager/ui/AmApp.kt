@@ -132,28 +132,31 @@ fun AmApp() {
 
     val navigationState = mainActivityState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationState, block = {
-        when (navigationState) {
-            NavigationAction.Idle -> Unit
-            NavigationAction.PopBack -> {
-                mainActivityState.resetNavigationAction()
-                navHostController.popBackStack()
-            }
+        navigationState?.let {
+            mainActivityState.resetNavigationAction()
+            when (navigationState) {
+                NavigationAction.PopBack -> {
+                    navHostController.popBackStack()
+                }
 
-            is NavigationAction.Navigate -> {
-                mainActivityState.resetNavigationAction()
-                val mainDestinationNavOption =
-                    when (navigationState.navigationDestination.isMainDistinction()) {
-                        true -> navOptions {
-                            popUpTo(NavigationDestination.Home) {
-                                saveState = true
+                is NavigationAction.Navigate -> {
+                    val mainDestinationNavOption =
+                        when (navigationState.navigationDestination.isMainDistinction()) {
+                            true -> navOptions {
+                                popUpTo(NavigationDestination.Home) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
 
-                        false -> null
-                    }
-                navHostController.navigate(navigationState, navOptions = mainDestinationNavOption)
+                            false -> null
+                        }
+                    navHostController.navigate(
+                        navigationState,
+                        navOptions = mainDestinationNavOption
+                    )
+                }
             }
         }
     })

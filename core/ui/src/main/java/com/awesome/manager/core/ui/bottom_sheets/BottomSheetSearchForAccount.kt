@@ -16,6 +16,7 @@ import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
+import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 
 @Composable
 fun BottomSheetSearchForAccount(searchForAccount: BottomSheetAction.SearchForAccount) {
@@ -31,10 +32,7 @@ fun BottomSheetSearchForAccount(searchForAccount: BottomSheetAction.SearchForAcc
         onTextChange = searchForAccount.onReSearch
     )
     Spacer(modifier = Modifier.height(8.dp))
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = UIConstant.SCROLL_CONTENT_PADDING_BOTTOM.dp),
-        verticalArrangement = Arrangement.spacedBy(UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS.dp),
+    AmLazyColumn(
         content = searchForAccount.items
     )
 }

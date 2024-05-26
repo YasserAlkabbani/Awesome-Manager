@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 interface MainNavigation {
-    val navigationAction: StateFlow<NavigationAction>
+    val navigationAction: StateFlow<NavigationAction?>
     fun NavigationAction.sendAction()
     fun resetNavigationAction()
     fun navigatePopBack()
@@ -18,12 +18,11 @@ interface MainNavigation {
 }
 
 class MainNavigationState : MainNavigation {
-    private val _navigationAction: MutableStateFlow<NavigationAction> =
-        MutableStateFlow(NavigationAction.Idle)
-    override val navigationAction: StateFlow<NavigationAction> = _navigationAction
+    private val _navigationAction: MutableStateFlow<NavigationAction?> = MutableStateFlow(null)
+    override val navigationAction: StateFlow<NavigationAction?> = _navigationAction
 
     override fun NavigationAction.sendAction() = _navigationAction.update { this }
-    override fun resetNavigationAction() = NavigationAction.Idle.sendAction()
+    override fun resetNavigationAction() = _navigationAction.update { null }
     override fun navigatePopBack() = NavigationAction.PopBack.sendAction()
 
     override fun navigateToAccountDetails(accountId: String) =
@@ -46,6 +45,6 @@ class MainNavigationState : MainNavigation {
         NavigationDestination.TransactionEditor(
             accountId = accountId,
             transactionId = transactionId
-        )
-            .asNavigation().sendAction()
+        ).asNavigation().sendAction()
+
 }

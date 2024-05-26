@@ -38,6 +38,7 @@ import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 
 @Composable
 fun AuthRoute(

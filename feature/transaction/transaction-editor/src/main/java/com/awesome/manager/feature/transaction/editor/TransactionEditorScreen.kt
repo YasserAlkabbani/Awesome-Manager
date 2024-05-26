@@ -17,14 +17,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.AccountCard
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
+import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -58,7 +62,7 @@ fun TransactionEditorRoute(
         pickAction.sendMainAction(sendMainAction, transactionEditorState::resetPick)
     })
 
-    val accountsSearchResult = transactionEditorState.accountsList.collectAsState().value
+    val accountsLazyPaging = transactionEditorState.accountsList.collectAsLazyPagingItems()
     val searchForAnAccountBottomSheet =
         transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
     LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
@@ -67,22 +71,24 @@ fun TransactionEditorRoute(
             transactionEditorState.showSearchForAccountBottomSheet(
                 items = {
                     items(
-                        items = accountsSearchResult,
-                        contentType = { "ACCOUNTS" },
-                        key = { account -> account.id },
-                        itemContent = { account ->
-                            AccountCard(
-                                modifier = Modifier.animateItemPlacement(),
-                                title = account.name,
-                                imageUrl = account.imageUrl,
-                                creditor = account.balanceDetails.creditor,
-                                debtor = account.balanceDetails.debtor,
-                                currency = account.balanceDetails.currency.currencyCode,
-                                loading = account.pending,
-                                onClick = { transactionEditorState.selectAccount(account) },
-                                onAddTransaction = null,
-                                onEditTransaction = null
-                            )
+                        count = accountsLazyPaging.itemCount,
+                        contentType = { LAZY_ITEM_ACCOUNT },
+                        key = accountsLazyPaging.itemKey { transaction -> transaction.id },
+                        itemContent = { index ->
+                            accountsLazyPaging[index]?.let { account ->
+                                AccountCard(
+                                    modifier = Modifier.animateItemPlacement(),
+                                    title = account.name,
+                                    imageUrl = account.imageUrl,
+                                    creditor = account.balanceDetails.creditor,
+                                    debtor = account.balanceDetails.debtor,
+                                    currency = account.balanceDetails.currency.currencyCode,
+                                    loading = account.pending,
+                                    onClick = { transactionEditorState.selectAccount(account) },
+                                    onAddTransaction = null,
+                                    onEditTransaction = null
+                                )
+                            }
                         }
                     )
                 },

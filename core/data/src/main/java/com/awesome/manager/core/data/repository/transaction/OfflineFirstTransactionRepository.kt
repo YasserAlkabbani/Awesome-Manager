@@ -1,5 +1,6 @@
 package com.awesome.manager.core.data.repository.transaction
 
+import androidx.paging.PagingData
 import com.awesome.manager.core.common.results.amInsert
 import com.awesome.manager.core.common.results.amRequest
 import com.awesome.manager.core.common.results.asAmResult
@@ -7,6 +8,7 @@ import com.awesome.manager.core.common.extentions.asDateTime
 import com.awesome.manager.core.data.model.asDomain
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asNetwork
+import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.UpsertTransaction
@@ -28,15 +30,15 @@ class OfflineFirstTransactionRepository @Inject constructor(
         amInsert { transactionDao.upsertTransaction(transactionEntity) }
     }
 
-    override fun returnTransactions(searchKey: String): Flow<List<AmTransaction>> =
-        transactionDao.returnTransactions(searchKey).map { it.map { it.asDomain() } }
+    override fun returnTransactions(searchKey: String): Flow<PagingData<AmTransaction>> =
+        transactionDao.returnTransactions(searchKey).asPagingDataFlow { asDomain() }
 
     override fun returnTransactionsByAccountId(
         accountId: String,
         searchKey: String
-    ): Flow<List<AmTransaction>> =
+    ): Flow<PagingData<AmTransaction>> =
         transactionDao.returnTransactionsByAccountId(accountId, searchKey)
-            .map { it.map { it.asDomain() } }
+            .asPagingDataFlow { asDomain() }
 
     override fun returnTransactionById(transactionId: String): Flow<AmTransaction> =
         transactionDao.returnTransactionById(transactionId).map { it.asDomain() }

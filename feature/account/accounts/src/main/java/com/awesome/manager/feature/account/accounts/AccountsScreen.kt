@@ -17,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
@@ -24,7 +26,10 @@ import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_B
 import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.ui.AccountCard
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
+import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 
 @Composable
 fun AccountsRoute(
@@ -49,12 +54,10 @@ fun AccountsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountsState::idleBottomSheet)
     })
 
-    when (accountsState.accounts.collectAsState().value) {
-        is DataState.Success, DataState.Error, DataState.Loading -> accountsState.showMainAppBar(
-            onAddAccount = accountsState::navigateToCreateAccount,
-            onAddTransaction = null
-        )
-    }
+    accountsState.showMainAppBar(
+        onAddAccount = accountsState::navigateToCreateAccount,
+        onAddTransaction = null
+    )
 
     AccountsScreen(accountsState)
 }
@@ -65,68 +68,59 @@ fun AccountsRoute(
 fun AccountsScreen(
     accountsState: AccountsState
 ) {
-    val accountsListState = accountsState.accounts.collectAsState().value
+    val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        when (accountsListState) {
-            is DataState.Success -> {
-                val accounts = accountsListState.data
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),
-                    content = {
-                        items(
-                            items = accounts,
-                            contentType = { "ACCOUNTS" },
-                            key = { account -> account.id },
-                            itemContent = { account ->
-                                AccountCard(
-                                    modifier = Modifier.animateItemPlacement(),
-                                    title = account.name,
-                                    imageUrl = account.imageUrl,
-                                    creditor = account.balanceDetails.creditor,
-                                    debtor = account.balanceDetails.debtor,
-                                    currency = account.balanceDetails.currency.currencyCode,
-                                    loading = account.pending,
-                                    onClick = { accountsState.navigateToAccountDetails(account.id) },
-                                    onAddTransaction = {
-                                        accountsState.navigateToCreateTransaction(account.id)
-                                    },
-                                    onEditTransaction = null
-                                )
-                            }
-                        )
+        AmLazyColumn(
+            content = {
+                if (accountsLazyPaging.itemCount == 0)
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .padding(UIConstant.PADDING_LARGE_EXTRA.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AmText(
+                                text = stringResource(R.string.theres_no_accounts_yet),
+                                maxLines = 3, textAlign = TextAlign.Center
+                            )
+                            AmFilledTonalButton(
+                                text = stringResource(R.string.create_an_account),
+                                onClick = accountsState::navigateToCreateAccount,
+                                positive = null
+                            )
+                        }
+                    }
+                else items(
+                    count = accountsLazyPaging.itemCount,
+                    contentType = { LAZY_ITEM_ACCOUNT },
+                    key = accountsLazyPaging.itemKey { it.id },
+                    itemContent = { index ->
+                        accountsLazyPaging[index]?.let { account ->
+                            AccountCard(
+                                modifier = Modifier.animateItemPlacement(),
+                                title = account.name,
+                                imageUrl = account.imageUrl,
+                                creditor = account.balanceDetails.creditor,
+                                debtor = account.balanceDetails.debtor,
+                                currency = account.balanceDetails.currency.currencyCode,
+                                loading = account.pending,
+                                onClick = { accountsState.navigateToAccountDetails(account.id) },
+                                onAddTransaction = {
+                                    accountsState.navigateToCreateTransaction(account.id)
+                                },
+                                onEditTransaction = null
+                            )
+                        }
                     }
                 )
             }
+        )
 
-            DataState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .padding(UIConstant.PADDING_LARGE_EXTRA.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AmText(
-                        text = stringResource(R.string.theres_no_accounts_yet),
-                        maxLines = 3, textAlign = TextAlign.Center
-                    )
-                    AmFilledTonalButton(
-                        text = stringResource(R.string.create_an_account),
-                        onClick = accountsState::navigateToCreateAccount,
-                        positive = null
-                    )
-                }
-            }
-
-            DataState.Loading -> {}
-        }
     }
 }

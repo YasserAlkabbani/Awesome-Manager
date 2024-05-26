@@ -14,7 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
-import com.awesome.manager.core.ui.AccountCard
+import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.ui.card.AccountCard
 
 @Composable
 fun TransactionDetailsRoute(

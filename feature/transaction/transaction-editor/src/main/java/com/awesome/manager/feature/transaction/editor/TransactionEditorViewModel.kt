@@ -31,10 +31,7 @@ class TransactionEditorViewModel @Inject constructor(
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(
             createTransaction = ::saveTransaction,
-            accountsSearchResults = {
-                flatMapLatest { accountRepository.returnAccounts(it) }
-                    .asListDataStateFlow(viewModelScope)
-            }
+            accountsSearchResults = { flatMapLatest { accountRepository.returnAccounts(it) } }
         )
 
     init {

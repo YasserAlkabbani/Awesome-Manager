@@ -10,7 +10,6 @@ composeBom = "2024.05.00"
 lifecycle = "2.8.0"
 room = "2.6.1"
 paging = "3.3.0"
-pagingCompose = "3.3.0"
 navigation = "2.8.0-beta01"
 hiltNavigation = "1.2.0"
 daggerHilt = "2.51"
@@ -73,7 +72,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }

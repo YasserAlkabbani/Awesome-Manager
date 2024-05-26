@@ -1,5 +1,6 @@
 package com.awesome.manager.feature.transaction.editor
 
+import androidx.paging.PagingData
 import com.awesome.manager.core.common.extentions.asDate
 import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
@@ -10,13 +11,14 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class TransactionEditorState(
-    val accountsSearchResults: StateFlow<String>.() -> StateFlow<List<AmAccount>>,
+    val accountsSearchResults: StateFlow<String>.() -> Flow<PagingData<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : MainState() {
 
@@ -34,7 +36,7 @@ class TransactionEditorState(
     }
 
     private val _searchKey: MutableStateFlow<String> = MutableStateFlow("")
-    val accountsList: StateFlow<List<AmAccount>> = _searchKey.accountsSearchResults()
+    val accountsList: Flow<PagingData<AmAccount>> = _searchKey.accountsSearchResults()
     fun updateSearchKey(newSearchKey: String) = _searchKey.update { newSearchKey }
 
 
