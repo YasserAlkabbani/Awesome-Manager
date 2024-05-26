@@ -10,21 +10,18 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DaoModule{
+object DaoModule {
 
     @Provides
-    fun provideUserDao(amDatabase: AmDatabase)=amDatabase.userDao()
+    fun provideUserDao(amDatabase: AmDatabase) = amDatabase.userDao()
 
     @Provides
-    fun provideCurrencyDao(amDatabase: AmDatabase)=amDatabase.currencyDao()
+    fun provideCurrencyDao(amDatabase: AmDatabase) = amDatabase.currencyDao()
 
     @Provides
-    fun provideTransactionType(amDatabase: AmDatabase)=amDatabase.transactionTypeDao()
+    fun provideAccountDao(amDatabase: AmDatabase) = amDatabase.accountDao()
 
     @Provides
-    fun provideAccountDao(amDatabase: AmDatabase)=amDatabase.accountDao()
-
-    @Provides
-    fun provideTransactionDao(amDatabase: AmDatabase)=amDatabase.transactionDao()
+    fun provideTransactionDao(amDatabase: AmDatabase) = amDatabase.transactionDao()
 
 }

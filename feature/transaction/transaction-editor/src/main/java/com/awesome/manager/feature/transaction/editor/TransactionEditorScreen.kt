@@ -33,11 +33,14 @@ fun TransactionEditorRoute(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
 
-    val transactionEditorState: TransactionEditorState = transactionEditorViewModel.transactionEditorState
+    val transactionEditorState: TransactionEditorState =
+        transactionEditorViewModel.transactionEditorState
 
     val navigationAction = transactionEditorState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, transactionEditorState::resetNavigationAction)
+        navigationAction.sendMainAction(
+            sendMainAction, transactionEditorState::resetNavigationAction
+        )
     })
 
     val appBarAction = transactionEditorState.appBarAction.collectAsState().value
@@ -47,18 +50,19 @@ fun TransactionEditorRoute(
 
     val bottomSheetAction = transactionEditorState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction,transactionEditorState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, transactionEditorState::idleBottomSheet)
     })
 
-    val pickAction=transactionEditorState.pickAction.collectAsState().value
+    val pickAction = transactionEditorState.pickAction.collectAsState().value
     LaunchedEffect(key1 = pickAction, block = {
-        pickAction.sendMainAction(sendMainAction,transactionEditorState::resetPick)
+        pickAction.sendMainAction(sendMainAction, transactionEditorState::resetPick)
     })
 
     val accountsSearchResult = transactionEditorState.accountsList.collectAsState().value
-    val searchForAnAccountBottomSheet=transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
+    val searchForAnAccountBottomSheet =
+        transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
     LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
-        if (searchForAnAccountBottomSheet){
+        if (searchForAnAccountBottomSheet) {
             transactionEditorState.doneSearchForAnAccountBottomSheet()
             transactionEditorState.showSearchForAccountBottomSheet(
                 items = {
@@ -71,9 +75,9 @@ fun TransactionEditorRoute(
                                 modifier = Modifier.animateItemPlacement(),
                                 title = account.name,
                                 imageUrl = account.imageUrl,
-                                creditor = account.creditor,
-                                debtor = account.debtor,
-                                currency = account.currency.currencyCode,
+                                creditor = account.balanceDetails.creditor,
+                                debtor = account.balanceDetails.debtor,
+                                currency = account.balanceDetails.currency.currencyCode,
                                 loading = account.pending,
                                 onClick = { transactionEditorState.selectAccount(account) },
                                 onAddTransaction = null,
@@ -82,20 +86,21 @@ fun TransactionEditorRoute(
                         }
                     )
                 },
-                searchKey =transactionEditorState::updateSearchKey
+                searchKey = transactionEditorState::updateSearchKey
             )
         }
     })
 
     val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
-    if(transactionData is DataState.Success){
-        when(transactionData.data.selectedAccount){
+    if (transactionData is DataState.Success) {
+        when (transactionData.data.selectedAccount) {
             null -> transactionEditorState.showCreateAppBar(
                 title = "Select Account",
                 onSave = transactionEditorState::requestSearchForAnAccountBottomSheet,
                 onCancel = transactionEditorState::navigatePopBack
             )
-            else -> when(transactionData.data){
+
+            else -> when (transactionData.data) {
                 is TransactionEditorInput.TransactionEditorCreate -> {
                     transactionEditorState.showCreateAppBar(
                         title = stringResource(id = R.string.create_transaction),
@@ -103,6 +108,7 @@ fun TransactionEditorRoute(
                         onCancel = transactionEditorState::navigatePopBack
                     )
                 }
+
                 is TransactionEditorInput.TransactionEditorUpdate -> {
                     transactionEditorState.showEditAppBar(
                         title = "Update Transaction",
@@ -114,7 +120,7 @@ fun TransactionEditorRoute(
         }
     }
 
-    TransactionEditorScreen(transactionEditorState=transactionEditorState)
+    TransactionEditorScreen(transactionEditorState = transactionEditorState)
 }
 
 @Composable
@@ -123,23 +129,16 @@ fun TransactionEditorScreen(
 ) {
 
     val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value
-    val transactionData = transactionEditorState.transactionEditorData.collectAsState().value
 
-    if (transactionInput is DataState.Success && transactionData is DataState.Success) {
+    if (transactionInput is DataState.Success) {
 
-        val transactionTypes = transactionData.data.transactionTypes
+        val transactionTypes = transactionEditorState.transactionTypes
         val transaction = transactionInput.data
 
         val transactionTypeChip = remember(transactionTypes) {
             transactionTypes.map {
-                getChipData(id=it.id, title = it.title, data = it)
+                getChipData(id = it.name, title = it.name, data = it)
             }
-        }
-        val paymentTypeChip= remember {
-            listOf(
-                getChipData(id = true, title =  "Pay", data = transactionEditorState::setAsPay),
-                getChipData(id = false, title =  "Receive", data = transactionEditorState::setAsReceive)
-            )
         }
 
         Column(
@@ -152,9 +151,9 @@ fun TransactionEditorScreen(
                     modifier = Modifier,
                     title = account.name,
                     imageUrl = account.imageUrl,
-                    creditor = account.creditor,
-                    debtor = account.debtor,
-                    currency = account.currency.currencyCode,
+                    creditor = account.balanceDetails.creditor,
+                    debtor = account.balanceDetails.debtor,
+                    currency = account.balanceDetails.currency.currencyCode,
                     loading = account.pending,
                     onClick = transactionEditorState::requestSearchForAnAccountBottomSheet,
                     onAddTransaction = null, onEditTransaction = null
@@ -169,7 +168,7 @@ fun TransactionEditorScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(
-                hint = "Subtitle",label = "Transaction Subtitle",
+                hint = "Subtitle", label = "Transaction Subtitle",
                 icon = AmIcons.SubTitle,
                 onTextChange = transactionEditorState::updateSubTitle,
                 initTextValue = transaction.subtitle,
@@ -216,21 +215,12 @@ fun TransactionEditorScreen(
             AmChipsContainer(
                 title = stringResource(R.string.transaction_type),
                 chipDataList = transactionTypeChip,
-                onSelect = {transactionEditorState.selectTransactionType(it.data)},
-                selectedItem = transaction.selectedTransactionType?.id,
-                content = null
-            )
-            AmChipsContainer(
-                title = "Payment Type",
-                chipDataList = paymentTypeChip,
-                onSelect = {it.data()},
-                selectedItem = transaction.paymentTransaction,
+                onSelect = { transactionEditorState.selectTransactionType(it.data) },
+                selectedItem = transaction.selectedTransactionType?.name,
                 content = null
             )
         }
     }
-
-
 
 
 }

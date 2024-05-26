@@ -10,14 +10,3 @@ data class AmCurrency(
     val createdAt: String,
     val updatedAt: String
 )
-
-data class CurrencyWithBalance(
-    val amCurrency: AmCurrency,
-    val incoming:Double,
-    val outgoing:Double,
-    val borrow:Double,
-    val lent:Double,
-    val netIncoming: Double = incoming - outgoing,
-    val netLent: Double = lent - borrow,
-    val netCash:Double=(incoming+borrow)-(outgoing+lent)
-)

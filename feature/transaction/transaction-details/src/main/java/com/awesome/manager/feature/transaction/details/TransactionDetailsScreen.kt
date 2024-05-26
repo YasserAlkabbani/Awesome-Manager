@@ -86,9 +86,9 @@ fun TransactionDetailsScreen(
                     modifier = Modifier,
                     title = account.name,
                     imageUrl = account.imageUrl,
-                    creditor = account.creditor,
-                    debtor = account.debtor,
-                    currency = account.currency.currencyCode,
+                    creditor = account.balanceDetails.creditor,
+                    debtor = account.balanceDetails.debtor,
+                    currency = account.balanceDetails.currency.currencyCode,
                     loading = account.pending,
                     onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
                     onAddTransaction = {
@@ -102,26 +102,26 @@ fun TransactionDetailsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.transaction_subject),
                     text = transaction.title,
-                    positive = transaction.paymentTransaction,
+                    positive = null,
                 )
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.transaction_description),
                     text = transaction.subtitle,
-                    positive = transaction.paymentTransaction
+                    positive = null
                 )
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.amount),
                     text = (transaction.amount).toString(),
-                    positive = transaction.paymentTransaction
+                    positive = null
                 )
 
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.payment_type),
-                    text = transaction.transactionType.title,
-                    positive = transaction.paymentTransaction
+                    text = transaction.transactionType.name,
+                    positive = null
                 )
             }
         }

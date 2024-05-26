@@ -9,22 +9,21 @@ import androidx.room.Relation
 @Entity(tableName = "transactions")
 data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
-    @ColumnInfo("creator_user_id")val creatorUserId: String,
-    @ColumnInfo("account_id")val accountId: String,
-    @ColumnInfo("transaction_type_id")val transactionTypeId: String,
-    @ColumnInfo("title") val title:String,
-    @ColumnInfo("subtitle") val subtitle:String,
-    @ColumnInfo("amount") val amount:Double,
-    @ColumnInfo("payment_transaction") val paymentTransaction:Boolean,
-    @ColumnInfo("created_at") val createdAt:Long,
-    @ColumnInfo("updated_at") val updatedAt:Long,
-    @ColumnInfo("transaction_at") val transactionAt:Long,
-    @ColumnInfo("pending") val pending:Boolean,
+    @ColumnInfo("creator_user_id") val creatorUserId: String,
+    @ColumnInfo("account_id") val accountId: String,
+    @ColumnInfo("transaction_type") val transactionType: TransactionTypeEntity,
+    @ColumnInfo("title") val title: String,
+    @ColumnInfo("subtitle") val subtitle: String,
+    @ColumnInfo("amount") val amount: Double,
+    @ColumnInfo("created_at") val createdAt: Long,
+    @ColumnInfo("updated_at") val updatedAt: Long,
+    @ColumnInfo("transaction_at") val transactionAt: Long,
+    @ColumnInfo("pending") val pending: Boolean,
 )
+
 data class TransactionEntityWithData(
-    @Embedded val transactionEntity:TransactionEntity,
-    @Relation (parentColumn = "transaction_type_id", entityColumn ="transaction_type_id") val transactionTypeEntity: TransactionTypeEntity,
-    @Relation (
+    @Embedded val transactionEntity: TransactionEntity,
+    @Relation(
         parentColumn = "account_id", entityColumn = "account_id",
         entity = AccountEntity::class
     ) val accountEntityWithBasic: AccountEntityWithBasic

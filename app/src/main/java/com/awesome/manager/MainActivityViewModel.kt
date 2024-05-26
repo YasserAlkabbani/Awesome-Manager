@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
-import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +18,6 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val currencyRepository: CurrencyRepository,
-    private val transactionTypeRepository: TransactionTypeRepository,
     private val accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
@@ -52,7 +50,6 @@ class MainActivityViewModel @Inject constructor(
             launch {
                 authRepository.refreshUserInfo()
                 currencyRepository.refreshCurrency()
-                transactionTypeRepository.refreshTransactionType()
                 accountRepository.refreshAccounts()
                 transactionRepository.refreshTransactions()
             }

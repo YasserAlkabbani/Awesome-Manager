@@ -14,9 +14,10 @@ import java.util.UUID
 
 class AccountEditorState(
     val currencies: StateFlow<List<AmCurrency>>,
-    val transactionTypes: StateFlow<List<AmTransactionType>>,
     val onSave: () -> Unit,
 ) : MainState() {
+
+    val transactionTypes: List<AmTransactionType> = AmTransactionType.entries.toList()
 
     private val _accountEditorData: MutableStateFlow<DataState<AccountEditorData>> =
         MutableStateFlow(DataState.Loading)
@@ -29,7 +30,7 @@ class AccountEditorState(
             AccountEditorData.AccountEditorUpdate(
                 id = amAccount.id, creatorUserId = amAccount.creatorUserId,
                 name = amAccount.name, imageUrl = amAccount.imageUrl,
-                currency = amAccount.currency,
+                currency = amAccount.balanceDetails.currency,
                 defaultTransactionType = amAccount.defaultTransactionType,
             )
         }
@@ -92,7 +93,7 @@ sealed class AccountEditorData {
                 UpsertAccount(
                     id = id, creatorUserId = creatorUserId, name = name,
                     imageUrl = imageUrl, currencyId = currency.id,
-                    defaultTransactionTypeId = defaultTransactionType.id,
+                    defaultTransactionType = defaultTransactionType,
                 ) else null
 
     }
@@ -123,7 +124,7 @@ sealed class AccountEditorData {
                 UpsertAccount(
                     id = id, creatorUserId = creatorUserId, name = name,
                     imageUrl = imageUrl, currencyId = currency.id,
-                    defaultTransactionTypeId = defaultTransactionType.id,
+                    defaultTransactionType = defaultTransactionType,
                 ) else null
 
     }

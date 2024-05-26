@@ -6,11 +6,10 @@ import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.network.model.AccountNetworkRequest
 import com.awesome.manager.core.network.model.AccountNetworkResponse
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 
 fun AccountNetworkResponse.asEntity() = AccountEntity(
@@ -18,7 +17,7 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = enumValueOf(defaultTransactionType),
     creatorUserId = creatorUserId,
     pending = false,
     createdAt = createdAt.asTimestamp(),
@@ -30,10 +29,11 @@ fun AccountEntityWithData.asModel() = AmAccount(
     creatorUserId = accountEntity.creatorUserId,
     name = accountEntity.name,
     imageUrl = accountEntity.imageUrl,
-    currency = currencyEntity.asModel(),
-    defaultTransactionType = defaultTransactionTypeEntity.asModel(),
-    debtor = incoming,
-    creditor = outgoing,
+    defaultTransactionType = accountEntity.defaultTransactionType.asModel(),
+    balanceDetails = BalanceDetails(
+        currencyEntity.asModel(),
+        income = income, expenses = expenses, debtor = debtor, creditor = creditor
+    ),
     pending = accountEntity.pending,
     createdAt = accountEntity.createdAt.asDate(),
     updatedAt = accountEntity.updatedAt.asDate()
@@ -45,7 +45,7 @@ fun AccountEntity.asNetwork() = AccountNetworkRequest(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = defaultTransactionType.name,
 )
 
 fun UpsertAccount.asEntity() = AccountEntity(
@@ -54,7 +54,7 @@ fun UpsertAccount.asEntity() = AccountEntity(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = defaultTransactionType.asEntity(),
     pending = true,
     createdAt = currentTime(),
     updatedAt = currentTime(),

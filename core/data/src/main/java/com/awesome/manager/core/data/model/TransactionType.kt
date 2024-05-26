@@ -1,24 +1,18 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.extentions.asDate
-import com.awesome.manager.core.common.extentions.asTimestamp
 import com.awesome.manager.core.database.model.TransactionTypeEntity
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.network.model.TransactionTypesNetwork
-import kotlinx.datetime.Instant
 
-fun TransactionTypesNetwork.asEntity() = TransactionTypeEntity(
-    id = id,
-    title = title,
-    deadTransaction = deadTransaction,
-    createdAt = createdAt.asTimestamp(),
-    updatedAt = updatedAt.asTimestamp(),
-)
+fun TransactionTypeEntity.asModel(): AmTransactionType = when (this) {
+    TransactionTypeEntity.EXPENSES -> AmTransactionType.EXPENSES
+    TransactionTypeEntity.INCOME -> AmTransactionType.INCOME
+    TransactionTypeEntity.DEBTOR -> AmTransactionType.DEBTOR
+    TransactionTypeEntity.CREDITOR -> AmTransactionType.CREDITOR
+}
 
-fun TransactionTypeEntity.asModel() = AmTransactionType(
-    id = id,
-    title = title,
-    deadTransaction = deadTransaction,
-    updatedAt = updatedAt.asDate(),
-    createdAt = createdAt.asDate()
-)
+fun AmTransactionType.asEntity(): TransactionTypeEntity = when (this) {
+    AmTransactionType.EXPENSES -> TransactionTypeEntity.EXPENSES
+    AmTransactionType.INCOME -> TransactionTypeEntity.INCOME
+    AmTransactionType.DEBTOR -> TransactionTypeEntity.DEBTOR
+    AmTransactionType.CREDITOR -> TransactionTypeEntity.CREDITOR
+}

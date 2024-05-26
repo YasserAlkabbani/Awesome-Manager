@@ -34,7 +34,7 @@ import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.model.CurrencyWithBalance
+import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.ui.AmTextWithIconLarge
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.absoluteValue
@@ -80,7 +80,7 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(homeState: HomeState) {
 
-    when (val currencyWithBalance = homeState.currencyWithData.collectAsState().value) {
+    when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is DataState.Success -> LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(PADDING_LOW.dp),
@@ -93,9 +93,9 @@ fun HomeScreen(homeState: HomeState) {
                 items(
                     items = currencyWithBalance.data,
                     contentType = { "HOME_CARD" },
-                    key = { it.amCurrency.id },
+                    key = { it.currency.id },
                     itemContent = {
-                        HomeCard(currencyWithBalance = it)
+                        HomeCard(balanceDetails = it)
                     }
                 )
             })
@@ -127,12 +127,12 @@ fun HomeScreen(homeState: HomeState) {
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeState(currencyWithData = MutableStateFlow(DataState.Success(listOf()))))
+    HomeScreen(HomeState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
 }
 
 @Composable
-fun HomeCard(currencyWithBalance: CurrencyWithBalance) {
-    val positiveCash = remember { derivedStateOf { currencyWithBalance.netCash >= 0 } }.value
+fun HomeCard(balanceDetails: BalanceDetails) {
+    val positiveCash = remember { derivedStateOf { balanceDetails.currentCash >= 0 } }.value
     AmSurface(modifier = Modifier.fillMaxWidth(), highPadding = false, positive = positiveCash) {
         Row(
             modifier = Modifier
@@ -142,11 +142,11 @@ fun HomeCard(currencyWithBalance: CurrencyWithBalance) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             AmText(
-                text = currencyWithBalance.amCurrency.currencyCode,
+                text = balanceDetails.currency.currencyCode,
                 style = MaterialTheme.typography.titleLarge
             )
             AmText(
-                text = "${currencyWithBalance.netCash} ${currencyWithBalance.amCurrency.currencySymbol}",
+                text = "${balanceDetails.currentCash} ${balanceDetails.currency.currencySymbol}",
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -155,22 +155,22 @@ fun HomeCard(currencyWithBalance: CurrencyWithBalance) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                positiveValue = currencyWithBalance.lent,
+                positiveValue = balanceDetails.creditor,
                 positiveLabel = stringResource(id = R.string.lent),
-                negativeValue = currencyWithBalance.borrow,
+                negativeValue = balanceDetails.debtor,
                 negativeLabel = stringResource(id = R.string.borrow),
-                netValue = currencyWithBalance.netLent
+                netValue = balanceDetails.netDebtor
             )
             AmSpacerSmallWidth()
             HomeCardResults(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                positiveValue = currencyWithBalance.incoming,
+                positiveValue = balanceDetails.income,
                 positiveLabel = stringResource(id = R.string.incoming),
-                negativeValue = currencyWithBalance.outgoing,
+                negativeValue = balanceDetails.expenses,
                 negativeLabel = stringResource(id = R.string.outgoing),
-                netValue = currencyWithBalance.netIncoming
+                netValue = balanceDetails.netIncome
             )
         }
     }

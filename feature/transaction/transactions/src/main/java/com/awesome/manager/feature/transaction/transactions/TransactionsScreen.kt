@@ -91,8 +91,8 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                     amount = transaction.amount,
                                     pending = transaction.pending,
                                     date = transaction.updatedAt,
-                                    transactionType = transaction.transactionType.title,
-                                    isPay = transaction.paymentTransaction,
+                                    transactionType = transaction.transactionType.name,
+                                    isPay = transaction.transactionType.posative,
                                     currency = transaction.currency.currencyCode,
                                     createdBy = transaction.creatorUserId,
                                     onClick = {

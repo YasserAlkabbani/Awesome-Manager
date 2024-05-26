@@ -4,4 +4,11 @@ fun String.isValidEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).ma
 
 fun String.isValidPassword() = this.length > 5
 
-fun String.limitName()=this.substringBefore(" ").take(7)
+fun String.limitName() = this.substringBefore(" ").take(7)
+
+inline fun <reified T : Enum<T>> String.toEnumOrNull(): T? =
+    try {
+        enumValueOf<T>(this)
+    } catch (_: Throwable) {
+        null
+    }

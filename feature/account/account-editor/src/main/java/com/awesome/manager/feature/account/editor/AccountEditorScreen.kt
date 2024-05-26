@@ -83,10 +83,10 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
             getChipData(id = it.id, title = it.currencyName, data = it)
         }
     }
-    val transactionTypes = accountEditorState.transactionTypes.collectAsState().value
+    val transactionTypes = accountEditorState.transactionTypes
     val transactionTypeChipData = remember(transactionTypes) {
         transactionTypes.map {
-            getChipData(id = it.id, title = it.title, data = it)
+            getChipData(id = it.name, title = it.name, data = it)
         }
     }
 
@@ -120,7 +120,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
             AmChipsContainer(
                 title = "Default Transaction Type",
                 chipDataList = transactionTypeChipData,
-                selectedItem = account.defaultTransactionType?.id,
+                selectedItem = account.defaultTransactionType?.name,
                 onSelect = { accountEditorState.updateDefaultTransactionType(it.data) },
                 content = null
             )

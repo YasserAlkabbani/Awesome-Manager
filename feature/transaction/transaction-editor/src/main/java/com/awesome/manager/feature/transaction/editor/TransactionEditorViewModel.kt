@@ -10,7 +10,6 @@ import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -24,7 +23,6 @@ class TransactionEditorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val accountRepository: AccountRepository,
     private val authRepository: AuthRepository,
-    private val transactionTypeRepository: TransactionTypeRepository,
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
@@ -32,11 +30,6 @@ class TransactionEditorViewModel @Inject constructor(
         savedStateHandle.toRoute()
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(
-            transactionEditorData = transactionTypeRepository.returnTransactionTypes()
-                .map { transactionTypes ->
-                    DataState.Success(TransactionEditorData(transactionTypes))
-                }
-                .asDataStateFlow(viewModelScope),
             createTransaction = ::saveTransaction,
             accountsSearchResults = {
                 flatMapLatest { accountRepository.returnAccounts(it) }

@@ -16,30 +16,37 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class TransactionEditorState(
-    val transactionEditorData: StateFlow<DataState<TransactionEditorData>>,
-    val accountsSearchResults: StateFlow<String>.()->StateFlow<List<AmAccount>>,
+    val accountsSearchResults: StateFlow<String>.() -> StateFlow<List<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : MainState() {
 
+    val transactionTypes = AmTransactionType.entries.toList()
+
     private val _transactionEditorInput: MutableStateFlow<DataState<TransactionEditorInput>> =
         MutableStateFlow(DataState.Loading)
-    val transactionEditorInput: StateFlow<DataState<TransactionEditorInput>> = _transactionEditorInput
+    val transactionEditorInput: StateFlow<DataState<TransactionEditorInput>> =
+        _transactionEditorInput
+
     fun asCreateTransaction(creatorUserId: String) {
         _transactionEditorInput.setData {
             TransactionEditorInput.TransactionEditorCreate(creatorUserId = creatorUserId)
         }
     }
 
-    private val _searchKey:MutableStateFlow<String> = MutableStateFlow("")
-    val accountsList:StateFlow<List<AmAccount>> = _searchKey.accountsSearchResults()
-    fun updateSearchKey(newSearchKey:String){_searchKey.update { newSearchKey }}
+    private val _searchKey: MutableStateFlow<String> = MutableStateFlow("")
+    val accountsList: StateFlow<List<AmAccount>> = _searchKey.accountsSearchResults()
+    fun updateSearchKey(newSearchKey: String) = _searchKey.update { newSearchKey }
 
-    private val _searchForAnAccountBottomSheet:MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val searchForAnAccountBottomSheet:MutableStateFlow<Boolean> = _searchForAnAccountBottomSheet
-    fun requestSearchForAnAccountBottomSheet(){_searchForAnAccountBottomSheet.update { true }}
-    fun doneSearchForAnAccountBottomSheet(){_searchForAnAccountBottomSheet.update { false }}
 
-    fun asEditTransaction(transaction: AmTransaction,account: AmAccount) {
+    private val _searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = _searchForAnAccountBottomSheet
+    fun requestSearchForAnAccountBottomSheet() =
+        _searchForAnAccountBottomSheet.update { true }
+
+    fun doneSearchForAnAccountBottomSheet() =
+        _searchForAnAccountBottomSheet.update { false }
+
+    fun asEditTransaction(transaction: AmTransaction, account: AmAccount) {
         _transactionEditorInput.setData {
             TransactionEditorInput.TransactionEditorUpdate(
                 id = transaction.id,
@@ -48,7 +55,6 @@ class TransactionEditorState(
                 subtitle = transaction.subtitle,
                 selectedAccount = account,
                 selectedTransactionType = transaction.transactionType,
-                paymentTransaction = transaction.paymentTransaction,
                 amount = transaction.amount,
                 transactionAt = transaction.transactionAt
             )
@@ -63,10 +69,10 @@ class TransactionEditorState(
 
     fun updateAmount(amount: String) =
         _transactionEditorInput.updateData {
-            it.updateAmount(amount.toDoubleOrNull()?:0.0)
+            it.updateAmount(amount.toDoubleOrNull() ?: 0.0)
         }
 
-    fun updateTransactionAt(transactionAt: Long){
+    fun updateTransactionAt(transactionAt: Long) {
         _transactionEditorInput.updateData {
             it.updateTransactionAt(transactionAt)
         }
@@ -81,21 +87,10 @@ class TransactionEditorState(
     fun selectTransactionType(transactionType: AmTransactionType) =
         _transactionEditorInput.updateData { it.selectTransactionType(transactionType) }
 
-    fun setAsPay() =
-        _transactionEditorInput.updateData { it.setAsPay() }
-
-    fun setAsReceive() =
-        _transactionEditorInput.updateData { it.setAsReceive() }
-
-
     fun validateTransaction(): UpsertTransaction? =
         (transactionEditorInput.value as? DataState.Success)?.data?.validateTransactionData()
 
 }
-
-data class TransactionEditorData(
-    val transactionTypes: List<AmTransactionType>
-)
 
 sealed interface TransactionEditorInput {
 
@@ -105,19 +100,16 @@ sealed interface TransactionEditorInput {
     val subtitle: String
     val selectedAccount: AmAccount?
     val selectedTransactionType: AmTransactionType?
-    val paymentTransaction: Boolean
     val amount: Double
-    val transactionAtTimestamp:Long
-    val transactionAt:String
+    val transactionAtTimestamp: Long
+    val transactionAt: String
 
     fun updateTitle(newTitle: String): TransactionEditorInput
     fun updateSubTitle(newSubtitle: String): TransactionEditorInput
-    fun updateAmount(newAmount:Double):TransactionEditorInput
-    fun updateTransactionAt(transactionAt:Long):TransactionEditorInput
+    fun updateAmount(newAmount: Double): TransactionEditorInput
+    fun updateTransactionAt(transactionAt: Long): TransactionEditorInput
     fun selectAccount(newAccount: AmAccount): TransactionEditorInput
     fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput
-    fun setAsPay(): TransactionEditorInput
-    fun setAsReceive(): TransactionEditorInput
     fun validateTransactionData(): UpsertTransaction?
 
     data class TransactionEditorCreate(
@@ -127,9 +119,8 @@ sealed interface TransactionEditorInput {
         override val subtitle: String = "",
         override val selectedAccount: AmAccount? = null,
         override val selectedTransactionType: AmTransactionType? = null,
-        override val paymentTransaction: Boolean = false,
         override val amount: Double = 0.0,
-        override val transactionAtTimestamp:Long=currentTime(),
+        override val transactionAtTimestamp: Long = currentTime(),
         override val transactionAt: String = transactionAtTimestamp.asDate()
     ) : TransactionEditorInput {
         override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
@@ -138,10 +129,13 @@ sealed interface TransactionEditorInput {
             copy(subtitle = newSubtitle)
 
         override fun updateAmount(newAmount: Double): TransactionEditorInput =
-            copy(amount=newAmount)
+            copy(amount = newAmount)
 
         override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
-            copy(transactionAt = transactionAt.asDate(), transactionAtTimestamp = transactionAtTimestamp)
+            copy(
+                transactionAt = transactionAt.asDate(),
+                transactionAtTimestamp = transactionAtTimestamp
+            )
 
         override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
             copy(selectedAccount = newAccount)
@@ -149,16 +143,12 @@ sealed interface TransactionEditorInput {
         override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
             copy(selectedTransactionType = newTransactionType)
 
-        override fun setAsPay(): TransactionEditorInput = copy(paymentTransaction = true)
-
-        override fun setAsReceive(): TransactionEditorInput = copy(paymentTransaction = false)
         override fun validateTransactionData(): UpsertTransaction? =
             if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
                 UpsertTransaction(
                     id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                     accountId = selectedAccount.id, amount = amount,
-                    transactionTypeId = selectedTransactionType.id,
-                    paymentTransaction = paymentTransaction,
+                    transactionType = selectedTransactionType,
                     transactionAt = transactionAt
                 )
             } else null
@@ -171,9 +161,8 @@ sealed interface TransactionEditorInput {
         override val subtitle: String,
         override val selectedAccount: AmAccount,
         override val selectedTransactionType: AmTransactionType,
-        override val paymentTransaction: Boolean,
         override val amount: Double,
-        override val transactionAtTimestamp:Long=currentTime(),
+        override val transactionAtTimestamp: Long = currentTime(),
         override val transactionAt: String = transactionAtTimestamp.asDate()
     ) : TransactionEditorInput {
         override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
@@ -182,10 +171,13 @@ sealed interface TransactionEditorInput {
             copy(subtitle = newSubtitle)
 
         override fun updateAmount(newAmount: Double): TransactionEditorInput =
-            copy(amount=amount)
+            copy(amount = amount)
 
         override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
-            copy(transactionAt = transactionAt.asDate(), transactionAtTimestamp = transactionAtTimestamp)
+            copy(
+                transactionAt = transactionAt.asDate(),
+                transactionAtTimestamp = transactionAtTimestamp
+            )
 
         override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
             copy(selectedAccount = newAccount)
@@ -193,15 +185,12 @@ sealed interface TransactionEditorInput {
         override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
             copy(selectedTransactionType = newTransactionType)
 
-        override fun setAsPay(): TransactionEditorInput = copy(paymentTransaction = true)
 
-        override fun setAsReceive(): TransactionEditorInput = copy(paymentTransaction = false)
         override fun validateTransactionData(): UpsertTransaction? = if (title.isNotEmpty()) {
             UpsertTransaction(
                 id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                 accountId = selectedAccount.id, amount = amount,
-                transactionTypeId = selectedTransactionType.id,
-                paymentTransaction = paymentTransaction,
+                transactionType = selectedTransactionType,
                 transactionAt = transactionAt
             )
         } else null

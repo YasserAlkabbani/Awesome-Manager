@@ -8,7 +8,6 @@ import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
-import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -22,7 +21,6 @@ class AccountEditorViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     savedStateHandle: SavedStateHandle,
     currencyRepository: CurrencyRepository,
-    transactionTypeRepository: TransactionTypeRepository,
 ) : ViewModel() {
 
 
@@ -30,8 +28,6 @@ class AccountEditorViewModel @Inject constructor(
 
     val accountEditorState: AccountEditorState = AccountEditorState(
         currencies = currencyRepository.returnCurrencies().asListDataStateFlow(viewModelScope),
-        transactionTypes = transactionTypeRepository.returnTransactionTypes()
-            .asListDataStateFlow(viewModelScope),
         onSave = ::onSave,
     )
 

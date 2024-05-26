@@ -5,9 +5,8 @@ import com.awesome.manager.core.common.extentions.asTimestamp
 import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency
-import com.awesome.manager.core.model.CurrencyWithBalance
+import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.network.model.CurrencyNetwork
-import kotlinx.datetime.Instant
 
 fun CurrencyNetwork.asEntity() = CurrencyEntity(
     id = id,
@@ -31,10 +30,7 @@ fun CurrencyEntity.asModel() = AmCurrency(
     updatedAt = updatedAt.asDate()
 )
 
-fun CurrencyEntityWithData.asModel() = CurrencyWithBalance(
-    amCurrency = currencyEntity.asModel(),
-    incoming = incoming,
-    outgoing = outgoing,
-    lent = lent,
-    borrow = borrow
+fun CurrencyEntityWithData.asModel() = BalanceDetails(
+    currency = currencyEntity.asModel(),
+    income = income, expenses = expenses, debtor = debtor, creditor = creditor,
 )

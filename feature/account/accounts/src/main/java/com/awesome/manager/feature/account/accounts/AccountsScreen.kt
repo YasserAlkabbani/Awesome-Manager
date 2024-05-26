@@ -90,9 +90,9 @@ fun AccountsScreen(
                                     modifier = Modifier.animateItemPlacement(),
                                     title = account.name,
                                     imageUrl = account.imageUrl,
-                                    creditor = account.creditor,
-                                    debtor = account.debtor,
-                                    currency = account.currency.currencyCode,
+                                    creditor = account.balanceDetails.creditor,
+                                    debtor = account.balanceDetails.debtor,
+                                    currency = account.balanceDetails.currency.currencyCode,
                                     loading = account.pending,
                                     onClick = { accountsState.navigateToAccountDetails(account.id) },
                                     onAddTransaction = {
