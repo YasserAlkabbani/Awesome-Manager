@@ -50,11 +50,6 @@ fun TransactionsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, transactionsState::idleBottomSheet)
     })
 
-    transactionsState.showMainAppBar(
-        onAddAccount = null,
-        onAddTransaction = { transactionsState.navigateToCreateTransaction(null) }
-    )
-
     TransactionScreen(transactionsState)
 }
 

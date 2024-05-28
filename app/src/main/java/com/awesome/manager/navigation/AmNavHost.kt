@@ -76,20 +76,15 @@ fun AmNavHost(
 
 }
 
-fun NavBackStackEntry.asNavigationDestination(): NavigationDestination =
-    tryToGetTheRoute<NavigationDestination.Intro>()
-        ?: tryToGetTheRoute<NavigationDestination.Auth>()
-        ?: tryToGetTheRoute<NavigationDestination.Home>()
-        ?: tryToGetTheRoute<NavigationDestination.Accounts>()
-        ?: tryToGetTheRoute<NavigationDestination.Transactions>()
-        ?: tryToGetTheRoute<NavigationDestination.AccountDetails>()
-        ?: tryToGetTheRoute<NavigationDestination.TransactionDetails>()
-        ?: tryToGetTheRoute<NavigationDestination.AccountEditor>()
-        ?: tryToGetTheRoute<NavigationDestination.TransactionEditor>()!!
-
-inline fun <reified T : NavigationDestination> NavBackStackEntry.tryToGetTheRoute() =
-    try {
-        this.toRoute<T>()
-    } catch (_: Throwable) {
-        null
-    }
+fun NavBackStackEntry.asNavigationDestination(): NavigationDestination? = when (destination.route) {
+    NavigationDestination.Intro::class.qualifiedName -> toRoute<NavigationDestination.Intro>()
+    NavigationDestination.Auth::class.qualifiedName -> toRoute<NavigationDestination.Auth>()
+    NavigationDestination.Home::class.qualifiedName -> toRoute<NavigationDestination.Home>()
+    NavigationDestination.Accounts::class.qualifiedName -> toRoute<NavigationDestination.Accounts>()
+    NavigationDestination.Transactions::class.qualifiedName -> toRoute<NavigationDestination.Transactions>()
+    NavigationDestination.AccountDetails::class.qualifiedName -> toRoute<NavigationDestination.AccountDetails>()
+    NavigationDestination.TransactionDetails::class.qualifiedName -> toRoute<NavigationDestination.TransactionDetails>()
+    NavigationDestination.AccountEditor::class.qualifiedName -> toRoute<NavigationDestination.AccountEditor>()
+    NavigationDestination.TransactionEditor::class.qualifiedName -> toRoute<NavigationDestination.TransactionEditor>()
+    else -> null
+}

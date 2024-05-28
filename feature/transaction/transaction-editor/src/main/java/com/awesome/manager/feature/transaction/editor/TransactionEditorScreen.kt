@@ -1,5 +1,6 @@
 package com.awesome.manager.feature.transaction.editor
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.ui_actions.picker.sendMainAction
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
@@ -59,6 +61,7 @@ fun TransactionEditorRoute(
 
     val pickAction = transactionEditorState.pickAction.collectAsState().value
     LaunchedEffect(key1 = pickAction, block = {
+        Log.d("TEST_PICKUP", "NEW_STATE $pickAction")
         pickAction.sendMainAction(sendMainAction, transactionEditorState::resetPick)
     })
 
@@ -98,29 +101,34 @@ fun TransactionEditorRoute(
     })
 
     val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
-    if (transactionData is DataState.Success) {
-        when (transactionData.data.selectedAccount) {
-            null -> transactionEditorState.showCreateAppBar(
-                title = "Select Account",
-                onSave = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                onCancel = transactionEditorState::navigatePopBack
-            )
+    val selectAccount = stringResource(R.string.select_account)
+    val createTransactionText = stringResource(R.string.create_transaction)
+    val updateTransactionText = stringResource(R.string.update_transaction)
+    LaunchedEffect(key1 = transactionData) {
+        if (transactionData is DataState.Success) {
+            when (transactionData.data.selectedAccount) {
+                null -> transactionEditorState.showCreateAppBar(
+                    title = selectAccount,
+                    onSave = transactionEditorState::requestSearchForAnAccountBottomSheet,
+                    onCancel = transactionEditorState::navigatePopBack
+                )
 
-            else -> when (transactionData.data) {
-                is TransactionEditorInput.TransactionEditorCreate -> {
-                    transactionEditorState.showCreateAppBar(
-                        title = stringResource(id = R.string.create_transaction),
-                        onSave = transactionEditorState.createTransaction,
-                        onCancel = transactionEditorState::navigatePopBack
-                    )
-                }
+                else -> when (transactionData.data.transactionEditorInputType) {
+                    TransactionEditorInputType.Create -> {
+                        transactionEditorState.showCreateAppBar(
+                            title = createTransactionText,
+                            onSave = transactionEditorState.createTransaction,
+                            onCancel = transactionEditorState::navigatePopBack
+                        )
+                    }
 
-                is TransactionEditorInput.TransactionEditorUpdate -> {
-                    transactionEditorState.showEditAppBar(
-                        title = "Update Transaction",
-                        onSave = transactionEditorState.createTransaction,
-                        onCancel = transactionEditorState::navigatePopBack
-                    )
+                    TransactionEditorInputType.Edit -> {
+                        transactionEditorState.showEditAppBar(
+                            title = updateTransactionText,
+                            onSave = transactionEditorState.createTransaction,
+                            onCancel = transactionEditorState::navigatePopBack
+                        )
+                    }
                 }
             }
         }
@@ -182,7 +190,7 @@ fun TransactionEditorScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(
-                hint = "Amount", icon = AmIcons.Money, label = "5000.0",
+                hint = "5000.0", icon = AmIcons.Money, label = "Amount",
                 initTextValue = transaction.amount.toString(),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
@@ -208,12 +216,15 @@ fun TransactionEditorScreen(
             )
 
             AmFilledTonalIconWithTextButton(
-                text = "Set data", amIconsType = AmIcons.Date, positive = null, loading = false,
+                text = transaction.transactionAt,
+                amIconsType = AmIcons.Date,
+                positive = null,
+                loading = false,
                 onClick = {
                     transactionEditorState.pickDate(
                         initTime = transaction.transactionAtTimestamp,
                         setDate = transactionEditorState::updateTransactionAt,
-                        dismiss = transactionEditorState::resetPick
+                        dismiss = transactionEditorState::hidePick
                     )
                 }
             )

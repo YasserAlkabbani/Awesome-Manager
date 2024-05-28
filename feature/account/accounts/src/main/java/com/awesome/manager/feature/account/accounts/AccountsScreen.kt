@@ -54,11 +54,6 @@ fun AccountsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountsState::idleBottomSheet)
     })
 
-    accountsState.showMainAppBar(
-        onAddAccount = accountsState::navigateToCreateAccount,
-        onAddTransaction = null
-    )
-
     AccountsScreen(accountsState)
 }
 

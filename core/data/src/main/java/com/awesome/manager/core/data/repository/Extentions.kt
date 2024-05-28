@@ -6,8 +6,8 @@ import androidx.paging.PagingSource
 import androidx.paging.map
 import kotlinx.coroutines.flow.map
 
-inline fun <T : Any, R : Any> PagingSource<Int, T>.asPagingDataFlow(crossinline asModel: T.() -> R) =
+inline fun <T : Any, R : Any> asPagingDataFlow(noinline getPagingSource:()->PagingSource<Int,T>,crossinline asModel: T.() -> R) =
     Pager(
         config = PagingConfig(pageSize = 10),
-        pagingSourceFactory = { this }
+        pagingSourceFactory = getPagingSource
     ).flow.map { it.map { it.asModel() } }

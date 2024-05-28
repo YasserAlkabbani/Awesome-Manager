@@ -5,7 +5,7 @@ import com.awesome.manager.core.common.results.amInsert
 import com.awesome.manager.core.common.results.amRequest
 import com.awesome.manager.core.common.results.asAmResult
 import com.awesome.manager.core.common.extentions.asDateTime
-import com.awesome.manager.core.data.model.asDomain
+import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asNetwork
 import com.awesome.manager.core.data.repository.asPagingDataFlow
@@ -31,17 +31,22 @@ class OfflineFirstTransactionRepository @Inject constructor(
     }
 
     override fun returnTransactions(searchKey: String): Flow<PagingData<AmTransaction>> =
-        transactionDao.returnTransactions(searchKey).asPagingDataFlow { asDomain() }
+        asPagingDataFlow(
+            getPagingSource = { transactionDao.returnTransactions(searchKey) },
+            asModel = { asModel() }
+        )
+
 
     override fun returnTransactionsByAccountId(
         accountId: String,
         searchKey: String
-    ): Flow<PagingData<AmTransaction>> =
-        transactionDao.returnTransactionsByAccountId(accountId, searchKey)
-            .asPagingDataFlow { asDomain() }
+    ): Flow<PagingData<AmTransaction>> = asPagingDataFlow(
+        getPagingSource = { transactionDao.returnTransactionsByAccountId(accountId, searchKey) },
+        asModel = { asModel() }
+    )
 
     override fun returnTransactionById(transactionId: String): Flow<AmTransaction> =
-        transactionDao.returnTransactionById(transactionId).map { it.asDomain() }
+        transactionDao.returnTransactionById(transactionId).map { it.asModel() }
 
     override suspend fun refreshTransactions() = amRequest {
         val lastUpdateTransactionTime =

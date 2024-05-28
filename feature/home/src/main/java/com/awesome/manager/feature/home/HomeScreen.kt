@@ -66,15 +66,6 @@ fun HomeRoute(
         bottomSheetAction.sendMainAction(sendMainAction, homeState::idleBottomSheet)
     })
 
-
-//    when (homeState.currencyWithData.collectAsState().value) {
-//        is DataState.Success, DataState.Error, DataState.Loading ->
-//            homeState.showMainAppBar(
-//                onAddAccount = homeState::navigateToCreateAccount,
-//                onAddTransaction = { homeState.navigateToCreateTransaction(null) }
-//            )
-//    }
-
     HomeScreen(homeState)
 }
 

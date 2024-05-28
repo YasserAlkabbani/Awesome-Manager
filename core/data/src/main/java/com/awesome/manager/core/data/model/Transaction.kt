@@ -25,7 +25,7 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     pending = false
 )
 
-fun TransactionEntityWithData.asDomain() = AmTransaction(
+fun TransactionEntityWithData.asModel() = AmTransaction(
     id = transactionEntity.id,
     accountId = transactionEntity.accountId,
     creatorUserId = transactionEntity.creatorUserId,

@@ -2,6 +2,7 @@ package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.asTimestamp
 import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
@@ -31,7 +32,13 @@ class TransactionEditorState(
 
     fun asCreateTransaction(creatorUserId: String) {
         _transactionEditorInput.setData {
-            TransactionEditorInput.TransactionEditorCreate(creatorUserId = creatorUserId)
+            TransactionEditorInput(
+                id = UUID.randomUUID().toString(), creatorUserId = creatorUserId,
+                title = "", subtitle = "",
+                selectedAccount = null, selectedTransactionType = null,
+                amount = 0.0, transactionAtTimestamp = currentTime(),
+                transactionEditorInputType = TransactionEditorInputType.Create
+            )
         }
     }
 
@@ -50,7 +57,7 @@ class TransactionEditorState(
 
     fun asEditTransaction(transaction: AmTransaction, account: AmAccount) {
         _transactionEditorInput.setData {
-            TransactionEditorInput.TransactionEditorUpdate(
+            TransactionEditorInput(
                 id = transaction.id,
                 creatorUserId = transaction.creatorUserId,
                 title = transaction.title,
@@ -58,7 +65,8 @@ class TransactionEditorState(
                 selectedAccount = account,
                 selectedTransactionType = transaction.transactionType,
                 amount = transaction.amount,
-                transactionAt = transaction.transactionAt
+                transactionAtTimestamp = transaction.transactionAt.asTimestamp(),
+                transactionEditorInputType = TransactionEditorInputType.Edit
             )
         }
     }
@@ -94,108 +102,50 @@ class TransactionEditorState(
 
 }
 
-sealed interface TransactionEditorInput {
+data class TransactionEditorInput(
+    val id: String,
+    val creatorUserId: String,
+    val title: String,
+    val subtitle: String,
+    val amount: Double,
+    val selectedAccount: AmAccount?,
+    val selectedTransactionType: AmTransactionType?,
+    val transactionAtTimestamp: Long = currentTime(),
+    val transactionEditorInputType: TransactionEditorInputType
+) {
 
-    val id: String
-    val creatorUserId: String
-    val title: String
-    val subtitle: String
-    val selectedAccount: AmAccount?
-    val selectedTransactionType: AmTransactionType?
-    val amount: Double
-    val transactionAtTimestamp: Long
-    val transactionAt: String
+    val transactionAt: String = transactionAtTimestamp.asDate()
 
-    fun updateTitle(newTitle: String): TransactionEditorInput
-    fun updateSubTitle(newSubtitle: String): TransactionEditorInput
-    fun updateAmount(newAmount: Double): TransactionEditorInput
-    fun updateTransactionAt(transactionAt: Long): TransactionEditorInput
-    fun selectAccount(newAccount: AmAccount): TransactionEditorInput
-    fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput
-    fun validateTransactionData(): UpsertTransaction?
+    fun updateTitle(newTitle: String): TransactionEditorInput =
+        copy(title = newTitle)
 
-    data class TransactionEditorCreate(
-        override val id: String = UUID.randomUUID().toString(),
-        override val creatorUserId: String,
-        override val title: String = "",
-        override val subtitle: String = "",
-        override val selectedAccount: AmAccount? = null,
-        override val selectedTransactionType: AmTransactionType? = null,
-        override val amount: Double = 0.0,
-        override val transactionAtTimestamp: Long = currentTime(),
-        override val transactionAt: String = transactionAtTimestamp.asDate()
-    ) : TransactionEditorInput {
-        override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
+    fun updateSubTitle(newSubtitle: String): TransactionEditorInput =
+        copy(subtitle = newSubtitle)
 
-        override fun updateSubTitle(newSubtitle: String): TransactionEditorInput =
-            copy(subtitle = newSubtitle)
+    fun updateAmount(newAmount: Double): TransactionEditorInput =
+        copy(amount = newAmount)
 
-        override fun updateAmount(newAmount: Double): TransactionEditorInput =
-            copy(amount = newAmount)
+    fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
+        copy(selectedAccount = newAccount)
 
-        override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
-            copy(
-                transactionAt = transactionAt.asDate(),
-                transactionAtTimestamp = transactionAtTimestamp
-            )
+    fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
+        copy(
+            transactionAtTimestamp = transactionAt
+        )
 
-        override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
-            copy(selectedAccount = newAccount)
+    fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
+        copy(selectedTransactionType = newTransactionType)
 
-        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
-            copy(selectedTransactionType = newTransactionType)
-
-        override fun validateTransactionData(): UpsertTransaction? =
-            if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
-                UpsertTransaction(
-                    id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
-                    accountId = selectedAccount.id, amount = amount,
-                    transactionType = selectedTransactionType,
-                    transactionAt = transactionAt
-                )
-            } else null
-    }
-
-    data class TransactionEditorUpdate(
-        override val id: String,
-        override val creatorUserId: String,
-        override val title: String,
-        override val subtitle: String,
-        override val selectedAccount: AmAccount,
-        override val selectedTransactionType: AmTransactionType,
-        override val amount: Double,
-        override val transactionAtTimestamp: Long = currentTime(),
-        override val transactionAt: String = transactionAtTimestamp.asDate()
-    ) : TransactionEditorInput {
-        override fun updateTitle(newTitle: String): TransactionEditorInput = copy(title = newTitle)
-
-        override fun updateSubTitle(newSubtitle: String): TransactionEditorInput =
-            copy(subtitle = newSubtitle)
-
-        override fun updateAmount(newAmount: Double): TransactionEditorInput =
-            copy(amount = amount)
-
-        override fun updateTransactionAt(transactionAt: Long): TransactionEditorInput =
-            copy(
-                transactionAt = transactionAt.asDate(),
-                transactionAtTimestamp = transactionAtTimestamp
-            )
-
-        override fun selectAccount(newAccount: AmAccount): TransactionEditorInput =
-            copy(selectedAccount = newAccount)
-
-        override fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
-            copy(selectedTransactionType = newTransactionType)
-
-
-        override fun validateTransactionData(): UpsertTransaction? = if (title.isNotEmpty()) {
+    fun validateTransactionData(): UpsertTransaction? =
+        if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
             UpsertTransaction(
                 id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                 accountId = selectedAccount.id, amount = amount,
-                transactionType = selectedTransactionType,
-                transactionAt = transactionAt
+                transactionType = selectedTransactionType, transactionAt = transactionAt
             )
         } else null
-    }
+}
 
+enum class TransactionEditorInputType {
+    Create, Edit
 }

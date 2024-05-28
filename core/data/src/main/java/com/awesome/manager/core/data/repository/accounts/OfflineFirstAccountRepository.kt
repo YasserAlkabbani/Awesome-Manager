@@ -32,7 +32,10 @@ class OfflineFirstAccountRepository @Inject constructor(
     }
 
     override fun returnAccounts(searchKey: String): Flow<PagingData<AmAccount>> =
-        accountDao.returnAccounts(searchKey).asPagingDataFlow { asModel() }
+        asPagingDataFlow(
+            getPagingSource = { accountDao.returnAccounts(searchKey) },
+            asModel = { asModel() }
+        )
 
     override fun returnAccountById(accountId: String): Flow<AmAccount> =
         accountDao.returnAccountById(accountId).map { it.asModel() }

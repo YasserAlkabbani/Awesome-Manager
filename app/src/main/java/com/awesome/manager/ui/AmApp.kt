@@ -1,5 +1,6 @@
 package com.awesome.manager.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -26,7 +27,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import androidx.navigation.toRoute
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.UIConstant
 import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
@@ -72,63 +72,95 @@ fun AmApp() {
 
 
     LaunchedEffect(key1 = loginState, key2 = currentNavigationDestination, block = {
-        Timber.d("TEST_NAVIGATION $loginState $currentBackStack")
-        when (loginState) {
-            true -> when (currentNavigationDestination) {
-                NavigationDestination.Auth -> {
-                    val homeNavOption = navOptions {
-                        popUpTo(NavigationDestination.Auth) { this.inclusive = true }
+        loginState?.let {
+            when (loginState) {
+                true -> when (currentNavigationDestination) {
+                    NavigationDestination.Auth -> {
+                        val homeNavOption = navOptions {
+                            popUpTo(NavigationDestination.Auth) { this.inclusive = true }
+                        }
+                        navHostController.navigate(
+                            route = NavigationDestination.Home,
+                            navOptions = homeNavOption
+                        )
                     }
-                    navHostController.navigate(
-                        route = NavigationDestination.Home,
-                        navOptions = homeNavOption
-                    )
-                }
 
-                NavigationDestination.Intro -> {
-                    val navOption = navOptions {
-                        popUpTo(NavigationDestination.Intro) { this.inclusive = true }
-                    }
-                    navHostController.navigate(
-                        route = NavigationDestination.Home,
-                        navOptions = navOption
-                    )
-                }
-
-                else -> Unit
-            }
-
-            false -> {
-                when (currentNavigationDestination) {
-                    NavigationDestination.Auth -> {}
                     NavigationDestination.Intro -> {
                         val navOption = navOptions {
                             popUpTo(NavigationDestination.Intro) { this.inclusive = true }
                         }
                         navHostController.navigate(
-                            route = NavigationDestination.Auth,
+                            route = NavigationDestination.Home,
                             navOptions = navOption
                         )
                     }
 
-                    NavigationDestination.Home -> {
-                        val authNavOption = navOptions {
-                            popUpTo(NavigationDestination.Home) { this.inclusive = true }
+                    else -> Unit
+                }
+                false -> {
+                    when (currentNavigationDestination) {
+                        NavigationDestination.Auth -> {}
+                        NavigationDestination.Intro -> {
+                            val navOption = navOptions {
+                                popUpTo(NavigationDestination.Intro) { this.inclusive = true }
+                            }
+                            navHostController.navigate(
+                                route = NavigationDestination.Auth,
+                                navOptions = navOption
+                            )
                         }
-                        navHostController.navigate(
-                            route = NavigationDestination.Intro,
-                            navOptions = authNavOption
-                        )
-                    }
 
-                    else -> {
-                        navHostController.popBackStack()
+                        NavigationDestination.Home -> {
+                            val authNavOption = navOptions {
+                                popUpTo(NavigationDestination.Home) { this.inclusive = true }
+                            }
+                            navHostController.navigate(
+                                route = NavigationDestination.Intro,
+                                navOptions = authNavOption
+                            )
+                        }
+
+                        else -> {
+                            navHostController.popBackStack()
+                        }
                     }
                 }
             }
         }
     })
 
+
+    LaunchedEffect(key1 = currentNavigationDestination) {
+        currentNavigationDestination?.let {
+            when (currentNavigationDestination) {
+                NavigationDestination.Auth -> Unit
+                NavigationDestination.Intro -> Unit
+                NavigationDestination.Home -> {
+                    mainActivityState.showMainAppBar(
+                        onAddAccount = mainActivityState::navigateToCreateAccount,
+                        onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
+                    )
+                }
+                NavigationDestination.Accounts -> {
+                    mainActivityState.showMainAppBar(
+                        onAddAccount = mainActivityState::navigateToCreateAccount,
+                        onAddTransaction = null
+                    )
+                }
+
+                NavigationDestination.Transactions -> {
+                    mainActivityState.showMainAppBar(
+                        onAddAccount = null,
+                        onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
+                    )
+                }
+                is NavigationDestination.AccountDetails -> Unit
+                is NavigationDestination.AccountEditor -> Unit
+                is NavigationDestination.TransactionDetails -> Unit
+                is NavigationDestination.TransactionEditor -> Unit
+            }
+        }
+    }
 
     val navigationState = mainActivityState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationState, block = {
@@ -153,7 +185,7 @@ fun AmApp() {
                             false -> null
                         }
                     navHostController.navigate(
-                        navigationState,
+                        navigationState.navigationDestination,
                         navOptions = mainDestinationNavOption
                     )
                 }
@@ -193,7 +225,7 @@ fun AmApp() {
             content = {
                 Column(
                     modifier = Modifier.padding(6.dp),
-                    content = { bottomSheetState.content() }
+                    content = { bottomSheetState.Content() }
                 )
             }
         )
@@ -201,10 +233,13 @@ fun AmApp() {
 
 
     val pickActionState = mainActivityState.pickAction.collectAsState().value
-    when (pickActionState) {
-        PickerAction.Idle -> Unit
-        is PickerAction.PickDate -> {
-            AmDatePickerDialog(pickDate = pickActionState)
+
+    pickActionState?.let {
+        when (pickActionState) {
+            is PickerAction.PickDate -> {
+                AmDatePickerDialog(pickDate = pickActionState)
+            }
+            PickerAction.Hide -> {}
         }
     }
 
@@ -252,11 +287,11 @@ fun AmApp() {
 }
 
 @Composable
-private fun BottomSheetAction.content(): Unit =
+private fun BottomSheetAction.Content(): Unit =
     when (this) {
-        is BottomSheetAction.Idle<*> -> bottomSheet!!.content()
+        is BottomSheetAction.Idle<*> -> bottomSheet!!.Content()
 
-        is BottomSheetAction.Dismiss<*> -> bottomSheet.content()
+        is BottomSheetAction.Dismiss<*> -> bottomSheet.Content()
 
         is BottomSheetAction.Profile -> BottomSheetProfile(this)
 

@@ -25,9 +25,9 @@ class MainActivityViewModel @Inject constructor(
     val mainActivityState = MainActivityState(
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, false),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null),
         currentUserEmail = authRepository.currentUserEmail()
-            .stateIn(viewModelScope, SharingStarted.Eagerly, ""),
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null),
         logout = ::logout
     )
 

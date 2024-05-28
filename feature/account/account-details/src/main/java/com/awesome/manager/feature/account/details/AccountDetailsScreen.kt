@@ -49,14 +49,18 @@ fun AccountDetailsRoute(
 
     val accountState = accountDetailsState.amAccount.collectAsState().value
     val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
-    if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
-        accountDetailsState.showReadAppBar(
-            title = stringResource(R.string.edit_account_name, accountState.data.name),
-            onBack = accountDetailsState::navigatePopBack,
-            onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
-            canEdit = allowToUpdate.data,
-            onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) }
-        )
+
+    val editAccount = stringResource(R.string.edit_account_name)
+    LaunchedEffect(key1 = accountState, allowToUpdate) {
+        if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
+            accountDetailsState.showReadAppBar(
+                title = "$editAccount ${accountState.data.name}",
+                onBack = accountDetailsState::navigatePopBack,
+                onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
+                canEdit = allowToUpdate.data,
+                onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) }
+            )
+        }
     }
 
     AccountDetailsScreen(accountDetailsState)

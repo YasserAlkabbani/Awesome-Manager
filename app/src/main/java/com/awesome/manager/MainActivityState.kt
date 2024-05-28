@@ -5,8 +5,8 @@ import com.awesome.manager.core.designsystem.ui_actions.main.MainState
 import kotlinx.coroutines.flow.StateFlow
 
 class MainActivityState(
-    val isLogin: StateFlow<Boolean>,
-    val currentUserEmail: StateFlow<String>,
+    val isLogin: StateFlow<Boolean?>,
+    val currentUserEmail: StateFlow<String?>,
     val logout: () -> Unit,
 ) : MainState() {
 

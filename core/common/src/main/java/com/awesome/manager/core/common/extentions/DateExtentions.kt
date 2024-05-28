@@ -9,19 +9,16 @@ import kotlinx.datetime.toLocalDateTime
 fun Long.asDate() =
     Instant.fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
-        .run { "$date $time" }
+        .run { "$date" }
 
 fun Long.asDateTime() =
     Instant.fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.UTC)
 
-fun String?.asTimestamp()=
+fun String?.asTimestamp() =
     Instant.parse(this.orEmpty()).toEpochMilliseconds()
 
-fun currentTime()= Clock.System.now().toEpochMilliseconds()
-
-
-
+fun currentTime() = Clock.System.now().toEpochMilliseconds()
 
 
 //fun Long.asData() = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(this)

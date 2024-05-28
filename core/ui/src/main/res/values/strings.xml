@@ -20,4 +20,6 @@
     <string name="reset_password_link_has_sent_successfully">Reset Password Link Has Sent Successfully</string>
     <string name="i_understand">I Understand</string>
     <string name="something_wrong">Something wrong</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

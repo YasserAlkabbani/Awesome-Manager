@@ -16,7 +16,7 @@ fun UserNetwork.asEntity() = UserEntity(
     updatedAt = updatedAt.asTimestamp()
 )
 
-fun UserEntity.asDomain() = AmUser(
+fun UserEntity.asModel() = AmUser(
     id=id,
     email=email,
     name = name,

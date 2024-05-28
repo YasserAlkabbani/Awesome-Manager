@@ -20,11 +20,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
+import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
+import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
+import timber.log.Timber
 
 @Composable
 fun AccountEditorRoute(
@@ -50,22 +53,25 @@ fun AccountEditorRoute(
     })
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
-    if (accountEditorData is DataState.Success) {
-        when (accountEditorData.data) {
-            is AccountEditorData.AccountEditorCreate -> accountEditorState.showCreateAppBar(
-                title = stringResource(id = R.string.create_account),
-                onCancel = accountEditorState::navigatePopBack,
-                onSave = accountEditorState.onSave
-            )
 
-            is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
-                title = stringResource(
-                    R.string.update_account,
-                    accountEditorData.data.name
-                ),
-                onCancel = accountEditorState::navigatePopBack,
-                onSave = accountEditorState.onSave
-            )
+
+    val createAccount = stringResource(id = R.string.create_account)
+    val updateAccount = stringResource(id = R.string.update_account)
+    LaunchedEffect(key1 = accountEditorData) {
+        if (accountEditorData is DataState.Success) {
+            when (accountEditorData.data) {
+                is AccountEditorData.AccountEditorCreate -> accountEditorState.showCreateAppBar(
+                    title = createAccount,
+                    onCancel = accountEditorState::navigatePopBack,
+                    onSave = accountEditorState.onSave
+                )
+
+                is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
+                    title = "$updateAccount ${accountEditorData.data.name}",
+                    onCancel = accountEditorState::navigatePopBack,
+                    onSave = accountEditorState.onSave
+                )
+            }
         }
     }
 
@@ -93,11 +99,11 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     if (accountData is DataState.Success) {
         val account = accountData.data
-        Column(modifier = Modifier) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 6.dp)) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmImage(modifier = Modifier.size(70.dp), imageUrl = account.imageUrl)
@@ -109,8 +115,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                     error = null, onTextChange = accountEditorState::updateName
                 )
             }
-            Spacer(modifier = Modifier.height(6.dp))
-
+            AmSpacerMediumHeight()
             AmChipsContainer(
                 title = "Currency",
                 chipDataList = currencyChipData,
@@ -118,6 +123,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 onSelect = { accountEditorState.updateCurrency(it.data) },
                 content = null
             )
+            AmSpacerSmallHeight()
             AmChipsContainer(
                 title = "Default Transaction Type",
                 chipDataList = transactionTypeChipData,
