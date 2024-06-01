@@ -25,10 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_LARGE
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
@@ -89,7 +86,7 @@ fun AuthScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(PADDING_LARGE.dp)
+            .padding(AmPadding.EXTRA_LARGE.value)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -103,7 +100,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AmIcon(
-                        modifier = Modifier.size(SIZE_EXTRA_LARGE.dp),
+                        modifier = Modifier.size(AmPadding.EXTRA_LARGE.value),
                         amIconsType = AmIcons.AwesomeManagerIcon,
                     )
                     AmText(
@@ -130,8 +127,8 @@ fun AuthScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                vertical = PADDING_LARGE_EXTRA.dp,
-                                horizontal = PADDING_LOW_EXTRA.dp
+                                vertical = AmPadding.EXTRA_LARGE.value,
+                                horizontal = AmPadding.EXTRA_SMALL.value
                             )
                     ) {
                         Column(Modifier.fillMaxWidth()) {

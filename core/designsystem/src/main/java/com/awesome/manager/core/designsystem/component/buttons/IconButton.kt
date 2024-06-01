@@ -18,7 +18,7 @@ fun AmIconButton(
 ) {
     AmSurface(
         modifier = modifier, positive = positive,
-        highPadding = true, onClick = onClick
+        onClick = onClick
     ) {
         AmIcon(amIconsType = amIconsType)
     }

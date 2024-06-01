@@ -67,7 +67,7 @@ fun AccountEditorRoute(
                 )
 
                 is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
-                    title = "$updateAccount ${accountEditorData.data.name}",
+                    title = "$updateAccount ${accountEditorData.data.name.substringBefore(" ")}",
                     onCancel = accountEditorState::navigatePopBack,
                     onSave = accountEditorState.onSave
                 )
@@ -99,9 +99,11 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     if (accountData is DataState.Success) {
         val account = accountData.data
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 6.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically

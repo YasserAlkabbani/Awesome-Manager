@@ -26,8 +26,8 @@ fun CurrencyEntity.asModel() = AmCurrency(
     currencyCode = currencyCode,
     currencyName = currencyName,
     currencySymbol = currencySymbol,
-    createdAt = createdAt.asDate(),
-    updatedAt = updatedAt.asDate()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun CurrencyEntityWithData.asModel() = BalanceDetails(

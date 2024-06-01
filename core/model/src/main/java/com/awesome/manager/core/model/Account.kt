@@ -8,8 +8,8 @@ data class AmAccount(
     val defaultTransactionType: AmTransactionType,
     val balanceDetails: BalanceDetails,
     val pending: Boolean,
-    val createdAt: String,
-    val updatedAt: String,
+    val createdAt: Long,
+    val updatedAt: Long,
 )
 
 data class UpsertAccount(

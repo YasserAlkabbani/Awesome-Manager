@@ -1,5 +1,7 @@
 package com.awesome.manager.core.model
 
+import kotlin.math.absoluteValue
+
 
 enum class AmTransactionType(val posative: Boolean) {
     INCOME(posative = true),
@@ -9,13 +11,21 @@ enum class AmTransactionType(val posative: Boolean) {
 }
 
 data class BalanceDetails(
+    val income: Double, val expenses: Double,
+    val debtor: Double, val creditor: Double,
     val currency: AmCurrency,
-    val income: Double,
-    val expenses: Double,
-    val debtor: Double,
-    val creditor: Double,
-    val netIncome: Double = income - expenses,
-    val netDebtor: Double = debtor - creditor,
-    val currentCash: Double = netIncome + netDebtor,
-    val currentBalance: Double = income - netDebtor
-)
+) {
+    private val netIncome: Double = income - expenses
+    private val netDebtor: Double = debtor - creditor
+    private val input: Double = income + debtor
+    private val output: Double = expenses + creditor
+    private val netCash: Double = input - output
+
+    val netIncomeAbs: Double = netIncome.absoluteValue
+    val netDebtorAbs: Double = netDebtor.absoluteValue
+    val netCashAbs: Double = netCash.absoluteValue
+    val isPositiveCash: Boolean = netCash >= 0
+    val isPositiveIncome: Boolean = netIncome >= 0
+    val isPositiveDebtor: Boolean = netDebtor <= 0
+
+}

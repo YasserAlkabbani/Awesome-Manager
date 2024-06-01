@@ -7,4 +7,8 @@
     <string name="borrow">Borrow</string>
     <string name="theres_no_accounts_yet">Theres no accounts yet</string>
     <string name="create_an_account">Create an account</string>
+    <string name="creditor">Creditor</string>
+    <string name="debtor">Debtor</string>
+    <string name="expenses">Expenses</string>
+    <string name="income">Income</string>
 </resources>

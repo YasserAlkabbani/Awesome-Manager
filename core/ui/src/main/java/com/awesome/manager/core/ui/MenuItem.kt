@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_MEDIUM
+import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmImage
@@ -29,10 +29,10 @@ fun MenuItem(
         positive = null, loading = loading, onClick = onClick
     ) {
         Row {
-            imageUrl?.let { AmImage(modifier = Modifier.size(SIZE_MEDIUM.dp), imageUrl = it) }
+            imageUrl?.let { AmImage(modifier = Modifier.size(AmSize.MEDIUM.value), imageUrl = it) }
             amIconsType?.let {
                 AmIcon(
-                    modifier = Modifier.size(SIZE_MEDIUM.dp), amIconsType = it
+                    modifier = Modifier.size(AmSize.MEDIUM.value), amIconsType = it
                 )
             }
             AmSpacerSmallWidth()

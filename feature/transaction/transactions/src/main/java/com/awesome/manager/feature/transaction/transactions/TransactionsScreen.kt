@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.designsystem.UIConstant
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
@@ -67,7 +67,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                     item {
                         Column(
                             modifier = Modifier
-                                .padding(UIConstant.PADDING_LARGE_EXTRA.dp)
+                                .padding(AmPadding.EXTRA_LARGE.value)
                                 .fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -96,7 +96,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                 subTitle = transaction.subtitle,
                                 amount = transaction.amount,
                                 pending = transaction.pending,
-                                date = transaction.updatedAt,
+                                date = transaction.transactionAtDate,
                                 transactionType = transaction.transactionType.name,
                                 isPay = transaction.transactionType.posative,
                                 currency = transaction.currency.currencyCode,

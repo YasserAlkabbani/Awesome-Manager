@@ -2,7 +2,6 @@ package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.extentions.asDate
-import com.awesome.manager.core.common.extentions.asTimestamp
 import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
@@ -65,7 +64,7 @@ class TransactionEditorState(
                 selectedAccount = account,
                 selectedTransactionType = transaction.transactionType,
                 amount = transaction.amount,
-                transactionAtTimestamp = transaction.transactionAt.asTimestamp(),
+                transactionAtTimestamp = transaction.transactionAt,
                 transactionEditorInputType = TransactionEditorInputType.Edit
             )
         }
@@ -114,7 +113,7 @@ data class TransactionEditorInput(
     val transactionEditorInputType: TransactionEditorInputType
 ) {
 
-    val transactionAt: String = transactionAtTimestamp.asDate()
+    val transactionAtDate: String = transactionAtTimestamp.asDate()
 
     fun updateTitle(newTitle: String): TransactionEditorInput =
         copy(title = newTitle)
@@ -141,7 +140,7 @@ data class TransactionEditorInput(
             UpsertTransaction(
                 id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                 accountId = selectedAccount.id, amount = amount,
-                transactionType = selectedTransactionType, transactionAt = transactionAt
+                transactionType = selectedTransactionType, transactionAt = transactionAtTimestamp
             )
         } else null
 }

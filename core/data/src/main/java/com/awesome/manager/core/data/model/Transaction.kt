@@ -34,11 +34,12 @@ fun TransactionEntityWithData.asModel() = AmTransaction(
     pending = transactionEntity.pending,
     subtitle = transactionEntity.subtitle,
     amount = transactionEntity.amount,
-    createdAt = transactionEntity.createdAt.asDate(),
-    updatedAt = transactionEntity.updatedAt.asDate(),
-    transactionAt = transactionEntity.updatedAt.asDate(),
+    createdAt = transactionEntity.createdAt,
+    updatedAt = transactionEntity.updatedAt,
+    transactionAt = transactionEntity.transactionAt,
     accountName = accountEntityWithBasic.accountEntity.name,
     currency = accountEntityWithBasic.currencyEntity.asModel(),
+    transactionAtDate = transactionEntity.transactionAt.asDate()
 )
 
 fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
@@ -62,6 +63,6 @@ fun UpsertTransaction.asEntity() = TransactionEntity(
     amount = amount,
     createdAt = currentTime(),
     updatedAt = currentTime(),
-    transactionAt = transactionAt.asTimestamp(),
+    transactionAt = transactionAt,
     pending = true,
 )

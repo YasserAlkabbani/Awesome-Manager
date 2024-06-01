@@ -3,11 +3,8 @@ package com.awesome.manager.feature.account.accounts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,15 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.UIConstant
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
-import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
@@ -75,7 +68,7 @@ fun AccountsScreen(
                     item {
                         Column(
                             modifier = Modifier
-                                .padding(UIConstant.PADDING_LARGE_EXTRA.dp)
+                                .padding(AmPadding.EXTRA_LARGE.value)
                                 .fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -97,19 +90,27 @@ fun AccountsScreen(
                     key = accountsLazyPaging.itemKey { it.id },
                     itemContent = { index ->
                         accountsLazyPaging[index]?.let { account ->
+                            val balanceDetails = account.balanceDetails
                             AccountCard(
                                 modifier = Modifier.animateItemPlacement(),
                                 title = account.name,
                                 imageUrl = account.imageUrl,
-                                creditor = account.balanceDetails.creditor,
-                                debtor = account.balanceDetails.debtor,
-                                currency = account.balanceDetails.currency.currencyCode,
                                 loading = account.pending,
+                                withDetails = false,
                                 onClick = { accountsState.navigateToAccountDetails(account.id) },
                                 onAddTransaction = {
                                     accountsState.navigateToCreateTransaction(account.id)
                                 },
-                                onEditTransaction = null
+                                onEditTransaction = null,
+                                income = balanceDetails.income,
+                                expenses = balanceDetails.expenses,
+                                netIncomeAbs = balanceDetails.netIncomeAbs,
+                                debtor = balanceDetails.debtor,
+                                creditor = balanceDetails.creditor,
+                                netDebtorAbs = balanceDetails.netDebtorAbs,
+                                currencySymbol = balanceDetails.currency.currencySymbol,
+                                isPositiveIncome = balanceDetails.isPositiveIncome,
+                                isPositiveDebtor = balanceDetails.isPositiveDebtor
                             )
                         }
                     }

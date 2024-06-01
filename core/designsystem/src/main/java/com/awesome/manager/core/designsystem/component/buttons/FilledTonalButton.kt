@@ -1,15 +1,10 @@
 package com.awesome.manager.core.designsystem.component.buttons
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmText
 
@@ -27,7 +22,7 @@ fun AmFilledTonalButton(
         loading = false,
     ) {
         AmText(
-            modifier = Modifier.padding(horizontal = UIConstant.PADDING_LOW.dp), text = text
+            modifier = Modifier.padding(horizontal = AmPadding.SMALL.value), text = text
         )
     }
 }

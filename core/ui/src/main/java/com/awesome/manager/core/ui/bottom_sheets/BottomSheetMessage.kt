@@ -15,9 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmSurface
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 
@@ -32,7 +30,7 @@ fun AmBottomSheetMessage(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
-            contentColor = when(positive){
+            contentColor = when (positive) {
                 true -> MaterialTheme.colorScheme.primary
                 false -> MaterialTheme.colorScheme.error
                 null -> MaterialTheme.colorScheme.secondary
@@ -46,15 +44,15 @@ fun AmBottomSheetMessage(
                 maxLines = 2
             )
         }
-        Spacer(modifier = Modifier.height(UIConstant.PADDING_MEDIUM.dp))
+        Spacer(modifier = Modifier.height(AmPadding.MEDIUM.value))
         AmText(
             modifier = Modifier.fillMaxWidth(),
             text = subtitle, style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center, maxLines = 5
         )
-        Spacer(modifier = Modifier.height(UIConstant.PADDING_LARGE_EXTRA.dp))
-        Spacer(modifier = Modifier.height(UIConstant.PADDING_LARGE_EXTRA.dp))
-        Spacer(modifier = Modifier.height(UIConstant.PADDING_LARGE_EXTRA.dp))
+        Spacer(modifier = Modifier.height(AmPadding.EXTRA_LARGE.value))
+        Spacer(modifier = Modifier.height(AmPadding.EXTRA_LARGE.value))
+        Spacer(modifier = Modifier.height(AmPadding.EXTRA_LARGE.value))
 
         button1?.let { button ->
             AmButton(

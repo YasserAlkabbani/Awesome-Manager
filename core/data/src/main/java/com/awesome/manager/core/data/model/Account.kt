@@ -31,12 +31,12 @@ fun AccountEntityWithData.asModel() = AmAccount(
     imageUrl = accountEntity.imageUrl,
     defaultTransactionType = accountEntity.defaultTransactionType.asModel(),
     balanceDetails = BalanceDetails(
-        currencyEntity.asModel(),
-        income = income, expenses = expenses, debtor = debtor, creditor = creditor
+        income = income, expenses = expenses, debtor = debtor, creditor = creditor,
+        currency = currencyEntity.asModel(),
     ),
     pending = accountEntity.pending,
-    createdAt = accountEntity.createdAt.asDate(),
-    updatedAt = accountEntity.updatedAt.asDate()
+    createdAt = accountEntity.createdAt,
+    updatedAt = accountEntity.updatedAt
 )
 
 fun AccountEntity.asNetwork() = AccountNetworkRequest(

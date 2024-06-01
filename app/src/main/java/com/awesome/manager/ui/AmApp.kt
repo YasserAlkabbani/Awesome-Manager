@@ -1,6 +1,5 @@
 package com.awesome.manager.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -28,7 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
-import com.awesome.manager.core.designsystem.UIConstant
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
@@ -48,7 +47,6 @@ import com.awesome.manager.core.ui.dialog.AmDatePickerDialog
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.asNavigationDestination
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +95,7 @@ fun AmApp() {
 
                     else -> Unit
                 }
+
                 false -> {
                     when (currentNavigationDestination) {
                         NavigationDestination.Auth -> {}
@@ -141,6 +140,7 @@ fun AmApp() {
                         onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
                     )
                 }
+
                 NavigationDestination.Accounts -> {
                     mainActivityState.showMainAppBar(
                         onAddAccount = mainActivityState::navigateToCreateAccount,
@@ -154,6 +154,7 @@ fun AmApp() {
                         onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
                     )
                 }
+
                 is NavigationDestination.AccountDetails -> Unit
                 is NavigationDestination.AccountEditor -> Unit
                 is NavigationDestination.TransactionDetails -> Unit
@@ -217,7 +218,7 @@ fun AmApp() {
     if (!bottomSheetState.isEmpty()) {
         ModalBottomSheet(
             modifier = Modifier
-                .padding(horizontal = UIConstant.PADDING_LOW.dp)
+                .padding(horizontal = AmPadding.SMALL.value)
                 .requiredHeightIn(max = 500.dp),
             onDismissRequest = { mainActivityState.dismissBottomSheet() },
             sheetState = sheetState,
@@ -239,6 +240,7 @@ fun AmApp() {
             is PickerAction.PickDate -> {
                 AmDatePickerDialog(pickDate = pickActionState)
             }
+
             PickerAction.Hide -> {}
         }
     }

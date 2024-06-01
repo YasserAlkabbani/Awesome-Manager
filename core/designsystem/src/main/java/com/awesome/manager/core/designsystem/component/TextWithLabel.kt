@@ -19,7 +19,7 @@ fun AmTextWithLabel(
     textAlign: TextAlign? = null,
     positive: Boolean?
 ) {
-    AmSurface(modifier = modifier, positive = positive, highPadding = true) {
+    AmSurface(modifier = modifier, positive = positive) {
         AmText(
             modifier = Modifier.padding(4.dp),
             text = label.orEmpty(),

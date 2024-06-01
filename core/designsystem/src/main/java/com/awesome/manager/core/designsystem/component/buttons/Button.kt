@@ -20,7 +20,7 @@ fun AmButton(
 ) {
     AmSurface(
         modifier = modifier, onClick = onClick,
-        positive = positive, loading = false, highPadding = true
+        positive = positive, loading = false
     ) {
         AmText(text = text)
     }

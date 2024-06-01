@@ -5,9 +5,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,7 +62,6 @@ fun TransactionEditorRoute(
 
     val pickAction = transactionEditorState.pickAction.collectAsState().value
     LaunchedEffect(key1 = pickAction, block = {
-        Log.d("TEST_PICKUP", "NEW_STATE $pickAction")
         pickAction.sendMainAction(sendMainAction, transactionEditorState::resetPick)
     })
 
@@ -79,17 +79,27 @@ fun TransactionEditorRoute(
                         key = accountsLazyPaging.itemKey { transaction -> transaction.id },
                         itemContent = { index ->
                             accountsLazyPaging[index]?.let { account ->
+                                val balanceDetails = account.balanceDetails
                                 AccountCard(
                                     modifier = Modifier.animateItemPlacement(),
                                     title = account.name,
                                     imageUrl = account.imageUrl,
-                                    creditor = account.balanceDetails.creditor,
-                                    debtor = account.balanceDetails.debtor,
-                                    currency = account.balanceDetails.currency.currencyCode,
                                     loading = account.pending,
-                                    onClick = { transactionEditorState.selectAccount(account) },
+                                    withDetails = false,
+                                    onClick = {
+                                        transactionEditorState.selectAccount(account)
+                                    },
                                     onAddTransaction = null,
-                                    onEditTransaction = null
+                                    onEditTransaction = null,
+                                    income = balanceDetails.income,
+                                    expenses = balanceDetails.expenses,
+                                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                                    debtor = balanceDetails.debtor,
+                                    creditor = balanceDetails.creditor,
+                                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                                    currencySymbol = balanceDetails.currency.currencySymbol,
+                                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                                    isPositiveDebtor = balanceDetails.isPositiveDebtor
                                 )
                             }
                         }
@@ -156,21 +166,27 @@ fun TransactionEditorScreen(
         }
 
         Column(
-            modifier = Modifier.padding(horizontal = 6.dp),
+            modifier = Modifier
+                .padding(horizontal = 6.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
 
             transaction.selectedAccount?.let { account ->
+                val balanceDetails = account.balanceDetails
                 AccountCard(
                     modifier = Modifier,
-                    title = account.name,
-                    imageUrl = account.imageUrl,
-                    creditor = account.balanceDetails.creditor,
-                    debtor = account.balanceDetails.debtor,
-                    currency = account.balanceDetails.currency.currencyCode,
-                    loading = account.pending,
-                    onClick = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    onAddTransaction = null, onEditTransaction = null
+                    title = account.name, imageUrl = account.imageUrl,
+                    loading = account.pending, withDetails = true,
+                    onClick = null,
+                    onAddTransaction = null, onEditTransaction = null,
+                    income = balanceDetails.income, expenses = balanceDetails.expenses,
+                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                    debtor = balanceDetails.debtor, creditor = balanceDetails.creditor,
+                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    currencySymbol = balanceDetails.currency.currencySymbol,
+                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                    isPositiveDebtor = balanceDetails.isPositiveDebtor,
                 )
             }
 
@@ -216,7 +232,7 @@ fun TransactionEditorScreen(
             )
 
             AmFilledTonalIconWithTextButton(
-                text = transaction.transactionAt,
+                text = transaction.transactionAtDate,
                 amIconsType = AmIcons.Date,
                 positive = null,
                 loading = false,

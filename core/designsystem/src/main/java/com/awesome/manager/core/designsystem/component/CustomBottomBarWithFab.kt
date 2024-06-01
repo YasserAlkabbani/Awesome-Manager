@@ -15,8 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW_EXTRA
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -28,7 +27,7 @@ fun AmCustomBottomBarWithFab(
     bottomBarItems: @Composable RowScope.() -> Unit,
     appBarAction: AppBarAction
 ) {
-    if (appBarAction !is AppBarAction.Idle){
+    if (appBarAction !is AppBarAction.Idle) {
         Surface(
             modifier = modifier,
             shape = MaterialTheme.shapes.extraLarge,
@@ -45,16 +44,20 @@ fun AmCustomBottomBarWithFab(
                             shape = MaterialTheme.shapes.extraLarge,
                             content = { Row(content = bottomBarItems) }
                         )
-                        AnimatedVisibility(visible = appBarAction.onAddAccount!=null) {
+                        AnimatedVisibility(visible = appBarAction.onAddAccount != null) {
                             Row {
                                 AmSpacerMediumWidth()
-                                AmFloatingActionBottom(amIconsType = AmIcons.AccountAdd, onClick = {appBarAction.onAddAccount?.invoke()})
+                                AmFloatingActionBottom(
+                                    amIconsType = AmIcons.AccountAdd,
+                                    onClick = { appBarAction.onAddAccount?.invoke() })
                             }
                         }
-                        AnimatedVisibility(visible = appBarAction.onAddTransaction!=null) {
+                        AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
                             Row {
-                                if (appBarAction.onAddAccount==null) AmSpacerMediumWidth()
-                                AmFloatingActionBottom(amIconsType = AmIcons.TransactionAdd, onClick = {appBarAction.onAddTransaction?.invoke()})
+                                if (appBarAction.onAddAccount == null) AmSpacerMediumWidth()
+                                AmFloatingActionBottom(
+                                    amIconsType = AmIcons.TransactionAdd,
+                                    onClick = { appBarAction.onAddTransaction?.invoke() })
                             }
                         }
                     }
@@ -72,9 +75,11 @@ fun AmCustomBottomBarWithFab(
                                 onClick = appBarAction.onEdit
                             )
                         }
-                        AnimatedVisibility(visible = appBarAction.onAddTransaction!=null) {
+                        AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
                             AmSpacerMediumWidth()
-                            AmFloatingActionBottom(amIconsType = AmIcons.TransactionAdd, onClick = {appBarAction.onAddTransaction?.invoke()})
+                            AmFloatingActionBottom(
+                                amIconsType = AmIcons.TransactionAdd,
+                                onClick = { appBarAction.onAddTransaction?.invoke() })
                         }
                     }
 
@@ -124,7 +129,7 @@ fun RowScope.AmNavigationCustomItem(
     onSelect: () -> Unit,
 ) {
     Card(
-        modifier = modifier.padding(PADDING_LOW_EXTRA.dp),
+        modifier = modifier.padding(AmPadding.EXTRA_SMALL.value),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors().copy(
             contentColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSecondaryContainer,
@@ -134,7 +139,7 @@ fun RowScope.AmNavigationCustomItem(
     ) {
         AmIcon(
             modifier = modifier
-                .padding(UIConstant.PADDING_LARGE.dp)
+                .padding(AmPadding.EXTRA_LARGE.value)
                 .size(24.dp),
             amIconsType = if (isSelected) selectedIcon else unSelectedIcon,
         )
@@ -166,7 +171,7 @@ fun RowScope.AmActionCustomItem(
 }
 
 @Composable
-fun AmFloatingActionBottom(amIconsType: AmIconsType, onClick:()->Unit){
+fun AmFloatingActionBottom(amIconsType: AmIconsType, onClick: () -> Unit) {
     SmallFloatingActionButton(
         modifier = Modifier,
         onClick = onClick,

@@ -13,33 +13,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LARGE_EXTRA
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
-import com.awesome.manager.core.model.BalanceDetails
-import com.awesome.manager.core.ui.AmTextWithIconLarge
+import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlin.math.absoluteValue
 
 @Composable
 fun HomeRoute(
@@ -76,19 +67,32 @@ fun HomeScreen(homeState: HomeState) {
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is DataState.Success -> LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(PADDING_LOW.dp),
+            verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
             contentPadding = PaddingValues(
-                start = PADDING_LOW.dp,
-                end = PADDING_LOW.dp,
-                bottom = PADDING_LARGE_EXTRA.dp
+                start = AmPadding.SMALL.value,
+                end = AmPadding.SMALL.value,
+                bottom = AmPadding.EXTRA_LARGE.value
             ),
             content = {
                 items(
                     items = currencyWithBalance.data,
                     contentType = { LAZY_ITEM_HOME },
                     key = { it.currency.id },
-                    itemContent = {
-                        HomeCard(balanceDetails = it)
+                    itemContent = { balanceDetails ->
+                        HomeCard(
+                            creditor = balanceDetails.creditor,
+                            debtor = balanceDetails.debtor,
+                            netDebtorAbs = balanceDetails.netDebtorAbs,
+                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                            income = balanceDetails.income,
+                            expenses = balanceDetails.expenses,
+                            netIncomeAbs = balanceDetails.netIncomeAbs,
+                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                            netCash = balanceDetails.netCashAbs,
+                            isPositiveCash = balanceDetails.isPositiveCash,
+                            currencyCode = balanceDetails.currency.currencyCode,
+                            currencySymbol = balanceDetails.currency.currencySymbol,
+                        )
                     }
                 )
             })
@@ -96,7 +100,7 @@ fun HomeScreen(homeState: HomeState) {
         DataState.Error -> {
             Column(
                 modifier = Modifier
-                    .padding(PADDING_LARGE_EXTRA.dp)
+                    .padding(AmPadding.EXTRA_LARGE.value)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -117,95 +121,59 @@ fun HomeScreen(homeState: HomeState) {
     }
 }
 
+@Composable
+fun HomeCard(
+    creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
+    income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
+    netCash: Double, isPositiveCash: Boolean, currencyCode: String, currencySymbol: String,
+) {
+    AmCard(
+        modifier = Modifier.fillMaxWidth(),
+        positive = isPositiveCash,
+        padding = AmPadding.ZERO
+    ) {
+        AmSurface(
+            modifier = Modifier.fillMaxWidth(),
+            positive = isPositiveCash,
+            padding = AmPadding.MEDIUM
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(AmPadding.MEDIUM.value)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                AmText(
+                    text = "Cash (${currencyCode}):",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                AmText(
+                    text = "${netCash} ${currencySymbol}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+
+            }
+        }
+        AmBalanceDetailsCard(
+            creditor = creditor,
+            debtor = debtor,
+            netDebtorAbs = netDebtorAbs,
+            isPositiveDebtor = isPositiveDebtor,
+            income = income,
+            expenses = expenses,
+            netIncomeAbs = netIncomeAbs,
+            isPositiveIncome = isPositiveIncome,
+            currencySymbol = currencySymbol,
+        )
+
+    }
+}
+
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(HomeState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
 }
 
-@Composable
-fun HomeCard(balanceDetails: BalanceDetails) {
-    val positiveCash = remember { derivedStateOf { balanceDetails.currentCash >= 0 } }.value
-    AmSurface(modifier = Modifier.fillMaxWidth(), highPadding = false, positive = positiveCash) {
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            AmText(
-                text = balanceDetails.currency.currencyCode,
-                style = MaterialTheme.typography.titleLarge
-            )
-            AmText(
-                text = "${balanceDetails.currentCash} ${balanceDetails.currency.currencySymbol}",
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        Row {
-            HomeCardResults(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                positiveValue = balanceDetails.creditor,
-                positiveLabel = stringResource(id = R.string.lent),
-                negativeValue = balanceDetails.debtor,
-                negativeLabel = stringResource(id = R.string.borrow),
-                netValue = balanceDetails.netDebtor
-            )
-            AmSpacerSmallWidth()
-            HomeCardResults(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                positiveValue = balanceDetails.income,
-                positiveLabel = stringResource(id = R.string.incoming),
-                negativeValue = balanceDetails.expenses,
-                negativeLabel = stringResource(id = R.string.outgoing),
-                netValue = balanceDetails.netIncome
-            )
-        }
-    }
-}
-
-@Composable
-fun HomeCardResults(
-    modifier: Modifier,
-    positiveValue: Double,
-    positiveLabel: String,
-    negativeValue: Double,
-    negativeLabel: String,
-    netValue: Double
-) {
-    val (isPositiveNetValue, absoluteNetValue) = remember {
-        derivedStateOf {
-            when {
-                netValue >= 0 -> true to netValue.absoluteValue
-                else -> false to netValue.absoluteValue
-            }
-        }
-    }.value
-    AmCard(modifier = modifier, positive = isPositiveNetValue) {
-        Column {
-            AmText(text = "$positiveLabel/$negativeLabel")
-            AmTextWithIconLarge(
-                modifier = Modifier.fillMaxWidth(),
-                text = positiveValue.toString(),
-                amIconsType = AmIcons.Input, positive = true,
-            )
-            AmSpacerSmallHeight()
-            AmTextWithIconLarge(
-                modifier = Modifier.fillMaxWidth(),
-                text = negativeValue.toString(),
-                amIconsType = AmIcons.Output, positive = false
-            )
-            AmSpacerSmallHeight()
-            AmTextWithIconLarge(
-                modifier = Modifier.fillMaxWidth(),
-                text = absoluteNetValue.toString(),
-                amIconsType = AmIcons.Balance, positive = isPositiveNetValue
-            )
-        }
-    }
-}

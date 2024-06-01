@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -14,90 +13,85 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
+import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
+import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.AmTextWithIcon
 import kotlin.math.absoluteValue
+
 
 @Composable
 fun AccountCard(
-    modifier: Modifier, title: String, imageUrl: String,
-    creditor: Double, debtor: Double, currency: String,
-    loading: Boolean,
+    modifier: Modifier,
+    title: String, imageUrl: String,
+    loading: Boolean, withDetails: Boolean,
+
+    creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
+    income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
+    currencySymbol: String,
+
     onClick: (() -> Unit)?,
     onAddTransaction: (() -> Unit)?,
-    onEditTransaction: (() -> Unit)?
+    onEditTransaction: (() -> Unit)?,
 ) {
-
-    val (total, positive) = remember(creditor, debtor) {
-        (creditor - debtor).let { amount ->
-            amount.absoluteValue to (amount >= 0)
-        }
-    }
-
     AmCard(
         modifier = modifier,
-        positive = positive,
+        positive = isPositiveDebtor,
         loading = loading,
         onClick = onClick,
         content = {
             Row(
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                AmImage(modifier = Modifier.size(42.dp), imageUrl = imageUrl)
-                Spacer(modifier = Modifier.width(12.dp))
+                AmImage(modifier = Modifier.size(AmSize.LARGE.value), imageUrl = imageUrl)
+                AmSpacerLargeWidth()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
                     AmText(text = title, style = MaterialTheme.typography.titleMedium)
-                    AmText(text = "$total $currency", style = MaterialTheme.typography.titleMedium)
+                    AmText(
+                        text = "$netDebtorAbs $currencySymbol",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
                 onAddTransaction?.let {
-                    Column {
-                        AmIconButton(
-                            modifier = Modifier,
-                            amIconsType = AmIcons.TransactionAdd,
-                            positive = null,
-                            onClick = onAddTransaction
-                        )
-                    }
+                    AmIconButton(
+                        modifier = Modifier,
+                        amIconsType = AmIcons.TransactionAdd,
+                        positive = null,
+                        onClick = it
+                    )
                 }
                 onEditTransaction?.let {
-                    Column {
-                        AmIconButton(
-                            modifier = Modifier,
-                            amIconsType = AmIcons.Edit,
-                            positive = null,
-                            onClick = onEditTransaction
-                        )
-                    }
+                    AmIconButton(
+                        modifier = Modifier,
+                        amIconsType = AmIcons.Edit,
+                        positive = null,
+                        onClick = it
+                    )
                 }
             }
 
-            Row {
-                AmTextWithIcon(
-                    Modifier
-                        .padding(horizontal = 4.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-                    text = creditor.toString(),
-                    amIconsType = AmIcons.Output,
-                    positive = false
-                )
-                AmTextWithIcon(
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    text = debtor.toString(),
-                    amIconsType = AmIcons.Input,
-                    positive = true
+            if (withDetails) {
+                AmBalanceDetailsCard(
+                    creditor = creditor,
+                    debtor = debtor,
+                    netDebtorAbs = netDebtorAbs,
+                    isPositiveDebtor = isPositiveDebtor,
+                    income = income,
+                    expenses = expenses,
+                    netIncomeAbs = netIncomeAbs,
+                    isPositiveIncome = isPositiveIncome,
+                    currencySymbol = currencySymbol,
                 )
             }
+
         }
     )
 }
@@ -108,8 +102,11 @@ fun AccountCardPreview() {
     AccountCard(
         modifier = Modifier.width(400.dp),
         title = "TITLE", imageUrl = "",
-        creditor = 15000.0, debtor = 6000.0, currency = "$",
-        loading = true,
-        onClick = {}, onAddTransaction = {}, onEditTransaction = {}
+        loading = true, withDetails = true,
+        onClick = {}, onAddTransaction = {}, onEditTransaction = {},
+        creditor = 100.0, debtor = 600.0,
+        income = 500.0, expenses = 300.0, currencySymbol = "$",
+        netDebtorAbs = 3000.0, netIncomeAbs = 5000.0,
+        isPositiveDebtor = true, isPositiveIncome = false,
     )
 }

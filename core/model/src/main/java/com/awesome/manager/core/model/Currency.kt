@@ -7,6 +7,6 @@ data class AmCurrency(
     val currencyCode: String,
     val currencyName: String,
     val currencySymbol: String,
-    val createdAt: String,
-    val updatedAt: String
+    val createdAt: Long,
+    val updatedAt: Long
 )

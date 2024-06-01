@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
+import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmCircularProgress
 import com.awesome.manager.core.designsystem.component.AmIcon
@@ -35,7 +35,6 @@ fun AmFilledTonalIconWithTextButton(
         AmSurface(
             modifier = Modifier, onClick = onClick,
             positive = positive, loading = loading,
-            highPadding = true
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -44,7 +43,7 @@ fun AmFilledTonalIconWithTextButton(
             ) {
                 AmText(text = text, style = MaterialTheme.typography.titleMedium)
                 AmCard(
-                    modifier = Modifier.size(SIZE_SMALL.dp), positive = positive,
+                    modifier = Modifier.size(AmSize.SMALL.value), positive = positive,
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     if (loading) {

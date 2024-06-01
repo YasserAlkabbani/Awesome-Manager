@@ -54,7 +54,7 @@ fun AccountDetailsRoute(
     LaunchedEffect(key1 = accountState, allowToUpdate) {
         if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
             accountDetailsState.showReadAppBar(
-                title = "$editAccount ${accountState.data.name}",
+                title = "$editAccount ${accountState.data.name.substringBefore(" ")}",
                 onBack = accountDetailsState::navigatePopBack,
                 onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
                 canEdit = allowToUpdate.data,
@@ -79,17 +79,27 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
         when (accountState) {
             is DataState.Success -> {
                 val account = accountState.data
+                val balanceDetails = account.balanceDetails
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
                     imageUrl = account.imageUrl,
-                    creditor = account.balanceDetails.creditor,
-                    debtor = account.balanceDetails.debtor,
-                    currency = account.balanceDetails.currency.currencyCode,
                     loading = account.pending,
-                    onClick = { },
-                    onAddTransaction = { accountDetailsState.navigateToCreateTransaction(account.id) },
-                    onEditTransaction = null
+                    withDetails = true,
+                    onClick = null,
+                    onAddTransaction = {
+                        accountDetailsState.navigateToCreateTransaction(account.id)
+                    },
+                    onEditTransaction = null,
+                    income = balanceDetails.income,
+                    expenses = balanceDetails.expenses,
+                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                    debtor = balanceDetails.debtor,
+                    creditor = balanceDetails.creditor,
+                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    currencySymbol = balanceDetails.currency.currencySymbol,
+                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                    isPositiveDebtor = balanceDetails.isPositiveDebtor,
                 )
 
             }
@@ -114,7 +124,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                 subTitle = transaction.subtitle,
                                 amount = transaction.amount,
                                 pending = transaction.pending,
-                                date = transaction.updatedAt,
+                                date = transaction.transactionAtDate,
                                 transactionType = transaction.transactionType.name,
                                 isPay = transaction.transactionType.posative,
                                 currency = transaction.currency.currencySymbol,

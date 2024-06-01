@@ -42,26 +42,29 @@ fun TransactionDetailsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, transactionDetailsState::idleBottomSheet)
     })
 
+    val transactionState =
+        transactionDetailsState.transactionDetailsData.collectAsState().value
+    val editTransactionText = stringResource(R.string.edit_transaction)
+    LaunchedEffect(key1 = transactionState) {
+        when (transactionState) {
+            is DataState.Success -> {
+                val transactionData = transactionState.data
+                transactionDetailsState.showReadAppBar(
+                    title = editTransactionText,
+                    canEdit = transactionData.allowToUpdate,
+                    onBack = transactionDetailsState::navigatePopBack,
+                    onEdit = {
+                        transactionDetailsState.navigateToEditTransaction(
+                            accountId = transactionData.transaction.accountId,
+                            transactionId = transactionData.transaction.id
+                        )
+                    },
+                    onAddTransaction = null,
+                )
+            }
 
-    when (val transactionState =
-        transactionDetailsState.transactionDetailsData.collectAsState().value) {
-        is DataState.Success -> {
-            val transactionData = transactionState.data
-            transactionDetailsState.showReadAppBar(
-                title = "Edit Transaction",
-                canEdit = transactionData.allowToUpdate,
-                onBack = transactionDetailsState::navigatePopBack,
-                onEdit = {
-                    transactionDetailsState.navigateToEditTransaction(
-                        accountId = transactionData.transaction.accountId,
-                        transactionId = transactionData.transaction.id
-                    )
-                },
-                onAddTransaction = null,
-            )
+            DataState.Error, DataState.Loading -> {}
         }
-
-        DataState.Error, DataState.Loading -> {}
     }
 
     TransactionDetailsScreen(transactionDetailsState)
@@ -83,21 +86,26 @@ fun TransactionDetailsScreen(
                 modifier = Modifier.padding(horizontal = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                val balanceDetails = account.balanceDetails
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
                     imageUrl = account.imageUrl,
-                    creditor = account.balanceDetails.creditor,
-                    debtor = account.balanceDetails.debtor,
-                    currency = account.balanceDetails.currency.currencyCode,
-                    loading = account.pending,
+                    loading = account.pending, withDetails = true,
                     onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
                     onAddTransaction = {
                         transactionDetailsState.navigateToCreateTransaction(
                             account.id
                         )
                     },
-                    onEditTransaction = null
+                    onEditTransaction = null,
+                    income = balanceDetails.income, expenses = balanceDetails.expenses,
+                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                    debtor = balanceDetails.debtor, creditor = balanceDetails.creditor,
+                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    currencySymbol = balanceDetails.currency.currencySymbol,
+                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                    isPositiveDebtor = balanceDetails.isPositiveDebtor
                 )
                 AmTextWithLabel(
                     modifier = Modifier.fillMaxWidth(),

@@ -8,8 +8,8 @@ import com.awesome.manager.core.network.model.UserNetwork
 import kotlinx.datetime.Instant
 
 fun UserNetwork.asEntity() = UserEntity(
-    id=id,
-    email=email,
+    id = id,
+    email = email,
     name = name,
     imageUrl = imageUrl,
     createdAt = createdAt.asTimestamp(),
@@ -17,10 +17,10 @@ fun UserNetwork.asEntity() = UserEntity(
 )
 
 fun UserEntity.asModel() = AmUser(
-    id=id,
-    email=email,
+    id = id,
+    email = email,
     name = name,
     imageUrl = imageUrl,
-    createdAt = createdAt.asDate(),
-    updatedAt = updatedAt.asDate()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )

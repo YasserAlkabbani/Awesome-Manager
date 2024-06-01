@@ -10,8 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
-import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
+import com.awesome.manager.core.designsystem.AmLazyColumnPadding
 
 
 const val LAZY_ITEM_ACCOUNT = "LAZY_ITEM_ACCOUNT"
@@ -25,8 +24,8 @@ fun AmLazyColumn(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp),
-        verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),
+        contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
+        verticalArrangement = Arrangement.spacedBy(AmLazyColumnPadding.SPACE_BETWEEN_ITEM.value),
         content = content
     )
 

@@ -32,10 +32,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_LOW
-import com.awesome.manager.core.designsystem.UIConstant.PADDING_MEDIUM
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_EXTRA_SMALL
-import com.awesome.manager.core.designsystem.UIConstant.SIZE_SMALL
+import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -46,7 +44,7 @@ fun AmTextField(
     initTextValue: String = "", onTextChange: (String) -> Unit,
     icon: AmIconsType, label: String, hint: String,
     singleLine: Boolean = true, error: String?, password: Boolean = false,
-    enabled: Boolean = true, reformatText:(String)->String={it},
+    enabled: Boolean = true, reformatText: (String) -> String = { it },
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
@@ -70,12 +68,12 @@ fun AmTextField(
         color = color,
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(Modifier.padding(PADDING_LOW.dp)) {
+        Column(Modifier.padding(AmPadding.SMALL.value)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = PADDING_MEDIUM.dp)
-                    .padding(bottom = PADDING_LOW.dp),
+                    .padding(horizontal = AmPadding.MEDIUM.value)
+                    .padding(bottom = AmPadding.SMALL.value),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
@@ -108,7 +106,7 @@ fun AmTextField(
                 trailingIcon = if (password) {
                     {
                         AmIconButton(
-                            modifier = Modifier.size(SIZE_SMALL.dp),
+                            modifier = Modifier.size(AmSize.SMALL.value),
                             onClick = { passwordHidden = !passwordHidden },
                             positive = null,
                             amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
@@ -130,12 +128,12 @@ fun AmTextField(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = PADDING_MEDIUM.dp)
-                        .padding(top = PADDING_LOW.dp),
+                        .padding(horizontal = AmPadding.MEDIUM.value)
+                        .padding(top = AmPadding.SMALL.value),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AmIcon(
-                        modifier = Modifier.height(SIZE_EXTRA_SMALL.dp),
+                        modifier = Modifier.height(AmSize.EXTRA_SMALL.value),
                         amIconsType = AmIcons.Error
                     )
                     AmSpacerMediumWidth()

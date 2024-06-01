@@ -29,7 +29,7 @@ fun AmSpacerSmallHeight() {
 }
 
 @Composable
-fun AmSpacerMediumHight() {
+fun AmSpacerMediumHeight() {
     Spacer(modifier = Modifier.height(8.dp))
 }
 

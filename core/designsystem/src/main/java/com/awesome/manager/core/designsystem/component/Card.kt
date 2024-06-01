@@ -13,13 +13,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant
+import com.awesome.manager.core.designsystem.AmPadding
 
 @Composable
 fun AmCard(
     modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.medium,
-    positive: Boolean?, loading: Boolean,
+    shape: Shape = MaterialTheme.shapes.medium, padding: AmPadding = AmPadding.MEDIUM,
+    positive: Boolean? = null, loading: Boolean = false,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -38,7 +38,7 @@ fun AmCard(
             Card(
                 modifier = modifier,
                 content = {
-                    Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
+                    Column(modifier = modifier.padding(padding.value)) {
                         content()
                     }
                     AnimatedVisibility(visible = loading) {
@@ -58,7 +58,7 @@ fun AmCard(
                 modifier = modifier,
                 onClick = onClick,
                 content = {
-                    Column(modifier = modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
+                    Column(modifier = modifier.padding(padding.value)) {
                         content()
                     }
                     AnimatedVisibility(visible = loading) {
@@ -74,37 +74,5 @@ fun AmCard(
         }
     }
 
-
-}
-
-@Composable
-fun AmCard(
-    modifier: Modifier = Modifier, loading: Boolean = false,
-    positive: Boolean?, shape: Shape = MaterialTheme.shapes.medium,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val secondaryContainer = MaterialTheme.colorScheme.secondaryContainer
-    val errorContainer = MaterialTheme.colorScheme.errorContainer
-    val cardColors = remember(positive) {
-        when (positive) {
-            null -> secondaryContainer
-            true -> primaryContainer
-            false -> errorContainer
-        }
-    }
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = cardColors),
-        content = {
-            Column(modifier = Modifier.padding(UIConstant.PADDING_MEDIUM.dp)) {
-                content()
-            }
-            AnimatedVisibility(visible = loading) {
-                AmLinearProgress(modifier = Modifier.fillMaxWidth(), positive = positive != false)
-            }
-        },
-        shape = shape,
-    )
 
 }
