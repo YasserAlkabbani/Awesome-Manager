@@ -40,11 +40,11 @@ interface AppBarStateI {
 
 class AppBarState : AppBarStateI {
 
-    private val _appBarAction: MutableStateFlow<AppBarAction?> = MutableStateFlow(AppBarAction())
+    private val _appBarAction: MutableStateFlow<AppBarAction?> = MutableStateFlow(null)
     override val appBarAction: StateFlow<AppBarAction?> = _appBarAction
 
-    override fun  AppBarAction.applyAction()=_appBarAction.update { this }
-    override fun doneAppBarAction() =_appBarAction.update { null }
+    override fun AppBarAction.applyAction() = _appBarAction.update { this }
+    override fun doneAppBarAction() = _appBarAction.update { null }
 
     private fun updateAppBarData(
         onAddAccount: (() -> Unit)? = null, onAddTransaction: (() -> Unit)? = null,
@@ -57,28 +57,39 @@ class AppBarState : AppBarStateI {
             onClickBackButton = onClickBackButton, onClickCancelButton = onClickCancelButton,
             buttonOnClick = onClickMainButton, buttonText = mainButtonText,
             bottomNavigation = bottomNavigation, visible = visible,
+        ) ?: AppBarAction(
+            onAddAccount = onAddAccount, onAddTransaction = onAddTransaction,
+            onClickBackButton = onClickBackButton, onClickCancelButton = onClickCancelButton,
+            buttonOnClick = onClickMainButton, buttonText = mainButtonText,
+            bottomNavigation = bottomNavigation, visible = visible,
         )
     }
 
-    override fun startLoading()=_appBarAction.update { it?.copy(isLoading = true) }
-    override fun endLoading()=_appBarAction.update { it?.copy(isLoading = false) }
+    override fun startLoading() = _appBarAction.update { it?.copy(isLoading = true) }
+    override fun endLoading() = _appBarAction.update { it?.copy(isLoading = false) }
 
     override fun setForHomeScreen(onAddAccount: () -> Unit, onAddTransaction: () -> Unit) =
-        updateAppBarData(bottomNavigation = true, onAddAccount = onAddTransaction)
+        updateAppBarData(
+            bottomNavigation = true, onAddAccount = onAddAccount,
+            onAddTransaction = onAddTransaction
+        )
+
     override fun setForAccountsScreen(onAddAccount: () -> Unit) =
-        updateAppBarData(onAddAccount = onAddAccount)
+        updateAppBarData(bottomNavigation = true, onAddAccount = onAddAccount)
+
     override fun setForTransactionsScreen(onAddTransaction: () -> Unit) =
-        updateAppBarData(onAddAccount = onAddTransaction)
+        updateAppBarData(bottomNavigation = true, onAddTransaction = onAddTransaction)
 
     override fun setForAccountDetailsScreen(
-        onClickBack: () -> Unit, editButtonText: String,allowToEdit: Boolean,
+        onClickBack: () -> Unit, editButtonText: String, allowToEdit: Boolean,
         onEditButton: () -> Unit, onAddTransaction: () -> Unit
     ) =
         updateAppBarData(
             onClickBackButton = onClickBack, mainButtonText = editButtonText,
-            onClickMainButton = if (allowToEdit)onEditButton else null,
+            onClickMainButton = if (allowToEdit) onEditButton else null,
             onAddTransaction = onAddTransaction
         )
+
     override fun setForEditAccountScreen(
         onClickCancel: () -> Unit, saveButtonText: String, onSaveButton: () -> Unit
     ) =
@@ -88,12 +99,12 @@ class AppBarState : AppBarStateI {
         )
 
     override fun setForTransactionDetailsScreen(
-        onClickBack: () -> Unit, editButtonText: String,allowToEdit: Boolean,
+        onClickBack: () -> Unit, editButtonText: String, allowToEdit: Boolean,
         onEditButton: () -> Unit
     ) =
         updateAppBarData(
             onClickBackButton = onClickBack, mainButtonText = editButtonText,
-            onClickMainButton = if (allowToEdit)onEditButton else null,
+            onClickMainButton = if (allowToEdit) onEditButton else null,
         )
 
     override fun setForEditTransactionScreen(
@@ -106,7 +117,10 @@ class AppBarState : AppBarStateI {
 
 }
 
-fun AppBarAction?.sendMainAction(sendMainAction: (MainAction) -> Unit, doneAppBarAction: () -> Unit) {
+fun AppBarAction?.sendMainAction(
+    sendMainAction: (MainAction) -> Unit,
+    doneAppBarAction: () -> Unit
+) {
     this?.let {
         doneAppBarAction()
         sendMainAction(this)

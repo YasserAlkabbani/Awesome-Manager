@@ -41,14 +41,12 @@ fun HomeRoute(
 ) {
     val homeState = homeViewModel.homeState
 
-    val navigationAction =
-        homeState.navigationAction.collectAsState().value
+    val navigationAction = homeState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
         navigationAction.sendMainAction(sendMainAction, homeState::doneNavigationAction)
     })
 
-    val appBarAction =
-        homeState.appBarAction.collectAsState().value
+    val appBarAction = homeState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
         appBarAction.sendMainAction(sendMainAction, homeState::doneAppBarAction)
     })

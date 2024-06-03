@@ -15,7 +15,7 @@ interface NavigationStateI {
     fun navigateToAccountDetails(accountId: String)
     fun navigateToTransactionDetails(transactionId: String)
     fun navigateToCreateAccount()
-    fun navigateToCreateTransaction(accountId: String?)
+    fun navigateToCreateTransaction(accountId: String?=null)
     fun navigateToEditAccount(accountId: String)
     fun navigateToEditTransaction(accountId: String?, transactionId: String)
 }

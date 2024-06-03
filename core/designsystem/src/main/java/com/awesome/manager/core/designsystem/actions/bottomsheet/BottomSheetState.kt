@@ -33,8 +33,7 @@ interface BottomSheetStateI {
 
 class BottomSheetState : BottomSheetStateI {
 
-    private val _bottomSheetAction: MutableStateFlow<BottomSheetAction?> =
-        MutableStateFlow(BottomSheetAction.Dismiss(null))
+    private val _bottomSheetAction: MutableStateFlow<BottomSheetAction?> = MutableStateFlow(null)
     override val bottomSheetAction: StateFlow<BottomSheetAction?> = _bottomSheetAction
 
     override fun BottomSheetAction.applyAction() = _bottomSheetAction.update { this }

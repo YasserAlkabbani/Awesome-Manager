@@ -23,12 +23,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.actions.main.AppBarAction
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.main.NavigationAction
 import com.awesome.manager.core.designsystem.actions.main.PickerAction
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
@@ -47,29 +51,24 @@ import com.awesome.manager.core.ui.dialog.AmDatePickerDialog
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.asNavigationDestination
 import kotlinx.coroutines.launch
-import timber.log.Timber
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmApp() {
+
     val mainActivityViewModel: MainActivityViewModel = viewModel()
     val mainActivityState = mainActivityViewModel.mainActivityState
 
     val currentUserEmail = mainActivityState.currentUserEmail.collectAsState().value
     val loginState = mainActivityState.isLogin.collectAsState().value
 
-    val appBarState = mainActivityState.appBarAction.collectAsState().value
-
     val navHostController = rememberNavController()
 
-    val currentBackStack: NavBackStackEntry? =
-        navHostController.currentBackStackEntryAsState().value
+    val navigationAction = mainActivityState.navigationAction.collectAsState().value
+    val currentBackStack: NavBackStackEntry? = navHostController.currentBackStackEntryAsState().value
     val currentNavigationDestination = remember(currentBackStack) {
         currentBackStack?.asNavigationDestination()
     }
-
-
     LaunchedEffect(key1 = loginState, key2 = currentNavigationDestination, block = {
         loginState?.let {
             when (loginState) {
@@ -96,7 +95,6 @@ fun AmApp() {
 
                     else -> Unit
                 }
-
                 false -> {
                     when (currentNavigationDestination) {
                         NavigationDestination.Auth -> {}
@@ -128,8 +126,6 @@ fun AmApp() {
             }
         }
     })
-
-
     LaunchedEffect(key1 = currentNavigationDestination) {
         currentNavigationDestination?.let {
             when (currentNavigationDestination) {
@@ -138,22 +134,19 @@ fun AmApp() {
                 NavigationDestination.Home -> {
                     mainActivityState.setForHomeScreen(
                         onAddAccount = mainActivityState::navigateToCreateAccount,
-                        onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
+                        onAddTransaction = mainActivityState::navigateToCreateTransaction
                     )
                 }
-
                 NavigationDestination.Accounts -> {
                     mainActivityState.setForAccountsScreen(
                         onAddAccount = mainActivityState::navigateToCreateAccount,
                     )
                 }
-
                 NavigationDestination.Transactions -> {
                     mainActivityState.setForTransactionsScreen(
                         onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
                     )
                 }
-
                 is NavigationDestination.AccountDetails -> Unit
                 is NavigationDestination.AccountEditor -> Unit
                 is NavigationDestination.TransactionDetails -> Unit
@@ -161,19 +154,17 @@ fun AmApp() {
             }
         }
     }
-
-    val navigationState = mainActivityState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationState, block = {
-        navigationState?.let {
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction?.let {
             mainActivityState.doneNavigationAction()
-            when (navigationState) {
+            when (navigationAction) {
                 NavigationAction.PopBack -> {
                     navHostController.popBackStack()
                 }
 
                 is NavigationAction.Navigate -> {
                     val mainDestinationNavOption =
-                        when (navigationState.navigationDestination.isMainDistinction()) {
+                        when (navigationAction.navigationDestination.isMainDistinction()) {
                             true -> navOptions {
                                 popUpTo(NavigationDestination.Home) {
                                     saveState = true
@@ -185,7 +176,7 @@ fun AmApp() {
                             false -> null
                         }
                     navHostController.navigate(
-                        navigationState.navigationDestination,
+                        navigationAction.navigationDestination,
                         navOptions = mainDestinationNavOption
                     )
                 }
@@ -193,47 +184,43 @@ fun AmApp() {
         }
     })
 
-    val bottomSheetState = mainActivityState.bottomSheetAction.collectAsState().value
+    val bottomSheetAction = mainActivityState.bottomSheetAction.collectAsState().value
     val sheetState: SheetState = rememberModalBottomSheetState(true)
-    LaunchedEffect(key1 = bottomSheetState, block = {
-        bottomSheetState?.let {
-            when (bottomSheetState) {
-                is BottomSheetAction.Dismiss<*> -> launch {
-                    sheetState.hide()
-                    mainActivityState.dismissBottomSheet()
-                }
-
-                is BottomSheetAction.AccountCreated, is BottomSheetAction.AuthError,
-                is BottomSheetAction.ConnectionError, is BottomSheetAction.CustomError,
-                is BottomSheetAction.PasswordRested, is BottomSheetAction.Profile,
-                is BottomSheetAction.SearchForAccount, is BottomSheetAction.UnknownError -> {
-                    sheetState.show()
+        LaunchedEffect(key1 = bottomSheetAction, block = {
+            bottomSheetAction?.let {
+                when (bottomSheetAction) {
+                    is BottomSheetAction.Dismiss<*> -> launch {
+                        sheetState.hide()
+                        mainActivityState.doneBottomSheetAction()
+                    }
+                    is BottomSheetAction.AccountCreated, is BottomSheetAction.AuthError,
+                    is BottomSheetAction.ConnectionError, is BottomSheetAction.CustomError,
+                    is BottomSheetAction.PasswordRested, is BottomSheetAction.Profile,
+                    is BottomSheetAction.SearchForAccount, is BottomSheetAction.UnknownError -> {
+                        sheetState.show()
+                    }
                 }
             }
+        })
+        bottomSheetAction?.let {
+            ModalBottomSheet(
+                modifier = Modifier
+                    .padding(horizontal = AmPadding.SMALL.value)
+                    .requiredHeightIn(max = 500.dp),
+                onDismissRequest = { mainActivityState.dismissBottomSheet() },
+                sheetState = sheetState,
+                properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetAction.isDismissible),
+                content = {
+                    Column(
+                        modifier = Modifier.padding(6.dp),
+                        content = { bottomSheetAction.Content() }
+                    )
+                }
+            )
         }
-    })
-
-
-    bottomSheetState?.let {
-        ModalBottomSheet(
-            modifier = Modifier
-                .padding(horizontal = AmPadding.SMALL.value)
-                .requiredHeightIn(max = 500.dp),
-            onDismissRequest = { mainActivityState.dismissBottomSheet() },
-            sheetState = sheetState,
-            properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetState.isDismissible),
-            content = {
-                Column(
-                    modifier = Modifier.padding(6.dp),
-                    content = { bottomSheetState.Content() }
-                )
-            }
-        )
-    }
 
 
     val pickActionState = mainActivityState.pickerAction.collectAsState().value
-
     pickActionState?.let {
         when (pickActionState) {
             is PickerAction.PickDate -> {
@@ -244,14 +231,28 @@ fun AmApp() {
         }
     }
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val appBarAction = mainActivityState.appBarAction.collectAsState().value
+    AppScreen(
+        navHostController = navHostController,
+        currentNavigationDestination = currentNavigationDestination,
+        appBarAction = appBarAction, updateMainAction = mainActivityState::updateMainState
+    )
+
+}
+
+@Composable
+fun AppScreen(
+    navHostController: NavHostController,
+    currentNavigationDestination: NavigationDestination?,
+    appBarAction: AppBarAction?, updateMainAction: (MainAction) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
-                Timber.d("TEST_APPBAR $appBarState")
-                appBarState?.let {
+                appBarAction?.let {
                     AmCustomBottomBarWithFab(
                         modifier = Modifier,
                         bottomBarItems = {
@@ -263,14 +264,14 @@ fun AmApp() {
                                         selectedIcon = destination.selectedAmIconsType,
                                         unSelectedIcon = destination.unSelectedAmIconsType,
                                         onSelect = {
-                                            mainActivityState.updateMainState(
+                                            updateMainAction(
                                                 navigationDestination.asNavigation()
                                             )
                                         }
                                     )
                                 }
                         },
-                        appBarAction = appBarState
+                        appBarAction = appBarAction
                     )
                 }
             },
@@ -283,11 +284,10 @@ fun AmApp() {
                     .statusBarsPadding()
                     .imePadding(),
                 navHostController = navHostController,
-                sendMainAction = mainActivityState::updateMainState
+                sendMainAction = updateMainAction
             )
         }
     }
-
 }
 
 @Composable
