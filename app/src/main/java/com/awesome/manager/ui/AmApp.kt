@@ -28,25 +28,26 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
+import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
+import com.awesome.manager.core.designsystem.actions.main.NavigationAction
+import com.awesome.manager.core.designsystem.actions.main.PickerAction
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
-import com.awesome.manager.core.designsystem.ui_actions.navigation.MainDistillation
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationAction
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
-import com.awesome.manager.core.designsystem.ui_actions.picker.PickerAction
+import com.awesome.manager.core.designsystem.actions.navigation.MainDistillation
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAuthError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetConnectionError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
-import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestered
+import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestored
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
 import com.awesome.manager.core.ui.dialog.AmDatePickerDialog
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.asNavigationDestination
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,22 +136,20 @@ fun AmApp() {
                 NavigationDestination.Auth -> Unit
                 NavigationDestination.Intro -> Unit
                 NavigationDestination.Home -> {
-                    mainActivityState.showMainAppBar(
+                    mainActivityState.setForHomeScreen(
                         onAddAccount = mainActivityState::navigateToCreateAccount,
                         onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
                     )
                 }
 
                 NavigationDestination.Accounts -> {
-                    mainActivityState.showMainAppBar(
+                    mainActivityState.setForAccountsScreen(
                         onAddAccount = mainActivityState::navigateToCreateAccount,
-                        onAddTransaction = null
                     )
                 }
 
                 NavigationDestination.Transactions -> {
-                    mainActivityState.showMainAppBar(
-                        onAddAccount = null,
+                    mainActivityState.setForTransactionsScreen(
                         onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
                     )
                 }
@@ -166,7 +165,7 @@ fun AmApp() {
     val navigationState = mainActivityState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationState, block = {
         navigationState?.let {
-            mainActivityState.resetNavigationAction()
+            mainActivityState.doneNavigationAction()
             when (navigationState) {
                 NavigationAction.PopBack -> {
                     navHostController.popBackStack()
@@ -197,25 +196,25 @@ fun AmApp() {
     val bottomSheetState = mainActivityState.bottomSheetAction.collectAsState().value
     val sheetState: SheetState = rememberModalBottomSheetState(true)
     LaunchedEffect(key1 = bottomSheetState, block = {
-        when (bottomSheetState) {
-            is BottomSheetAction.Idle<*> -> Unit
-            is BottomSheetAction.Dismiss<*> -> launch {
-                sheetState.hide()
-                mainActivityState.idleBottomSheet(clearBottomSheet = true)
-            }
+        bottomSheetState?.let {
+            when (bottomSheetState) {
+                is BottomSheetAction.Dismiss<*> -> launch {
+                    sheetState.hide()
+                    mainActivityState.dismissBottomSheet()
+                }
 
-            is BottomSheetAction.AccountCreated, is BottomSheetAction.AuthError,
-            is BottomSheetAction.ConnectionError, is BottomSheetAction.CustomError,
-            is BottomSheetAction.PasswordRested, is BottomSheetAction.Profile,
-            is BottomSheetAction.SearchForAccount, is BottomSheetAction.UnknownError -> {
-                sheetState.show()
-                mainActivityState.idleBottomSheet()
+                is BottomSheetAction.AccountCreated, is BottomSheetAction.AuthError,
+                is BottomSheetAction.ConnectionError, is BottomSheetAction.CustomError,
+                is BottomSheetAction.PasswordRested, is BottomSheetAction.Profile,
+                is BottomSheetAction.SearchForAccount, is BottomSheetAction.UnknownError -> {
+                    sheetState.show()
+                }
             }
         }
     })
 
 
-    if (!bottomSheetState.isEmpty()) {
+    bottomSheetState?.let {
         ModalBottomSheet(
             modifier = Modifier
                 .padding(horizontal = AmPadding.SMALL.value)
@@ -233,7 +232,7 @@ fun AmApp() {
     }
 
 
-    val pickActionState = mainActivityState.pickAction.collectAsState().value
+    val pickActionState = mainActivityState.pickerAction.collectAsState().value
 
     pickActionState?.let {
         when (pickActionState) {
@@ -251,26 +250,29 @@ fun AmApp() {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
-                AmCustomBottomBarWithFab(
-                    modifier = Modifier,
-                    bottomBarItems = {
-                        MainDistillation.entries
-                            .forEach { destination ->
-                                val navigationDestination = destination.navigationDestination
-                                AmNavigationCustomItem(
-                                    isSelected = navigationDestination == currentNavigationDestination,
-                                    selectedIcon = destination.selectedAmIconsType,
-                                    unSelectedIcon = destination.unSelectedAmIconsType,
-                                    onSelect = {
-                                        mainActivityState.updateMainState(
-                                            navigationDestination.asMainAction()
-                                        )
-                                    }
-                                )
-                            }
-                    },
-                    appBarAction = appBarState
-                )
+                Timber.d("TEST_APPBAR $appBarState")
+                appBarState?.let {
+                    AmCustomBottomBarWithFab(
+                        modifier = Modifier,
+                        bottomBarItems = {
+                            MainDistillation.entries
+                                .forEach { destination ->
+                                    val navigationDestination = destination.navigationDestination
+                                    AmNavigationCustomItem(
+                                        isSelected = navigationDestination == currentNavigationDestination,
+                                        selectedIcon = destination.selectedAmIconsType,
+                                        unSelectedIcon = destination.unSelectedAmIconsType,
+                                        onSelect = {
+                                            mainActivityState.updateMainState(
+                                                navigationDestination.asNavigation()
+                                            )
+                                        }
+                                    )
+                                }
+                        },
+                        appBarAction = appBarState
+                    )
+                }
             },
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
@@ -289,11 +291,9 @@ fun AmApp() {
 }
 
 @Composable
-private fun BottomSheetAction.Content(): Unit =
+private fun BottomSheetAction.Content(): Unit? =
     when (this) {
-        is BottomSheetAction.Idle<*> -> bottomSheet!!.Content()
-
-        is BottomSheetAction.Dismiss<*> -> bottomSheet.Content()
+        is BottomSheetAction.Dismiss<*> -> bottomSheet?.Content()
 
         is BottomSheetAction.Profile -> BottomSheetProfile(this)
 
@@ -301,7 +301,7 @@ private fun BottomSheetAction.Content(): Unit =
 
         is BottomSheetAction.AccountCreated -> BottomSheetAccountCreated(this)
 
-        is BottomSheetAction.PasswordRested -> BottomSheetPasswordRestered(this)
+        is BottomSheetAction.PasswordRested -> BottomSheetPasswordRestored(this)
 
         is BottomSheetAction.AuthError -> BottomSheetAuthError(this)
 

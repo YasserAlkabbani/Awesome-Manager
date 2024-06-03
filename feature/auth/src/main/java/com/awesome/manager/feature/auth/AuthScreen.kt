@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmCard
@@ -32,10 +31,11 @@ import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 
 @Composable
 fun AuthRoute(
@@ -46,17 +46,17 @@ fun AuthRoute(
 
     val navigationAction = authScreenState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, authScreenState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, authScreenState::doneNavigationAction)
     })
 
     val appBarAction = authScreenState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, authScreenState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, authScreenState::doneAppBarAction)
     })
 
     val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, authScreenState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, authScreenState::doneBottomSheetAction)
     })
 
 
@@ -65,9 +65,8 @@ fun AuthRoute(
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenState
+    authScreenState: AuthScreenStateMain
 ) {
-    val isLoading by authScreenState.loading.collectAsState()
     val authData by authScreenState.authData.collectAsState()
 
     val emailErrorMessage = remember {
@@ -143,7 +142,7 @@ fun AuthScreen(
                                     imeAction = ImeAction.Next,
                                     keyboardType = KeyboardType.Email
                                 ),
-                                enabled = !isLoading
+                                enabled = true
                             )
 
                             AmSpacerSmallHeight()
@@ -159,7 +158,7 @@ fun AuthScreen(
                                     imeAction = ImeAction.Done,
                                     keyboardType = KeyboardType.Password
                                 ),
-                                enabled = !isLoading,
+                                enabled = true,
                                 password = true
                             )
                         }
@@ -167,16 +166,6 @@ fun AuthScreen(
                     }
                 }
             }
-        }
-        AmSpacerLargeHeight()
-        if (authData.validateData) {
-            AmFilledTonalIconWithTextButton(
-                text = stringResource(R.string.start_accounting),
-                amIconsType = AmIcons.ArrowForward,
-                positive = true,
-                loading = isLoading,
-                onClick = authScreenState.login
-            )
         }
     }
 
@@ -186,5 +175,5 @@ fun AuthScreen(
 @Preview
 @Composable
 fun AuthScreenPreview() {
-    AuthScreen(AuthScreenState({}, {}, {}))
+    AuthScreen(AuthScreenStateMain({}, {}, {}))
 }

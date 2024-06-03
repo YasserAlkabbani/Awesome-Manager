@@ -6,7 +6,7 @@ import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
-import com.awesome.manager.core.designsystem.ui_actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.MainState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.util.UUID
 
-class TransactionEditorState(
+class TransactionEditorStateMain(
     val accountsSearchResults: StateFlow<String>.() -> Flow<PagingData<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : MainState() {

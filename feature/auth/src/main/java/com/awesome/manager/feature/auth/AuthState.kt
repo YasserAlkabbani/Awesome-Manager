@@ -4,13 +4,13 @@ import com.awesome.manager.core.common.extentions.isValidEmail
 import com.awesome.manager.core.common.extentions.isValidPassword
 import com.awesome.manager.core.common.results.AmError
 import com.awesome.manager.core.common.results.AmResult
-import com.awesome.manager.core.designsystem.ui_actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.MainState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 
-class AuthScreenState(
+class AuthScreenStateMain(
     val login: () -> Unit, val register: () -> Unit, val resetPassword: () -> Unit,
 ) : MainState() {
 
@@ -22,7 +22,7 @@ class AuthScreenState(
     fun updateStateBasedOnResult(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
-        stopLoading()
+        endLoading()
         when (amResult) {
             is AmResult.Error -> when (val amError = amResult.amError) {
 

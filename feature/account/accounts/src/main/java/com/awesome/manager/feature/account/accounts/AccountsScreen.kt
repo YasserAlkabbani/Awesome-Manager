@@ -16,10 +16,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
@@ -34,17 +36,17 @@ fun AccountsRoute(
 
     val navigationAction = accountsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountsState::doneNavigationAction)
     })
 
     val appBarAction = accountsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountsState::doneAppBarAction)
     })
 
     val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
     })
 
     AccountsScreen(accountsState)
@@ -54,7 +56,7 @@ fun AccountsRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AccountsScreen(
-    accountsState: AccountsState
+    accountsState: AccountsMainState
 ) {
     val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
 

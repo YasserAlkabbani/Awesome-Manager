@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
-import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
 import com.awesome.manager.core.ui.R
 
 @Composable

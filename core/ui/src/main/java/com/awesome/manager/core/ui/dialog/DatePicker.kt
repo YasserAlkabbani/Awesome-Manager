@@ -1,14 +1,13 @@
 package com.awesome.manager.core.ui.dialog
 
-import android.util.Log
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.awesome.manager.core.designsystem.actions.main.PickerAction
 import com.awesome.manager.core.designsystem.component.buttons.AmTextButton
-import com.awesome.manager.core.designsystem.ui_actions.picker.PickerAction
 import com.awesome.manager.core.ui.R
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -10,11 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
 
 @Composable
 fun IntroRoute(sendMainAction: (MainAction) -> Unit) {

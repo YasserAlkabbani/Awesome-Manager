@@ -20,11 +20,13 @@ interface TransactionDao {
 
 
     @Transaction
-    @Query("SELECT * FROM transactions WHERE transactions.title LIKE '%' || :searchKey || '%' ")
+    @Query("SELECT * FROM transactions WHERE transactions.title LIKE '%' || :searchKey || '%' " +
+            "ORDER BY transactions.transaction_at DESC")
     fun returnTransactions(searchKey: String): PagingSource<Int, TransactionEntityWithData>
 
     @Transaction
-    @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId AND transactions.title LIKE '%' || :searchKey || '%'")
+    @Query("SELECT * FROM transactions WHERE transactions.account_id=:accountId AND transactions.title LIKE '%' || :searchKey || '%' " +
+            "ORDER BY transactions.transaction_at DESC")
     fun returnTransactionsByAccountId(
         accountId: String, searchKey: String
     ): PagingSource<Int, TransactionEntityWithData>

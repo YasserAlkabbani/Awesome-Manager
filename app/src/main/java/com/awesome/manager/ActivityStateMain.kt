@@ -1,0 +1,26 @@
+package com.awesome.manager
+
+import com.awesome.manager.core.designsystem.actions.main.AppBarAction
+import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.NavigationAction
+import com.awesome.manager.core.designsystem.actions.main.PickerAction
+import kotlinx.coroutines.flow.StateFlow
+
+class ActivityStateMain(
+    val isLogin: StateFlow<Boolean?>,
+    val currentUserEmail: StateFlow<String?>,
+    val logout: () -> Unit,
+) : MainState() {
+
+    fun updateMainState(mainAction: MainAction) {
+        when (mainAction) {
+            is NavigationAction -> mainAction.applyAction()
+            is AppBarAction -> mainAction.applyAction()
+            is BottomSheetAction -> mainAction.applyAction()
+            is PickerAction -> mainAction.applyAction()
+        }
+    }
+
+}

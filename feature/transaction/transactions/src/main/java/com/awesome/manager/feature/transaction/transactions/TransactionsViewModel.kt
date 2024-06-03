@@ -11,7 +11,7 @@ class TransactionsViewModel @Inject constructor(
     transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    val transactionsState: TransactionsState = TransactionsState(
+    val transactionsState: TransactionsMainState = TransactionsMainState(
         transactions = transactionRepository.returnTransactions("")
     )
 

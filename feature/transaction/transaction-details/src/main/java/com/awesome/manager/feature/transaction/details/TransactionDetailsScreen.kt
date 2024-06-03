@@ -12,9 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmTextWithLabel
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.card.AccountCard
 
 @Composable
@@ -28,18 +30,20 @@ fun TransactionDetailsRoute(
     val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
         navigationAction.sendMainAction(
-            sendMainAction, transactionDetailsState::resetNavigationAction
+            sendMainAction, transactionDetailsState::doneNavigationAction
         )
     })
 
     val appBarAction = transactionDetailsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, transactionDetailsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, transactionDetailsState::doneAppBarAction)
     })
 
     val bottomSheetAction = transactionDetailsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, transactionDetailsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(
+            sendMainAction, transactionDetailsState::doneBottomSheetAction
+        )
     })
 
     val transactionState =
@@ -49,17 +53,16 @@ fun TransactionDetailsRoute(
         when (transactionState) {
             is DataState.Success -> {
                 val transactionData = transactionState.data
-                transactionDetailsState.showReadAppBar(
-                    title = editTransactionText,
-                    canEdit = transactionData.allowToUpdate,
-                    onBack = transactionDetailsState::navigatePopBack,
-                    onEdit = {
+                transactionDetailsState.setForTransactionDetailsScreen(
+                    editButtonText = editTransactionText,
+                    allowToEdit = transactionData.allowToUpdate,
+                    onClickBack = transactionDetailsState::navigatePopBack,
+                    onEditButton = {
                         transactionDetailsState.navigateToEditTransaction(
                             accountId = transactionData.transaction.accountId,
                             transactionId = transactionData.transaction.id
                         )
                     },
-                    onAddTransaction = null,
                 )
             }
 
@@ -72,7 +75,7 @@ fun TransactionDetailsRoute(
 
 @Composable
 fun TransactionDetailsScreen(
-    transactionDetailsState: TransactionDetailsState
+    transactionDetailsState: TransactionDetailsStateMain
 ) {
 
     val transactionDetailsData =

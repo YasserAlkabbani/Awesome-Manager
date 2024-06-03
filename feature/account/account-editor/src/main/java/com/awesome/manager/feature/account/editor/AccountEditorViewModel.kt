@@ -8,11 +8,10 @@ import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +25,7 @@ class AccountEditorViewModel @Inject constructor(
 
     private val accountEditorArg: NavigationDestination.AccountEditor = savedStateHandle.toRoute()
 
-    val accountEditorState: AccountEditorState = AccountEditorState(
+    val accountEditorState: AccountEditorStateMain = AccountEditorStateMain(
         currencies = currencyRepository.returnCurrencies().asListDataStateFlow(viewModelScope),
         onSave = ::onSave,
     )

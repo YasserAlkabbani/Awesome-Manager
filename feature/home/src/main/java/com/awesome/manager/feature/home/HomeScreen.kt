@@ -22,12 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,19 +44,18 @@ fun HomeRoute(
     val navigationAction =
         homeState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, homeState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, homeState::doneNavigationAction)
     })
 
     val appBarAction =
         homeState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, homeState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, homeState::doneAppBarAction)
     })
 
-    val bottomSheetAction =
-        homeState.bottomSheetAction.collectAsState().value
+    val bottomSheetAction = homeState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, homeState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, homeState::doneBottomSheetAction)
     })
 
     HomeScreen(homeState)
@@ -62,7 +63,7 @@ fun HomeRoute(
 
 
 @Composable
-fun HomeScreen(homeState: HomeState) {
+fun HomeScreen(homeState: HomeMainState) {
 
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is DataState.Success -> LazyColumn(
@@ -174,6 +175,6 @@ fun HomeCard(
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
+    HomeScreen(HomeMainState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
 }
 

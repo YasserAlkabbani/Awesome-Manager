@@ -1,13 +1,10 @@
 package com.awesome.manager.feature.auth
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +13,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    val authScreenState: AuthScreenState = AuthScreenState(
+    val authScreenState: AuthScreenStateMain = AuthScreenStateMain(
         login = ::login, register = ::register, resetPassword = ::resetPassword
     )
     private val authData: AmAuthData get() = authScreenState.authData.value
@@ -39,12 +36,13 @@ class AuthViewModel @Inject constructor(
     private fun register() {
         viewModelScope.launch {
             if (isValidateData) {
-                authRepository.signUp(email=email,password= password).collectLatest { amResult ->
-                    authScreenState.updateStateBasedOnResult(
-                        amResult = amResult,
-                        onSuccess = authScreenState::showAccountCreatedBottomSheet,
-                    )
-                }
+                authRepository.signUp(email = email, password = password)
+                    .collectLatest { amResult ->
+                        authScreenState.updateStateBasedOnResult(
+                            amResult = amResult,
+                            onSuccess = authScreenState::showAccountCreatedBottomSheet,
+                        )
+                    }
             }
         }
     }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,17 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
-import timber.log.Timber
 
 @Composable
 fun AccountEditorRoute(
@@ -39,37 +40,37 @@ fun AccountEditorRoute(
 
     val navigationAction = accountEditorState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountEditorState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountEditorState::doneNavigationAction)
     })
 
     val appBarAction = accountEditorState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountEditorState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountEditorState::doneAppBarAction)
     })
 
     val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::doneBottomSheetAction)
     })
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
 
 
-    val createAccount = stringResource(id = R.string.create_account)
-    val updateAccount = stringResource(id = R.string.update_account)
+    val createAccountText = stringResource(id = R.string.create_account)
+    val updateAccountText = stringResource(id = R.string.update_account)
     LaunchedEffect(key1 = accountEditorData) {
         if (accountEditorData is DataState.Success) {
-            when (accountEditorData.data) {
-                is AccountEditorData.AccountEditorCreate -> accountEditorState.showCreateAppBar(
-                    title = createAccount,
-                    onCancel = accountEditorState::navigatePopBack,
-                    onSave = accountEditorState.onSave
+            when (val accountEditor = accountEditorData.data) {
+                is AccountEditorData.AccountEditorCreate -> accountEditorState.setForEditAccountScreen(
+                    onClickCancel = accountEditorState::navigatePopBack,
+                    onSaveButton = accountEditorState.onSave,
+                    saveButtonText = createAccountText,
                 )
 
-                is AccountEditorData.AccountEditorUpdate -> accountEditorState.showEditAppBar(
-                    title = "$updateAccount ${accountEditorData.data.name.substringBefore(" ")}",
-                    onCancel = accountEditorState::navigatePopBack,
-                    onSave = accountEditorState.onSave
+                is AccountEditorData.AccountEditorUpdate -> accountEditorState.setForEditAccountScreen(
+                    onClickCancel = accountEditorState::navigatePopBack,
+                    onSaveButton = accountEditorState.onSave,
+                    saveButtonText = "$updateAccountText ${accountEditor.name.limitName()}",
                 )
             }
         }
@@ -81,7 +82,7 @@ fun AccountEditorRoute(
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState: AccountEditorState) {
+fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
 
     val accountData = accountEditorState.accountEditorData.collectAsState().value
     val currencies = accountEditorState.currencies.collectAsState().value

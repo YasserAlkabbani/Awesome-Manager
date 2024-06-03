@@ -1,26 +1,10 @@
-package com.awesome.manager.core.designsystem.ui_actions.navigation
+package com.awesome.manager.core.designsystem.actions.navigation
 
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.main.NavigationAction
 import kotlinx.serialization.Serializable
 
-sealed class NavigationAction {
-
-    data object PopBack : NavigationAction()
-    data class Navigate(val navigationDestination: NavigationDestination) : NavigationAction()
-
-}
-
-fun NavigationAction?.sendMainAction(
-    sendMainAction: (MainAction) -> Unit,
-    resetNavigation: () -> Unit
-) {
-    this?.let {
-        resetNavigation()
-        sendMainAction(MainAction.Navigate(this))
-    }
-}
 
 @Serializable
 sealed class NavigationDestination {
@@ -56,7 +40,6 @@ sealed class NavigationDestination {
         NavigationDestination()
 
     fun asNavigation() = NavigationAction.Navigate(this)
-    fun asMainAction() = MainAction.Navigate(asNavigation())
     fun isMainDistinction() =
         MainDistillation.entries.map { it.navigationDestination }.contains(this)
 

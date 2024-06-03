@@ -4,17 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.common.states.asDataStateFlow
-import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +24,8 @@ class TransactionEditorViewModel @Inject constructor(
 
     private val transactionEditorArg: NavigationDestination.TransactionEditor =
         savedStateHandle.toRoute()
-    val transactionEditorState: TransactionEditorState =
-        TransactionEditorState(
+    val transactionEditorState: TransactionEditorStateMain =
+        TransactionEditorStateMain(
             createTransaction = ::saveTransaction,
             accountsSearchResults = { flatMapLatest { accountRepository.returnAccounts(it) } }
         )

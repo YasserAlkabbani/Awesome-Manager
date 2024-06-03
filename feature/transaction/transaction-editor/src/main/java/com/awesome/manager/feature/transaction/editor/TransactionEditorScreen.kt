@@ -1,6 +1,5 @@
 package com.awesome.manager.feature.transaction.editor
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,16 +21,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.ui_actions.picker.sendMainAction
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
+import com.awesome.manager.feature.transaction.editor.TransactionEditorInputType.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -40,29 +42,33 @@ fun TransactionEditorRoute(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
 
-    val transactionEditorState: TransactionEditorState =
+    val transactionEditorState: TransactionEditorStateMain =
         transactionEditorViewModel.transactionEditorState
 
     val navigationAction = transactionEditorState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
         navigationAction.sendMainAction(
-            sendMainAction, transactionEditorState::resetNavigationAction
+            sendMainAction, transactionEditorState::doneNavigationAction
         )
     })
 
     val appBarAction = transactionEditorState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, transactionEditorState::resetAppBar)
+        appBarAction.sendMainAction(
+            sendMainAction, transactionEditorState::doneAppBarAction
+        )
     })
 
     val bottomSheetAction = transactionEditorState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, transactionEditorState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(
+            sendMainAction, transactionEditorState::doneBottomSheetAction
+        )
     })
 
-    val pickAction = transactionEditorState.pickAction.collectAsState().value
+    val pickAction = transactionEditorState.pickerAction.collectAsState().value
     LaunchedEffect(key1 = pickAction, block = {
-        pickAction.sendMainAction(sendMainAction, transactionEditorState::resetPick)
+        pickAction.sendMainAction(sendMainAction, transactionEditorState::donePickerAction)
     })
 
     val accountsLazyPaging = transactionEditorState.accountsList.collectAsLazyPagingItems()
@@ -111,34 +117,33 @@ fun TransactionEditorRoute(
     })
 
     val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
-    val selectAccount = stringResource(R.string.select_account)
+    val selectAccountText = stringResource(R.string.select_account)
     val createTransactionText = stringResource(R.string.create_transaction)
     val updateTransactionText = stringResource(R.string.update_transaction)
     LaunchedEffect(key1 = transactionData) {
         if (transactionData is DataState.Success) {
             when (transactionData.data.selectedAccount) {
-                null -> transactionEditorState.showCreateAppBar(
-                    title = selectAccount,
-                    onSave = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    onCancel = transactionEditorState::navigatePopBack
+                null -> transactionEditorState.setForEditTransactionScreen(
+                    saveButtonText = selectAccountText,
+                    onSaveButton = transactionEditorState::requestSearchForAnAccountBottomSheet,
+                    onClickCancel = transactionEditorState::navigatePopBack
                 )
 
-                else -> when (transactionData.data.transactionEditorInputType) {
-                    TransactionEditorInputType.Create -> {
-                        transactionEditorState.showCreateAppBar(
-                            title = createTransactionText,
-                            onSave = transactionEditorState.createTransaction,
-                            onCancel = transactionEditorState::navigatePopBack
+                else -> {
+                    when (transactionData.data.transactionEditorInputType) {
+                        Create -> transactionEditorState.setForEditTransactionScreen(
+                            saveButtonText = createTransactionText,
+                            onSaveButton = transactionEditorState.createTransaction,
+                            onClickCancel = transactionEditorState::navigatePopBack
+                        )
+
+                        Edit -> transactionEditorState.setForEditTransactionScreen(
+                            saveButtonText = updateTransactionText,
+                            onSaveButton = transactionEditorState.createTransaction,
+                            onClickCancel = transactionEditorState::navigatePopBack
                         )
                     }
 
-                    TransactionEditorInputType.Edit -> {
-                        transactionEditorState.showEditAppBar(
-                            title = updateTransactionText,
-                            onSave = transactionEditorState.createTransaction,
-                            onCancel = transactionEditorState::navigatePopBack
-                        )
-                    }
                 }
             }
         }
@@ -149,7 +154,7 @@ fun TransactionEditorRoute(
 
 @Composable
 fun TransactionEditorScreen(
-    transactionEditorState: TransactionEditorState,
+    transactionEditorState: TransactionEditorStateMain,
 ) {
 
     val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value

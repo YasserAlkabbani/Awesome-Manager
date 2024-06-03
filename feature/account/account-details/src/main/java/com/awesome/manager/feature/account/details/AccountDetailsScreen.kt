@@ -15,9 +15,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
@@ -30,21 +33,21 @@ fun AccountDetailsRoute(
     sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
-    val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
+    val accountDetailsState: AccountDetailsStateMain = accountDetailsViewModel.accountDetailsState
 
     val navigationAction = accountDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountDetailsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, accountDetailsState::doneNavigationAction)
     })
 
     val appBarAction = accountDetailsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountDetailsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, accountDetailsState::doneAppBarAction)
     })
 
     val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountDetailsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, accountDetailsState::doneBottomSheetAction)
     })
 
     val accountState = accountDetailsState.amAccount.collectAsState().value
@@ -53,11 +56,11 @@ fun AccountDetailsRoute(
     val editAccount = stringResource(R.string.edit_account_name)
     LaunchedEffect(key1 = accountState, allowToUpdate) {
         if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
-            accountDetailsState.showReadAppBar(
-                title = "$editAccount ${accountState.data.name.substringBefore(" ")}",
-                onBack = accountDetailsState::navigatePopBack,
-                onEdit = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
-                canEdit = allowToUpdate.data,
+            accountDetailsState.setForAccountDetailsScreen(
+                onClickBack = accountDetailsState::navigatePopBack,
+                editButtonText = "$editAccount ${accountState.data.name.limitName()}",
+                onEditButton = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
+                allowToEdit = allowToUpdate.data,
                 onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) }
             )
         }
@@ -68,7 +71,7 @@ fun AccountDetailsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
+fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
 
     val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =

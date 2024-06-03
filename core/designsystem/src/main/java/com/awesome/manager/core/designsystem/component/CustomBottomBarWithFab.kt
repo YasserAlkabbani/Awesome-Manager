@@ -19,7 +19,7 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.ui_actions.appbar.AppBarAction
+import com.awesome.manager.core.designsystem.actions.main.AppBarAction
 
 @Composable
 fun AmCustomBottomBarWithFab(
@@ -27,7 +27,7 @@ fun AmCustomBottomBarWithFab(
     bottomBarItems: @Composable RowScope.() -> Unit,
     appBarAction: AppBarAction
 ) {
-    if (appBarAction !is AppBarAction.Idle) {
+    AnimatedVisibility(appBarAction.visible) {
         Surface(
             modifier = modifier,
             shape = MaterialTheme.shapes.extraLarge,
@@ -37,81 +37,48 @@ fun AmCustomBottomBarWithFab(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                when (appBarAction) {
-                    AppBarAction.Idle -> {}
-                    is AppBarAction.MainNavigation -> {
+                AnimatedVisibility(visible = appBarAction.bottomNavigation) {
+                    Row {
                         Surface(
                             shape = MaterialTheme.shapes.extraLarge,
                             content = { Row(content = bottomBarItems) }
                         )
-                        AnimatedVisibility(visible = appBarAction.onAddAccount != null) {
-                            Row {
-                                AmSpacerMediumWidth()
-                                AmFloatingActionBottom(
-                                    amIconsType = AmIcons.AccountAdd,
-                                    onClick = { appBarAction.onAddAccount?.invoke() })
-                            }
-                        }
-                        AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
-                            Row {
-                                if (appBarAction.onAddAccount == null) AmSpacerMediumWidth()
-                                AmFloatingActionBottom(
-                                    amIconsType = AmIcons.TransactionAdd,
-                                    onClick = { appBarAction.onAddTransaction?.invoke() })
-                            }
-                        }
                     }
-
-                    is AppBarAction.Read -> {
-                        AmActionCustomItem(
-                            amIconsType = AmIcons.ArrowBack,
-                            onClick = appBarAction.onBack
-                        )
-                        if (appBarAction.canEdit) {
-                            AmSpacerMediumWidth()
-                            AmButton(
-                                text = appBarAction.title,
-                                positive = null,
-                                onClick = appBarAction.onEdit
-                            )
-                        }
-                        AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
-                            AmSpacerMediumWidth()
-                            AmFloatingActionBottom(
-                                amIconsType = AmIcons.TransactionAdd,
-                                onClick = { appBarAction.onAddTransaction?.invoke() })
-                        }
-                    }
-
-                    is AppBarAction.Create -> {
-                        AmActionCustomItem(
-                            amIconsType = AmIcons.ArrowBack,
-                            onClick = appBarAction.onCancel
-                        )
+                }
+                AnimatedVisibility(visible = appBarAction.onAddAccount != null) {
+                    Row {
                         AmSpacerMediumWidth()
-                        AmButton(
-                            text = appBarAction.title,
-                            positive = null,
-                            onClick = appBarAction.onCreate
-                        )
+                        AmFloatingActionBottom(
+                            amIconsType = AmIcons.AccountAdd,
+                            onClick = { appBarAction.onAddAccount?.invoke() })
                     }
-
-                    is AppBarAction.Edit -> {
-                        AmActionCustomItem(
-                            amIconsType = AmIcons.Close,
-                            onClick = appBarAction.onCancel
-                        )
-                        AmSpacerMediumWidth()
-                        AmButton(
-                            text = appBarAction.title,
-                            positive = null,
-                            onClick = appBarAction.onUpdate
-                        )
+                }
+                AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
+                    Row {
+                        if (appBarAction.onAddAccount == null) AmSpacerMediumWidth()
+                        AmFloatingActionBottom(
+                            amIconsType = AmIcons.TransactionAdd,
+                            onClick = { appBarAction.onAddTransaction?.invoke() })
                     }
-
-                    is AppBarAction.Search -> {
-
-                    }
+                }
+                AnimatedVisibility(visible = appBarAction.buttonOnClick != null) {
+                    AmButton(
+                        text = appBarAction.buttonText,
+                        positive = null,
+                        onClick = { appBarAction.buttonOnClick?.invoke() }
+                    )
+                }
+                AnimatedVisibility(visible = appBarAction.onClickBackButton != null) {
+                    AmActionCustomItem(
+                        amIconsType = AmIcons.ArrowBack,
+                        onClick = { appBarAction.onClickBackButton?.invoke() }
+                    )
+                }
+                AnimatedVisibility(visible = appBarAction.onClickCancelButton != null) {
+                    AmActionCustomItem(
+                        amIconsType = AmIcons.Close,
+                        onClick = { appBarAction.onClickCancelButton?.invoke() }
+                    )
                 }
             }
         }

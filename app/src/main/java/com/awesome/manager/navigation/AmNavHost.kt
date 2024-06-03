@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import com.awesome.manager.feature.account.accounts.AccountsRoute
 import com.awesome.manager.feature.account.details.AccountDetailsRoute
 import com.awesome.manager.feature.account.editor.AccountEditorRoute
@@ -18,7 +18,6 @@ import com.awesome.manager.feature.intro.IntroRoute
 import com.awesome.manager.feature.transaction.details.TransactionDetailsRoute
 import com.awesome.manager.feature.transaction.editor.TransactionEditorRoute
 import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
-import timber.log.Timber
 
 
 @Composable

@@ -9,7 +9,7 @@ import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.ui_actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -25,7 +25,7 @@ class AccountDetailsViewModel @Inject constructor(
 
     private val accountDetailsArg: NavigationDestination.AccountDetails = savedStateHandle.toRoute()
 
-    val accountDetailsState: AccountDetailsState = AccountDetailsState(
+    val accountDetailsState: AccountDetailsStateMain = AccountDetailsStateMain(
         amAccount = accountRepository
             .returnAccountById(accountDetailsArg.accountId)
             .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),

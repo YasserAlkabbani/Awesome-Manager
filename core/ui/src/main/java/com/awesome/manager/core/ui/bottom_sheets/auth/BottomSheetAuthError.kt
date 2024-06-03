@@ -3,7 +3,7 @@ package com.awesome.manager.core.ui.bottom_sheets.auth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.awesome.manager.core.designsystem.ui_actions.bottomsheet.BottomSheetAction
+import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.ui.R
 import com.awesome.manager.core.ui.bottom_sheets.AmBottomSheetMessage
 import com.awesome.manager.core.ui.bottom_sheets.MessageBottomData

@@ -3,7 +3,7 @@ package com.awesome.manager.feature.account.editor
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
-import com.awesome.manager.core.designsystem.ui_actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.MainState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
 
-class AccountEditorState(
+class AccountEditorStateMain(
     val currencies: StateFlow<List<AmCurrency>>,
     val onSave: () -> Unit,
 ) : MainState() {

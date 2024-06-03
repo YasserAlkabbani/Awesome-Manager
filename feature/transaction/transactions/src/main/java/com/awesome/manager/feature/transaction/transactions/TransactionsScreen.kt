@@ -12,16 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.ui_actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.ui_actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
@@ -37,17 +37,17 @@ fun TransactionsRoute(
 
     val navigationAction = transactionsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, transactionsState::resetNavigationAction)
+        navigationAction.sendMainAction(sendMainAction, transactionsState::doneNavigationAction)
     })
 
     val appBarAction = transactionsState.appBarAction.collectAsState().value
     LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, transactionsState::resetAppBar)
+        appBarAction.sendMainAction(sendMainAction, transactionsState::doneAppBarAction)
     })
 
     val bottomSheetAction = transactionsState.bottomSheetAction.collectAsState().value
     LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, transactionsState::idleBottomSheet)
+        bottomSheetAction.sendMainAction(sendMainAction, transactionsState::doneBottomSheetAction)
     })
 
     TransactionScreen(transactionsState)
@@ -55,7 +55,7 @@ fun TransactionsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionScreen(transactionsState: TransactionsState) {
+fun TransactionScreen(transactionsState: TransactionsMainState) {
 
     val transactionsLazyPaging = transactionsState.transactions.collectAsLazyPagingItems()
     val loadState = transactionsLazyPaging.loadState.refresh
