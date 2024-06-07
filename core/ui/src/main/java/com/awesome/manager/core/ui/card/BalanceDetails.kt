@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmTextWithIcon
 import com.awesome.manager.core.ui.R

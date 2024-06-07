@@ -1,13 +1,20 @@
 package com.awesome.manager.feature.account.accounts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,13 +22,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
+import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
+import com.awesome.manager.core.designsystem.component.text.AmSearchTextField
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
@@ -49,16 +60,34 @@ fun AccountsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
     })
 
+    val pickerAction = accountsState.pickerAction.collectAsState().value
+    LaunchedEffect(key1 = pickerAction) {
+        pickerAction.sendMainAction(sendMainAction, accountsState::donePickerAction)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        accountsState.setForAccountsScreen(
+            onAddAccount = accountsState::navigateToCreateAccount,
+        )
+    }
+
     AccountsScreen(accountsState)
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsScreen(
     accountsState: AccountsMainState
 ) {
     val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
+    val filterData = accountsState.filterData.collectAsState().value
+
+    val noItems = remember {
+        derivedStateOf {
+            !filterData.filterApplauded() && accountsLazyPaging.itemCount == 0
+        }
+    }.value
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -66,7 +95,7 @@ fun AccountsScreen(
     ) {
         AmLazyColumn(
             content = {
-                if (accountsLazyPaging.itemCount == 0)
+                if (noItems)
                     item {
                         Column(
                             modifier = Modifier
@@ -86,37 +115,58 @@ fun AccountsScreen(
                             )
                         }
                     }
-                else items(
-                    count = accountsLazyPaging.itemCount,
-                    contentType = { LAZY_ITEM_ACCOUNT },
-                    key = accountsLazyPaging.itemKey { it.id },
-                    itemContent = { index ->
-                        accountsLazyPaging[index]?.let { account ->
-                            val balanceDetails = account.balanceDetails
-                            AccountCard(
-                                modifier = Modifier.animateItemPlacement(),
-                                title = account.name,
-                                imageUrl = account.imageUrl,
-                                loading = account.pending,
-                                withDetails = false,
-                                onClick = { accountsState.navigateToAccountDetails(account.id) },
-                                onAddTransaction = {
-                                    accountsState.navigateToCreateTransaction(account.id)
-                                },
-                                onEditTransaction = null,
-                                income = balanceDetails.income,
-                                expenses = balanceDetails.expenses,
-                                netIncomeAbs = balanceDetails.netIncomeAbs,
-                                debtor = balanceDetails.debtor,
-                                creditor = balanceDetails.creditor,
-                                netDebtorAbs = balanceDetails.netDebtorAbs,
-                                currencySymbol = balanceDetails.currency.currencySymbol,
-                                isPositiveIncome = balanceDetails.isPositiveIncome,
-                                isPositiveDebtor = balanceDetails.isPositiveDebtor
+                else {
+                    item(contentType = "FILTER", key = "FILTER") {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            AmSearchTextField(
+                                onSearchKeyChange = accountsState::updateSearchKey
                             )
+                            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                                AmButton(
+                                    text = stringResource(R.string.set_date),
+                                    onClick = {
+                                        accountsState.showPickRangeDateBottomSheet(
+                                            setDate = accountsState::setDate,
+                                            initTime = currentTime(),
+                                            dismiss = accountsState::dismissBottomSheet
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
-                )
+                    items(
+                        count = accountsLazyPaging.itemCount,
+                        contentType = { LAZY_ITEM_ACCOUNT },
+                        key = accountsLazyPaging.itemKey { it.id },
+                        itemContent = { index ->
+                            accountsLazyPaging[index]?.let { account ->
+                                val balanceDetails = account.balanceDetails
+                                AccountCard(
+                                    modifier = Modifier.animateItemPlacement(),
+                                    title = account.name,
+                                    imageUrl = account.imageUrl,
+                                    loading = account.pending,
+                                    withDetails = false,
+                                    onClick = { accountsState.navigateToAccountDetails(account.id) },
+                                    onAddTransaction = {
+                                        accountsState.navigateToCreateTransaction(account.id)
+                                    },
+                                    onEditTransaction = null,
+                                    income = balanceDetails.income,
+                                    expenses = balanceDetails.expenses,
+                                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                                    debtor = balanceDetails.debtor,
+                                    creditor = balanceDetails.creditor,
+                                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                                    currencySymbol = balanceDetails.currency.currencySymbol,
+                                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                                    isPositiveDebtor = balanceDetails.isPositiveDebtor
+                                )
+                            }
+                        }
+                    )
+                }
             }
         )
 

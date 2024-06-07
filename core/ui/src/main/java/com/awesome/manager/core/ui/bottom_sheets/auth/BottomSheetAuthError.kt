@@ -3,6 +3,7 @@ package com.awesome.manager.core.ui.bottom_sheets.auth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.ui.R
 import com.awesome.manager.core.ui.bottom_sheets.AmBottomSheetMessage
@@ -10,7 +11,7 @@ import com.awesome.manager.core.ui.bottom_sheets.MessageBottomData
 
 @Composable
 fun BottomSheetAuthError(
-    bottomSheetAction: BottomSheetAction.AuthError
+    bottomSheetAction: BottomSheetContent.AuthError
 ) {
     AmBottomSheetMessage(
         title = stringResource(R.string.something_wrong),
@@ -35,6 +36,6 @@ fun BottomSheetAuthError(
 @Composable
 fun BottomSheetAuthErrorPreview() {
     BottomSheetAuthError(
-        BottomSheetAction.AuthError("", {}, {})
+        BottomSheetContent.AuthError("", {}, {})
     )
 }

@@ -20,7 +20,7 @@ import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -49,6 +49,12 @@ fun TransactionsRoute(
     LaunchedEffect(key1 = bottomSheetAction, block = {
         bottomSheetAction.sendMainAction(sendMainAction, transactionsState::doneBottomSheetAction)
     })
+
+    LaunchedEffect(key1 = Unit) {
+        transactionsState.setForTransactionsScreen(
+            onAddTransaction = transactionsState::navigateToCreateTransaction,
+        )
+    }
 
     TransactionScreen(transactionsState)
 }

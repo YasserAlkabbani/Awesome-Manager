@@ -9,4 +9,5 @@
     <string name="pay">Pay</string>
     <string name="update_transaction">Update Transaction</string>
     <string name="select_account">Select Account</string>
+    <string name="invalidate_input">Invalidate Input</string>
 </resources>

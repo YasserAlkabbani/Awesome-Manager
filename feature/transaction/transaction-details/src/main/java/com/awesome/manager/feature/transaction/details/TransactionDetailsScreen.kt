@@ -16,7 +16,7 @@ import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.component.AmTextWithLabel
+import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.ui.card.AccountCard
 
 @Composable

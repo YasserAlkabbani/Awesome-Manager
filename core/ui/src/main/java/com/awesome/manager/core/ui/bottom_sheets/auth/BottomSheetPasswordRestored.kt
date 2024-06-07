@@ -2,6 +2,7 @@ package com.awesome.manager.core.ui.bottom_sheets.auth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.ui.R
 import com.awesome.manager.core.ui.bottom_sheets.AmBottomSheetMessage
@@ -9,7 +10,7 @@ import com.awesome.manager.core.ui.bottom_sheets.MessageBottomData
 
 @Composable
 fun BottomSheetPasswordRestored(
-    passwordRested: BottomSheetAction.PasswordRested
+    passwordRested: BottomSheetContent.PasswordRested
 ) {
     AmBottomSheetMessage(
         title = stringResource(R.string.reset_password_link_has_sent_successfully),

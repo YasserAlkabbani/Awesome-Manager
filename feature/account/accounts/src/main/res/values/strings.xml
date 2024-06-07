@@ -4,4 +4,5 @@
     <string name="search_for_account">Search For Account</string>
     <string name="theres_no_accounts_yet">Theres no accounts yet</string>
     <string name="create_an_account">Create an account</string>
+    <string name="set_date">Set Date</string>
 </resources>

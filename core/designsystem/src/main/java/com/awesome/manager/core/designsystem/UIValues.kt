@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class AmSize(val value: Dp) {
-    EXTRA_SMALL(20.dp), SMALL(30.dp), MEDIUM(40.dp), LARGE(50.dp), EXTRA_LARGE(60.dp)
+    EXTRA_SMALL(20.dp), MID_SMALL(25.dp), SMALL(30.dp), MEDIUM(40.dp), LARGE(50.dp), EXTRA_LARGE(60.dp)
 }
 
 enum class AmLazyColumnPadding(val value: Dp) {

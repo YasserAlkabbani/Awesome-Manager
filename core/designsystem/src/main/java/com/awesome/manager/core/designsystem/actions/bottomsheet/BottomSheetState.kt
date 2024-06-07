@@ -5,6 +5,7 @@ import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 interface BottomSheetStateI {
@@ -29,53 +30,77 @@ interface BottomSheetStateI {
     fun showConnectionErrorBottomSheet()
     fun showCustomErrorMessage(errorMessage: String)
 
+    fun showPickRangeDateBottomSheet(
+        initTime: Long,
+        setDate: (Long, Long) -> Unit,
+        dismiss: () -> Unit
+    )
+
+    fun showPickDateBottomSheet(initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit)
+
 }
 
 class BottomSheetState : BottomSheetStateI {
 
     private val _bottomSheetAction: MutableStateFlow<BottomSheetAction?> = MutableStateFlow(null)
-    override val bottomSheetAction: StateFlow<BottomSheetAction?> = _bottomSheetAction
+    override val bottomSheetAction: StateFlow<BottomSheetAction?> = _bottomSheetAction.asStateFlow()
 
     override fun BottomSheetAction.applyAction() = _bottomSheetAction.update { this }
+    private fun BottomSheetContent.open() = BottomSheetAction.Open(this).applyAction()
+
+
     override fun doneBottomSheetAction() = _bottomSheetAction.update { null }
 
     override fun dismissBottomSheet() = _bottomSheetAction.update {
-        BottomSheetAction.Dismiss(it)
+        (it as? BottomSheetAction.Open).let { BottomSheetAction.Dismiss(it?.content) }
     }
 
     override fun showProfileBottomSheet(email: String, logout: () -> Unit) =
-        BottomSheetAction.Profile(email = email, logout = logout).applyAction()
+        BottomSheetContent.Profile(email = email, logout = logout).open()
 
     override fun showSearchForAccountBottomSheet(
         items: LazyListScope.() -> Unit,
         searchKey: (String) -> Unit
     ) =
-        BottomSheetAction.SearchForAccount(items = items, onReSearch = searchKey).applyAction()
+        BottomSheetContent.SearchForAccount(items = items, onReSearch = searchKey).open()
 
     override fun showAccountCreatedBottomSheet() =
-        BottomSheetAction.AccountCreated(dismiss = ::dismissBottomSheet).applyAction()
+        BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet).open()
 
     override fun showPasswordRestedBottomSheet() =
-        BottomSheetAction.PasswordRested(dismiss = ::dismissBottomSheet).applyAction()
+        BottomSheetContent.PasswordRested(dismiss = ::dismissBottomSheet).open()
 
     override fun showUnknownErrorBottomSheet() =
-        BottomSheetAction.UnknownError(dismiss = ::dismissBottomSheet).applyAction()
+        BottomSheetContent.UnknownError(dismiss = ::dismissBottomSheet).open()
 
     override fun showAuthErrorBottomSheet(
         errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
     ) =
-        BottomSheetAction.AuthError(
+        BottomSheetContent.AuthError(
             errorMessage = errorMessage,
             createNewAccount = onCreateAccount,
             editCredentials = editCredentials
-        ).applyAction()
+        ).open()
 
     override fun showConnectionErrorBottomSheet() =
-        BottomSheetAction.ConnectionError(dismiss = ::dismissBottomSheet).applyAction()
+        BottomSheetContent.ConnectionError(dismiss = ::dismissBottomSheet).open()
 
     override fun showCustomErrorMessage(errorMessage: String) =
-        BottomSheetAction.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
-            .applyAction()
+        BottomSheetContent.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
+            .open()
+
+    override fun showPickDateBottomSheet(
+        initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
+    ) =
+        BottomSheetContent.PickDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
+            .open()
+
+    override fun showPickRangeDateBottomSheet(
+        initTime: Long, setDate: (Long, Long) -> Unit, dismiss: () -> Unit
+    ) =
+        BottomSheetContent.PickRangeDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
+            .open()
+
 }
 
 fun BottomSheetAction?.sendMainAction(

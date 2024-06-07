@@ -8,13 +8,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
-import com.awesome.manager.core.designsystem.component.AmTextField
+import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
+import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 
 @Composable
-fun BottomSheetSearchForAccount(searchForAccount: BottomSheetAction.SearchForAccount) {
+fun BottomSheetSearchForAccount(searchForAccount: BottomSheetContent.SearchForAccount) {
     val focusRequester: FocusRequester = FocusRequester()
     AmTextField(
         modifier = Modifier

@@ -7,22 +7,22 @@ import com.awesome.manager.core.common.results.AmResult
 import com.awesome.manager.core.designsystem.actions.main.MainState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 class AuthScreenStateMain(
     val login: () -> Unit, val register: () -> Unit, val resetPassword: () -> Unit,
 ) : MainState() {
 
     private val _authData: MutableStateFlow<AmAuthData> = MutableStateFlow(AmAuthData())
-    val authData: StateFlow<AmAuthData> = _authData
+    val authData: StateFlow<AmAuthData> = _authData.asStateFlow()
     fun updateEmail(email: String) = _authData.update { it.copy(email = email) }
     fun updatePassword(password: String) = _authData.update { it.copy(password = password) }
 
     fun updateStateBasedOnResult(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
-        endLoading()
+//        endLoading()
         when (amResult) {
             is AmResult.Error -> when (val amError = amResult.amError) {
 
@@ -38,7 +38,6 @@ class AuthScreenStateMain(
                 }
 
                 is AmError.OtherError -> {
-                    Timber.d("TEST_ERROR_MESSAGE ${amError.message}")
                     showCustomErrorMessage(errorMessage = amError.errorMessage.orEmpty())
                 }
 
@@ -48,7 +47,7 @@ class AuthScreenStateMain(
                 AmError.UnknownError -> {}
             }
 
-            is AmResult.Loading -> startLoading()
+            is AmResult.Loading -> {}//startLoading()
             is AmResult.Success -> onSuccess()
         }
 

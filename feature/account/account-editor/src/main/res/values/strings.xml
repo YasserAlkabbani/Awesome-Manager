@@ -2,4 +2,5 @@
 <resources>
     <string name="create_account">Create Account</string>
     <string name="update_account">Update</string>
+    <string name="invalidate_input">Invalidate Input</string>
 </resources>

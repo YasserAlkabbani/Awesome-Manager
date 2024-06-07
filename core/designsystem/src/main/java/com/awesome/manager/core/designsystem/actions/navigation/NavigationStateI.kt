@@ -4,6 +4,7 @@ import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.main.NavigationAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 
@@ -15,7 +16,7 @@ interface NavigationStateI {
     fun navigateToAccountDetails(accountId: String)
     fun navigateToTransactionDetails(transactionId: String)
     fun navigateToCreateAccount()
-    fun navigateToCreateTransaction(accountId: String?=null)
+    fun navigateToCreateTransaction(accountId: String? = null)
     fun navigateToEditAccount(accountId: String)
     fun navigateToEditTransaction(accountId: String?, transactionId: String)
 }
@@ -23,7 +24,7 @@ interface NavigationStateI {
 class NavigationState : NavigationStateI {
 
     private val _navigationAction: MutableStateFlow<NavigationAction?> = MutableStateFlow(null)
-    override val navigationAction: StateFlow<NavigationAction?> = _navigationAction
+    override val navigationAction: StateFlow<NavigationAction?> = _navigationAction.asStateFlow()
 
     override fun NavigationAction.applyAction() = _navigationAction.update { this }
     override fun doneNavigationAction() = _navigationAction.update { null }

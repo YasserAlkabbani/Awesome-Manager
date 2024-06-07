@@ -1,6 +1,7 @@
 package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
+import com.awesome.manager.core.common.enums.EditorInputType
 import com.awesome.manager.core.common.extentions.asDate
 import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.common.states.DataState
@@ -14,11 +15,13 @@ import com.awesome.manager.core.model.UpsertTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class TransactionEditorStateMain(
-    val accountsSearchResults: StateFlow<String>.() -> Flow<PagingData<AmAccount>>,
+    val accountsSearchResults: String.() -> Flow<PagingData<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : MainState() {
 
@@ -29,6 +32,13 @@ class TransactionEditorStateMain(
     val transactionEditorInput: StateFlow<DataState<TransactionEditorInput>> =
         _transactionEditorInput
 
+    private val transactionFilterData: MutableStateFlow<TransactionFilterData> =
+        MutableStateFlow(TransactionFilterData())
+
+    fun updateSearchKey(searchKey: String) {
+        transactionFilterData.update { it.copy(searchKey = searchKey) }
+    }
+
     fun asCreateTransaction(creatorUserId: String) {
         _transactionEditorInput.setData {
             TransactionEditorInput(
@@ -36,18 +46,18 @@ class TransactionEditorStateMain(
                 title = "", subtitle = "",
                 selectedAccount = null, selectedTransactionType = null,
                 amount = 0.0, transactionAtTimestamp = currentTime(),
-                transactionEditorInputType = TransactionEditorInputType.Create
+                editorInputType = EditorInputType.Create
             )
         }
     }
 
-    private val _searchKey: MutableStateFlow<String> = MutableStateFlow("")
-    val accountsList: Flow<PagingData<AmAccount>> = _searchKey.accountsSearchResults()
-    fun updateSearchKey(newSearchKey: String) = _searchKey.update { newSearchKey }
-
+    val accountsList: Flow<PagingData<AmAccount>> =
+        transactionFilterData.flatMapLatest { it.searchKey.accountsSearchResults() }
 
     private val _searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val searchForAnAccountBottomSheet: MutableStateFlow<Boolean> = _searchForAnAccountBottomSheet
+    val searchForAnAccountBottomSheet: StateFlow<Boolean> =
+        _searchForAnAccountBottomSheet.asStateFlow()
+
     fun requestSearchForAnAccountBottomSheet() =
         _searchForAnAccountBottomSheet.update { true }
 
@@ -65,7 +75,7 @@ class TransactionEditorStateMain(
                 selectedTransactionType = transaction.transactionType,
                 amount = transaction.amount,
                 transactionAtTimestamp = transaction.transactionAt,
-                transactionEditorInputType = TransactionEditorInputType.Edit
+                editorInputType = EditorInputType.Edit
             )
         }
     }
@@ -97,7 +107,7 @@ class TransactionEditorStateMain(
         _transactionEditorInput.updateData { it.selectTransactionType(transactionType) }
 
     fun validateTransaction(): UpsertTransaction? =
-        (transactionEditorInput.value as? DataState.Success)?.data?.validateTransactionData()
+        (transactionEditorInput.value as? DataState.Success)?.data?.validateTransactionData
 
 }
 
@@ -110,7 +120,7 @@ data class TransactionEditorInput(
     val selectedAccount: AmAccount?,
     val selectedTransactionType: AmTransactionType?,
     val transactionAtTimestamp: Long = currentTime(),
-    val transactionEditorInputType: TransactionEditorInputType
+    val editorInputType: EditorInputType
 ) {
 
     val transactionAtDate: String = transactionAtTimestamp.asDate()
@@ -135,8 +145,8 @@ data class TransactionEditorInput(
     fun selectTransactionType(newTransactionType: AmTransactionType): TransactionEditorInput =
         copy(selectedTransactionType = newTransactionType)
 
-    fun validateTransactionData(): UpsertTransaction? =
-        if (title.isNotEmpty() && selectedAccount != null && selectedTransactionType != null) {
+    val validateTransactionData: UpsertTransaction? =
+        if (selectedAccount != null && selectedTransactionType != null) {
             UpsertTransaction(
                 id = id, creatorUserId = creatorUserId, title = title, subtitle = subtitle,
                 accountId = selectedAccount.id, amount = amount,
@@ -145,6 +155,6 @@ data class TransactionEditorInput(
         } else null
 }
 
-enum class TransactionEditorInputType {
-    Create, Edit
-}
+data class TransactionFilterData(
+    val searchKey: String = ""
+)

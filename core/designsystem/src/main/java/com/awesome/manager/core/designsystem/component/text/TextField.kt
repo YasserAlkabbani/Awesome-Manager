@@ -1,4 +1,4 @@
-package com.awesome.manager.core.designsystem.component
+package com.awesome.manager.core.designsystem.component.text
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -31,9 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
+import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -42,8 +43,8 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmTextField(
     modifier: Modifier = Modifier,
     initTextValue: String = "", onTextChange: (String) -> Unit,
-    icon: AmIconsType, label: String, hint: String,
-    singleLine: Boolean = true, error: String?, password: Boolean = false,
+    icon: AmIconsType? = null, label: String? = null, hint: String,
+    singleLine: Boolean = true, error: String? = null, password: Boolean = false,
     enabled: Boolean = true, reformatText: (String) -> String = { it },
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -69,20 +70,22 @@ fun AmTextField(
         shape = MaterialTheme.shapes.medium
     ) {
         Column(Modifier.padding(AmPadding.SMALL.value)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AmPadding.MEDIUM.value)
-                    .padding(bottom = AmPadding.SMALL.value),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
-                AmSpacerMediumWidth()
-                AmText(
-                    modifier = Modifier.wrapContentHeight(),
-                    text = label,
-                    style = MaterialTheme.typography.titleMedium
-                )
+            if (label != null && icon != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AmPadding.MEDIUM.value)
+                        .padding(bottom = AmPadding.SMALL.value),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
+                    AmSpacerMediumWidth()
+                    AmText(
+                        modifier = Modifier.wrapContentHeight(),
+                        text = label,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
             TextField(
                 modifier = Modifier

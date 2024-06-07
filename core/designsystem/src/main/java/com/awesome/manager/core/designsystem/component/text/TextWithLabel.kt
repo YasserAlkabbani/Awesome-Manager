@@ -1,4 +1,4 @@
-package com.awesome.manager.core.designsystem.component
+package com.awesome.manager.core.designsystem.component.text
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +10,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.component.AmCard
+import com.awesome.manager.core.designsystem.component.AmSurface
 
 @Composable
 fun AmTextWithLabel(

@@ -61,7 +61,7 @@ fun AccountDetailsRoute(
                 editButtonText = "$editAccount ${accountState.data.name.limitName()}",
                 onEditButton = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
                 allowToEdit = allowToUpdate.data,
-                onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) }
+                onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) },
             )
         }
     }

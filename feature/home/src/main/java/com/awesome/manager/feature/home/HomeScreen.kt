@@ -25,7 +25,7 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
@@ -55,6 +55,13 @@ fun HomeRoute(
     LaunchedEffect(key1 = bottomSheetAction, block = {
         bottomSheetAction.sendMainAction(sendMainAction, homeState::doneBottomSheetAction)
     })
+
+    LaunchedEffect(key1 = Unit) {
+        homeState.setForHomeScreen(
+            onAddAccount = homeState::navigateToCreateAccount,
+            onAddTransaction = homeState::navigateToCreateTransaction,
+        )
+    }
 
     HomeScreen(homeState)
 }

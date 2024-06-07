@@ -2,10 +2,8 @@ package com.awesome.manager.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
@@ -23,22 +21,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.main.AppBarAction
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.main.NavigationAction
-import com.awesome.manager.core.designsystem.actions.main.PickerAction
 import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
-import com.awesome.manager.core.designsystem.component.AmCustomBottomBarWithFab
+import com.awesome.manager.core.designsystem.component.AmDynamicBottomBar
 import com.awesome.manager.core.designsystem.actions.navigation.MainDistillation
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
+import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
@@ -47,7 +46,6 @@ import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetConnectionError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestored
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
-import com.awesome.manager.core.ui.dialog.AmDatePickerDialog
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.asNavigationDestination
 import kotlinx.coroutines.launch
@@ -65,7 +63,8 @@ fun AmApp() {
     val navHostController = rememberNavController()
 
     val navigationAction = mainActivityState.navigationAction.collectAsState().value
-    val currentBackStack: NavBackStackEntry? = navHostController.currentBackStackEntryAsState().value
+    val currentBackStack: NavBackStackEntry? =
+        navHostController.currentBackStackEntryAsState().value
     val currentNavigationDestination = remember(currentBackStack) {
         currentBackStack?.asNavigationDestination()
     }
@@ -95,6 +94,7 @@ fun AmApp() {
 
                     else -> Unit
                 }
+
                 false -> {
                     when (currentNavigationDestination) {
                         NavigationDestination.Auth -> {}
@@ -131,22 +131,11 @@ fun AmApp() {
             when (currentNavigationDestination) {
                 NavigationDestination.Auth -> Unit
                 NavigationDestination.Intro -> Unit
-                NavigationDestination.Home -> {
-                    mainActivityState.setForHomeScreen(
-                        onAddAccount = mainActivityState::navigateToCreateAccount,
-                        onAddTransaction = mainActivityState::navigateToCreateTransaction
-                    )
-                }
-                NavigationDestination.Accounts -> {
-                    mainActivityState.setForAccountsScreen(
-                        onAddAccount = mainActivityState::navigateToCreateAccount,
-                    )
-                }
-                NavigationDestination.Transactions -> {
-                    mainActivityState.setForTransactionsScreen(
-                        onAddTransaction = { mainActivityState.navigateToCreateTransaction(null) }
-                    )
-                }
+
+                NavigationDestination.Home -> {}
+                NavigationDestination.Accounts -> {}
+                NavigationDestination.Transactions -> {}
+
                 is NavigationDestination.AccountDetails -> Unit
                 is NavigationDestination.AccountEditor -> Unit
                 is NavigationDestination.TransactionDetails -> Unit
@@ -186,49 +175,40 @@ fun AmApp() {
 
     val bottomSheetAction = mainActivityState.bottomSheetAction.collectAsState().value
     val sheetState: SheetState = rememberModalBottomSheetState(true)
-        LaunchedEffect(key1 = bottomSheetAction, block = {
-            bottomSheetAction?.let {
-                when (bottomSheetAction) {
-                    is BottomSheetAction.Dismiss<*> -> launch {
-                        sheetState.hide()
-                        mainActivityState.doneBottomSheetAction()
-                    }
-                    is BottomSheetAction.AccountCreated, is BottomSheetAction.AuthError,
-                    is BottomSheetAction.ConnectionError, is BottomSheetAction.CustomError,
-                    is BottomSheetAction.PasswordRested, is BottomSheetAction.Profile,
-                    is BottomSheetAction.SearchForAccount, is BottomSheetAction.UnknownError -> {
-                        sheetState.show()
-                    }
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction?.let {
+            when (bottomSheetAction) {
+                is BottomSheetAction.Dismiss -> launch {
+                    sheetState.hide()
+                    mainActivityState.doneBottomSheetAction()
+                }
+
+                is BottomSheetAction.Open -> {
+                    sheetState.show()
                 }
             }
-        })
-        bottomSheetAction?.let {
-            ModalBottomSheet(
-                modifier = Modifier
-                    .padding(horizontal = AmPadding.SMALL.value)
-                    .requiredHeightIn(max = 500.dp),
-                onDismissRequest = { mainActivityState.dismissBottomSheet() },
-                sheetState = sheetState,
-                properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetAction.isDismissible),
-                content = {
-                    Column(
-                        modifier = Modifier.padding(6.dp),
-                        content = { bottomSheetAction.Content() }
-                    )
-                }
-            )
         }
+    })
+    bottomSheetAction?.let {
+        ModalBottomSheet(
+            modifier = Modifier
+                .padding(horizontal = AmPadding.SMALL.value)
+                .requiredHeightIn(max = 600.dp),
+            onDismissRequest = { mainActivityState.dismissBottomSheet() },
+            sheetState = sheetState,
+            properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetAction.isDismissible),
+            content = {
+                Column(
+                    modifier = Modifier.padding(6.dp),
+                    content = { bottomSheetAction.Content() }
+                )
+            }
+        )
+    }
 
 
     val pickActionState = mainActivityState.pickerAction.collectAsState().value
     pickActionState?.let {
-        when (pickActionState) {
-            is PickerAction.PickDate -> {
-                AmDatePickerDialog(pickDate = pickActionState)
-            }
-
-            PickerAction.Hide -> {}
-        }
     }
 
 
@@ -253,7 +233,7 @@ fun AppScreen(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
                 appBarAction?.let {
-                    AmCustomBottomBarWithFab(
+                    AmDynamicBottomBar(
                         modifier = Modifier,
                         bottomBarItems = {
                             MainDistillation.entries
@@ -280,9 +260,7 @@ fun AppScreen(
             AmNavHost(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .statusBarsPadding()
-                    .imePadding(),
+                    .padding(padding),
                 navHostController = navHostController,
                 sendMainAction = updateMainAction
             )
@@ -292,23 +270,17 @@ fun AppScreen(
 
 @Composable
 private fun BottomSheetAction.Content(): Unit? =
-    when (this) {
-        is BottomSheetAction.Dismiss<*> -> bottomSheet?.Content()
-
-        is BottomSheetAction.Profile -> BottomSheetProfile(this)
-
-        is BottomSheetAction.SearchForAccount -> BottomSheetSearchForAccount(this)
-
-        is BottomSheetAction.AccountCreated -> BottomSheetAccountCreated(this)
-
-        is BottomSheetAction.PasswordRested -> BottomSheetPasswordRestored(this)
-
-        is BottomSheetAction.AuthError -> BottomSheetAuthError(this)
-
-        is BottomSheetAction.UnknownError -> BottomSheetUnknownError(this)
-
-        is BottomSheetAction.ConnectionError -> BottomSheetConnectionError(this)
-
-        is BottomSheetAction.CustomError -> BottomSheetCustomError(this)
-
+    content?.let { bottomSheetContent ->
+        when (bottomSheetContent) {
+            is BottomSheetContent.AccountCreated -> BottomSheetAccountCreated(bottomSheetContent)
+            is BottomSheetContent.AuthError -> BottomSheetAuthError(bottomSheetContent)
+            is BottomSheetContent.ConnectionError -> BottomSheetConnectionError(bottomSheetContent)
+            is BottomSheetContent.CustomError -> BottomSheetCustomError(bottomSheetContent)
+            is BottomSheetContent.PasswordRested -> BottomSheetPasswordRestored(bottomSheetContent)
+            is BottomSheetContent.Profile -> BottomSheetProfile(bottomSheetContent)
+            is BottomSheetContent.UnknownError -> BottomSheetUnknownError(bottomSheetContent)
+            is BottomSheetContent.SearchForAccount -> BottomSheetSearchForAccount(bottomSheetContent)
+            is BottomSheetContent.PickDate -> BottomSheetDatePicker(bottomSheetContent)
+            is BottomSheetContent.PickRangeDate -> BottomSheetDateRangePicker(bottomSheetContent)
+        }
     }

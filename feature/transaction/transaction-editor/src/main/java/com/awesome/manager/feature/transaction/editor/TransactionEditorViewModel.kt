@@ -27,7 +27,7 @@ class TransactionEditorViewModel @Inject constructor(
     val transactionEditorState: TransactionEditorStateMain =
         TransactionEditorStateMain(
             createTransaction = ::saveTransaction,
-            accountsSearchResults = { flatMapLatest { accountRepository.returnAccounts(it) } }
+            accountsSearchResults = { accountRepository.returnAccounts(this) }
         )
 
     init {

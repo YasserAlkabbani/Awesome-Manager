@@ -11,10 +11,8 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmIconButton(
-    modifier: Modifier,
-    amIconsType: AmIconsType,
-    positive: Boolean?,
-    onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    amIconsType: AmIconsType, positive: Boolean?, onClick: () -> Unit
 ) {
     AmSurface(
         modifier = modifier, positive = positive,

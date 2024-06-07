@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.awesome.manager.core.common.enums.EditorInputType
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
@@ -25,7 +26,7 @@ import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
-import com.awesome.manager.core.designsystem.component.AmTextField
+import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
@@ -53,24 +54,31 @@ fun AccountEditorRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::doneBottomSheetAction)
     })
 
+
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
-
-
     val createAccountText = stringResource(id = R.string.create_account)
     val updateAccountText = stringResource(id = R.string.update_account)
+    val invalidInputMessage = stringResource(R.string.invalidate_input)
     LaunchedEffect(key1 = accountEditorData) {
         if (accountEditorData is DataState.Success) {
-            when (val accountEditor = accountEditorData.data) {
-                is AccountEditorData.AccountEditorCreate -> accountEditorState.setForEditAccountScreen(
+            val accountEditor = accountEditorData.data
+            val isValidInput = accountEditor.validateAccountData != null
+            val errorMessage = if (isValidInput) null else invalidInputMessage
+            val saveButton = if (isValidInput) accountEditorState.onSave else null
+
+            when (accountEditor.editorInputType) {
+                EditorInputType.Create -> accountEditorState.setForEditAccountScreen(
                     onClickCancel = accountEditorState::navigatePopBack,
-                    onSaveButton = accountEditorState.onSave,
+                    onSaveButton = saveButton,
                     saveButtonText = createAccountText,
+                    errorMessage = errorMessage
                 )
 
-                is AccountEditorData.AccountEditorUpdate -> accountEditorState.setForEditAccountScreen(
+                EditorInputType.Edit -> accountEditorState.setForEditAccountScreen(
                     onClickCancel = accountEditorState::navigatePopBack,
-                    onSaveButton = accountEditorState.onSave,
+                    onSaveButton = saveButton,
                     saveButtonText = "$updateAccountText ${accountEditor.name.limitName()}",
+                    errorMessage = errorMessage
                 )
             }
         }

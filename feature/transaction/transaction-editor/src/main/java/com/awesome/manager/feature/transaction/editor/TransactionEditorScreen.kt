@@ -20,20 +20,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.enums.EditorInputType
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
-import com.awesome.manager.core.designsystem.component.AmTextField
+import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
-import com.awesome.manager.feature.transaction.editor.TransactionEditorInputType.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -120,27 +120,35 @@ fun TransactionEditorRoute(
     val selectAccountText = stringResource(R.string.select_account)
     val createTransactionText = stringResource(R.string.create_transaction)
     val updateTransactionText = stringResource(R.string.update_transaction)
+    val invalidateInputMessage = stringResource(R.string.invalidate_input)
     LaunchedEffect(key1 = transactionData) {
         if (transactionData is DataState.Success) {
-            when (transactionData.data.selectedAccount) {
+            val transactionEditor = transactionData.data
+            val isValidateInput = transactionEditor.validateTransactionData != null
+            val errorMessage = if (isValidateInput) null else invalidateInputMessage
+            val saveButton = if (isValidateInput) transactionEditorState.createTransaction else null
+            when (transactionEditor.selectedAccount) {
                 null -> transactionEditorState.setForEditTransactionScreen(
                     saveButtonText = selectAccountText,
                     onSaveButton = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    onClickCancel = transactionEditorState::navigatePopBack
+                    onClickCancel = transactionEditorState::navigatePopBack,
+                    errorMessage = null
                 )
 
                 else -> {
-                    when (transactionData.data.transactionEditorInputType) {
-                        Create -> transactionEditorState.setForEditTransactionScreen(
+                    when (transactionEditor.editorInputType) {
+                        EditorInputType.Create -> transactionEditorState.setForEditTransactionScreen(
                             saveButtonText = createTransactionText,
-                            onSaveButton = transactionEditorState.createTransaction,
-                            onClickCancel = transactionEditorState::navigatePopBack
+                            onSaveButton = saveButton,
+                            onClickCancel = transactionEditorState::navigatePopBack,
+                            errorMessage = errorMessage,
                         )
 
-                        Edit -> transactionEditorState.setForEditTransactionScreen(
+                        EditorInputType.Edit -> transactionEditorState.setForEditTransactionScreen(
                             saveButtonText = updateTransactionText,
-                            onSaveButton = transactionEditorState.createTransaction,
-                            onClickCancel = transactionEditorState::navigatePopBack
+                            onSaveButton = saveButton,
+                            onClickCancel = transactionEditorState::navigatePopBack,
+                            errorMessage = errorMessage
                         )
                     }
 
@@ -242,10 +250,10 @@ fun TransactionEditorScreen(
                 positive = null,
                 loading = false,
                 onClick = {
-                    transactionEditorState.pickDate(
+                    transactionEditorState.showPickDateBottomSheet(
                         initTime = transaction.transactionAtTimestamp,
                         setDate = transactionEditorState::updateTransactionAt,
-                        dismiss = transactionEditorState::hidePick
+                        dismiss = transactionEditorState::dismissBottomSheet
                     )
                 }
             )
