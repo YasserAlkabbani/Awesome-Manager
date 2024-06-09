@@ -11,6 +11,19 @@ fun Long.asDate() =
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .run { "$date" }
 
+fun Long.asShortDate() =
+    Instant.fromEpochMilliseconds(this)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .run {
+            val (year, date, time) = date.toString().split("-")
+            "$date.$time.${year.substringAfter("20")}"
+        }
+
+fun Pair<Long, Long>.asDateRange(): String {
+    val (from, to) = this
+    return "${from.asShortDate()} - ${to.asShortDate()}"
+}
+
 fun Long.asDateTime() =
     Instant.fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.UTC)

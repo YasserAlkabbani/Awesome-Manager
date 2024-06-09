@@ -1,6 +1,7 @@
 package com.awesome.manager.core.designsystem.actions.bottomsheet
 
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +16,9 @@ interface BottomSheetStateI {
     fun dismissBottomSheet()
 
     fun showProfileBottomSheet(email: String, logout: () -> Unit)
-    fun showSearchForAccountBottomSheet(
-        items: LazyListScope.() -> Unit,
-        searchKey: (String) -> Unit
+    fun showSearchWithContentBottomSheet(
+        searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
+        onSearchDone: () -> Unit, content: @Composable () -> Unit,
     )
 
     fun showAccountCreatedBottomSheet()
@@ -58,11 +59,13 @@ class BottomSheetState : BottomSheetStateI {
     override fun showProfileBottomSheet(email: String, logout: () -> Unit) =
         BottomSheetContent.Profile(email = email, logout = logout).open()
 
-    override fun showSearchForAccountBottomSheet(
-        items: LazyListScope.() -> Unit,
-        searchKey: (String) -> Unit
-    ) =
-        BottomSheetContent.SearchForAccount(items = items, onReSearch = searchKey).open()
+    override fun showSearchWithContentBottomSheet(
+        searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
+        onSearchDone: () -> Unit, content: @Composable () -> Unit,
+    ) = BottomSheetContent.SearchWithContent(
+        searchLabel = searchLabel, initSearch = initSearch,
+        onReSearch = onReSearch, onSearchDone, content = content
+    ).open()
 
     override fun showAccountCreatedBottomSheet() =
         BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet).open()

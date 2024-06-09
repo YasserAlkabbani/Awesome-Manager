@@ -1,5 +1,6 @@
 package com.awesome.manager.core.data.repository.transaction
 
+import android.util.Log
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.results.amInsert
 import com.awesome.manager.core.common.results.amRequest
@@ -11,6 +12,7 @@ import com.awesome.manager.core.data.model.asNetwork
 import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
 import kotlinx.coroutines.flow.Flow
@@ -27,21 +29,32 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
     override suspend fun upsertTransaction(upsertTransaction: UpsertTransaction) {
         val transactionEntity = upsertTransaction.asEntity()
-        amInsert { transactionDao.upsertTransaction(transactionEntity) }
+        amInsert { transactionDao.upsertTransaction(transactionEntity = transactionEntity) }
     }
 
-    override fun returnTransactions(searchKey: String): Flow<PagingData<AmTransaction>> =
+    override fun returnTransactions(
+        searchKey: String?, transactionType: AmTransactionType?,
+        fromDate: Long?, toDate: Long?
+    ): Flow<PagingData<AmTransaction>> =
         asPagingDataFlow(
-            getPagingSource = { transactionDao.returnTransactions(searchKey) },
+            getPagingSource = {
+                transactionDao.returnTransactions(
+                    searchKey = searchKey, transactionType = transactionType?.asEntity(),
+                    fromDate = fromDate, toDate = toDate
+                )
+            },
             asModel = { asModel() }
         )
 
 
     override fun returnTransactionsByAccountId(
-        accountId: String,
-        searchKey: String
+        accountId: String, searchKey: String
     ): Flow<PagingData<AmTransaction>> = asPagingDataFlow(
-        getPagingSource = { transactionDao.returnTransactionsByAccountId(accountId, searchKey) },
+        getPagingSource = {
+            transactionDao.returnTransactionsByAccountId(
+                accountId = accountId, searchKey = searchKey
+            )
+        },
         asModel = { asModel() }
     )
 

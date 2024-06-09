@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.component.AmChip
+import com.awesome.manager.core.designsystem.component.chips.AmChip
 import com.awesome.manager.core.designsystem.component.text.AmText
 
 data class ChipData<T, R>(val id: R, val title: String, val data: T)

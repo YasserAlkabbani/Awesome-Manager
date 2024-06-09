@@ -28,11 +28,11 @@ interface AccountDao {
                 "IFNULL(SUM( IIF(transactions.transaction_type=:creditor, transactions.amount, 0)),0) AS creditor " +
                 "FROM accounts " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
-                "WHERE accounts.name LIKE '%' || :searchKey || '%' " +
+                "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
                 "GROUP BY accounts.account_id "
     )
     fun returnAccounts(
-        searchKey: String,
+        searchKey: String?,
         income: TransactionTypeEntity = TransactionTypeEntity.INCOME,
         expenses: TransactionTypeEntity = TransactionTypeEntity.EXPENSES,
         debtor: TransactionTypeEntity = TransactionTypeEntity.DEBTOR,

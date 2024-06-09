@@ -9,7 +9,7 @@ interface AccountRepository {
 
     suspend fun upsertAccount(upsertAccount: UpsertAccount)
 
-    fun returnAccounts(searchKey: String): Flow<PagingData<AmAccount>>
+    fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>>
 
     fun returnAccountById(accountId: String): Flow<AmAccount>
 

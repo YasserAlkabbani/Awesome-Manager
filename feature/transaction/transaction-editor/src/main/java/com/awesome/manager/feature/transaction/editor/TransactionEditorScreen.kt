@@ -33,6 +33,7 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
+import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -66,52 +67,53 @@ fun TransactionEditorRoute(
         )
     })
 
-    val pickAction = transactionEditorState.pickerAction.collectAsState().value
-    LaunchedEffect(key1 = pickAction, block = {
-        pickAction.sendMainAction(sendMainAction, transactionEditorState::donePickerAction)
-    })
-
     val accountsLazyPaging = transactionEditorState.accountsList.collectAsLazyPagingItems()
     val searchForAnAccountBottomSheet =
         transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
+    val searchLabel = stringResource(id = R.string.search_in_accounts)
     LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
         if (searchForAnAccountBottomSheet) {
             transactionEditorState.doneSearchForAnAccountBottomSheet()
-            transactionEditorState.showSearchForAccountBottomSheet(
-                items = {
-                    items(
-                        count = accountsLazyPaging.itemCount,
-                        contentType = { LAZY_ITEM_ACCOUNT },
-                        key = accountsLazyPaging.itemKey { transaction -> transaction.id },
-                        itemContent = { index ->
-                            accountsLazyPaging[index]?.let { account ->
-                                val balanceDetails = account.balanceDetails
-                                AccountCard(
-                                    modifier = Modifier.animateItemPlacement(),
-                                    title = account.name,
-                                    imageUrl = account.imageUrl,
-                                    loading = account.pending,
-                                    withDetails = false,
-                                    onClick = {
-                                        transactionEditorState.selectAccount(account)
-                                    },
-                                    onAddTransaction = null,
-                                    onEditTransaction = null,
-                                    income = balanceDetails.income,
-                                    expenses = balanceDetails.expenses,
-                                    netIncomeAbs = balanceDetails.netIncomeAbs,
-                                    debtor = balanceDetails.debtor,
-                                    creditor = balanceDetails.creditor,
-                                    netDebtorAbs = balanceDetails.netDebtorAbs,
-                                    currencySymbol = balanceDetails.currency.currencySymbol,
-                                    isPositiveIncome = balanceDetails.isPositiveIncome,
-                                    isPositiveDebtor = balanceDetails.isPositiveDebtor
-                                )
+            transactionEditorState.showSearchWithContentBottomSheet(
+                searchLabel = searchLabel,
+                content = {
+                    AmLazyColumn {
+                        items(
+                            count = accountsLazyPaging.itemCount,
+                            contentType = { LAZY_ITEM_ACCOUNT },
+                            key = accountsLazyPaging.itemKey { transaction -> transaction.id },
+                            itemContent = { index ->
+                                accountsLazyPaging[index]?.let { account ->
+                                    val balanceDetails = account.balanceDetails
+                                    AccountCard(
+                                        modifier = Modifier.animateItemPlacement(),
+                                        title = account.name,
+                                        imageUrl = account.imageUrl,
+                                        loading = account.pending,
+                                        withDetails = false,
+                                        onClick = {
+                                            transactionEditorState.selectAccount(account)
+                                        },
+                                        onAddTransaction = null,
+                                        onEditTransaction = null,
+                                        income = balanceDetails.income,
+                                        expenses = balanceDetails.expenses,
+                                        netIncomeAbs = balanceDetails.netIncomeAbs,
+                                        debtor = balanceDetails.debtor,
+                                        creditor = balanceDetails.creditor,
+                                        netDebtorAbs = balanceDetails.netDebtorAbs,
+                                        currencySymbol = balanceDetails.currency.currencySymbol,
+                                        isPositiveIncome = balanceDetails.isPositiveIncome,
+                                        isPositiveDebtor = balanceDetails.isPositiveDebtor
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 },
-                searchKey = transactionEditorState::updateSearchKey
+                onReSearch = transactionEditorState::updateSearchKey,
+                onSearchDone = transactionEditorState::dismissBottomSheet,
+                initSearch = ""
             )
         }
     })
@@ -169,11 +171,10 @@ fun TransactionEditorScreen(
 
     if (transactionInput is DataState.Success) {
 
-        val transactionTypes = transactionEditorState.transactionTypes
         val transaction = transactionInput.data
 
-        val transactionTypeChip = remember(transactionTypes) {
-            transactionTypes.map {
+        val transactionTypeChipData = remember {
+            transactionEditorState.transactionTypes.map {
                 getChipData(id = it.name, title = it.name, data = it)
             }
         }
@@ -260,7 +261,7 @@ fun TransactionEditorScreen(
 
             AmChipsContainer(
                 title = stringResource(R.string.transaction_type),
-                chipDataList = transactionTypeChip,
+                chipDataList = transactionTypeChipData,
                 onSelect = { transactionEditorState.selectTransactionType(it.data) },
                 selectedItem = transaction.selectedTransactionType?.name,
                 content = null

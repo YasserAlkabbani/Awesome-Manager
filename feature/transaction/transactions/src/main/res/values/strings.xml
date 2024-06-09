@@ -4,4 +4,7 @@
     <string name="search_for_transaction">"Search For Transaction .. "</string>
     <string name="theres_no_transactions_yet">Theres no transactions yet</string>
     <string name="create_a_transaction">Create a transaction</string>
+    <string name="search">Search</string>
+    <string name="transaction_type">Transaction Type</string>
+    <string name="date">Date</string>
 </resources>

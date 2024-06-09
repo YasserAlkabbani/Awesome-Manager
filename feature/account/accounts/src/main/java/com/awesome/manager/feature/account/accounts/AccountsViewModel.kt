@@ -11,7 +11,7 @@ class AccountsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val accountsState: AccountsMainState = AccountsMainState(
-        returnAccount = {
+        searchForAccounts = {
             accountRepository.returnAccounts(this.searchKey)
         }
     )

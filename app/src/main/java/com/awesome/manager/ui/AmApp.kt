@@ -39,7 +39,7 @@ import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestin
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
-import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchForAccount
+import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchWithContent
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAuthError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetConnectionError
@@ -279,7 +279,7 @@ private fun BottomSheetAction.Content(): Unit? =
             is BottomSheetContent.PasswordRested -> BottomSheetPasswordRestored(bottomSheetContent)
             is BottomSheetContent.Profile -> BottomSheetProfile(bottomSheetContent)
             is BottomSheetContent.UnknownError -> BottomSheetUnknownError(bottomSheetContent)
-            is BottomSheetContent.SearchForAccount -> BottomSheetSearchForAccount(bottomSheetContent)
+            is BottomSheetContent.SearchWithContent -> BottomSheetSearchWithContent(bottomSheetContent)
             is BottomSheetContent.PickDate -> BottomSheetDatePicker(bottomSheetContent)
             is BottomSheetContent.PickRangeDate -> BottomSheetDateRangePicker(bottomSheetContent)
         }

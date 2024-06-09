@@ -1,6 +1,6 @@
 package com.awesome.manager.core.designsystem.actions.bottomsheet
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 
 sealed class BottomSheetContent {
 
@@ -9,9 +9,11 @@ sealed class BottomSheetContent {
         val logout: () -> Unit
     ) : BottomSheetContent()
 
-    data class SearchForAccount(
-        val items: LazyListScope.() -> Unit,
-        val onReSearch: (String) -> Unit
+    data class SearchWithContent(
+        val searchLabel: String, val initSearch: String,
+        val onReSearch: (String) -> Unit,
+        val onSearchDone: () -> Unit,
+        val content: @Composable () -> Unit,
     ) : BottomSheetContent()
 
     data class AccountCreated(val dismiss: () -> Unit) :

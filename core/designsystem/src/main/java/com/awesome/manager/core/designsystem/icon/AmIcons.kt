@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Input
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
@@ -46,6 +47,10 @@ import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.AccountTree
+import androidx.compose.material.icons.outlined.Domain
+import androidx.compose.material.icons.outlined.House
+import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.awesome.manager.core.designsystem.R
@@ -58,15 +63,15 @@ object AmIcons {
     val PlaceHolderIcon = AmIconsType.DrawableResourceAmIconsType(R.drawable.awesome_manager_icon)
 
     val HomeSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.House)
-    val HomeUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Home)
+    val HomeUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Outlined.House)
     val HomeAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.Add)
 
-    val AccountsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Domain)
-    val AccountsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.BusinessCenter)
+    val AccountsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.AccountTree)
+    val AccountsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Outlined.AccountTree)
     val AccountAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.DomainAdd)
 
     val TransactionsSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Payments)
-    val TransactionsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.CreditCard)
+    val TransactionsUnSelected = AmIconsType.ImageVictorAmIconsType(Icons.Outlined.Payments)
     val TransactionAdd = AmIconsType.ImageVictorAmIconsType(Icons.Default.AddCard)
 
     val MenuSelected = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.MenuOpen)

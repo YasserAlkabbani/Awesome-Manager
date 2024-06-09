@@ -3,15 +3,15 @@ package com.awesome.manager.core.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.awesome.manager.core.designsystem.component.AmChip
+import com.awesome.manager.core.designsystem.component.chips.AmChip
 
 
 @Composable
 fun TransactionType(
-    modifier: Modifier=Modifier,
-    type:String,
-    selected:Boolean
-){
+    modifier: Modifier = Modifier,
+    type: String,
+    selected: Boolean
+) {
     AmChip(
         modifier = modifier,
         onClick = {},
@@ -22,15 +22,16 @@ fun TransactionType(
 
 @Preview
 @Composable
-fun TransactionTypeSelectedPreview(){
+fun TransactionTypeSelectedPreview() {
     TransactionType(
         type = "TRANSACTION TYPE",
         selected = false
     )
 }
+
 @Preview
 @Composable
-fun TransactionTypeUnSelectedPreview(){
+fun TransactionTypeUnSelectedPreview() {
     TransactionType(
         type = "TRANSACTION TYPE",
         selected = true

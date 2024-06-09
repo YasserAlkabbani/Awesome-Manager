@@ -99,9 +99,9 @@ fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
             getChipData(id = it.id, title = it.currencyName, data = it)
         }
     }
-    val transactionTypes = accountEditorState.transactionTypes
-    val transactionTypeChipData = remember(transactionTypes) {
-        transactionTypes.map {
+
+    val transactionTypeChipData = remember {
+        accountEditorState.transactionTypes.map {
             getChipData(id = it.name, title = it.name, data = it)
         }
     }

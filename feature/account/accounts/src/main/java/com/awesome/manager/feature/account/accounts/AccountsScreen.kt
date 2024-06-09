@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,17 +23,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
-import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.component.text.AmSearchTextField
+import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
@@ -60,11 +59,6 @@ fun AccountsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
     })
 
-    val pickerAction = accountsState.pickerAction.collectAsState().value
-    LaunchedEffect(key1 = pickerAction) {
-        pickerAction.sendMainAction(sendMainAction, accountsState::donePickerAction)
-    }
-
     LaunchedEffect(key1 = Unit) {
         accountsState.setForAccountsScreen(
             onAddAccount = accountsState::navigateToCreateAccount,
@@ -81,11 +75,10 @@ fun AccountsScreen(
     accountsState: AccountsMainState
 ) {
     val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
-    val filterData = accountsState.filterData.collectAsState().value
-
+    val filterData by accountsState.filterData.collectAsState()
     val noItems = remember {
         derivedStateOf {
-            !filterData.filterApplauded() && accountsLazyPaging.itemCount == 0
+            !filterData.filterApplauded && accountsLazyPaging.itemCount == 0
         }
     }.value
 
@@ -118,19 +111,23 @@ fun AccountsScreen(
                 else {
                     item(contentType = "FILTER", key = "FILTER") {
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            AmSearchTextField(
-                                onSearchKeyChange = accountsState::updateSearchKey
-                            )
                             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                                AmButton(
-                                    text = stringResource(R.string.set_date),
+                                val searchLabel = stringResource(id = R.string.search_in_accounts)
+                                AmFilterChip(
+                                    selected = filterData.searchFilter,
+                                    label = stringResource(R.string.search),
+                                    value = filterData.searchKey,
+                                    amIconsType = AmIcons.Search,
                                     onClick = {
-                                        accountsState.showPickRangeDateBottomSheet(
-                                            setDate = accountsState::setDate,
-                                            initTime = currentTime(),
-                                            dismiss = accountsState::dismissBottomSheet
+                                        accountsState.showSearchWithContentBottomSheet(
+                                            searchLabel = searchLabel,
+                                            initSearch = filterData.searchKey.orEmpty(),
+                                            onReSearch = accountsState::updateSearchKey,
+                                            onSearchDone = accountsState::dismissBottomSheet,
+                                            content = {}
                                         )
-                                    }
+                                    },
+                                    onRemove = accountsState::clearSearch
                                 )
                             }
                         }

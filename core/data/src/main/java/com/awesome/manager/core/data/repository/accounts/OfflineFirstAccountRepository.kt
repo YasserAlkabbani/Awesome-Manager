@@ -31,7 +31,7 @@ class OfflineFirstAccountRepository @Inject constructor(
         amInsert { accountDao.upsertAccount(accountEntity) }
     }
 
-    override fun returnAccounts(searchKey: String): Flow<PagingData<AmAccount>> =
+    override fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
         asPagingDataFlow(
             getPagingSource = { accountDao.returnAccounts(searchKey) },
             asModel = { asModel() }

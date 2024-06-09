@@ -1,6 +1,9 @@
 package com.awesome.manager.core.designsystem.component.buttons
 
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,11 +15,17 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmIconButton(
     modifier: Modifier = Modifier,
-    amIconsType: AmIconsType, positive: Boolean?, onClick: () -> Unit
+    amIconsType: AmIconsType, positive: Boolean? = null,
+    onClick: () -> Unit
 ) {
-    AmSurface(
-        modifier = modifier, positive = positive,
-        onClick = onClick
+    val color = when (positive) {
+        true -> MaterialTheme.colorScheme.primary
+        false -> MaterialTheme.colorScheme.error
+        null -> MaterialTheme.colorScheme.secondary
+    }
+    IconButton(
+        modifier = modifier, onClick = onClick,
+        colors = IconButtonDefaults.iconButtonColors().copy(contentColor = color)
     ) {
         AmIcon(amIconsType = amIconsType)
     }

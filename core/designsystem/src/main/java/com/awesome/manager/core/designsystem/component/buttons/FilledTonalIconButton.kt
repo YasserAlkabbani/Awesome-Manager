@@ -15,7 +15,7 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmFilledTonalIconButton(
     modifier: Modifier = Modifier,
     amIconsType: AmIconsType,
-    positive: Boolean,
+    positive: Boolean? = null,
     onClick: () -> Unit
 ) {
     AmCard(
