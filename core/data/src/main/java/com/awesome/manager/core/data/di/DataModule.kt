@@ -6,8 +6,6 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.auth.OfflineFirstAuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.currency.OfflineFirstCurrencyRepository
-import com.awesome.manager.core.data.repository.transaction_type.OfflineFirstTransactionTypeRepository
-import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.data.repository.transaction.OfflineFirstTransactionRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.Binds
@@ -24,15 +22,12 @@ interface DataModule {
     fun bindAuthRepository(authRepository: OfflineFirstAuthRepository): AuthRepository
 
     @Binds
-    fun bindCurrencyRepository(currencyRepository: OfflineFirstCurrencyRepository):CurrencyRepository
+    fun bindCurrencyRepository(currencyRepository: OfflineFirstCurrencyRepository): CurrencyRepository
 
     @Binds
-    fun bindTransactionTypeRepository(transactionTypeRepository: OfflineFirstTransactionTypeRepository):TransactionTypeRepository
+    fun bindAccountRepository(accountRepository: OfflineFirstAccountRepository): AccountRepository
 
     @Binds
-    fun bindAccountRepository(accountRepository: OfflineFirstAccountRepository):AccountRepository
-
-    @Binds
-    fun bindTransactionRepository(transactionRepository: OfflineFirstTransactionRepository):TransactionRepository
+    fun bindTransactionRepository(transactionRepository: OfflineFirstTransactionRepository): TransactionRepository
 
 }

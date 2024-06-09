@@ -3,41 +3,48 @@ package com.awesome.manager.feature.transaction.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.common.states.asDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
+import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.feature.transaction.details.navigation.TransactionDetailsArg
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionDetailsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository,
+    private val authRepository: AuthRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val transactionId: String = TransactionDetailsArg(savedStateHandle).transactionId
+    private val transactionDetails: NavigationDestination.TransactionDetails =
+        savedStateHandle.toRoute()
 
-    val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
-        transaction = transactionRepository.returnTransactionById(transactionId)
-            .stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, null),
-        asAccount = {
-            flatMapLatest {
-                it?.accountId?.let { accountRepository.returnAccountById(it) } ?: flowOf(null)
+    val transactionDetailsState: TransactionDetailsStateMain = TransactionDetailsStateMain(
+        transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
+            .flatMapLatest { transaction ->
+                accountRepository.returnAccountById(transaction.accountId)
+                    .map { account -> account to transaction }
             }
-                .flowOn(Dispatchers.Default)
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    null
+            .flatMapLatest { (account, transaction) ->
+                authRepository.currentUserId()
+                    .map { currentUserId -> Triple(account, transaction, currentUserId) }
+            }
+            .map { (account, transaction, currentUserId) ->
+                DataState.Success(
+                    TransactionDetailsData(
+                        account = account, transaction = transaction,
+                        allowToUpdate = transaction.creatorUserId == currentUserId
+                    )
                 )
-        }
+            }
+            .asDataStateFlow(viewModelScope)
     )
 
 

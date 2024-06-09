@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
@@ -53,7 +54,7 @@ fun AmImage(modifier: Modifier, imageUrl: String) {
     ) {
         Image(
             modifier = Modifier
-                .padding(2.dp)
+                .padding(AmPadding.EXTRA_SMALL.value)
                 .fillMaxSize()
                 .clip(CircleShape),
             painter = painter,

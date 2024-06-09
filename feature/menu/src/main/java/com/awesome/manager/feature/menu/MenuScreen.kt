@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
+import com.awesome.manager.core.designsystem.AmLazyColumnPadding
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.core.ui.MenuItem
@@ -22,7 +22,7 @@ fun MenuScreen() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp)
+        verticalArrangement = Arrangement.spacedBy(AmLazyColumnPadding.SPACE_BETWEEN_ITEM.value)
     ) {
         MenuItem(
             title = "Menu 1".asAmText(),

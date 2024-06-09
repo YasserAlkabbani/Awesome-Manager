@@ -12,56 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.UIConstant.HEIGH_PADDING
-import com.awesome.manager.core.designsystem.UIConstant.LOW_PADDING
-
-@Composable
-fun AmSurface(
-    modifier: Modifier = Modifier, positive: Boolean?, loading: Boolean = false,
-    shape: Shape = MaterialTheme.shapes.medium, highPadding: Boolean, onClick: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    val surface = MaterialTheme.colorScheme.secondary
-    val primary = MaterialTheme.colorScheme.primary
-    val error = MaterialTheme.colorScheme.error
-    val surfaceColors = remember(positive) {
-        when (positive) {
-            null -> surface
-            true -> primary
-            false -> error
-        }
-    }
-    val padding = remember(highPadding) {
-        if (highPadding) HEIGH_PADDING.dp else LOW_PADDING.dp
-    }
-    Surface(
-        modifier = modifier,
-        shape = shape,
-        color = surfaceColors,
-        content = {
-            Column {
-                Column(
-                    modifier = modifier.padding(padding),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    content()
-                }
-                AnimatedVisibility(visible = loading) {
-                    AmLinearProgress(
-                        modifier = Modifier.fillMaxWidth(),
-                        positive = positive == true
-                    )
-                }
-            }
-        },
-        onClick = onClick, enabled = !loading
-    )
-}
+import com.awesome.manager.core.designsystem.AmPadding
 
 @Composable
 fun AmSurface(
     modifier: Modifier = Modifier, positive: Boolean? = null, loading: Boolean = false,
-    shape: Shape = MaterialTheme.shapes.medium, highPadding: Boolean,
+    shape: Shape = MaterialTheme.shapes.medium, padding: AmPadding = AmPadding.MEDIUM,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     val surface = MaterialTheme.colorScheme.secondary
@@ -74,26 +31,51 @@ fun AmSurface(
             false -> error
         }
     }
-    val padding = remember(highPadding) {
-        if (highPadding) HEIGH_PADDING.dp else LOW_PADDING.dp
-    }
-    Surface(
-        modifier = modifier,
-        shape = shape,
-        color = surfaceColors,
-        content = {
-            Column {
-                Column(modifier = modifier.padding(padding)) {
-                    content()
-                }
-                AnimatedVisibility(visible = loading) {
-                    AmLinearProgress(
-                        modifier = Modifier.fillMaxWidth(),
-                        positive = positive == true
-                    )
-                }
-            }
-        },
-    )
+    when (onClick) {
+        null -> {
+            Surface(
+                modifier = modifier,
+                shape = shape,
+                color = surfaceColors,
+                content = {
+                    Column {
+                        Column(modifier = Modifier.padding(padding.value)) {
+                            content()
+                        }
+                        AnimatedVisibility(visible = loading) {
+                            AmLinearProgress(
+                                modifier = Modifier.fillMaxWidth(),
+                                positive = positive == true
+                            )
+                        }
+                    }
+                },
+            )
+        }
 
+        else -> {
+            Surface(
+                modifier = modifier,
+                shape = shape,
+                color = surfaceColors,
+                content = {
+                    Column {
+                        Column(
+                            modifier = modifier.padding(padding.value),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            content()
+                        }
+                        AnimatedVisibility(visible = loading) {
+                            AmLinearProgress(
+                                modifier = Modifier.fillMaxWidth(),
+                                positive = positive == true
+                            )
+                        }
+                    }
+                },
+                onClick = onClick, enabled = !loading
+            )
+        }
+    }
 }

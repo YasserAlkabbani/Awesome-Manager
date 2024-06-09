@@ -2,125 +2,88 @@ package com.awesome.manager.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.feature.account.details.navigation.accountDetailsScreen
-import com.awesome.manager.feature.account.editor.navigation.accountEditorScreen
-import com.awesome.manager.feature.account.accounts.navigation.accountsScreen
-import com.awesome.manager.feature.account.details.navigation.navigateToAccountDetails
-import com.awesome.manager.feature.account.editor.navigation.navigateToCreateAccount
-import com.awesome.manager.feature.account.editor.navigation.navigateToEditAccount
-import com.awesome.manager.feature.auth.navigation.authScreen
-import com.awesome.manager.feature.home.navigation.homeScreen
-import com.awesome.manager.feature.intro.navigation.introRoute
-import com.awesome.manager.feature.intro.navigation.introScreen
-import com.awesome.manager.feature.menu.navigation.menuScreen
-import com.awesome.manager.feature.transaction.details.navigation.navigateToTransactionDetails
-import com.awesome.manager.feature.transaction.details.navigation.transactionDetailsScreen
-import com.awesome.manager.feature.transaction.editor.navigation.navigateToCreateTransaction
-import com.awesome.manager.feature.transaction.editor.navigation.navigateToEditTransaction
-import com.awesome.manager.feature.transaction.editor.navigation.transactionEditorScreen
-import com.awesome.manager.feature.transaction.transactions.navigation.transactionsScreen
-import com.awesome.manager.ui.AmAppState
+import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.feature.account.accounts.AccountsRoute
+import com.awesome.manager.feature.account.details.AccountDetailsRoute
+import com.awesome.manager.feature.account.editor.AccountEditorRoute
+import com.awesome.manager.feature.auth.AuthRoute
+import com.awesome.manager.feature.home.HomeRoute
+import com.awesome.manager.feature.intro.IntroRoute
+import com.awesome.manager.feature.transaction.details.TransactionDetailsRoute
+import com.awesome.manager.feature.transaction.editor.TransactionEditorRoute
+import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
+
 
 @Composable
 fun AmNavHost(
     modifier: Modifier,
-    amAppState: AmAppState,
-    startDistinction: String = introRoute,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit
+    navHostController: NavHostController,
+    startDistinction: NavigationDestination = NavigationDestination.Intro,
+    sendMainAction: (MainAction) -> Unit
 ) {
-
-    val navController = amAppState.navHostController
 
     NavHost(
         modifier = modifier,
-        navController = navController,
+        navController = navHostController,
         startDestination = startDistinction,
     ) {
 
-        introScreen()
-        authScreen()
-        homeScreen()
+        composable<NavigationDestination.Intro> {
+            IntroRoute(sendMainAction = sendMainAction)
+        }
+        composable<NavigationDestination.Auth> {
+            AuthRoute(sendMainAction = sendMainAction)
+        }
 
-        accountsScreen(
-            navigateToCreateAccount = { navController.navigateToCreateAccount(navOptions = null) },
-            navigateToAccountDetails = { amAccount ->
-                navController.navigateToAccountDetails(
-                    accountId = amAccount.id,
-                    navOptions = null
-                )
-            },
-            navigateToCreateTransaction = { amAccount ->
-                navController.navigateToCreateTransaction(
-                    accountId = amAccount.id,
-                    navOptions = null
-                )
-            },
-            updateAppBarState = updateAppBarState
-        )
-        accountEditorScreen(
-            navController::popBackStack,
-            updateAppBarState = updateAppBarState
-        )
-        accountDetailsScreen(
-            navigateBack = navController::popBackStack,
-            navigateToEditAccount = { amAccount ->
-                navController.navigateToEditAccount(
-                    accountId = amAccount.id,
-                    navOptions = null
-                )
-            },
-            navigateCreateTransaction = { amAccount ->
-                navController.navigateToCreateTransaction(
-                    accountId = amAccount.id,
-                    navOptions = null
-                )
-            },
-            navigateToTransactionDetails = { amTransaction ->
-                navController.navigateToTransactionDetails(
-                    transactionId = amTransaction.id,
-                    navOptions = null
-                )
-            },
-            updateAppBarState = updateAppBarState
-        )
 
-        transactionsScreen(
-            navigateToTransactionDetails = { amTransaction ->
-                navController.navigateToTransactionDetails(
-                    transactionId = amTransaction.id,
-                    navOptions = null
-                )
-            },
-            updateAppBarState = updateAppBarState
-        )
-        transactionEditorScreen(
-            onBack = { navController.popBackStack() },
-            updateAppBarState = updateAppBarState
-        )
-        transactionDetailsScreen(
-            navigateToAccount = { amAccount ->
-                navController.navigateToEditAccount(amAccount.id, navOptions = null)
-            },
-            navigateToCreateTransaction = { amAccount ->
-                navController.navigateToCreateTransaction(
-                    accountId = amAccount.id,
-                    navOptions = null
-                )
-            },
-            navigateToEditTransaction = { amTransaction ->
-                navController.navigateToEditTransaction(
-                    transactionId = amTransaction.id,
-                    navOptions = null
-                )
-            },
-            navigateBack = navController::popBackStack,
-            updateAppBarState = updateAppBarState,
-        )
 
-        menuScreen()
+        composable<NavigationDestination.Home> {
+            HomeRoute(sendMainAction = sendMainAction)
+        }
+        composable<NavigationDestination.Accounts> {
+            AccountsRoute(sendMainAction = sendMainAction)
+        }
+        composable<NavigationDestination.Transactions> {
+            TransactionsRoute(sendMainAction = sendMainAction)
+        }
+
+
+
+        composable<NavigationDestination.AccountDetails> {
+            AccountDetailsRoute(sendMainAction = sendMainAction)
+        }
+        composable<NavigationDestination.TransactionDetails> {
+            TransactionDetailsRoute(sendMainAction = sendMainAction)
+        }
+
+
+
+        composable<NavigationDestination.AccountEditor> {
+            AccountEditorRoute(sendMainAction = sendMainAction)
+        }
+        composable<NavigationDestination.TransactionEditor> {
+            TransactionEditorRoute(sendMainAction = sendMainAction)
+        }
 
     }
 
+}
+
+fun NavBackStackEntry.asNavigationDestination(): NavigationDestination? = when (destination.route) {
+    NavigationDestination.Intro::class.qualifiedName -> toRoute<NavigationDestination.Intro>()
+    NavigationDestination.Auth::class.qualifiedName -> toRoute<NavigationDestination.Auth>()
+    NavigationDestination.Home::class.qualifiedName -> toRoute<NavigationDestination.Home>()
+    NavigationDestination.Accounts::class.qualifiedName -> toRoute<NavigationDestination.Accounts>()
+    NavigationDestination.Transactions::class.qualifiedName -> toRoute<NavigationDestination.Transactions>()
+    NavigationDestination.AccountDetails::class.qualifiedName -> toRoute<NavigationDestination.AccountDetails>()
+    NavigationDestination.TransactionDetails::class.qualifiedName -> toRoute<NavigationDestination.TransactionDetails>()
+    NavigationDestination.AccountEditor::class.qualifiedName -> toRoute<NavigationDestination.AccountEditor>()
+    NavigationDestination.TransactionEditor::class.qualifiedName -> toRoute<NavigationDestination.TransactionEditor>()
+    else -> null
 }

@@ -1,7 +1,6 @@
 package com.awesome.manager.core.network.di
 
 import android.content.Context
-import android.util.Log
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.asResult
@@ -120,10 +119,12 @@ object NetworkModule {
                     val accessToken = refreshTokenResult.accessToken
                     val refreshToken = refreshTokenResult.refreshToken
                     val currentUserId = refreshTokenResult.authUserNetwork.id
+                    val email = refreshTokenResult.authUserNetwork.email
                     authPreferencesDataStore.updateToken(
                         accessToken = accessToken,
                         refreshToken = refreshToken,
-                        currentUserId = currentUserId
+                        currentUserId = currentUserId,
+                        email = email
                     )
                     BearerTokens(accessToken, refreshToken)
                 }

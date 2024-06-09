@@ -1,12 +1,14 @@
 package com.awesome.manager.core.data.repository.accounts
 
-import com.awesome.manager.core.common.amInsert
-import com.awesome.manager.core.common.amRequest
-import com.awesome.manager.core.common.asAmResult
-import com.awesome.manager.core.common.asDateTime
+import androidx.paging.PagingData
+import com.awesome.manager.core.common.results.amInsert
+import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.common.results.asAmResult
+import com.awesome.manager.core.common.extentions.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork
+import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.AccountDao
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.model.AmAccount
@@ -29,8 +31,11 @@ class OfflineFirstAccountRepository @Inject constructor(
         amInsert { accountDao.upsertAccount(accountEntity) }
     }
 
-    override fun returnAccounts(searchKey: String): Flow<List<AmAccount>> =
-        accountDao.returnAccounts(searchKey).map { it.map { it.asModel() } }
+    override fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
+        asPagingDataFlow(
+            getPagingSource = { accountDao.returnAccounts(searchKey) },
+            asModel = { asModel() }
+        )
 
     override fun returnAccountById(accountId: String): Flow<AmAccount> =
         accountDao.returnAccountById(accountId).map { it.asModel() }
@@ -51,5 +56,7 @@ class OfflineFirstAccountRepository @Inject constructor(
                 doOnSuccess = ::refreshAccounts
             ).collect()
     }
+
+    override suspend fun deleteAccounts() = accountDao.deleteAccounts()
 
 }

@@ -1,14 +1,15 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.asData
+import com.awesome.manager.core.common.extentions.asDate
+import com.awesome.manager.core.common.extentions.asTimestamp
+import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.network.model.AccountNetworkRequest
 import com.awesome.manager.core.network.model.AccountNetworkResponse
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 
 fun AccountNetworkResponse.asEntity() = AccountEntity(
@@ -16,11 +17,11 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = enumValueOf(defaultTransactionType),
     creatorUserId = creatorUserId,
     pending = false,
-    createdAt = Instant.parse(createdAt.orEmpty()).toEpochMilliseconds(),
-    updatedAt = Instant.parse(updatedAt.orEmpty()).toEpochMilliseconds(),
+    createdAt = createdAt.asTimestamp(),
+    updatedAt = updatedAt.asTimestamp(),
 )
 
 fun AccountEntityWithData.asModel() = AmAccount(
@@ -28,13 +29,14 @@ fun AccountEntityWithData.asModel() = AmAccount(
     creatorUserId = accountEntity.creatorUserId,
     name = accountEntity.name,
     imageUrl = accountEntity.imageUrl,
-    currency = currencyEntity.asModel(),
-    defaultTransactionType = defaultTransactionTypeEntity.asModel(),
-    debtor = incoming,
-    creditor = outgoing,
+    defaultTransactionType = accountEntity.defaultTransactionType.asModel(),
+    balanceDetails = BalanceDetails(
+        income = income, expenses = expenses, debtor = debtor, creditor = creditor,
+        currency = currencyEntity.asModel(),
+    ),
     pending = accountEntity.pending,
-    createdAt = accountEntity.createdAt.asData(),
-    updatedAt = accountEntity.updatedAt.asData()
+    createdAt = accountEntity.createdAt,
+    updatedAt = accountEntity.updatedAt
 )
 
 fun AccountEntity.asNetwork() = AccountNetworkRequest(
@@ -43,7 +45,7 @@ fun AccountEntity.asNetwork() = AccountNetworkRequest(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = defaultTransactionType.name,
 )
 
 fun UpsertAccount.asEntity() = AccountEntity(
@@ -52,8 +54,8 @@ fun UpsertAccount.asEntity() = AccountEntity(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionTypeId = defaultTransactionTypeId,
+    defaultTransactionType = defaultTransactionType.asEntity(),
     pending = true,
-    createdAt = Clock.System.now().toEpochMilliseconds(),
-    updatedAt = Clock.System.now().toEpochMilliseconds(),
+    createdAt = currentTime(),
+    updatedAt = currentTime(),
 )

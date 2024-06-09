@@ -2,4 +2,9 @@
 <resources>
     <string name="accounts">Accounts</string>
     <string name="search_for_account">Search For Account</string>
+    <string name="theres_no_accounts_yet">Theres no accounts yet</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="set_date">Set Date</string>
+    <string name="search">Search</string>
+    <string name="search_in_accounts">Search in accounts</string>
 </resources>

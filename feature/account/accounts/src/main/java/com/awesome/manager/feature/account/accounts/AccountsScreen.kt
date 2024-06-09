@@ -1,120 +1,171 @@
 package com.awesome.manager.feature.account.accounts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_BOTTOM
-import com.awesome.manager.core.designsystem.UIConstant.SCROLL_CONTENT_PADDING_TOP
-import com.awesome.manager.core.designsystem.UIConstant.VERTICAL_SPACE_BETWEEN_ITEMS
-import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.ui.AccountCard
-import com.awesome.manager.core.ui.AmSearch
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
+import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
+import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 
 @Composable
 fun AccountsRoute(
-    navigateToCreateAccount: () -> Unit,
-    navigateToAccountDetails: (AmAccount) -> Unit,
-    navigateToCreateTransaction: (AmAccount) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     accountsViewModel: AccountsViewModel = hiltViewModel()
 ) {
 
     val accountsState = accountsViewModel.accountsState
 
-    val createAccountNavigation =
-        accountsState.createAccountNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = createAccountNavigation, block = {
-        createAccountNavigation?.let {
-            navigateToCreateAccount()
-            accountsState.doneCreateAccountNavigation()
-        }
+    val navigationAction = accountsState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendMainAction(sendMainAction, accountsState::doneNavigationAction)
     })
 
-    val accountDetailsNavigation =
-        accountsState.accountDetailsNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = accountDetailsNavigation, block = {
-        accountDetailsNavigation?.let {
-            navigateToAccountDetails(it)
-            accountsState.doneAccountDetailsNavigation()
-        }
+    val appBarAction = accountsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendMainAction(sendMainAction, accountsState::doneAppBarAction)
     })
 
-    val createTransactionNavigation =
-        accountsState.createTransactionNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = createTransactionNavigation, block = {
-        createTransactionNavigation?.let {
-            navigateToCreateTransaction(it)
-            accountsState.doneCreateTransactionNavigation()
-        }
+    val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
     })
 
-    LaunchedEffect(key1 = Unit, block = {
-        updateAppBarState(null)
-    })
+    LaunchedEffect(key1 = Unit) {
+        accountsState.setForAccountsScreen(
+            onAddAccount = accountsState::navigateToCreateAccount,
+        )
+    }
 
     AccountsScreen(accountsState)
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsScreen(
-    accountsState: AccountsState
+    accountsState: AccountsMainState
 ) {
-    val accounts = accountsState.accounts.collectAsStateWithLifecycle().value
-    val accountSearchKey = accountsState.accountSearchKey.collectAsStateWithLifecycle().value
+    val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
+    val filterData by accountsState.filterData.collectAsState()
+    val noItems = remember {
+        derivedStateOf {
+            !filterData.filterApplauded && accountsLazyPaging.itemCount == 0
+        }
+    }.value
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        AmSearch(
-            searchKey = accountSearchKey,
-            searchLabel = stringResource(R.string.search_for_account),
-            onSearchKeyChange = accountsState::updateAccountSearchKey,
-            errorMessage = null
-        )
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = SCROLL_CONTENT_PADDING_TOP.dp,
-                bottom = SCROLL_CONTENT_PADDING_BOTTOM.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(VERTICAL_SPACE_BETWEEN_ITEMS.dp),
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top
+    ) {
+        AmLazyColumn(
             content = {
-                items(
-                    items = accounts,
-                    contentType = { "ACCOUNTS" },
-                    key = { account -> account.id },
-                    itemContent = { account ->
-                        AccountCard(
-                            modifier = Modifier.animateItemPlacement(),
-                            title = account.name,
-                            imageUrl = account.imageUrl,
-                            creditor = account.creditor,
-                            debtor = account.debtor,
-                            currency = account.currency.currencyCode,
-                            loading = account.pending,
-                            onClick = { accountsState.startAccountDetailsNavigation(account) },
-                            onAddTransaction = {
-                                accountsState.startCreateTransactionNavigation(
-                                    account
-                                )
-                            },
-                            onEditTransaction = null
-                        )
+                if (noItems)
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .padding(AmPadding.EXTRA_LARGE.value)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AmText(
+                                text = stringResource(R.string.theres_no_accounts_yet),
+                                maxLines = 3, textAlign = TextAlign.Center
+                            )
+                            AmFilledTonalButton(
+                                text = stringResource(R.string.create_an_account),
+                                onClick = accountsState::navigateToCreateAccount,
+                                positive = null
+                            )
+                        }
                     }
-                )
+                else {
+                    item(contentType = "FILTER", key = "FILTER") {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                                val searchLabel = stringResource(id = R.string.search_in_accounts)
+                                AmFilterChip(
+                                    selected = filterData.searchFilter,
+                                    label = stringResource(R.string.search),
+                                    value = filterData.searchKey,
+                                    amIconsType = AmIcons.Search,
+                                    onClick = {
+                                        accountsState.showSearchWithContentBottomSheet(
+                                            searchLabel = searchLabel,
+                                            initSearch = filterData.searchKey.orEmpty(),
+                                            onReSearch = accountsState::updateSearchKey,
+                                            onSearchDone = accountsState::dismissBottomSheet,
+                                            content = {}
+                                        )
+                                    },
+                                    onRemove = accountsState::clearSearch
+                                )
+                            }
+                        }
+                    }
+                    items(
+                        count = accountsLazyPaging.itemCount,
+                        contentType = { LAZY_ITEM_ACCOUNT },
+                        key = accountsLazyPaging.itemKey { it.id },
+                        itemContent = { index ->
+                            accountsLazyPaging[index]?.let { account ->
+                                val balanceDetails = account.balanceDetails
+                                AccountCard(
+                                    modifier = Modifier.animateItemPlacement(),
+                                    title = account.name,
+                                    imageUrl = account.imageUrl,
+                                    loading = account.pending,
+                                    withDetails = false,
+                                    onClick = { accountsState.navigateToAccountDetails(account.id) },
+                                    onAddTransaction = {
+                                        accountsState.navigateToCreateTransaction(account.id)
+                                    },
+                                    onEditTransaction = null,
+                                    income = balanceDetails.income,
+                                    expenses = balanceDetails.expenses,
+                                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                                    debtor = balanceDetails.debtor,
+                                    creditor = balanceDetails.creditor,
+                                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                                    currencySymbol = balanceDetails.currency.currencySymbol,
+                                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                                    isPositiveDebtor = balanceDetails.isPositiveDebtor
+                                )
+                            }
+                        }
+                    )
+                }
             }
         )
+
     }
 }

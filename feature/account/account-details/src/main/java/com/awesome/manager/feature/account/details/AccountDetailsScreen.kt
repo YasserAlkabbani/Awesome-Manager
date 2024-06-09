@@ -2,126 +2,124 @@ package com.awesome.manager.feature.account.details
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.core.designsystem.icon.AmIcons
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.extentions.limitName
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.ui.AccountCard
-import com.awesome.manager.core.ui.TransactionCard
+import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.card.TransactionCard
+import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
+import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
 
 @Composable
 fun AccountDetailsRoute(
-    navigateBack: () -> Unit,
-    navigateToEditAccount: (AmAccount) -> Unit,
-    navigateCreateTransaction: (AmAccount) -> Unit,
-    navigateToTransactionDetails: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
-    val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
-    val account: AmAccount? = accountDetailsState.amAccount.collectAsStateWithLifecycle().value
+    val accountDetailsState: AccountDetailsStateMain = accountDetailsViewModel.accountDetailsState
 
-
-    val backNavigationState = accountDetailsState.backNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = backNavigationState, block = {
-        backNavigationState?.let {
-            accountDetailsState.doneBackNavigation()
-            navigateBack()
-        }
+    val navigationAction = accountDetailsState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendMainAction(sendMainAction, accountDetailsState::doneNavigationAction)
     })
 
-    val editAccountNavigation =
-        accountDetailsState.editAccountNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = editAccountNavigation, block = {
-        editAccountNavigation?.let {
-            navigateToEditAccount(it)
-            accountDetailsState.doneEditAccountNavigation()
-        }
+    val appBarAction = accountDetailsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendMainAction(sendMainAction, accountDetailsState::doneAppBarAction)
     })
 
-    val transactionNavigation =
-        accountDetailsState.transactionNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = transactionNavigation, block = {
-        transactionNavigation?.let {
-            navigateToTransactionDetails(it)
-            accountDetailsState.doneTransactionNavigation()
-        }
+    val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendMainAction(sendMainAction, accountDetailsState::doneBottomSheetAction)
     })
 
-    val createTransactionNavigation =
-        accountDetailsState.createTransactionNavigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = createTransactionNavigation, block = {
-        createTransactionNavigation?.let {
-            navigateCreateTransaction(it)
-            accountDetailsState.doneCreateTransactionNavigation()
-        }
-    })
+    val accountState = accountDetailsState.amAccount.collectAsState().value
+    val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
 
-
-    LaunchedEffect(key1 = account, block = {
-        if (account != null) {
-            updateAppBarState(
-                AppBarData(
-                    account.name,
-                    startIcon = AmIcons.ArrowBack to accountDetailsState::startBackNavigation,
-                    endIcon = AmIcons.Edit to accountDetailsState::startEditAccountNavigation
-                )
+    val editAccount = stringResource(R.string.edit_account_name)
+    LaunchedEffect(key1 = accountState, allowToUpdate) {
+        if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
+            accountDetailsState.setForAccountDetailsScreen(
+                onClickBack = accountDetailsState::navigatePopBack,
+                editButtonText = "$editAccount ${accountState.data.name.limitName()}",
+                onEditButton = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
+                allowToEdit = allowToUpdate.data,
+                onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) },
             )
-        } else {
-            updateAppBarState(null)
         }
-    })
+    }
 
     AccountDetailsScreen(accountDetailsState)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
+fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
 
-    val account: AmAccount? = accountDetailsState.amAccount.collectAsStateWithLifecycle().value
-    val transactions: List<AmTransaction> =
-        accountDetailsState.amTransactions.collectAsStateWithLifecycle().value
+    val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
+    val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
+        accountDetailsState.amTransactions.collectAsLazyPagingItems()
 
     Column(Modifier.fillMaxSize()) {
 
-        account?.let { account ->
-            AccountCard(
-                modifier = Modifier,
-                title = account.name,
-                imageUrl = account.imageUrl,
-                creditor = account.creditor,
-                debtor = account.debtor,
-                currency = account.currency.currencyCode,
-                loading = account.pending,
-                onClick = { },
-                onAddTransaction = { accountDetailsState.startCreateTransactionNavigation(account) },
-                onEditTransaction = null
-            )
+        when (accountState) {
+            is DataState.Success -> {
+                val account = accountState.data
+                val balanceDetails = account.balanceDetails
+                AccountCard(
+                    modifier = Modifier,
+                    title = account.name,
+                    imageUrl = account.imageUrl,
+                    loading = account.pending,
+                    withDetails = true,
+                    onClick = null,
+                    onAddTransaction = {
+                        accountDetailsState.navigateToCreateTransaction(account.id)
+                    },
+                    onEditTransaction = null,
+                    income = balanceDetails.income,
+                    expenses = balanceDetails.expenses,
+                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                    debtor = balanceDetails.debtor,
+                    creditor = balanceDetails.creditor,
+                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    currencySymbol = balanceDetails.currency.currencySymbol,
+                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                    isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp),
-                content = {
-                    items(
-                        items = transactions,
-                        contentType = { "TRANSACTIONS" },
-                        key = { transactions -> transactions.id },
-                        itemContent = { transaction ->
+            DataState.Error, DataState.Loading -> {}
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AmLazyColumn(
+            content = {
+                items(
+                    count = transactionsLazyPaging.itemCount,
+                    contentType = { LAZY_ITEM_TRANSACTION },
+                    key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
+                    itemContent = { index ->
+                        transactionsLazyPaging[index]?.let { transaction ->
                             TransactionCard(
                                 modifier = Modifier.animateItemPlacement(),
                                 account = "ACCOUNT",
@@ -129,22 +127,22 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                 subTitle = transaction.subtitle,
                                 amount = transaction.amount,
                                 pending = transaction.pending,
-                                date = transaction.updatedAt,
-                                transactionType = transaction.transactionType.title,
-                                isPay = transaction.paymentTransaction,
-                                currency = account.currency.currencySymbol,
+                                date = transaction.transactionAtDate,
+                                transactionType = transaction.transactionType.name,
+                                isPay = transaction.transactionType.posative,
+                                currency = transaction.currency.currencySymbol,
                                 createdBy = transaction.creatorUserId,
                                 onClick = {
-                                    accountDetailsState.startTransactionNavigation(
-                                        transaction
+                                    accountDetailsState.navigateToTransactionDetails(
+                                        transaction.id
                                     )
                                 }
                             )
                         }
-                    )
-                }
-            )
-        }
+                    }
+                )
+            }
+        )
 
     }
 

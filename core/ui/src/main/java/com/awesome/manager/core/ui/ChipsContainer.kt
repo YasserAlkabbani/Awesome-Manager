@@ -13,18 +13,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.component.AmChip
-import com.awesome.manager.core.designsystem.component.AmSurface
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.chips.AmChip
+import com.awesome.manager.core.designsystem.component.text.AmText
 
-data class ChipData(val id: String, val title: String)
+data class ChipData<T, R>(val id: R, val title: String, val data: T)
+
+fun <T, R> getChipData(id: R, title: String, data: T) =
+    ChipData(id = id, title = title, data = data)
 
 @Composable
-fun AmChipsContainer(
+fun <T, R> AmChipsContainer(
     title: String,
-    chipDataList: List<ChipData>,
-    selectedItem: String?,
-    onSelect: (String) -> Unit,
+    chipDataList: List<ChipData<T, R>>,
+    selectedItem: R?,
+    onSelect: (ChipData<T, R>) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
 
@@ -48,11 +50,11 @@ fun AmChipsContainer(
             ) {
                 items(
                     items = chipDataList,
-                    key = { it.id },
+                    key = { it.id.toString() },
                     contentType = { "CHIP_DATA" }) { chipData ->
                     AmChip(
                         selected = chipData.id == selectedItem, label = chipData.title,
-                        onClick = { onSelect(chipData.id) }
+                        onClick = { onSelect(chipData) }
                     )
                 }
             }

@@ -5,7 +5,6 @@ import java.util.Properties
 plugins {
     id("awesomemanager.android.library")
     id("awesomemanager.android.hilt")
-    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 val networkFile = rootProject.file("local.properties")
@@ -32,8 +31,6 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)

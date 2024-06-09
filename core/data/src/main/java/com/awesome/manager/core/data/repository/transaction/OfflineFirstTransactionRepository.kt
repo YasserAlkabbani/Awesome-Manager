@@ -1,14 +1,18 @@
 package com.awesome.manager.core.data.repository.transaction
 
-import com.awesome.manager.core.common.amInsert
-import com.awesome.manager.core.common.amRequest
-import com.awesome.manager.core.common.asAmResult
-import com.awesome.manager.core.common.asDateTime
-import com.awesome.manager.core.data.model.asDomain
+import android.util.Log
+import androidx.paging.PagingData
+import com.awesome.manager.core.common.results.amInsert
+import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.common.results.asAmResult
+import com.awesome.manager.core.common.extentions.asDateTime
+import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asNetwork
+import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
 import kotlinx.coroutines.flow.Flow
@@ -25,21 +29,37 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
     override suspend fun upsertTransaction(upsertTransaction: UpsertTransaction) {
         val transactionEntity = upsertTransaction.asEntity()
-        amInsert { transactionDao.upsertTransaction(transactionEntity) }
+        amInsert { transactionDao.upsertTransaction(transactionEntity = transactionEntity) }
     }
 
-    override fun returnTransactions(searchKey: String): Flow<List<AmTransaction>> =
-        transactionDao.returnTransactions(searchKey).map { it.map { it.asDomain() } }
+    override fun returnTransactions(
+        searchKey: String?, transactionType: AmTransactionType?,
+        fromDate: Long?, toDate: Long?
+    ): Flow<PagingData<AmTransaction>> =
+        asPagingDataFlow(
+            getPagingSource = {
+                transactionDao.returnTransactions(
+                    searchKey = searchKey, transactionType = transactionType?.asEntity(),
+                    fromDate = fromDate, toDate = toDate
+                )
+            },
+            asModel = { asModel() }
+        )
+
 
     override fun returnTransactionsByAccountId(
-        accountId: String,
-        searchKey: String
-    ): Flow<List<AmTransaction>> =
-        transactionDao.returnTransactionsByAccountId(accountId, searchKey)
-            .map { it.map { it.asDomain() } }
+        accountId: String, searchKey: String
+    ): Flow<PagingData<AmTransaction>> = asPagingDataFlow(
+        getPagingSource = {
+            transactionDao.returnTransactionsByAccountId(
+                accountId = accountId, searchKey = searchKey
+            )
+        },
+        asModel = { asModel() }
+    )
 
     override fun returnTransactionById(transactionId: String): Flow<AmTransaction> =
-        transactionDao.returnTransactionById(transactionId).map { it.asDomain() }
+        transactionDao.returnTransactionById(transactionId).map { it.asModel() }
 
     override suspend fun refreshTransactions() = amRequest {
         val lastUpdateTransactionTime =
@@ -59,5 +79,6 @@ class OfflineFirstTransactionRepository @Inject constructor(
             ).collect()
     }
 
+    override suspend fun deleteTransactions() = transactionDao.deleteTransactions()
 
 }

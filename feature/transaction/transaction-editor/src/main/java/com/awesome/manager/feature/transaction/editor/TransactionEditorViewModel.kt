@@ -3,21 +3,15 @@ package com.awesome.manager.feature.transaction.editor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
-import com.awesome.manager.feature.transaction.editor.navigation.TransactionEditorArg
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,52 +19,40 @@ class TransactionEditorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val accountRepository: AccountRepository,
     private val authRepository: AuthRepository,
-    private val transactionTypeRepository: TransactionTypeRepository,
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
-    private val transactionEditorArg: TransactionEditorArg = TransactionEditorArg(savedStateHandle)
-    val transactionEditorState: TransactionEditorState =
-        TransactionEditorState(
-            savedStateHandle = savedStateHandle,
-            transactionTypes = transactionTypeRepository.returnTransactionTypes()
-                .flowOn(Dispatchers.Default)
-                .stateIn(viewModelScope, SharingStarted.Eagerly, listOf()),
+    private val transactionEditorArg: NavigationDestination.TransactionEditor =
+        savedStateHandle.toRoute()
+    val transactionEditorState: TransactionEditorStateMain =
+        TransactionEditorStateMain(
             createTransaction = ::saveTransaction,
-            asAccountsSearchResult = {
-                flatMapLatest { accountRepository.returnAccounts(it) }
-                    .flowOn(Dispatchers.Default)
-                    .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
-            },
-            asAccount = {
-                flatMapLatest {
-                    it?.let { accountRepository.returnAccountById(it) } ?: flowOf(null)
-                }
-                    .flowOn(Dispatchers.Default)
-                    .stateIn(viewModelScope, SharingStarted.Eagerly, null)
-            },
-            asTransactionType = {
-                flatMapLatest {
-                    it?.let { transactionTypeRepository.returnTransactionTypeById(it) } ?: flowOf(
-                        null
-                    )
-                }
-                    .flowOn(Dispatchers.Default)
-                    .stateIn(viewModelScope, SharingStarted.Eagerly, null)
-            },
-        ).apply { fillTransactionData() }
+            accountsSearchResults = { accountRepository.returnAccounts(this) }
+        )
+
+    init {
+        fillTransactionData()
+    }
 
     private fun fillTransactionData() {
         viewModelScope.launch {
+            val currentUserId = authRepository.currentUserId().first()
+
+            val transaction = transactionEditorArg.transactionId?.let {
+                transactionRepository.returnTransactionById(it).first()
+            }
             when {
-                transactionEditorArg.accountId != null -> {
-                    accountRepository.returnAccountById(transactionEditorArg.accountId)
-                        .firstOrNull()?.let(transactionEditorState::selectAccount)
+                transaction != null -> {
+                    val account = accountRepository.returnAccountById(transaction.accountId).first()
+                    transactionEditorState.asEditTransaction(transaction, account)
                 }
 
-                transactionEditorArg.transactionId != null -> {
-                    transactionRepository.returnTransactionById(transactionEditorArg.transactionId)
-                        .firstOrNull()?.let(transactionEditorState::fillTransactionData)
+                else -> {
+                    val account = transactionEditorArg.accountId?.let {
+                        accountRepository.returnAccountById(it).first()
+                    }
+                    transactionEditorState.asCreateTransaction(currentUserId)
+                    account?.let { transactionEditorState.selectAccount(it) }
                 }
             }
         }
@@ -79,25 +61,10 @@ class TransactionEditorViewModel @Inject constructor(
     private fun saveTransaction() {
         viewModelScope.launch {
 
-            val initTransactionId: String? = transactionEditorArg.transactionId
-            val currentUserId = authRepository.returnCurrentUserId()!!
-
-            val (transactionId: String, creatorUserId: String?) =
-                when (initTransactionId) {
-                    null -> UUID.randomUUID().toString() to currentUserId
-                    else -> {
-                        val creatorUserId = transactionRepository
-                            .returnTransactionById(initTransactionId).firstOrNull()?.creatorUserId!!
-                        if (creatorUserId == currentUserId)
-                            initTransactionId to creatorUserId else initTransactionId to null
-                    }
-                }
-            transactionEditorState
-                .validateTransaction(transactionId = transactionId, creatorUserId = creatorUserId)
-                ?.let { upsertTransaction ->
-                    transactionRepository.upsertTransaction(upsertTransaction)
-                    transactionEditorState.startPop()
-                }
+            transactionEditorState.validateTransaction()?.let {
+                transactionRepository.upsertTransaction(it)
+                transactionEditorState.navigatePopBack()
+            }
 
         }
     }

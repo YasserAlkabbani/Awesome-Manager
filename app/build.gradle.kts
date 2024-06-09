@@ -2,6 +2,8 @@ plugins {
     id("awesomemanager.android.application.compose")
     id("awesomemanager.android.application")
     id("awesomemanager.android.hilt")
+    id("androidx.navigation.safeargs.kotlin")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 @Suppress("UnstableApiUsage")
@@ -46,14 +48,15 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(libs.activity.compose)
-    implementation (libs.timber)
+    implementation(libs.timber)
     implementation(libs.core.ktx)
 
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization)
 
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
-    testImplementation (libs.lifecycle.runtime.testing)
+    testImplementation(libs.lifecycle.runtime.testing)
 
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)

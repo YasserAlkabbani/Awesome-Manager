@@ -1,6 +1,5 @@
 package com.awesome.manager.feature.transaction.details
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,127 +11,134 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.designsystem.component.AmTextWithLabel
-import com.awesome.manager.core.designsystem.component.AppBarData
-import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.ui.AccountCard
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
+import com.awesome.manager.core.ui.card.AccountCard
 
 @Composable
 fun TransactionDetailsRoute(
-    navigateBack: () -> Unit,
-    navigateToAccount: (AmAccount) -> Unit,
-    navigateToCreateTransaction: (AmAccount) -> Unit,
-    navigateToEditTransaction: (AmTransaction) -> Unit,
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
+    sendMainAction: (MainAction) -> Unit,
     transactionDetailsViewModel: TransactionDetailsViewModel = hiltViewModel()
 ) {
 
     val transactionDetailsState = transactionDetailsViewModel.transactionDetailsState
 
-    val transaction = transactionDetailsState.transaction.collectAsState().value
-    LaunchedEffect(key1 = transaction, block = {
-        updateAppBarState(
-            AppBarData(
-                title = transaction?.title.orEmpty(),
-                startIcon = AmIcons.ArrowBack to navigateBack,
-                endIcon = AmIcons.Edit to {
-                    transactionDetailsState.startEditTransactionNavigation(
-                        transaction
-                    )
-                },
-            )
+    val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendMainAction(
+            sendMainAction, transactionDetailsState::doneNavigationAction
         )
     })
 
-    val accountNavigation = transactionDetailsState.accountNavigation.collectAsState().value
-    LaunchedEffect(key1 = accountNavigation, block = {
-        accountNavigation?.let { amAccount ->
-            transactionDetailsState.doneAccountNavigation()
-            navigateToAccount(amAccount)
-        }
+    val appBarAction = transactionDetailsState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendMainAction(sendMainAction, transactionDetailsState::doneAppBarAction)
     })
 
-    val createTransactionNavigation =
-        transactionDetailsState.createTransactionNavigation.collectAsState().value
-    LaunchedEffect(key1 = createTransactionNavigation, block = {
-        createTransactionNavigation?.let { amAccount ->
-            transactionDetailsState.doneCreateTransactionNavigation()
-            navigateToCreateTransaction(amAccount)
-        }
+    val bottomSheetAction = transactionDetailsState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendMainAction(
+            sendMainAction, transactionDetailsState::doneBottomSheetAction
+        )
     })
 
-    val transactionNavigation =
-        transactionDetailsState.editTransactionNavigation.collectAsState().value
-    LaunchedEffect(key1 = transactionNavigation, block = {
-        transactionNavigation?.let { amTransaction ->
-            transactionDetailsState.doneEditTransactionNavigation()
-            navigateToEditTransaction(amTransaction)
+    val transactionState =
+        transactionDetailsState.transactionDetailsData.collectAsState().value
+    val editTransactionText = stringResource(R.string.edit_transaction)
+    LaunchedEffect(key1 = transactionState) {
+        when (transactionState) {
+            is DataState.Success -> {
+                val transactionData = transactionState.data
+                transactionDetailsState.setForTransactionDetailsScreen(
+                    editButtonText = editTransactionText,
+                    allowToEdit = transactionData.allowToUpdate,
+                    onClickBack = transactionDetailsState::navigatePopBack,
+                    onEditButton = {
+                        transactionDetailsState.navigateToEditTransaction(
+                            accountId = transactionData.transaction.accountId,
+                            transactionId = transactionData.transaction.id
+                        )
+                    },
+                )
+            }
+
+            DataState.Error, DataState.Loading -> {}
         }
-    })
+    }
 
     TransactionDetailsScreen(transactionDetailsState)
 }
 
 @Composable
 fun TransactionDetailsScreen(
-    transactionDetailsState: TransactionDetailsState
+    transactionDetailsState: TransactionDetailsStateMain
 ) {
 
-    val account = transactionDetailsState.account.collectAsState().value
-    val transaction = transactionDetailsState.transaction.collectAsState().value
+    val transactionDetailsData =
+        transactionDetailsState.transactionDetailsData.collectAsState().value
 
-    Column(
-        modifier = Modifier.padding(horizontal = 6.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-
-        AnimatedVisibility(account != null) {
-            if (account != null) {
+    when (transactionDetailsData) {
+        is DataState.Success -> {
+            val transaction = transactionDetailsData.data.transaction
+            val account = transactionDetailsData.data.account
+            Column(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                val balanceDetails = account.balanceDetails
                 AccountCard(
                     modifier = Modifier,
                     title = account.name,
                     imageUrl = account.imageUrl,
-                    creditor = account.creditor,
-                    debtor = account.debtor,
-                    currency = account.currency.currencyCode,
-                    loading = account.pending,
-                    onClick = { transactionDetailsState.startAccountNavigation(account) },
+                    loading = account.pending, withDetails = true,
+                    onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
                     onAddTransaction = {
-                        transactionDetailsState.startCreateTransactionNavigation(
-                            account
+                        transactionDetailsState.navigateToCreateTransaction(
+                            account.id
                         )
                     },
-                    onEditTransaction = null
+                    onEditTransaction = null,
+                    income = balanceDetails.income, expenses = balanceDetails.expenses,
+                    netIncomeAbs = balanceDetails.netIncomeAbs,
+                    debtor = balanceDetails.debtor, creditor = balanceDetails.creditor,
+                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    currencySymbol = balanceDetails.currency.currencySymbol,
+                    isPositiveIncome = balanceDetails.isPositiveIncome,
+                    isPositiveDebtor = balanceDetails.isPositiveDebtor
+                )
+                AmTextWithLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.transaction_subject),
+                    text = transaction.title,
+                    positive = null,
+                )
+                AmTextWithLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.transaction_description),
+                    text = transaction.subtitle,
+                    positive = null
+                )
+                AmTextWithLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.amount),
+                    text = (transaction.amount).toString(),
+                    positive = null
+                )
+
+                AmTextWithLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.payment_type),
+                    text = transaction.transactionType.name,
+                    positive = null
                 )
             }
         }
 
-        AmTextWithLabel(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(R.string.transaction_subject),
-            text = transaction?.title,
-            positive = transaction?.paymentTransaction,
-        )
-        AmTextWithLabel(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(R.string.transaction_description),
-            text = transaction?.subtitle,
-            positive = transaction?.paymentTransaction
-        )
-        AmTextWithLabel(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(R.string.amount),
-            text = (transaction?.amount ?: 0.0).toString(),
-            positive = transaction?.paymentTransaction
-        )
-
-        AmTextWithLabel(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(R.string.payment_type),
-            text = transaction?.transactionType?.title,
-            positive = transaction?.paymentTransaction
-        )
+        DataState.Error, DataState.Loading -> {}
     }
+
 }

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.awesome.manager.core.ui"
-    compileSdk = 33
+    compileSdk = 34
 }
 
 dependencies {

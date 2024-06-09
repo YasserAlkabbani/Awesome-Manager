@@ -8,15 +8,16 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.kotlin
 
-class AndroidLibraryConventionPlugin:Plugin<Project> {
+class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        with(target){
+        with(target) {
 
 //            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
             extensions.configure<LibraryExtension> {
@@ -24,10 +25,19 @@ class AndroidLibraryConventionPlugin:Plugin<Project> {
                 defaultConfig.targetSdk = 34
             }
 
-
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
+
+                add("implementation", libs.findLibrary("kotlinx.serialization").get())
+                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+
+
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
+
+                add("implementation", libs.findLibrary("junit").get())
+                add("implementation", libs.findLibrary("androidx.junit").get())
+
             }
 
         }

@@ -10,12 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmCircularProgress
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSurface
-import com.awesome.manager.core.designsystem.component.AmText
+import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 
@@ -24,7 +24,7 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmFilledTonalIconWithTextButton(
     modifier: Modifier = Modifier,
     text: String, amIconsType: AmIconsType,
-    positive: Boolean, loading: Boolean,
+    positive: Boolean?, loading: Boolean,
     onClick: () -> Unit
 ) {
     Row(
@@ -32,18 +32,17 @@ fun AmFilledTonalIconWithTextButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AmSurface(
-            modifier = modifier, onClick = onClick,
+            modifier = Modifier, onClick = onClick,
             positive = positive, loading = loading,
-            highPadding = true
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                AmText(text = text, style = MaterialTheme.typography.titleLarge)
+                AmText(text = text, style = MaterialTheme.typography.titleMedium)
                 AmCard(
-                    modifier = Modifier.size(50.dp), positive = positive,
+                    modifier = Modifier.size(AmSize.SMALL.value), positive = positive,
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     if (loading) {

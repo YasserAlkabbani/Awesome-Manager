@@ -9,11 +9,12 @@ data class AmTransaction(
     val subtitle: String,
     val amount: Double,
     val pending: Boolean,
-    val paymentTransaction: Boolean,
-    val createdAt: String,
-    val updatedAt: String,
     val accountName: String,
-    val currency: AmCurrency
+    val currency: AmCurrency,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val transactionAt: Long,
+    val transactionAtDate: String
 )
 
 data class UpsertTransaction(
@@ -23,6 +24,6 @@ data class UpsertTransaction(
     val title: String,
     val subtitle: String,
     val amount: Double,
-    val transactionTypeId: String,
-    val paymentTransaction: Boolean,
+    val transactionType: AmTransactionType,
+    val transactionAt: Long,
 )

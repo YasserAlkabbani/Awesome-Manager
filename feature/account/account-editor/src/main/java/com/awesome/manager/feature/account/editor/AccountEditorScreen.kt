@@ -1,160 +1,150 @@
 package com.awesome.manager.feature.account.editor
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.designsystem.component.AmChip
+import com.awesome.manager.core.common.enums.EditorInputType
+import com.awesome.manager.core.common.extentions.limitName
+import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
+import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
+import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmImage
-import com.awesome.manager.core.designsystem.component.AmText
-import com.awesome.manager.core.designsystem.component.AmTextField
-import com.awesome.manager.core.designsystem.component.AppBarData
+import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
+import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
+import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import kotlinx.coroutines.delay
+import com.awesome.manager.core.ui.AmChipsContainer
+import com.awesome.manager.core.ui.getChipData
 
 @Composable
 fun AccountEditorRoute(
+    sendMainAction: (MainAction) -> Unit,
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
-    updateAppBarState: (appBarData: AppBarData?) -> Unit,
-    onBack: () -> Unit
 ) {
 
     val accountEditorState = accountEditorViewModel.accountEditorState
 
-    val navigationBack = accountEditorState.navigationBack.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = navigationBack, block = {
-        navigationBack?.let {
-            accountEditorState.doneNavigationBack()
-            onBack()
-        }
+    val navigationAction = accountEditorState.navigationAction.collectAsState().value
+    LaunchedEffect(key1 = navigationAction, block = {
+        navigationAction.sendMainAction(sendMainAction, accountEditorState::doneNavigationAction)
     })
 
-    val createAccountText = stringResource(id = R.string.create_account)
-    val editAccountText = stringResource(R.string.edit_account)
-    val account = null
-    LaunchedEffect(key1 = account, block = {
-        delay(100)
-        val title = when (account) {
-            null -> createAccountText
-            else -> editAccountText
-        }
-        updateAppBarState(
-            AppBarData(
-                title = title,
-                startIcon = AmIcons.Close to accountEditorState::onNavigationBack,
-                endIcon = AmIcons.Save to accountEditorState.onSave
-            )
-        )
+    val appBarAction = accountEditorState.appBarAction.collectAsState().value
+    LaunchedEffect(key1 = appBarAction, block = {
+        appBarAction.sendMainAction(sendMainAction, accountEditorState::doneAppBarAction)
     })
+
+    val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
+    LaunchedEffect(key1 = bottomSheetAction, block = {
+        bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::doneBottomSheetAction)
+    })
+
+
+    val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
+    val createAccountText = stringResource(id = R.string.create_account)
+    val updateAccountText = stringResource(id = R.string.update_account)
+    val invalidInputMessage = stringResource(R.string.invalidate_input)
+    LaunchedEffect(key1 = accountEditorData) {
+        if (accountEditorData is DataState.Success) {
+            val accountEditor = accountEditorData.data
+            val isValidInput = accountEditor.validateAccountData != null
+            val errorMessage = if (isValidInput) null else invalidInputMessage
+            val saveButton = if (isValidInput) accountEditorState.onSave else null
+
+            when (accountEditor.editorInputType) {
+                EditorInputType.Create -> accountEditorState.setForEditAccountScreen(
+                    onClickCancel = accountEditorState::navigatePopBack,
+                    onSaveButton = saveButton,
+                    saveButtonText = createAccountText,
+                    errorMessage = errorMessage
+                )
+
+                EditorInputType.Edit -> accountEditorState.setForEditAccountScreen(
+                    onClickCancel = accountEditorState::navigatePopBack,
+                    onSaveButton = saveButton,
+                    saveButtonText = "$updateAccountText ${accountEditor.name.limitName()}",
+                    errorMessage = errorMessage
+                )
+            }
+        }
+    }
+
 
     AccountEditorScreen(accountEditorState)
 
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState: AccountEditorState) {
+fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
 
-    val accountName: String = accountEditorState.name.collectAsStateWithLifecycle().value
-    val accountImage: String = accountEditorState.imageUrl.collectAsStateWithLifecycle().value
-    val currencies = accountEditorState.currencies.collectAsStateWithLifecycle().value
-    val selectedCurrency = accountEditorState.selectedCurrency.collectAsStateWithLifecycle().value
-    val transactionTypes = accountEditorState.transactionTypes.collectAsStateWithLifecycle().value
-    val defaultTransactionType =
-        accountEditorState.defaultTransactionType.collectAsStateWithLifecycle().value
-
-    Column(
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-    ) {
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AmImage(modifier = Modifier.size(70.dp), imageUrl = accountImage)
-            Spacer(modifier = Modifier.width(12.dp))
-            AmTextField(
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                label = "Name", icon = AmIcons.Title, hint = "Account Name",
-                text = accountName, error = null, onTextChange = accountEditorState::updateName
-            )
+    val accountData = accountEditorState.accountEditorData.collectAsState().value
+    val currencies = accountEditorState.currencies.collectAsState().value
+    val currencyChipData = remember(currencies) {
+        currencies.map {
+            getChipData(id = it.id, title = it.currencyName, data = it)
         }
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
-        ) {
-            AmText(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                text = "Currency",
-                style = MaterialTheme.typography.titleMedium
-            )
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                items(items = currencies, key = { it.id }, contentType = { "CURRENCY" }) {
-                    AmChip(
-                        selected = selectedCurrency?.id == it.id,
-                        label = it.currencyName,
-                        onClick = { accountEditorState.updateCurrency(it.id) })
-                }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
-        ) {
-            AmText(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                text = "Default Transaction Type",
-                style = MaterialTheme.typography.titleMedium
-            )
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                items(
-                    items = transactionTypes,
-                    key = { it.id },
-                    contentType = { "TRANSACTION_TYPE" }) {
-                    AmChip(
-                        selected = defaultTransactionType?.id == it.id,
-                        label = it.title,
-                        onClick = { accountEditorState.updateDefaultTransactionType(it.id) })
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
     }
+
+    val transactionTypeChipData = remember {
+        accountEditorState.transactionTypes.map {
+            getChipData(id = it.name, title = it.name, data = it)
+        }
+    }
+
+    if (accountData is DataState.Success) {
+        val account = accountData.data
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AmImage(modifier = Modifier.size(70.dp), imageUrl = account.imageUrl)
+                Spacer(modifier = Modifier.width(12.dp))
+                AmTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true, initTextValue = account.name,
+                    label = "Name", icon = AmIcons.Title, hint = "Account Name",
+                    error = null, onTextChange = accountEditorState::updateName
+                )
+            }
+            AmSpacerMediumHeight()
+            AmChipsContainer(
+                title = "Currency",
+                chipDataList = currencyChipData,
+                selectedItem = account.currency?.id,
+                onSelect = { accountEditorState.updateCurrency(it.data) },
+                content = null
+            )
+            AmSpacerSmallHeight()
+            AmChipsContainer(
+                title = "Default Transaction Type",
+                chipDataList = transactionTypeChipData,
+                selectedItem = account.defaultTransactionType?.name,
+                onSelect = { accountEditorState.updateDefaultTransactionType(it.data) },
+                content = null
+            )
+
+        }
+
+    }
+
 }

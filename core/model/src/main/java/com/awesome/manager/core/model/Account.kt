@@ -5,13 +5,11 @@ data class AmAccount(
     val creatorUserId: String,
     val name: String,
     val imageUrl: String,
-    val currency: AmCurrency,
     val defaultTransactionType: AmTransactionType,
-    val creditor: Double,
-    val debtor: Double,
+    val balanceDetails: BalanceDetails,
     val pending: Boolean,
-    val createdAt: String,
-    val updatedAt: String,
+    val createdAt: Long,
+    val updatedAt: Long,
 )
 
 data class UpsertAccount(
@@ -20,5 +18,5 @@ data class UpsertAccount(
     val name: String,
     val imageUrl: String,
     val currencyId: String,
-    val defaultTransactionTypeId: String
+    val defaultTransactionType: AmTransactionType
 )

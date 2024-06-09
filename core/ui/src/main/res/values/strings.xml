@@ -8,4 +8,20 @@
     <string name="pay">Pay</string>
     <string name="date">Date</string>
     <string name="type">Type</string>
+    <string name="email">Email</string>
+    <string name="create_and_confirm_account">Create and confirm the account</string>
+    <string name="edit_credentials">Edit credentials</string>
+    <string name="there_is_something_wrong">There Is Something Wrong</string>
+    <string name="there_is_unknown_error_try_again_later">Unknown Error Please Try Again Later</string>
+    <string name="your_account_has_created_successfully">Your Account Has Created Successfully</string>
+    <string name="we_sent_you_a_confirmation_link_please_check_your_email">We Sent You A Confirmation Link\nPlease Check Your Email</string>
+    <string name="check_email">Check Email</string>
+    <string name="we_sent_you_a_reset_password_link_please_check_your_email_to_create_your_new_password">We Sent You A Reset Password Link\nPlease Check Your Email To Create Your New Password</string>
+    <string name="reset_password_link_has_sent_successfully">Reset Password Link Has Sent Successfully</string>
+    <string name="i_understand">I Understand</string>
+    <string name="something_wrong">Something wrong</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
 </resources>

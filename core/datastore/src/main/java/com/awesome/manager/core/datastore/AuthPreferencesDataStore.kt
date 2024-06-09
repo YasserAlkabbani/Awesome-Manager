@@ -1,6 +1,6 @@
 package com.awesome.manager.core.datastore
 
-import android.util.Log
+import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -14,33 +14,39 @@ class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val au
     private val accessTokenKey = stringPreferencesKey("access_token")
     private val refreshTokenKey = stringPreferencesKey("refresh_token")
     private val currentUserIdKey = stringPreferencesKey("current_user_id")
+    private val currentUserEmailKey = stringPreferencesKey("current_email")
 
-    suspend fun updateToken(accessToken: String, refreshToken: String, currentUserId: String) {
+    suspend fun updateToken(
+        accessToken: String, refreshToken: String,
+        currentUserId: String, email: String
+    ) {
         authDataStore.edit {
-            it[accessTokenKey] = accessToken
-            it[refreshTokenKey] = refreshToken
-            it[currentUserIdKey] = currentUserId
+            it[accessTokenKey] = Uri.encode(accessToken)
+            it[refreshTokenKey] = Uri.encode(refreshToken)
+            it[currentUserIdKey] = Uri.encode(currentUserId)
+            it[currentUserEmailKey] = Uri.encode(email)
         }
     }
 
     suspend fun clearAuth() {
-        authDataStore.edit {
-            it[accessTokenKey] = ""
-            it[refreshTokenKey] = ""
-            it[currentUserIdKey] = ""
-        }
+        authDataStore.edit { it.clear() }
     }
 
     fun returnAccessToken() = authDataStore.data.map {
-        it[accessTokenKey]
+        Uri.decode(it[accessTokenKey])
     }
 
     fun returnRefreshToken() = authDataStore.data.map {
-        it[refreshTokenKey]
+        Uri.decode(it[refreshTokenKey])
     }
 
     fun returnCurrentUserId() = authDataStore.data.map {
-        it[currentUserIdKey]
+        Uri.decode(it[currentUserIdKey])
     }
+
+    fun returnCurrentUserEmail() = authDataStore.data.map {
+        Uri.decode(it[currentUserEmailKey])
+    }
+
 
 }
