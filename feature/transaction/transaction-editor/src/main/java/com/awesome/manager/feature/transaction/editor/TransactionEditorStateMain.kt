@@ -100,7 +100,6 @@ class TransactionEditorStateMain(
     fun selectAccount(account: AmAccount) {
         _transactionEditorInput.updateData { it.selectAccount(account) }
         selectTransactionType(account.defaultTransactionType)
-        dismissBottomSheet()
     }
 
     fun selectTransactionType(transactionType: AmTransactionType) =

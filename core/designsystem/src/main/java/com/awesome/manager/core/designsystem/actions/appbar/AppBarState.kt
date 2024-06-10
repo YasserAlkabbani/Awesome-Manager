@@ -122,8 +122,8 @@ class AppBarState : AppBarStateI {
     ) =
         updateAppBarData(
             buttonText = editButtonText,
-            onClickBackButton = if (allowToEdit) onEditButton else null,
-            buttonOnClick = onClickBack,
+            onClickBackButton = onClickBack,
+            buttonOnClick = if (allowToEdit) onEditButton else null,
         )
 
     override fun setForEditTransactionScreen(

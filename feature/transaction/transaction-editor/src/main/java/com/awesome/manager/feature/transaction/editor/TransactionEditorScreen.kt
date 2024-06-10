@@ -93,6 +93,7 @@ fun TransactionEditorRoute(
                                         withDetails = false,
                                         onClick = {
                                             transactionEditorState.selectAccount(account)
+                                            transactionEditorState.dismissBottomSheet()
                                         },
                                         onAddTransaction = null,
                                         onEditTransaction = null,

@@ -50,7 +50,7 @@ fun AmTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    var text by rememberSaveable { mutableStateOf(initTextValue) }
+    var text by remember { mutableStateOf(initTextValue) }
     LaunchedEffect(key1 = text, block = { onTextChange(text) })
 
     val isFocus = remember { mutableStateOf(false) }
@@ -61,7 +61,7 @@ fun AmTextField(
             if (error != null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
         label = "1"
     ).value
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+    var passwordHidden by remember { mutableStateOf(true) }
 
 
     Surface(

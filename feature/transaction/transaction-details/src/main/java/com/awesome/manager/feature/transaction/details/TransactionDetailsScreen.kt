@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
@@ -86,8 +87,8 @@ fun TransactionDetailsScreen(
             val transaction = transactionDetailsData.data.transaction
             val account = transactionDetailsData.data.account
             Column(
-                modifier = Modifier.padding(horizontal = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(horizontal = AmPadding.MEDIUM.value),
+                verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
             ) {
                 val balanceDetails = account.balanceDetails
                 AccountCard(

@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -34,7 +37,9 @@ fun AmDynamicBottomBar(
 ) {
     AnimatedVisibility(appBarAction.visible) {
         Surface(
-            modifier = modifier.animateContentSize(),
+            modifier = modifier
+                .height(AmSize.EXTRA_LARGE.value)
+                .animateContentSize(),
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.05f)
         ) {
@@ -42,13 +47,6 @@ fun AmDynamicBottomBar(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AnimatedVisibility(visible = appBarAction.onAddAccount != null) {
-                    Row {
-                        AmFloatingActionBottom(
-                            amIconsType = AmIcons.AccountAdd,
-                            onClick = { appBarAction.onAddAccount?.invoke() })
-                    }
-                }
                 AnimatedVisibility(visible = appBarAction.onClickBackButton != null) {
                     AmActionCustomItem(
                         amIconsType = AmIcons.ArrowBack,
@@ -81,8 +79,17 @@ fun AmDynamicBottomBar(
                         AmText(text = appBarAction.errorMessage.orEmpty())
                     }
                 }
+                AnimatedVisibility(visible = appBarAction.onAddAccount != null) {
+                    Row {
+                        AmSpacerSmallWidth()
+                        AmFloatingActionBottom(
+                            amIconsType = AmIcons.AccountAdd,
+                            onClick = { appBarAction.onAddAccount?.invoke() })
+                    }
+                }
                 AnimatedVisibility(visible = appBarAction.onAddTransaction != null) {
                     Row {
+                        AmSpacerSmallWidth()
                         AmFloatingActionBottom(
                             amIconsType = AmIcons.TransactionAdd,
                             onClick = { appBarAction.onAddTransaction?.invoke() })
@@ -148,11 +155,13 @@ fun RowScope.AmActionCustomItem(
 @Composable
 fun AmFloatingActionBottom(amIconsType: AmIconsType, onClick: () -> Unit) {
     SmallFloatingActionButton(
-        modifier = Modifier,
+        modifier = Modifier
+            .fillMaxHeight()
+            .aspectRatio(1f),
         onClick = onClick,
         content = { AmIcon(amIconsType = amIconsType) },
         elevation = FloatingActionButtonDefaults.elevation(0.dp),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         containerColor = MaterialTheme.colorScheme.secondary,
         contentColor = MaterialTheme.colorScheme.secondaryContainer,
     )
