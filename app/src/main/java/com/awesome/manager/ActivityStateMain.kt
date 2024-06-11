@@ -16,13 +16,9 @@ class ActivityStateMain(
 ) : MainState() {
 
     fun updateMainState(mainAction: MainAction) {
-        Timber.d("TEST_APPBAR UPDATE_ACTION $mainAction")
         when (mainAction) {
             is NavigationAction -> mainAction.applyAction()
-            is AppBarAction -> {
-                Timber.d("TEST_APPBAR APPLY_ACTION")
-                mainAction.applyAction()
-            }
+            is AppBarAction -> mainAction.applyAction()
             is BottomSheetAction -> mainAction.applyAction()
             is PickerAction -> mainAction.applyAction()
         }

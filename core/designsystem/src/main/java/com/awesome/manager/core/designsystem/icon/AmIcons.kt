@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.Money
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Output
 import androidx.compose.material.icons.filled.Password
@@ -82,7 +83,7 @@ object AmIcons {
     val Edit = AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
     val Save = AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
     val Close = AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
-    val More = AmIconsType.ImageVictorAmIconsType(Icons.Default.MoreVert)
+    val More = AmIconsType.ImageVictorAmIconsType(Icons.Default.MoreHoriz)
 
     val Email = AmIconsType.ImageVictorAmIconsType(Icons.Default.Email)
     val Password = AmIconsType.ImageVictorAmIconsType(Icons.Default.Password)

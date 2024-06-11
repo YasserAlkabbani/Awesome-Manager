@@ -217,7 +217,8 @@ fun AmApp() {
     AppScreen(
         navHostController = navHostController,
         currentNavigationDestination = currentNavigationDestination,
-        appBarAction = appBarAction, updateMainAction = mainActivityState::updateMainState
+        appBarAction = appBarAction, updateMainAction = mainActivityState::updateMainState,
+        userEmail = currentUserEmail, logout = mainActivityState.logout
     )
 
 }
@@ -226,7 +227,8 @@ fun AmApp() {
 fun AppScreen(
     navHostController: NavHostController,
     currentNavigationDestination: NavigationDestination?,
-    appBarAction: AppBarAction?, updateMainAction: (MainAction) -> Unit
+    appBarAction: AppBarAction?, updateMainAction: (MainAction) -> Unit,
+    userEmail: String?, logout: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -251,7 +253,18 @@ fun AppScreen(
                                     )
                                 }
                         },
-                        appBarAction = appBarAction
+                        showMoreBottomSheet = {
+                            userEmail?.let { email ->
+                                updateMainAction(
+                                    BottomSheetAction.Open(
+                                        BottomSheetContent.Profile(
+                                            email = email, logout = logout
+                                        )
+                                    )
+                                )
+                            }
+                        },
+                        appBarAction = appBarAction,
                     )
                 }
             },
@@ -279,7 +292,10 @@ private fun BottomSheetAction.Content(): Unit? =
             is BottomSheetContent.PasswordRested -> BottomSheetPasswordRestored(bottomSheetContent)
             is BottomSheetContent.Profile -> BottomSheetProfile(bottomSheetContent)
             is BottomSheetContent.UnknownError -> BottomSheetUnknownError(bottomSheetContent)
-            is BottomSheetContent.SearchWithContent -> BottomSheetSearchWithContent(bottomSheetContent)
+            is BottomSheetContent.SearchWithContent -> BottomSheetSearchWithContent(
+                bottomSheetContent
+            )
+
             is BottomSheetContent.PickDate -> BottomSheetDatePicker(bottomSheetContent)
             is BottomSheetContent.PickRangeDate -> BottomSheetDateRangePicker(bottomSheetContent)
         }

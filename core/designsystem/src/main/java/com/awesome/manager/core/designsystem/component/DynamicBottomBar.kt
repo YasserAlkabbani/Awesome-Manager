@@ -33,6 +33,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 fun AmDynamicBottomBar(
     modifier: Modifier,
     bottomBarItems: @Composable RowScope.() -> Unit,
+    showMoreBottomSheet: () -> Unit,
     appBarAction: AppBarAction
 ) {
     AnimatedVisibility(appBarAction.visible) {
@@ -61,6 +62,10 @@ fun AmDynamicBottomBar(
                 }
                 AnimatedVisibility(visible = appBarAction.bottomNavigation) {
                     Row {
+                        AmActionCustomItem(
+                            amIconsType = AmIcons.More,
+                            onClick = showMoreBottomSheet
+                        )
                         Surface(
                             shape = MaterialTheme.shapes.extraLarge,
                             content = { Row(content = bottomBarItems) }
