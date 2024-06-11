@@ -21,7 +21,7 @@ fun AmSurface(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val surface = MaterialTheme.colorScheme.secondary
+    val surface = MaterialTheme.colorScheme.surface
     val primary = MaterialTheme.colorScheme.primary
     val error = MaterialTheme.colorScheme.error
     val surfaceColors = remember(positive) {

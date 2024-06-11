@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,7 +33,6 @@ fun AmBalanceDetailsCard(
             positiveLabel = stringResource(R.string.debtor),
             balance = netDebtorAbs,
             isPositiveBalance = isPositiveDebtor,
-            currency = currencySymbol
         )
         AmSpacerSmallWidth()
         BalanceDetailsRow(
@@ -45,7 +45,6 @@ fun AmBalanceDetailsCard(
             negativeLabel = stringResource(R.string.expenses),
             balance = netIncomeAbs,
             isPositiveBalance = isPositiveIncome,
-            currency = currencySymbol
         )
     }
 }
@@ -56,25 +55,25 @@ fun BalanceDetailsRow(
     positiveValue: Double, positiveLabel: String,
     negativeValue: Double, negativeLabel: String,
     balance: Double, isPositiveBalance: Boolean,
-    currency: String
 ) {
     Column(modifier = modifier) {
-        AmText(text = "$positiveLabel/$negativeLabel")
+        AmText(
+            text = "$positiveLabel/$negativeLabel",
+            style = MaterialTheme.typography.titleMedium
+        )
         AmTextWithIcon(
             modifier = Modifier.fillMaxWidth(),
-            text = "$positiveValue $currency",
+            text = "$positiveValue",
             amIconsType = AmIcons.Input, positive = true,
         )
-        AmSpacerSmallHeight()
         AmTextWithIcon(
             modifier = Modifier.fillMaxWidth(),
-            text = "$negativeValue $currency",
+            text = "$negativeValue",
             amIconsType = AmIcons.Output, positive = false
         )
-        AmSpacerSmallHeight()
         AmTextWithIcon(
             modifier = Modifier.fillMaxWidth(),
-            text = "$balance $currency",
+            text = "$balance",
             amIconsType = AmIcons.Balance, positive = isPositiveBalance
         )
     }

@@ -8,6 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
+fun AmSpacerXSmallWidth() {
+    Spacer(modifier = Modifier.width(2.dp))
+}
+
+@Composable
 fun AmSpacerSmallWidth() {
     Spacer(modifier = Modifier.width(4.dp))
 }
@@ -22,6 +27,11 @@ fun AmSpacerLargeWidth() {
     Spacer(modifier = Modifier.width(16.dp))
 }
 
+
+@Composable
+fun AmSpacerXSmallHeight() {
+    Spacer(modifier = Modifier.height(2.dp))
+}
 
 @Composable
 fun AmSpacerSmallHeight() {

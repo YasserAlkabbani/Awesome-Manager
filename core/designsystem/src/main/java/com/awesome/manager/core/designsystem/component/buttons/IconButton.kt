@@ -25,7 +25,8 @@ fun AmIconButton(
     }
     IconButton(
         modifier = modifier, onClick = onClick,
-        colors = IconButtonDefaults.iconButtonColors().copy(contentColor = color)
+        colors = IconButtonDefaults.iconButtonColors()
+            .copy(contentColor = color, containerColor = MaterialTheme.colorScheme.surface)
     ) {
         AmIcon(amIconsType = amIconsType)
     }

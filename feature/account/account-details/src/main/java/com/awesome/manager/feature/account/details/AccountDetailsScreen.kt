@@ -124,14 +124,12 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
                                 modifier = Modifier.animateItemPlacement(),
                                 account = "ACCOUNT",
                                 title = transaction.title,
-                                subTitle = transaction.subtitle,
                                 amount = transaction.amount,
                                 pending = transaction.pending,
                                 date = transaction.transactionAtDate,
                                 transactionType = transaction.transactionType.name,
                                 isPay = transaction.transactionType.posative,
                                 currency = transaction.currency.currencySymbol,
-                                createdBy = transaction.creatorUserId,
                                 onClick = {
                                     accountDetailsState.navigateToTransactionDetails(
                                         transaction.id

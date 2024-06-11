@@ -20,18 +20,14 @@ import com.awesome.manager.core.ui.AmTextWithIcon
 fun TransactionCard(
     modifier: Modifier,
     account: String,
-    title: String, subTitle: String, amount: Double, pending: Boolean,
+    title: String, amount: Double, pending: Boolean,
     date: String, transactionType: String, isPay: Boolean, currency: String,
-    createdBy: String, onClick: () -> Unit
+    onClick: () -> Unit
 ) {
 
     AmCard(
         modifier = modifier,
         content = {
-            AmText(
-                modifier = Modifier.fillMaxWidth(),
-                text = title, style = MaterialTheme.typography.titleMedium
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -46,22 +42,27 @@ fun TransactionCard(
                 AmText(
                     modifier = Modifier.wrapContentWidth(),
                     text = "$amount $currency",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
-
+            AmText(
+                modifier = Modifier.fillMaxWidth(),
+                text = title, style = MaterialTheme.typography.bodyMedium
+            )
             Row {
                 AmTextWithIcon(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f), text = transactionType,
+                        .weight(1f),
+                    text = transactionType, textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Category,
                     positive = isPay
                 )
                 AmTextWithIcon(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f), text = date,
+                        .weight(1f),
+                    text = date, textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Date,
                     positive = isPay
                 )
@@ -81,13 +82,11 @@ fun TransactionCardPreview() {
         modifier = Modifier.width(400.dp),
         account = "ACCOUNT",
         title = "TRANSACTION TITLE",
-        subTitle = "TRANSACTION SUBTITLE",
         amount = 5000.0,
         pending = false,
         date = "15.10.2023",
         transactionType = "Salary",
         isPay = true,
-        createdBy = "YASSER",
         currency = "$",
         onClick = {}
     )

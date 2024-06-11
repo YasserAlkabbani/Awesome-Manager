@@ -92,7 +92,7 @@ fun AccountsScreen(
                     item {
                         Column(
                             modifier = Modifier
-                                .padding(AmPadding.EXTRA_LARGE.value)
+                                .padding(AmPadding.X_LARGE.value)
                                 .fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally

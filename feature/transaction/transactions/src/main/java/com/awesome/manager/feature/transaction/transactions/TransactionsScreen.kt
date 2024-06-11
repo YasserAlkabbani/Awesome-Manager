@@ -96,7 +96,7 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                     item {
                         Column(
                             modifier = Modifier
-                                .padding(AmPadding.EXTRA_LARGE.value)
+                                .padding(AmPadding.X_LARGE.value)
                                 .fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -188,14 +188,12 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     modifier = Modifier.animateItemPlacement(),
                                     account = transaction.accountName,
                                     title = transaction.title,
-                                    subTitle = transaction.subtitle,
                                     amount = transaction.amount,
                                     pending = transaction.pending,
                                     date = transaction.transactionAtDate,
                                     transactionType = transaction.transactionType.name,
                                     isPay = transaction.transactionType.posative,
                                     currency = transaction.currency.currencyCode,
-                                    createdBy = transaction.creatorUserId,
                                     onClick = {
                                         transactionsState.navigateToTransactionDetails(
                                             transaction.id

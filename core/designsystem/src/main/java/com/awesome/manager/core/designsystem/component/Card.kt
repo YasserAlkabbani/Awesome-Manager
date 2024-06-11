@@ -23,8 +23,8 @@ fun AmCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val secondaryContainer = MaterialTheme.colorScheme.secondaryContainer // Color.Unspecified
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val secondaryContainer = MaterialTheme.colorScheme.secondaryContainer
     val errorContainer = MaterialTheme.colorScheme.errorContainer
     val cardColors = remember(positive) {
         when (positive) {

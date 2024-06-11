@@ -85,7 +85,7 @@ fun AuthScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(AmPadding.EXTRA_LARGE.value)
+            .padding(AmPadding.X_LARGE.value)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -99,7 +99,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AmIcon(
-                        modifier = Modifier.size(AmPadding.EXTRA_LARGE.value),
+                        modifier = Modifier.size(AmPadding.X_LARGE.value),
                         amIconsType = AmIcons.AwesomeManagerIcon,
                     )
                     AmText(
@@ -126,8 +126,8 @@ fun AuthScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                vertical = AmPadding.EXTRA_LARGE.value,
-                                horizontal = AmPadding.EXTRA_SMALL.value
+                                vertical = AmPadding.X_LARGE.value,
+                                horizontal = AmPadding.X_SMALL.value
                             )
                     ) {
                         Column(Modifier.fillMaxWidth()) {

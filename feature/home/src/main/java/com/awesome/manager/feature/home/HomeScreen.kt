@@ -77,7 +77,7 @@ fun HomeScreen(homeState: HomeMainState) {
             contentPadding = PaddingValues(
                 start = AmPadding.SMALL.value,
                 end = AmPadding.SMALL.value,
-                bottom = AmPadding.EXTRA_LARGE.value
+                bottom = AmPadding.X_LARGE.value
             ),
             content = {
                 items(
@@ -106,7 +106,7 @@ fun HomeScreen(homeState: HomeMainState) {
         DataState.Error -> {
             Column(
                 modifier = Modifier
-                    .padding(AmPadding.EXTRA_LARGE.value)
+                    .padding(AmPadding.X_LARGE.value)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -151,7 +151,7 @@ fun HomeCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 AmText(
-                    text = "Cash (${currencyCode}):",
+                    text = "Cash (${currencyCode})",
                     style = MaterialTheme.typography.titleLarge
                 )
                 AmText(

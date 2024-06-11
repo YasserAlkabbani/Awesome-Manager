@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
@@ -28,7 +27,6 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.designsystem.actions.main.AppBarAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmDynamicBottomBar(
     modifier: Modifier,
@@ -39,7 +37,7 @@ fun AmDynamicBottomBar(
     AnimatedVisibility(appBarAction.visible) {
         Surface(
             modifier = modifier
-                .height(AmSize.EXTRA_LARGE.value)
+                .height(AmSize.X_LARGE.value)
                 .animateContentSize(),
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.05f)
