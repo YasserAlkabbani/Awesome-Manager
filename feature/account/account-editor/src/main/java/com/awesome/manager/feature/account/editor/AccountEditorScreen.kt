@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +29,7 @@ import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
 
@@ -56,28 +58,27 @@ fun AccountEditorRoute(
 
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
-    val createAccountText = stringResource(id = R.string.create_account)
-    val updateAccountText = stringResource(id = R.string.update_account)
-    val invalidInputMessage = stringResource(R.string.invalidate_input)
+    val context = LocalContext.current
     LaunchedEffect(key1 = accountEditorData) {
         if (accountEditorData is DataState.Success) {
             val accountEditor = accountEditorData.data
             val isValidInput = accountEditor.validateAccountData != null
-            val errorMessage = if (isValidInput) null else invalidInputMessage
+            val errorMessage =
+                if (isValidInput) null else context.getString(R.string.invalidate_input)
             val saveButton = if (isValidInput) accountEditorState.onSave else null
 
             when (accountEditor.editorInputType) {
                 EditorInputType.Create -> accountEditorState.setForEditAccountScreen(
                     onClickCancel = accountEditorState::navigatePopBack,
                     onSaveButton = saveButton,
-                    saveButtonText = createAccountText,
+                    saveButtonText = context.getString(R.string.create_account),
                     errorMessage = errorMessage
                 )
 
                 EditorInputType.Edit -> accountEditorState.setForEditAccountScreen(
                     onClickCancel = accountEditorState::navigatePopBack,
                     onSaveButton = saveButton,
-                    saveButtonText = "$updateAccountText ${accountEditor.name.limitName()}",
+                    saveButtonText = "${context.getString(R.string.update_account)} ${accountEditor.name.limitName()}",
                     errorMessage = errorMessage
                 )
             }
@@ -92,6 +93,7 @@ fun AccountEditorRoute(
 @Composable
 fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
 
+    val context = LocalContext.current
     val accountData = accountEditorState.accountEditorData.collectAsState().value
     val currencies = accountEditorState.currencies.collectAsState().value
     val currencyChipData = remember(currencies) {
@@ -99,10 +101,10 @@ fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
             getChipData(id = it.id, title = it.currencyName, data = it)
         }
     }
-
     val transactionTypeChipData = remember {
         accountEditorState.transactionTypes.map {
-            getChipData(id = it.name, title = it.name, data = it)
+            val title = context.enumToString(it)
+            getChipData(id = it.name, title = title, data = it)
         }
     }
 
@@ -122,21 +124,23 @@ fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
                 AmTextField(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true, initTextValue = account.name,
-                    label = "Name", icon = AmIcons.Title, hint = "Account Name",
+                    label = "Account", icon = AmIcons.Title, hint = "Account Name",
                     error = null, onTextChange = accountEditorState::updateName
                 )
             }
-            AmSpacerMediumHeight()
-            AmChipsContainer(
-                title = "Currency",
-                chipDataList = currencyChipData,
-                selectedItem = account.currency?.id,
-                onSelect = { accountEditorState.updateCurrency(it.data) },
-                content = null
-            )
+            if (account.allowToUpdateCurrency) {
+                AmSpacerMediumHeight()
+                AmChipsContainer(
+                    title = "Currency",
+                    chipDataList = currencyChipData,
+                    selectedItem = account.currency?.id,
+                    onSelect = { accountEditorState.updateCurrency(it.data) },
+                    content = null
+                )
+            }
             AmSpacerSmallHeight()
             AmChipsContainer(
-                title = "Default Transaction Type",
+                title = stringResource(R.string.default_transaction_type),
                 chipDataList = transactionTypeChipData,
                 selectedItem = account.defaultTransactionType?.name,
                 onSelect = { accountEditorState.updateDefaultTransactionType(it.data) },

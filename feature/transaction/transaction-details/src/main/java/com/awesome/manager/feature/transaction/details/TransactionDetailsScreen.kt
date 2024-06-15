@@ -9,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
@@ -18,6 +17,7 @@ import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
+import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 
 @Composable
@@ -97,11 +97,7 @@ fun TransactionDetailsScreen(
                     imageUrl = account.imageUrl,
                     loading = account.pending, withDetails = true,
                     onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
-                    onAddTransaction = {
-                        transactionDetailsState.navigateToCreateTransaction(
-                            account.id
-                        )
-                    },
+                    onAddTransaction = null,
                     onEditTransaction = null,
                     income = balanceDetails.income, expenses = balanceDetails.expenses,
                     netIncomeAbs = balanceDetails.netIncomeAbs,
@@ -111,31 +107,42 @@ fun TransactionDetailsScreen(
                     isPositiveIncome = balanceDetails.isPositiveIncome,
                     isPositiveDebtor = balanceDetails.isPositiveDebtor
                 )
-                AmTextWithLabel(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.transaction_subject),
-                    text = transaction.title,
-                    positive = null,
-                )
-                AmTextWithLabel(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.transaction_description),
-                    text = transaction.subtitle,
-                    positive = null
-                )
-                AmTextWithLabel(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.amount),
-                    text = (transaction.amount).toString(),
-                    positive = null
-                )
 
-                AmTextWithLabel(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.payment_type),
-                    text = transaction.transactionType.name,
-                    positive = null
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(AmPadding.X_SMALL.value),
+                ) {
+                    AmTextWithLabel(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.transaction_subject),
+                        text = transaction.title,
+                        positive = transaction.transactionType.positive
+                    )
+                    AmTextWithLabel(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.transaction_description),
+                        text = transaction.subtitle,
+                        positive = transaction.transactionType.positive
+                    )
+                    AmTextWithLabel(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.amount),
+                        text = (transaction.amount).toString(),
+                        positive = transaction.transactionType.positive
+                    )
+                    AmTextWithLabel(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.date),
+                        text = transaction.transactionAtDate,
+                        positive = transaction.transactionType.positive
+                    )
+                    AmTextWithLabel(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.payment_type),
+                        text = transaction.transactionType.getString(),
+                        positive = transaction.transactionType.positive
+                    )
+
+                }
             }
         }
 

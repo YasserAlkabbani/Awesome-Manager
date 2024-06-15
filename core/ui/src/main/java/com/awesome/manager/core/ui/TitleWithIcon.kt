@@ -27,7 +27,6 @@ fun AmTextWithIcon(
     modifier: Modifier = Modifier,
     text: String, textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     amIconsType: AmIconsType,
-    positive: Boolean
 ) {
     Row(
         modifier = modifier,
@@ -36,7 +35,7 @@ fun AmTextWithIcon(
     ) {
         AmIcon(
             modifier = Modifier.size(AmSize.X_SMALL.value),
-            amIconsType = amIconsType, positive = positive
+            amIconsType = amIconsType
         )
         AmSpacerMediumWidth()
         AmText(text = text, style = textStyle)
@@ -50,7 +49,6 @@ fun AmTitleWithIconPreview() {
         AmTextWithIcon(
             text = "TITLE",
             amIconsType = AmIcons.AwesomeManagerIcon,
-            positive = true
         )
     }
 }

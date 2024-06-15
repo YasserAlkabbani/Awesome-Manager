@@ -36,6 +36,7 @@ import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
 
 @Composable
 fun AuthRoute(
@@ -147,7 +148,7 @@ fun AuthScreen(
 
                             AmSpacerSmallHeight()
 
-                            AmTextField(
+                            AmPasswordTextField(
                                 modifier = Modifier,
                                 label = stringResource(R.string.password),
                                 icon = AmIcons.Password,
@@ -159,7 +160,6 @@ fun AuthScreen(
                                     keyboardType = KeyboardType.Password
                                 ),
                                 enabled = true,
-                                password = true
                             )
                         }
 

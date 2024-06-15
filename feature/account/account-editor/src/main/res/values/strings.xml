@@ -3,4 +3,5 @@
     <string name="create_account">Create Account</string>
     <string name="update_account">Update</string>
     <string name="invalidate_input">Invalidate Input</string>
+    <string name="default_transaction_type">Default Transaction Type</string>
 </resources>

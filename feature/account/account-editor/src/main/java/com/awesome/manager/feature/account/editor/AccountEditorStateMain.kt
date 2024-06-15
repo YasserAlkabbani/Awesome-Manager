@@ -32,18 +32,20 @@ class AccountEditorStateMain(
                 id = UUID.randomUUID().toString(), creatorUserId = creatorUserId,
                 name = "", imageUrl = images.random(),
                 currency = null, defaultTransactionType = null,
-                editorInputType = EditorInputType.Create
+                editorInputType = EditorInputType.Create,
+                allowToUpdateCurrency = true
             )
         }
 
-    fun asEditAccount(currentUserId: String, amAccount: AmAccount) {
+    fun asEditAccount(currentUserId: String, amAccount: AmAccount,allowToUpdateCurrency: Boolean) {
         if (currentUserId == amAccount.creatorUserId) _accountEditorData.setData {
             AccountEditorData(
                 id = amAccount.id, creatorUserId = amAccount.creatorUserId,
                 name = amAccount.name, imageUrl = amAccount.imageUrl,
                 currency = amAccount.balanceDetails.currency,
                 defaultTransactionType = amAccount.defaultTransactionType,
-                editorInputType = EditorInputType.Edit
+                editorInputType = EditorInputType.Edit,
+                allowToUpdateCurrency=allowToUpdateCurrency
             )
         }
         else navigatePopBack()
@@ -72,6 +74,7 @@ data class AccountEditorData(
     val currency: AmCurrency?,
     val defaultTransactionType: AmTransactionType?,
     val editorInputType: EditorInputType,
+    val allowToUpdateCurrency:Boolean
 ) {
 
     fun updateName(name: String): AccountEditorData = copy(name = name)

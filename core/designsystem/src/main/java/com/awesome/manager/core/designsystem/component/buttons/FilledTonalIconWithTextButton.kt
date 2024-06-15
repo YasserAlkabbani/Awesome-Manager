@@ -10,10 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmCircularProgress
 import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -24,33 +26,23 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmFilledTonalIconWithTextButton(
     modifier: Modifier = Modifier,
     text: String, amIconsType: AmIconsType,
-    positive: Boolean?, loading: Boolean,
-    onClick: () -> Unit
+    positive: Boolean?, onClick: () -> Unit
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AmSurface(
-            modifier = Modifier, onClick = onClick,
-            positive = positive, loading = loading,
+        AmCard(
+            modifier = Modifier, onClick = onClick, positive = positive,
+            padding = AmPadding.LARGE
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                AmIcon(modifier = Modifier, amIconsType = amIconsType)
+                AmSpacerMediumWidth()
                 AmText(text = text, style = MaterialTheme.typography.titleMedium)
-                AmCard(
-                    modifier = Modifier.size(AmSize.SMALL.value), positive = positive,
-                    shape = MaterialTheme.shapes.extraLarge
-                ) {
-                    if (loading) {
-                        AmCircularProgress(modifier = Modifier.fillMaxSize(), positive = true)
-                    } else {
-                        AmIcon(modifier = Modifier.fillMaxSize(), amIconsType = amIconsType)
-                    }
-                }
             }
         }
     }
@@ -64,8 +56,7 @@ fun AmFilledTonalIconButtonWithPositivePreview() {
     AmFilledTonalIconWithTextButton(
         modifier = Modifier,
         text = "TEST TEXT", amIconsType = AmIcons.Save,
-        positive = true, loading = true,
-        onClick = {}
+        positive = true, onClick = {}
     )
 }
 
@@ -75,7 +66,6 @@ fun AmFilledTonalIconButtonWithNegativePreview() {
     AmFilledTonalIconWithTextButton(
         modifier = Modifier,
         text = "TEST TEXT", amIconsType = AmIcons.Save,
-        positive = false, loading = false,
-        onClick = {}
+        positive = false, onClick = {}
     )
 }

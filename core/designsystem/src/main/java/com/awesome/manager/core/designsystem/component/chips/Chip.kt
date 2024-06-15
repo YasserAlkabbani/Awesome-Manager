@@ -22,7 +22,7 @@ fun AmChip(
 ) {
     val shape = if (selected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
     FilterChip(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier,
         selected = selected,
         label = { Text(text = label) },
         shape = shape,
@@ -31,7 +31,6 @@ fun AmChip(
             enabled = false,
             selected = true
         ),
-        leadingIcon = { if (selected) AmIcon(amIconsType = AmIcons.Done) },
         onClick = onClick,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surface,

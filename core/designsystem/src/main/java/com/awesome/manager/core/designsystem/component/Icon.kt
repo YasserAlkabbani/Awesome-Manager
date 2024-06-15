@@ -12,36 +12,25 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmIcon(
     modifier: Modifier = Modifier,
-    amIconsType: AmIconsType,
-    positive: Boolean? = null
+    amIconsType: AmIconsType
 ) {
-    val default = LocalContentColor.current
-    val primary = MaterialTheme.colorScheme.primary
-    val error = MaterialTheme.colorScheme.error
-    val tint = remember(positive) {
-        when (positive) {
-            null -> default
-            true -> primary
-            false -> error
-        }
-    }
     when (amIconsType) {
         is AmIconsType.ImageVictorAmIconsType ->
             Icon(
                 modifier = modifier, imageVector = amIconsType.imageVector,
-                tint = tint, contentDescription = null
+                contentDescription = null
             )
 
         is AmIconsType.DrawableResourceAmIconsType ->
             Icon(
                 modifier = modifier, painter = painterResource(id = amIconsType.id),
-                tint = tint, contentDescription = null
+                contentDescription = null
             )
 
         is AmIconsType.PainterAmIconsType ->
             Icon(
                 modifier = modifier, painter = amIconsType.painter,
-                tint = tint, contentDescription = null
+                contentDescription = null
             )
     }
 }

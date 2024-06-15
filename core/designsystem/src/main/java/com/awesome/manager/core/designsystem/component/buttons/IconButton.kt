@@ -15,18 +15,12 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmIconButton(
     modifier: Modifier = Modifier,
-    amIconsType: AmIconsType, positive: Boolean? = null,
-    onClick: () -> Unit
+    amIconsType: AmIconsType, onClick: () -> Unit
 ) {
-    val color = when (positive) {
-        true -> MaterialTheme.colorScheme.primary
-        false -> MaterialTheme.colorScheme.error
-        null -> MaterialTheme.colorScheme.secondary
-    }
     IconButton(
         modifier = modifier, onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors()
-            .copy(contentColor = color, containerColor = MaterialTheme.colorScheme.surface)
+
     ) {
         AmIcon(amIconsType = amIconsType)
     }
@@ -38,7 +32,6 @@ fun AmIconButtonPreview() {
     AmIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.ArrowBack,
-        positive = true,
         onClick = {}
     )
 }

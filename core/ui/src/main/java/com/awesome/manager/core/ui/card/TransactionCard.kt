@@ -49,22 +49,19 @@ fun TransactionCard(
                 modifier = Modifier.fillMaxWidth(),
                 text = title, style = MaterialTheme.typography.bodyMedium
             )
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 AmTextWithIcon(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier,
                     text = transactionType, textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Category,
-                    positive = isPay
                 )
                 AmTextWithIcon(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier,
                     text = date, textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Date,
-                    positive = isPay
                 )
             }
         },

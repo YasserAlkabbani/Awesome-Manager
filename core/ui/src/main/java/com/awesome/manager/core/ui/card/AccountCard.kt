@@ -60,7 +60,6 @@ fun AccountCard(
                     AmIconButton(
                         modifier = Modifier,
                         amIconsType = AmIcons.TransactionAdd,
-                        positive = null,
                         onClick = it
                     )
                 }
@@ -68,7 +67,6 @@ fun AccountCard(
                     AmIconButton(
                         modifier = Modifier,
                         amIconsType = AmIcons.Edit,
-                        positive = null,
                         onClick = it
                     )
                 }

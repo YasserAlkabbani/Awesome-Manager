@@ -79,6 +79,10 @@ class OfflineFirstTransactionRepository @Inject constructor(
             ).collect()
     }
 
-    override suspend fun deleteTransactions() = transactionDao.deleteTransactions()
+    override suspend fun returnTransactionCount(accountId: String): Int =
+        transactionDao.returnTransactionsCount(accountId)
+
+    override suspend fun deleteTransactions() =
+        transactionDao.deleteTransactions()
 
 }

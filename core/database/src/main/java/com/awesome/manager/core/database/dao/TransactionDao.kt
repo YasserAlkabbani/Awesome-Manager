@@ -56,7 +56,11 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
     suspend fun returnLastUpdatedTransaction(): TransactionEntity?
 
+    @Query("SELECT COUNT(*) FROM transactions WHERE account_id=:accountId")
+    suspend fun returnTransactionsCount(accountId: String): Int
+
     @Query("DELETE FROM transactions")
     suspend fun deleteTransactions()
+
 
 }

@@ -21,6 +21,7 @@ import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
+import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
@@ -84,21 +85,13 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
                 val account = accountState.data
                 val balanceDetails = account.balanceDetails
                 AccountCard(
-                    modifier = Modifier,
-                    title = account.name,
-                    imageUrl = account.imageUrl,
-                    loading = account.pending,
-                    withDetails = true,
-                    onClick = null,
-                    onAddTransaction = {
-                        accountDetailsState.navigateToCreateTransaction(account.id)
-                    },
-                    onEditTransaction = null,
-                    income = balanceDetails.income,
-                    expenses = balanceDetails.expenses,
+                    modifier = Modifier, title = account.name,
+                    imageUrl = account.imageUrl, loading = account.pending,
+                    withDetails = true, onClick = null,
+                    onAddTransaction = null, onEditTransaction = null,
+                    income = balanceDetails.income, expenses = balanceDetails.expenses,
                     netIncomeAbs = balanceDetails.netIncomeAbs,
-                    debtor = balanceDetails.debtor,
-                    creditor = balanceDetails.creditor,
+                    debtor = balanceDetails.debtor, creditor = balanceDetails.creditor,
                     netDebtorAbs = balanceDetails.netDebtorAbs,
                     currencySymbol = balanceDetails.currency.currencySymbol,
                     isPositiveIncome = balanceDetails.isPositiveIncome,
@@ -122,13 +115,13 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
                         transactionsLazyPaging[index]?.let { transaction ->
                             TransactionCard(
                                 modifier = Modifier.animateItemPlacement(),
-                                account = "ACCOUNT",
+                                account = transaction.accountName,
                                 title = transaction.title,
                                 amount = transaction.amount,
                                 pending = transaction.pending,
                                 date = transaction.transactionAtDate,
-                                transactionType = transaction.transactionType.name,
-                                isPay = transaction.transactionType.posative,
+                                transactionType = transaction.transactionType.getString(),
+                                isPay = transaction.transactionType.positive,
                                 currency = transaction.currency.currencySymbol,
                                 onClick = {
                                     accountDetailsState.navigateToTransactionDetails(

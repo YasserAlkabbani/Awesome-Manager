@@ -8,6 +8,7 @@ import com.awesome.manager.core.common.states.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
+import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class AccountEditorViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
+    private val transactionRepository: TransactionRepository,
     savedStateHandle: SavedStateHandle,
     currencyRepository: CurrencyRepository,
 ) : ViewModel() {
@@ -42,8 +44,15 @@ class AccountEditorViewModel @Inject constructor(
                 ?.let { accountRepository.returnAccountById(it).first() }
             when (account) {
                 null -> accountEditorState.asCreateAccount(creatorUserId = currentUserId)
-                else -> accountEditorState
-                    .asEditAccount(currentUserId = currentUserId, amAccount = account)
+                else -> {
+                    val allowToUpdateCurrency =
+                        transactionRepository.returnTransactionCount(account.id) == 0
+                    accountEditorState
+                        .asEditAccount(
+                            currentUserId = currentUserId, amAccount = account,
+                            allowToUpdateCurrency = allowToUpdateCurrency
+                        )
+                }
             }
         }
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="debtor">Debtor</string>
+    <string name="creditor">Creditor</string>
+</resources>

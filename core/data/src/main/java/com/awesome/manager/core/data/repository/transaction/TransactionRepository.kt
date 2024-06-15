@@ -25,6 +25,8 @@ interface TransactionRepository {
 
     suspend fun synTransactions()
 
+    suspend fun returnTransactionCount(accountId: String): Int
+
     suspend fun deleteTransactions()
 
 }

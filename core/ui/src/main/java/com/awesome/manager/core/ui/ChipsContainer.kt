@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.chips.AmChip
 import com.awesome.manager.core.designsystem.component.text.AmText
 
@@ -30,9 +32,7 @@ fun <T, R> AmChipsContainer(
     content: (@Composable () -> Unit)?
 ) {
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-    ) {
+    AmCard(padding = AmPadding.ZERO) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -32,7 +32,10 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.getString
+import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.ui.AmChipsContainer
+import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.getChipData
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -123,12 +126,10 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     value = filterData.searchKey,
                                     amIconsType = AmIcons.Search,
                                     onClick = {
-                                        transactionsState.showSearchWithContentBottomSheet(
-                                            searchLabel = searchLabel,
-                                            initSearch = filterData.searchKey.orEmpty(),
-                                            onReSearch = transactionsState::updateSearchKey,
-                                            onSearchDone = transactionsState::dismissBottomSheet,
-                                            content = {}
+                                        SearchAndFilter(
+                                            transactionsState = transactionsState,
+                                            searchLabel = searchLabel, filterData = filterData,
+                                            transactionTypeChipData = transactionTypeChipData,
                                         )
                                     },
                                     onRemove = transactionsState::clearSearch
@@ -139,24 +140,10 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     value = filterData.transactionType?.name,
                                     amIconsType = AmIcons.Category,
                                     onClick = {
-                                        transactionsState.showSearchWithContentBottomSheet(
-                                            searchLabel = searchLabel,
-                                            initSearch = filterData.searchKey.orEmpty(),
-                                            onReSearch = transactionsState::updateSearchKey,
-                                            onSearchDone = transactionsState::dismissBottomSheet,
-                                            content = {
-                                                AmChipsContainer(
-                                                    title = stringResource(R.string.transaction_type),
-                                                    chipDataList = transactionTypeChipData,
-                                                    onSelect = {
-                                                        transactionsState.updateTransactionType(
-                                                            it.data
-                                                        )
-                                                    },
-                                                    selectedItem = filterData.transactionType?.name,
-                                                    content = null
-                                                )
-                                            }
+                                        SearchAndFilter(
+                                            transactionsState = transactionsState,
+                                            searchLabel = searchLabel, filterData = filterData,
+                                            transactionTypeChipData = transactionTypeChipData,
                                         )
                                     },
                                     onRemove = transactionsState::clearTransactionType
@@ -191,8 +178,8 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     amount = transaction.amount,
                                     pending = transaction.pending,
                                     date = transaction.transactionAtDate,
-                                    transactionType = transaction.transactionType.name,
-                                    isPay = transaction.transactionType.posative,
+                                    transactionType = transaction.transactionType.getString(),
+                                    isPay = transaction.transactionType.positive,
                                     currency = transaction.currency.currencyCode,
                                     onClick = {
                                         transactionsState.navigateToTransactionDetails(
@@ -207,4 +194,30 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
             },
         )
     }
+}
+
+fun SearchAndFilter(
+    transactionsState: TransactionsMainState,
+    searchLabel: String, filterData: FilterData,
+    transactionTypeChipData: List<ChipData<AmTransactionType, String>>
+) {
+    transactionsState.showSearchWithContentBottomSheet(
+        searchLabel = searchLabel,
+        initSearch = filterData.searchKey.orEmpty(),
+        onReSearch = transactionsState::updateSearchKey,
+        onSearchDone = transactionsState::dismissBottomSheet,
+        content = {
+            AmChipsContainer(
+                title = stringResource(R.string.transaction_type),
+                chipDataList = transactionTypeChipData,
+                onSelect = {
+                    transactionsState.updateTransactionType(
+                        it.data
+                    )
+                },
+                selectedItem = filterData.transactionType?.name,
+                content = null
+            )
+        }
+    )
 }

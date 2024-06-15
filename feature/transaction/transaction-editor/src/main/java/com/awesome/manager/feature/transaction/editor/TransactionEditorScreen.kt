@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,6 +31,8 @@ import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.enumToString
+import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
@@ -169,6 +172,7 @@ fun TransactionEditorScreen(
 ) {
 
     val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value
+    val context = LocalContext.current
 
     if (transactionInput is DataState.Success) {
 
@@ -176,7 +180,7 @@ fun TransactionEditorScreen(
 
         val transactionTypeChipData = remember {
             transactionEditorState.transactionTypes.map {
-                getChipData(id = it.name, title = it.name, data = it)
+                getChipData(id = it.name, title = context.enumToString(it), data = it)
             }
         }
 
@@ -186,14 +190,13 @@ fun TransactionEditorScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-
             transaction.selectedAccount?.let { account ->
                 val balanceDetails = account.balanceDetails
                 AccountCard(
                     modifier = Modifier,
                     title = account.name, imageUrl = account.imageUrl,
                     loading = account.pending, withDetails = true,
-                    onClick = null,
+                    onClick = transactionEditorState::requestSearchForAnAccountBottomSheet,
                     onAddTransaction = null, onEditTransaction = null,
                     income = balanceDetails.income, expenses = balanceDetails.expenses,
                     netIncomeAbs = balanceDetails.netIncomeAbs,
@@ -250,7 +253,6 @@ fun TransactionEditorScreen(
                 text = transaction.transactionAtDate,
                 amIconsType = AmIcons.Date,
                 positive = null,
-                loading = false,
                 onClick = {
                     transactionEditorState.showPickDateBottomSheet(
                         initTime = transaction.transactionAtTimestamp,

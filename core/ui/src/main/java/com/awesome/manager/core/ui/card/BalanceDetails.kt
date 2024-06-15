@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
+import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmTextWithIcon
@@ -61,20 +62,30 @@ fun BalanceDetailsRow(
             text = "$positiveLabel/$negativeLabel",
             style = MaterialTheme.typography.titleMedium
         )
-        AmTextWithIcon(
-            modifier = Modifier.fillMaxWidth(),
-            text = "$positiveValue",
-            amIconsType = AmIcons.Input, positive = true,
-        )
-        AmTextWithIcon(
-            modifier = Modifier.fillMaxWidth(),
-            text = "$negativeValue",
-            amIconsType = AmIcons.Output, positive = false
-        )
-        AmTextWithIcon(
-            modifier = Modifier.fillMaxWidth(),
-            text = "$balance",
-            amIconsType = AmIcons.Balance, positive = isPositiveBalance
-        )
+        AmSurface(
+            positive = true
+        ) {
+            AmTextWithIcon(
+                modifier = Modifier.fillMaxWidth(),
+                text = "$positiveValue",
+                amIconsType = AmIcons.Input,
+            )
+        }
+        AmSpacerSmallHeight()
+        AmSurface(positive = false) {
+            AmTextWithIcon(
+                modifier = Modifier.fillMaxWidth(),
+                text = "$negativeValue",
+                amIconsType = AmIcons.Output,
+            )
+        }
+        AmSpacerSmallHeight()
+        AmSurface(positive = isPositiveBalance) {
+            AmTextWithIcon(
+                modifier = Modifier.fillMaxWidth(),
+                text = "$balance",
+                amIconsType = AmIcons.Balance,
+            )
+        }
     }
 }
