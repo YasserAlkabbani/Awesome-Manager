@@ -147,8 +147,8 @@ fun AmApp() {
         navigationAction?.let {
             mainActivityState.doneNavigationAction()
             when (navigationAction) {
-                NavigationAction.PopBack -> {
-                    navHostController.popBackStack()
+                NavigationAction.NavigateUp -> {
+                    navHostController.navigateUp()
                 }
 
                 is NavigationAction.Navigate -> {

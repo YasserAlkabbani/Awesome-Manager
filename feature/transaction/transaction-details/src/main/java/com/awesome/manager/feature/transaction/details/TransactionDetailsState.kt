@@ -6,7 +6,7 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.StateFlow
 
-class TransactionDetailsStateMain(
+class TransactionDetailsState(
     val transactionDetailsData: StateFlow<DataState<TransactionDetailsData>>
 ) : MainState() {
 

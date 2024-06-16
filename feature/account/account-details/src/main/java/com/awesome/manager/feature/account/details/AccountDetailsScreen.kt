@@ -34,7 +34,7 @@ fun AccountDetailsRoute(
     sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
-    val accountDetailsState: AccountDetailsStateMain = accountDetailsViewModel.accountDetailsState
+    val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
 
     val navigationAction = accountDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
@@ -72,8 +72,9 @@ fun AccountDetailsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
+fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
+    val isLoading: Boolean = accountDetailsState.loading.collectAsState().value
     val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
         accountDetailsState.amTransactions.collectAsLazyPagingItems()
@@ -106,6 +107,8 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsStateMain) {
         Spacer(modifier = Modifier.height(16.dp))
 
         AmLazyColumn(
+            isRefreshing = isLoading,
+            onRefresh = accountDetailsState.refreshTransactions,
             content = {
                 items(
                     count = transactionsLazyPaging.itemCount,

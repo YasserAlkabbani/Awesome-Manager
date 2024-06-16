@@ -29,7 +29,7 @@ class NavigationState : NavigationStateI {
     override fun NavigationAction.applyAction() = _navigationAction.update { this }
     override fun doneNavigationAction() = _navigationAction.update { null }
 
-    override fun navigatePopBack() = NavigationAction.PopBack.applyAction()
+    override fun navigatePopBack() = NavigationAction.NavigateUp.applyAction()
 
     override fun navigateToAccountDetails(accountId: String) =
         NavigationDestination.AccountDetails(accountId).asNavigation().applyAction()

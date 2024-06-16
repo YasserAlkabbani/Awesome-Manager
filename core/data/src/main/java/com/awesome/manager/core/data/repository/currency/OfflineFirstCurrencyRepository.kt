@@ -33,9 +33,6 @@ class OfflineFirstCurrencyRepository @Inject constructor(
     override fun returnCurrencies(): Flow<List<AmCurrency>> =
         currencyDao.returnCurrencies().map { it.map { it.asModel() } }
 
-    override fun returnCurrencyById(currencyId: String): Flow<AmCurrency> =
-        currencyDao.returnCurrencyById(currencyId).map { it.asModel() }
-
     override fun returnBalanceDetails(): Flow<List<BalanceDetails>> =
         currencyDao.returnCurrenciesBalance().map { it.map { it.asModel() } }
 

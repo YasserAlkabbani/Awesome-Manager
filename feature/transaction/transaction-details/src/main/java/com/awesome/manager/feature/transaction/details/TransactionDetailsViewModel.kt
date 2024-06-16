@@ -26,7 +26,7 @@ class TransactionDetailsViewModel @Inject constructor(
     private val transactionDetails: NavigationDestination.TransactionDetails =
         savedStateHandle.toRoute()
 
-    val transactionDetailsState: TransactionDetailsStateMain = TransactionDetailsStateMain(
+    val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
         transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
             .flatMapLatest { transaction ->
                 accountRepository.returnAccountById(transaction.accountId)
@@ -46,6 +46,4 @@ class TransactionDetailsViewModel @Inject constructor(
             }
             .asDataStateFlow(viewModelScope)
     )
-
-
 }

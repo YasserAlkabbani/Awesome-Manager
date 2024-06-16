@@ -18,9 +18,6 @@ interface CurrencyDao {
     @Query("SELECT * FROM currencies")
     fun returnCurrencies(): Flow<List<CurrencyEntity>>
 
-    @Query("SELECT * FROM currencies WHERE currency_id=:currencyId")
-    fun returnCurrencyById(currencyId: String): Flow<CurrencyEntity>
-
     @Query("SELECT * FROM currencies ORDER BY updated_at DESC LIMIT 1")
     suspend fun returnLastUpdatedCurrencyType(): CurrencyEntity?
 

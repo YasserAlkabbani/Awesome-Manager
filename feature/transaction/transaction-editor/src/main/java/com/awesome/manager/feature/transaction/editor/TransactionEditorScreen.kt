@@ -80,40 +80,44 @@ fun TransactionEditorRoute(
             transactionEditorState.showSearchWithContentBottomSheet(
                 searchLabel = searchLabel,
                 content = {
-                    AmLazyColumn {
-                        items(
-                            count = accountsLazyPaging.itemCount,
-                            contentType = { LAZY_ITEM_ACCOUNT },
-                            key = accountsLazyPaging.itemKey { transaction -> transaction.id },
-                            itemContent = { index ->
-                                accountsLazyPaging[index]?.let { account ->
-                                    val balanceDetails = account.balanceDetails
-                                    AccountCard(
-                                        modifier = Modifier.animateItemPlacement(),
-                                        title = account.name,
-                                        imageUrl = account.imageUrl,
-                                        loading = account.pending,
-                                        withDetails = false,
-                                        onClick = {
-                                            transactionEditorState.selectAccount(account)
-                                            transactionEditorState.dismissBottomSheet()
-                                        },
-                                        onAddTransaction = null,
-                                        onEditTransaction = null,
-                                        income = balanceDetails.income,
-                                        expenses = balanceDetails.expenses,
-                                        netIncomeAbs = balanceDetails.netIncomeAbs,
-                                        debtor = balanceDetails.debtor,
-                                        creditor = balanceDetails.creditor,
-                                        netDebtorAbs = balanceDetails.netDebtorAbs,
-                                        currencySymbol = balanceDetails.currency.currencySymbol,
-                                        isPositiveIncome = balanceDetails.isPositiveIncome,
-                                        isPositiveDebtor = balanceDetails.isPositiveDebtor
-                                    )
+                    AmLazyColumn(
+                        isRefreshing = true,
+                        onRefresh = {},
+                        content = {
+                            items(
+                                count = accountsLazyPaging.itemCount,
+                                contentType = { LAZY_ITEM_ACCOUNT },
+                                key = accountsLazyPaging.itemKey { transaction -> transaction.id },
+                                itemContent = { index ->
+                                    accountsLazyPaging[index]?.let { account ->
+                                        val balanceDetails = account.balanceDetails
+                                        AccountCard(
+                                            modifier = Modifier.animateItemPlacement(),
+                                            title = account.name,
+                                            imageUrl = account.imageUrl,
+                                            loading = account.pending,
+                                            withDetails = false,
+                                            onClick = {
+                                                transactionEditorState.selectAccount(account)
+                                                transactionEditorState.dismissBottomSheet()
+                                            },
+                                            onAddTransaction = null,
+                                            onEditTransaction = null,
+                                            income = balanceDetails.income,
+                                            expenses = balanceDetails.expenses,
+                                            netIncomeAbs = balanceDetails.netIncomeAbs,
+                                            debtor = balanceDetails.debtor,
+                                            creditor = balanceDetails.creditor,
+                                            netDebtorAbs = balanceDetails.netDebtorAbs,
+                                            currencySymbol = balanceDetails.currency.currencySymbol,
+                                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                                            isPositiveDebtor = balanceDetails.isPositiveDebtor
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                    }
+                            )
+                        }
+                    )
                 },
                 onReSearch = transactionEditorState::updateSearchKey,
                 onSearchDone = transactionEditorState::dismissBottomSheet,

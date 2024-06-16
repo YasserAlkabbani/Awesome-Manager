@@ -24,7 +24,7 @@ sealed class BottomSheetAction : MainAction() {
 
 sealed class NavigationAction : MainAction() {
 
-    data object PopBack : NavigationAction()
+    data object NavigateUp : NavigationAction()
     data class Navigate(val navigationDestination: NavigationDestination) : NavigationAction()
 
 }

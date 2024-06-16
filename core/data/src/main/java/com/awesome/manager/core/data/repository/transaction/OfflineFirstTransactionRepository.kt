@@ -27,36 +27,29 @@ class OfflineFirstTransactionRepository @Inject constructor(
     private val transactionDao: TransactionDao
 ) : TransactionRepository {
 
-    override suspend fun upsertTransaction(upsertTransaction: UpsertTransaction) {
+    override suspend fun upsertTransaction(upsertTransaction: UpsertTransaction) = amInsert {
         val transactionEntity = upsertTransaction.asEntity()
-        amInsert { transactionDao.upsertTransaction(transactionEntity = transactionEntity) }
+        transactionDao.upsertTransaction(transactionEntity = transactionEntity)
     }
 
     override fun returnTransactions(
         searchKey: String?, transactionType: AmTransactionType?,
         fromDate: Long?, toDate: Long?
-    ): Flow<PagingData<AmTransaction>> =
-        asPagingDataFlow(
-            getPagingSource = {
-                transactionDao.returnTransactions(
-                    searchKey = searchKey, transactionType = transactionType?.asEntity(),
-                    fromDate = fromDate, toDate = toDate
-                )
-            },
-            asModel = { asModel() }
+    ): Flow<PagingData<AmTransaction>> = {
+        transactionDao.returnTransactions(
+            searchKey = searchKey, transactionType = transactionType?.asEntity(),
+            fromDate = fromDate, toDate = toDate
         )
+    }.asPagingDataFlow(asModel = { asModel() })
 
 
     override fun returnTransactionsByAccountId(
         accountId: String, searchKey: String
-    ): Flow<PagingData<AmTransaction>> = asPagingDataFlow(
-        getPagingSource = {
-            transactionDao.returnTransactionsByAccountId(
-                accountId = accountId, searchKey = searchKey
-            )
-        },
-        asModel = { asModel() }
-    )
+    ): Flow<PagingData<AmTransaction>> = {
+        transactionDao.returnTransactionsByAccountId(
+            accountId = accountId, searchKey = searchKey
+        )
+    }.asPagingDataFlow(asModel = { asModel() })
 
     override fun returnTransactionById(transactionId: String): Flow<AmTransaction> =
         transactionDao.returnTransactionById(transactionId).map { it.asModel() }

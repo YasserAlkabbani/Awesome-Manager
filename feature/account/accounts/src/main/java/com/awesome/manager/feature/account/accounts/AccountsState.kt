@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 
 
-class AccountsMainState(
-    searchForAccounts: FilterData.() -> Flow<PagingData<AmAccount>>
+class AccountsState(
+    searchForAccounts: FilterData.() -> Flow<PagingData<AmAccount>>,
+    val refreshAccounts: () -> Unit
 ) : MainState() {
 
     private val _filterData: MutableStateFlow<FilterData> = MutableStateFlow(FilterData())

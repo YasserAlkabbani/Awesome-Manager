@@ -78,6 +78,7 @@ fun TransactionsRoute(
 @Composable
 fun TransactionScreen(transactionsState: TransactionsMainState) {
 
+    val isLoading = transactionsState.loading.collectAsState().value
     val transactionsLazyPaging = transactionsState.transactions.collectAsLazyPagingItems()
     val filterData by transactionsState.filterData.collectAsState()
     val noItems = remember {
@@ -94,6 +95,8 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
 
     Column(Modifier.fillMaxSize()) {
         AmLazyColumn(
+            isRefreshing = isLoading,
+            onRefresh = transactionsState.refreshTransactions,
             content = {
                 if (noItems)
                     item {

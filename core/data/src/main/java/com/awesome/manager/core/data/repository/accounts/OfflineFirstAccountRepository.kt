@@ -23,19 +23,16 @@ import javax.inject.Inject
 
 class OfflineFirstAccountRepository @Inject constructor(
     private val accountDao: AccountDao,
-    private val accountNetworkDataSource: AccountNetworkDataSource
+    private val accountNetworkDataSource: AccountNetworkDataSource,
 ) : AccountRepository {
 
-    override suspend fun upsertAccount(upsertAccount: UpsertAccount) {
+    override suspend fun upsertAccount(upsertAccount: UpsertAccount) = amInsert {
         val accountEntity: AccountEntity = upsertAccount.asEntity()
-        amInsert { accountDao.upsertAccount(accountEntity) }
+        accountDao.upsertAccount(accountEntity)
     }
 
     override fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
-        asPagingDataFlow(
-            getPagingSource = { accountDao.returnAccounts(searchKey) },
-            asModel = { asModel() }
-        )
+        { accountDao.returnAccounts(searchKey) }.asPagingDataFlow { asModel() }
 
     override fun returnAccountById(accountId: String): Flow<AmAccount> =
         accountDao.returnAccountById(accountId).map { it.asModel() }

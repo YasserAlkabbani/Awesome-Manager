@@ -15,25 +15,29 @@ import kotlinx.coroutines.flow.update
 
 
 class TransactionsMainState(
-    val searchForTransaction: FilterData.()->Flow<PagingData<AmTransaction>>
+    val refreshTransactions: () -> Unit,
+    val searchForTransaction: FilterData.() -> Flow<PagingData<AmTransaction>>
 ) : MainState() {
 
-    private val _filterData:MutableStateFlow<FilterData> = MutableStateFlow(FilterData())
-    val filterData:StateFlow<FilterData> =_filterData.asStateFlow()
+    private val _filterData: MutableStateFlow<FilterData> = MutableStateFlow(FilterData())
+    val filterData: StateFlow<FilterData> = _filterData.asStateFlow()
 
     val transactionTypes = AmTransactionType.entries.toList()
 
-    val transactions=filterData.flatMapLatest { it.searchForTransaction() }
+    val transactions = filterData.flatMapLatest { it.searchForTransaction() }
 
-    fun updateSearchKey(searchKey:String)=
+    fun updateSearchKey(searchKey: String) =
         _filterData.update { it.updateSearchKey(searchKey) }
-    fun clearSearch()=_filterData.update { it.clearSearch() }
-    fun updateDate(fromDate:Long,toDate:Long)=
+
+    fun clearSearch() = _filterData.update { it.clearSearch() }
+    fun updateDate(fromDate: Long, toDate: Long) =
         _filterData.update { it.updateDate(fromDate to toDate) }
-    fun clearDate()=_filterData.update { it.clearDate() }
-    fun updateTransactionType(transactionType: AmTransactionType)=
+
+    fun clearDate() = _filterData.update { it.clearDate() }
+    fun updateTransactionType(transactionType: AmTransactionType) =
         _filterData.update { it.updateTransactionType(transactionType) }
-    fun clearTransactionType()=
+
+    fun clearTransactionType() =
         _filterData.update { it.clearTransactionType() }
 
 }
@@ -41,12 +45,12 @@ class TransactionsMainState(
 data class FilterData(
     val searchKey: String? = null,
     val transactionType: AmTransactionType? = null,
-    val date: Pair<Long, Long>?=null,
+    val date: Pair<Long, Long>? = null,
 ) {
 
     val searchFilter: Boolean = !searchKey.isNullOrEmpty()
-    val dateFilter: Boolean = date!=null
-    val transactionTypeFilter:Boolean=transactionType!=null
+    val dateFilter: Boolean = date != null
+    val transactionTypeFilter: Boolean = transactionType != null
     val filterApplauded: Boolean = searchFilter || dateFilter || transactionTypeFilter
 
     val dateString: String? = date?.asDateRange()
@@ -57,7 +61,9 @@ data class FilterData(
     fun updateDate(newDate: Pair<Long, Long>) = copy(date = newDate)
     fun clearDate() = copy(date = null)
 
-    fun updateTransactionType(transactionType: AmTransactionType)=copy(transactionType = transactionType)
-    fun clearTransactionType()=copy(transactionType = null)
+    fun updateTransactionType(transactionType: AmTransactionType) =
+        copy(transactionType = transactionType)
+
+    fun clearTransactionType() = copy(transactionType = null)
 
 }

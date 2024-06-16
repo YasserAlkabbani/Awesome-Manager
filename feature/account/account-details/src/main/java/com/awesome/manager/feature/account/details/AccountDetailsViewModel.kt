@@ -13,6 +13,7 @@ import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +26,8 @@ class AccountDetailsViewModel @Inject constructor(
 
     private val accountDetailsArg: NavigationDestination.AccountDetails = savedStateHandle.toRoute()
 
-    val accountDetailsState: AccountDetailsStateMain = AccountDetailsStateMain(
+    val accountDetailsState: AccountDetailsState = AccountDetailsState(
+        refreshTransactions = ::refreshTransactions,
         amAccount = accountRepository
             .returnAccountById(accountDetailsArg.accountId)
             .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
@@ -37,5 +39,13 @@ class AccountDetailsViewModel @Inject constructor(
             }
             .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
     )
+
+    private fun refreshTransactions() {
+        viewModelScope.launch {
+            accountDetailsState.apply {
+                transactionRepository::refreshTransactions.processWitLoading()
+            }
+        }
+    }
 
 }

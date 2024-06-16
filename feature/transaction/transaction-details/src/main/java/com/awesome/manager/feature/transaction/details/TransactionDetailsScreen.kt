@@ -76,7 +76,7 @@ fun TransactionDetailsRoute(
 
 @Composable
 fun TransactionDetailsScreen(
-    transactionDetailsState: TransactionDetailsStateMain
+    transactionDetailsState: TransactionDetailsState
 ) {
 
     val transactionDetailsData =
