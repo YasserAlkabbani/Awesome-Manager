@@ -14,25 +14,23 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AmLinearProgress(
-    modifier: Modifier=Modifier,
-    positive:Boolean?=null
-){
+    modifier: Modifier = Modifier,
+    positive: Boolean? = null
+) {
 
     val primary = MaterialTheme.colorScheme.primary
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val error = MaterialTheme.colorScheme.error
     val errorContainer = MaterialTheme.colorScheme.errorContainer
 
-    val color= remember (positive){
-        when(positive){
-            true ->  primary to primaryContainer
+    val (color, trackColor) = remember(positive) {
+        when (positive) {
+            true -> primary to primaryContainer
             false -> error to errorContainer
             null -> null
         }
-    }
-    color?.let {(color,trackColor)->
-        LinearProgressIndicator(modifier=modifier, color = color,trackColor=trackColor)
-    }?:LinearProgressIndicator(modifier=modifier)
+    } ?: Pair(ProgressIndicatorDefaults.linearColor, ProgressIndicatorDefaults.linearTrackColor)
+    LinearProgressIndicator(modifier = modifier, color = color, trackColor = trackColor)
 }
 
 
