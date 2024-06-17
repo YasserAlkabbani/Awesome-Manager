@@ -22,7 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.enums.EditorInputType
+import com.awesome.manager.core.common.enums.EditorInputType.*
 import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
@@ -46,6 +48,7 @@ fun TransactionEditorRoute(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
 
+    val context = LocalContext.current
     val transactionEditorState: TransactionEditorStateMain =
         transactionEditorViewModel.transactionEditorState
 
@@ -127,41 +130,34 @@ fun TransactionEditorRoute(
     })
 
     val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
-    val selectAccountText = stringResource(R.string.select_account)
-    val createTransactionText = stringResource(R.string.create_transaction)
-    val updateTransactionText = stringResource(R.string.update_transaction)
-    val invalidateInputMessage = stringResource(R.string.invalidate_input)
     LaunchedEffect(key1 = transactionData) {
         if (transactionData is DataState.Success) {
             val transactionEditor = transactionData.data
             val isValidateInput = transactionEditor.validateTransactionData != null
-            val errorMessage = if (isValidateInput) null else invalidateInputMessage
-            val saveButton = if (isValidateInput) transactionEditorState.createTransaction else null
+            val errorMessage =
+                if (isValidateInput) null else context.getString(R.string.invalidate_input)
+            val buttonText = when (transactionEditor.editorInputType) {
+                Create -> context.getString(R.string.create_transaction)
+                Edit -> context.getString(R.string.update_transaction)
+            }
             when (transactionEditor.selectedAccount) {
                 null -> transactionEditorState.setForEditTransactionScreen(
-                    saveButtonText = selectAccountText,
-                    onSaveButton = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    onClickCancel = transactionEditorState::navigatePopBack,
-                    errorMessage = null
+                    saveButton = AppBarButton(
+                        text = context.getString(R.string.select_account),
+                        click = transactionEditorState::requestSearchForAnAccountBottomSheet,
+                    ),
+                    cancelButton = true,
                 )
 
                 else -> {
-                    when (transactionEditor.editorInputType) {
-                        EditorInputType.Create -> transactionEditorState.setForEditTransactionScreen(
-                            saveButtonText = createTransactionText,
-                            onSaveButton = saveButton,
-                            onClickCancel = transactionEditorState::navigatePopBack,
-                            errorMessage = errorMessage,
-                        )
-
-                        EditorInputType.Edit -> transactionEditorState.setForEditTransactionScreen(
-                            saveButtonText = updateTransactionText,
-                            onSaveButton = saveButton,
-                            onClickCancel = transactionEditorState::navigatePopBack,
+                    transactionEditorState.setForEditTransactionScreen(
+                        saveButton = AppBarButton(
+                            text = buttonText,
+                            click = transactionEditorState.createTransaction,
                             errorMessage = errorMessage
-                        )
-                    }
-
+                        ),
+                        cancelButton = true,
+                    )
                 }
             }
         }
@@ -216,7 +212,7 @@ fun TransactionEditorScreen(
                 hint = "Title", icon = AmIcons.Title, label = "Transaction Title",
                 onTextChange = transactionEditorState::updateTitle,
                 initTextValue = transaction.title,
-                keyboardActions = KeyboardActions(), error = null,
+                keyboardActions = KeyboardActions(),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(
@@ -224,7 +220,6 @@ fun TransactionEditorScreen(
                 icon = AmIcons.SubTitle,
                 onTextChange = transactionEditorState::updateSubTitle,
                 initTextValue = transaction.subtitle,
-                error = null,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(
@@ -250,7 +245,6 @@ fun TransactionEditorScreen(
                         }
                 },
                 onTextChange = transactionEditorState::updateAmount,
-                error = null,
             )
 
             AmFilledTonalIconWithTextButton(

@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class AuthScreenStateMain(
-    val login: () -> Unit, val register: () -> Unit, val resetPassword: () -> Unit,
+    val login: () -> Unit, val register: () -> Unit,
+    val resetPassword: () -> Unit,
 ) : MainState() {
 
     private val _authData: MutableStateFlow<AmAuthData> = MutableStateFlow(AmAuthData())
@@ -22,7 +23,7 @@ class AuthScreenStateMain(
     fun updateStateBasedOnResult(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
-//        endLoading()
+        endLoading()
         when (amResult) {
             is AmResult.Error -> when (val amError = amResult.amError) {
 
@@ -47,7 +48,7 @@ class AuthScreenStateMain(
                 AmError.UnknownError -> {}
             }
 
-            is AmResult.Loading -> {}//startLoading()
+            is AmResult.Loading -> startLoading()
             is AmResult.Success -> onSuccess()
         }
 

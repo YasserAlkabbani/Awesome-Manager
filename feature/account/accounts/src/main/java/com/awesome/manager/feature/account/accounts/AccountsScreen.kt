@@ -59,9 +59,7 @@ fun AccountsRoute(
     })
 
     LaunchedEffect(key1 = Unit) {
-        accountsState.setForAccountsScreen(
-            onAddAccount = accountsState::navigateToCreateAccount,
-        )
+        accountsState.setForAccountsScreen()
     }
 
     AccountsScreen(accountsState)
@@ -73,7 +71,7 @@ fun AccountsRoute(
 fun AccountsScreen(
     accountsState: AccountsState
 ) {
-    val isLoading = accountsState.loading.collectAsState().value
+    val isLoading = accountsState.isLoading.collectAsState().value
     val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
     val filterData by accountsState.filterData.collectAsState()
     val noItems = remember {
@@ -106,7 +104,6 @@ fun AccountsScreen(
                             AmFilledTonalButton(
                                 text = stringResource(R.string.create_an_account),
                                 onClick = accountsState::navigateToCreateAccount,
-                                positive = null
                             )
                         }
                     }

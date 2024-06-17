@@ -49,7 +49,9 @@ fun AmLazyColumn(
     }
 
     Column(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
-        AnimatedVisibility(pullToRefreshState.isRefreshing) { LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) }
+        AnimatedVisibility(pullToRefreshState.isRefreshing) {
+            AmLinearProgress(modifier = Modifier.fillMaxWidth())
+        }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),

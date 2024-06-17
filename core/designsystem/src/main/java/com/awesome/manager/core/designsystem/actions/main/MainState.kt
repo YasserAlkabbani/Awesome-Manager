@@ -17,12 +17,14 @@ import kotlinx.coroutines.flow.update
 abstract class MainState : NavigationStateI by NavigationState(), AppBarStateI by AppBarState(),
     BottomSheetStateI by BottomSheetState(), PickerStateI by PickerState() {
 
-    private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val loading: StateFlow<Boolean> = _loading.asStateFlow()
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    fun startLoading() = _isLoading.update { true }
+    fun endLoading() = _isLoading.update { false }
     suspend fun (suspend () -> Unit).processWitLoading() {
-        _loading.update { true }
+        _isLoading.update { true }
         this.invoke()
-        _loading.update { false }
+        _isLoading.update { false }
     }
 
 }

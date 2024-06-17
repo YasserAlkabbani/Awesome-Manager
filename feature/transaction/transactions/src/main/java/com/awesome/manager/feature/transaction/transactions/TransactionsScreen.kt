@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,6 +33,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.ui.AmChipsContainer
@@ -66,9 +68,7 @@ fun TransactionsRoute(
     })
 
     LaunchedEffect(key1 = Unit) {
-        transactionsState.setForTransactionsScreen(
-            onAddTransaction = transactionsState::navigateToCreateTransaction,
-        )
+        transactionsState.setForTransactionsScreen()
     }
 
     TransactionScreen(transactionsState)
@@ -78,7 +78,8 @@ fun TransactionsRoute(
 @Composable
 fun TransactionScreen(transactionsState: TransactionsMainState) {
 
-    val isLoading = transactionsState.loading.collectAsState().value
+    val context = LocalContext.current
+    val isLoading = transactionsState.isLoading.collectAsState().value
     val transactionsLazyPaging = transactionsState.transactions.collectAsLazyPagingItems()
     val filterData by transactionsState.filterData.collectAsState()
     val noItems = remember {
@@ -89,7 +90,7 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
 
     val transactionTypeChipData = remember {
         transactionsState.transactionTypes.map {
-            getChipData(id = it.name, title = it.name, data = it)
+            getChipData(id = it.name, title = context.enumToString(it), data = it)
         }
     }
 
@@ -114,7 +115,6 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                             AmFilledTonalButton(
                                 text = stringResource(R.string.create_a_transaction),
                                 onClick = { transactionsState.navigateToCreateTransaction(null) },
-                                positive = null
                             )
                         }
                     }
@@ -122,16 +122,16 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                     item(contentType = "FILTER", key = "FILTER") {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                                val searchLabel = "Search in transactions"
                                 AmFilterChip(
                                     selected = filterData.searchFilter,
                                     label = stringResource(R.string.search),
                                     value = filterData.searchKey,
                                     amIconsType = AmIcons.Search,
                                     onClick = {
-                                        SearchAndFilter(
+                                        searchAndFilter(
                                             transactionsState = transactionsState,
-                                            searchLabel = searchLabel, filterData = filterData,
+                                            searchLabel = context.getString(R.string.search_in_transactions),
+                                            filterData = { filterData },
                                             transactionTypeChipData = transactionTypeChipData,
                                         )
                                     },
@@ -143,9 +143,10 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     value = filterData.transactionType?.name,
                                     amIconsType = AmIcons.Category,
                                     onClick = {
-                                        SearchAndFilter(
+                                        searchAndFilter(
                                             transactionsState = transactionsState,
-                                            searchLabel = searchLabel, filterData = filterData,
+                                            searchLabel = context.getString(R.string.search_in_transactions),
+                                            filterData = { filterData },
                                             transactionTypeChipData = transactionTypeChipData,
                                         )
                                     },
@@ -199,14 +200,15 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
     }
 }
 
-fun SearchAndFilter(
+private fun searchAndFilter(
     transactionsState: TransactionsMainState,
-    searchLabel: String, filterData: FilterData,
+    searchLabel: String,
+    filterData: () -> FilterData,
     transactionTypeChipData: List<ChipData<AmTransactionType, String>>
 ) {
     transactionsState.showSearchWithContentBottomSheet(
         searchLabel = searchLabel,
-        initSearch = filterData.searchKey.orEmpty(),
+        initSearch = filterData().searchKey.orEmpty(),
         onReSearch = transactionsState::updateSearchKey,
         onSearchDone = transactionsState::dismissBottomSheet,
         content = {
@@ -214,11 +216,9 @@ fun SearchAndFilter(
                 title = stringResource(R.string.transaction_type),
                 chipDataList = transactionTypeChipData,
                 onSelect = {
-                    transactionsState.updateTransactionType(
-                        it.data
-                    )
+                    transactionsState.updateTransactionType(it.data)
                 },
-                selectedItem = filterData.transactionType?.name,
+                selectedItem = filterData().transactionType?.name,
                 content = null
             )
         }

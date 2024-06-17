@@ -1,5 +1,6 @@
 package com.awesome.manager.feature.transaction.details
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
@@ -26,7 +29,9 @@ fun TransactionDetailsRoute(
     transactionDetailsViewModel: TransactionDetailsViewModel = hiltViewModel()
 ) {
 
-    val transactionDetailsState = transactionDetailsViewModel.transactionDetailsState
+    val context: Context = LocalContext.current
+    val transactionDetailsState: TransactionDetailsState =
+        transactionDetailsViewModel.transactionDetailsState
 
     val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
@@ -49,21 +54,22 @@ fun TransactionDetailsRoute(
 
     val transactionState =
         transactionDetailsState.transactionDetailsData.collectAsState().value
-    val editTransactionText = stringResource(R.string.edit_transaction)
     LaunchedEffect(key1 = transactionState) {
         when (transactionState) {
             is DataState.Success -> {
                 val transactionData = transactionState.data
                 transactionDetailsState.setForTransactionDetailsScreen(
-                    editButtonText = editTransactionText,
-                    allowToEdit = transactionData.allowToUpdate,
-                    onClickBack = transactionDetailsState::navigatePopBack,
-                    onEditButton = {
-                        transactionDetailsState.navigateToEditTransaction(
-                            accountId = transactionData.transaction.accountId,
-                            transactionId = transactionData.transaction.id
-                        )
-                    },
+                    editButton = if (transactionData.allowToUpdate)
+                        AppBarButton(
+                            text = context.getString(R.string.edit_transaction),
+                            click = {
+                                transactionDetailsState.navigateToEditTransaction(
+                                    accountId = transactionData.transaction.accountId,
+                                    transactionId = transactionData.transaction.id
+                                )
+                            },
+                        ) else null,
+                    backButton = true,
                 )
             }
 

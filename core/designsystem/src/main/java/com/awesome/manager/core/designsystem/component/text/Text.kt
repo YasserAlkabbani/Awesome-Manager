@@ -15,10 +15,8 @@ fun AmText(
     textAlign: TextAlign? = null
 ) {
     Text(
-        modifier = modifier,
-        text = text,
-        maxLines = maxLines,
-        style = style,
-        textAlign = textAlign
+        modifier = modifier, text = text,
+        maxLines = maxLines, style = style,
+        textAlign = textAlign,
     )
 }

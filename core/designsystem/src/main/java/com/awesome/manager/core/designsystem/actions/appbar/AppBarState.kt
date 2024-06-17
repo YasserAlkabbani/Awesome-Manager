@@ -8,43 +8,43 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+data class AppBarButton(
+    val text: String,
+    val click: () -> Unit,
+    val errorMessage: String? = null,
+) {
+    val showButton: Boolean = errorMessage == null
+}
+
 interface AppBarStateI {
 
     val appBarAction: StateFlow<AppBarAction?>
     fun AppBarAction.applyAction()
     fun doneAppBarAction()
 
-    fun setForHomeScreen(
-        onAddAccount: () -> Unit, onAddTransaction: () -> Unit,
-    )
+    fun setForAuth(isLoading: Boolean, loginButton: AppBarButton)
 
-    fun setForAccountsScreen(
-        onAddAccount: () -> Unit,
-    )
+    fun setForHomeScreen()
 
-    fun setForTransactionsScreen(
-        onAddTransaction: () -> Unit,
-    )
+    fun setForAccountsScreen()
+
+    fun setForTransactionsScreen()
 
     fun setForAccountDetailsScreen(
-        editButtonText: String, allowToEdit: Boolean, onEditButton: () -> Unit,
-        onClickBack: () -> Unit, onAddTransaction: () -> Unit
+        backButton: Boolean, onEditButton: AppBarButton?,
+        transactionEditor: NavigationDestination.TransactionEditor?
     )
 
     fun setForEditAccountScreen(
-        errorMessage: String?,
-        saveButtonText: String, onSaveButton: (() -> Unit)?,
-        onClickCancel: () -> Unit
+        cancelButton: Boolean, saveButton: AppBarButton
     )
 
     fun setForTransactionDetailsScreen(
-        editButtonText: String, allowToEdit: Boolean, onEditButton: () -> Unit,
-        onClickBack: () -> Unit
+        backButton: Boolean, editButton: AppBarButton?
     )
 
     fun setForEditTransactionScreen(
-        errorMessage: String?,
-        saveButtonText: String, onSaveButton: (() -> Unit)?, onClickCancel: () -> Unit
+        cancelButton: Boolean, saveButton: AppBarButton?
     )
 
 }
@@ -58,84 +58,62 @@ class AppBarState : AppBarStateI {
     override fun doneAppBarAction() = _appBarAction.update { null }
 
     private fun updateAppBarData(
-        isLoading: Boolean = false, visible: Boolean = true,
-        bottomNavigation: Boolean = false, errorMessage: String? = null,
-        buttonText: String = "", buttonOnClick: (() -> Unit)? = null,
-        onAddAccount: (() -> Unit)? = null, onAddTransaction: (() -> Unit)? = null,
-        onClickBackButton: (() -> Unit)? = null, onClickCancelButton: (() -> Unit)? = null,
+        visible: Boolean = true, isLoading: Boolean = false,
+        bottomNavigation: Boolean = false,
+        accountEditor: NavigationDestination.AccountEditor? = null,
+        transactionEditor: NavigationDestination.TransactionEditor? = null,
+        backButton: Boolean = false, cancelButton: Boolean = false, moreButton: Boolean = false,
+        appBarButton: AppBarButton? = null
     ) = _appBarAction.update {
-        it?.copy(
-            onAddAccount = onAddAccount, onAddTransaction = onAddTransaction,
-            bottomNavigation = bottomNavigation, visible = visible, isLoading = isLoading,
-            onClickBackButton = onClickBackButton, onClickCancelButton = onClickCancelButton,
-            buttonOnClick = buttonOnClick, buttonText = buttonText,
-            errorMessage = errorMessage
-        ) ?: AppBarAction(
-            onAddAccount = onAddAccount, onAddTransaction = onAddTransaction,
-            bottomNavigation = bottomNavigation, visible = visible, isLoading = isLoading,
-            onClickBackButton = onClickBackButton, onClickCancelButton = onClickCancelButton,
-            buttonOnClick = buttonOnClick, buttonText = buttonText,
-            errorMessage = errorMessage
+        AppBarAction(
+            navigateToAccountEditor = accountEditor,
+            navigateToTransactionEditor = transactionEditor,
+            bottomNavigation = bottomNavigation,
+            visible = visible, isLoading = isLoading,
+            backButton = backButton, cancelButton = cancelButton,
+            moreButton = moreButton, appBarButton = appBarButton
         )
     }
 
-    override fun setForHomeScreen(
-        onAddAccount: () -> Unit, onAddTransaction: () -> Unit,
-    ) =
-        updateAppBarData(
-            bottomNavigation = true,
-            onAddAccount = onAddAccount, onAddTransaction = onAddTransaction
+    override fun setForAuth(isLoading: Boolean, loginButton: AppBarButton) = updateAppBarData(
+        isLoading = isLoading, appBarButton = loginButton
+    )
+
+    override fun setForHomeScreen() = updateAppBarData(bottomNavigation = true, moreButton = true)
+
+    override fun setForAccountsScreen() = updateAppBarData(
+        bottomNavigation = true,
+        accountEditor = NavigationDestination.AccountEditor(accountId = null)
+    )
+
+    override fun setForTransactionsScreen() = updateAppBarData(
+        bottomNavigation = true,
+        transactionEditor = NavigationDestination.TransactionEditor(
+            accountId = null, transactionId = null
         )
-
-    override fun setForAccountsScreen(
-        onAddAccount: () -> Unit,
-    ) =
-        updateAppBarData(bottomNavigation = true, onAddAccount = onAddAccount)
-
-    override fun setForTransactionsScreen(onAddTransaction: () -> Unit) =
-        updateAppBarData(bottomNavigation = true, onAddTransaction = onAddTransaction)
+    )
 
     override fun setForAccountDetailsScreen(
-        editButtonText: String, allowToEdit: Boolean, onEditButton: () -> Unit,
-        onClickBack: () -> Unit, onAddTransaction: () -> Unit
-    ) =
-        updateAppBarData(
-            onClickBackButton = onClickBack,
-            buttonText = editButtonText, buttonOnClick = if (allowToEdit) onEditButton else null,
-            onAddTransaction = onAddTransaction
-        )
+        backButton: Boolean, onEditButton: AppBarButton?,
+        transactionEditor: NavigationDestination.TransactionEditor?
+    ) = updateAppBarData(
+        backButton = backButton, appBarButton = onEditButton,
+        transactionEditor = transactionEditor,
+    )
 
     override fun setForEditAccountScreen(
-        errorMessage: String?,
-        saveButtonText: String, onSaveButton: (() -> Unit)?,
-        onClickCancel: () -> Unit
-    ) =
-        updateAppBarData(
-            errorMessage = errorMessage,
-            buttonText = saveButtonText, buttonOnClick = onSaveButton,
-            onClickBackButton = onClickCancel,
-        )
+        cancelButton: Boolean, saveButton: AppBarButton
+    ) = updateAppBarData(cancelButton = cancelButton, appBarButton = saveButton)
 
     override fun setForTransactionDetailsScreen(
-        editButtonText: String, allowToEdit: Boolean, onEditButton: () -> Unit,
-        onClickBack: () -> Unit
-    ) =
-        updateAppBarData(
-            buttonText = editButtonText,
-            onClickBackButton = onClickBack,
-            buttonOnClick = if (allowToEdit) onEditButton else null,
-        )
+        backButton: Boolean, editButton: AppBarButton?
+    ) = updateAppBarData(backButton = backButton, appBarButton = editButton)
 
     override fun setForEditTransactionScreen(
-        errorMessage: String?,
-        saveButtonText: String, onSaveButton: (() -> Unit)?, onClickCancel: () -> Unit
-    ) =
-        updateAppBarData(
-            errorMessage = errorMessage,
-            buttonText = saveButtonText,
-            buttonOnClick = onSaveButton,
-            onClickCancelButton = onClickCancel
-        )
+        cancelButton: Boolean, saveButton: AppBarButton?
+    ) = updateAppBarData(
+        cancelButton = cancelButton, appBarButton = saveButton
+    )
 
 }
 

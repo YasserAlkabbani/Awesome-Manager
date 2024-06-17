@@ -82,7 +82,6 @@ fun AccountCard(
                     expenses = expenses,
                     netIncomeAbs = netIncomeAbs,
                     isPositiveIncome = isPositiveIncome,
-                    currencySymbol = currencySymbol,
                 )
             }
 

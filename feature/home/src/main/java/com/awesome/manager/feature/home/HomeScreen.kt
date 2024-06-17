@@ -57,10 +57,7 @@ fun HomeRoute(
     })
 
     LaunchedEffect(key1 = Unit) {
-        homeState.setForHomeScreen(
-            onAddAccount = homeState::navigateToCreateAccount,
-            onAddTransaction = homeState::navigateToCreateTransaction,
-        )
+        homeState.setForHomeScreen()
     }
 
     HomeScreen(homeState)
@@ -118,7 +115,6 @@ fun HomeScreen(homeState: HomeMainState) {
                 AmFilledTonalButton(
                     text = stringResource(R.string.create_an_account),
                     onClick = homeState::navigateToCreateAccount,
-                    positive = null
                 )
             }
         }
@@ -155,7 +151,7 @@ fun HomeCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 AmText(
-                    text = "${netCash} ${currencySymbol}",
+                    text = "$netCash $currencySymbol",
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -171,7 +167,6 @@ fun HomeCard(
             expenses = expenses,
             netIncomeAbs = netIncomeAbs,
             isPositiveIncome = isPositiveIncome,
-            currencySymbol = currencySymbol,
         )
 
     }

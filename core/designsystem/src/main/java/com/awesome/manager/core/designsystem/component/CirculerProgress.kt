@@ -10,25 +10,14 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AmCircularProgress(
-    modifier: Modifier=Modifier,
-    positive:Boolean
-){
-
-    val primary = MaterialTheme.colorScheme.primary
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val error = MaterialTheme.colorScheme.error
-    val errorContainer = MaterialTheme.colorScheme.errorContainer
-
-    val (color,trackColor)= remember (positive){
-        if(positive) primary to primaryContainer else error to errorContainer
-    }
-
-    CircularProgressIndicator(modifier=modifier, color = color,trackColor=trackColor)
+    modifier: Modifier = Modifier,
+) {
+    CircularProgressIndicator(modifier = modifier)
 }
 
 
 @Preview
 @Composable
-fun AmCircularProgressPreview(){
-    AmLinearProgress(positive = false)
+fun AmCircularProgressPreview() {
+    AmCircularProgress(Modifier)
 }

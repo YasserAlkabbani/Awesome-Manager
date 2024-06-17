@@ -17,9 +17,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
@@ -57,12 +59,18 @@ fun AccountDetailsRoute(
     val editAccount = stringResource(R.string.edit_account_name)
     LaunchedEffect(key1 = accountState, allowToUpdate) {
         if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
+            val allowToEdit = allowToUpdate.data
+            val account = accountState.data
             accountDetailsState.setForAccountDetailsScreen(
-                onClickBack = accountDetailsState::navigatePopBack,
-                editButtonText = "$editAccount ${accountState.data.name.limitName()}",
-                onEditButton = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
-                allowToEdit = allowToUpdate.data,
-                onAddTransaction = { accountDetailsState.navigateToCreateTransaction(accountState.data.id) },
+                backButton = true,
+                onEditButton = AppBarButton(
+                    text = "$editAccount ${accountState.data.name.limitName()}",
+                    click = { accountDetailsState.navigateToEditAccount(accountState.data.id) }
+                ),
+                transactionEditor = if (allowToEdit)
+                    NavigationDestination.TransactionEditor(
+                        accountId = account.id, transactionId = null
+                    ) else null,
             )
         }
     }
@@ -74,7 +82,7 @@ fun AccountDetailsRoute(
 @Composable
 fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
-    val isLoading: Boolean = accountDetailsState.loading.collectAsState().value
+    val isLoading: Boolean = accountDetailsState.isLoading.collectAsState().value
     val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
         accountDetailsState.amTransactions.collectAsLazyPagingItems()

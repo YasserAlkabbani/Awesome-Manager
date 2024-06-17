@@ -1,5 +1,6 @@
 package com.awesome.manager.core.designsystem.actions.main
 
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 
@@ -30,16 +31,15 @@ sealed class NavigationAction : MainAction() {
 }
 
 data class AppBarAction(
-    val isLoading: Boolean = false,
     val visible: Boolean = true,
     val bottomNavigation: Boolean = false,
-    val errorMessage: String? = null,
-    val buttonText: String = "",
-    val buttonOnClick: (() -> Unit)? = null,
-    val onAddAccount: (() -> Unit)? = null,
-    val onAddTransaction: (() -> Unit)? = null,
-    val onClickBackButton: (() -> Unit)? = null,
-    val onClickCancelButton: (() -> Unit)? = null,
+    val moreButton: Boolean = false,
+    val backButton: Boolean = false,
+    val cancelButton: Boolean = false,
+    val isLoading: Boolean = false,
+    val navigateToAccountEditor: NavigationDestination.AccountEditor? = null,
+    val navigateToTransactionEditor: NavigationDestination.TransactionEditor? = null,
+    val appBarButton: AppBarButton? = null,
 ) : MainAction()
 
 sealed class PickerAction : MainAction() {

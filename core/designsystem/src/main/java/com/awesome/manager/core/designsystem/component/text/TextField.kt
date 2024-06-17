@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,22 +44,20 @@ fun AmTextField(
     modifier: Modifier = Modifier,
     initTextValue: String = "", onTextChange: (String) -> Unit,
     icon: AmIconsType? = null, label: String? = null, hint: String,
-    singleLine: Boolean = true, error: String? = null,
+    singleLine: Boolean = true,
     enabled: Boolean = true, reformatText: (String) -> String = { it },
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    var text by remember { mutableStateOf(initTextValue) }
+    var text by rememberSaveable { mutableStateOf(initTextValue) }
     LaunchedEffect(key1 = text, block = { onTextChange(text) })
 
     val isFocus = remember { mutableStateOf(false) }
     val color = animateColorAsState(
-        targetValue = if (isFocus.value)
-            if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
-        else
-            if (error != null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
-        label = "1"
+        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.secondaryContainer,
+        label = "COLOR"
     ).value
 
     Surface(
@@ -112,50 +111,27 @@ fun AmTextField(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
             )
-            AnimatedVisibility(visible = error != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AmPadding.MEDIUM.value)
-                        .padding(top = AmPadding.SMALL.value),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AmIcon(
-                        modifier = Modifier.height(AmSize.X_SMALL.value),
-                        amIconsType = AmIcons.Error
-                    )
-                    AmSpacerMediumWidth()
-                    AmText(
-                        modifier = Modifier.wrapContentHeight(),
-                        text = error.orEmpty(),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
         }
     }
 }
 
 @Composable
 fun AmPasswordTextField(
-    modifier: Modifier = Modifier,
-    initTextValue: String = "", onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier, onTextChange: (String) -> Unit,
     icon: AmIconsType? = null, label: String? = null, hint: String,
-    singleLine: Boolean = true, error: String? = null,
+    singleLine: Boolean = true,
     enabled: Boolean = true, reformatText: (String) -> String = { it },
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    var text by remember { mutableStateOf(initTextValue) }
+    var text by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(key1 = text, block = { onTextChange(text) })
 
     val isFocus = remember { mutableStateOf(false) }
     val color = animateColorAsState(
-        targetValue = if (isFocus.value)
-            if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary
-        else
-            if (error != null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
+        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.secondaryContainer,
         label = "1"
     ).value
     var passwordHidden by remember { mutableStateOf(true) }
@@ -219,26 +195,6 @@ fun AmPasswordTextField(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
             )
-            AnimatedVisibility(visible = error != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AmPadding.MEDIUM.value)
-                        .padding(top = AmPadding.SMALL.value),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AmIcon(
-                        modifier = Modifier.height(AmSize.X_SMALL.value),
-                        amIconsType = AmIcons.Error
-                    )
-                    AmSpacerMediumWidth()
-                    AmText(
-                        modifier = Modifier.wrapContentHeight(),
-                        text = error.orEmpty(),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
         }
     }
 }
@@ -252,7 +208,6 @@ fun AmTextFieldPreview() {
         hint = "HINT",
         icon = AmIcons.Email,
         label = "LABEL",
-        error = "ERROR MESSAGE",
         onTextChange = {}
     )
 }

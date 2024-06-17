@@ -14,17 +14,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
@@ -44,6 +43,9 @@ fun AuthRoute(
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val authScreenState = authViewModel.authScreenState
+    val authData = authScreenState.authData.collectAsState().value
+    val isLoading = authScreenState.isLoading.collectAsState().value
+    val context = LocalContext.current
 
     val navigationAction = authScreenState.navigationAction.collectAsState().value
     LaunchedEffect(key1 = navigationAction, block = {
@@ -60,6 +62,21 @@ fun AuthRoute(
         bottomSheetAction.sendMainAction(sendMainAction, authScreenState::doneBottomSheetAction)
     })
 
+    LaunchedEffect(key1 = authData, key2 = isLoading) {
+        authScreenState.setForAuth(
+            isLoading = isLoading,
+            loginButton = AppBarButton(
+                text = context.getString(R.string.start_accounting),
+                click = authScreenState.login,
+                errorMessage = when {
+                    !authData.validatePassword && !authData.validateEmail -> "Please, enter your credential"
+                    !authData.validateEmail -> context.getString(R.string.invalid_email)
+                    !authData.validatePassword -> context.getString(R.string.invalid_password)
+                    else -> null
+                }
+            ),
+        )
+    }
 
     AuthScreen(authScreenState)
 }
@@ -68,21 +85,6 @@ fun AuthRoute(
 fun AuthScreen(
     authScreenState: AuthScreenStateMain
 ) {
-    val authData by authScreenState.authData.collectAsState()
-
-    val emailErrorMessage = remember {
-        derivedStateOf {
-            if (authData.validateEmail || authData.email.isEmpty()) null else R.string.invalid_email
-        }
-    }.value?.let { stringResource(id = it) }
-
-    val passwordErrorMessage = remember {
-        derivedStateOf {
-            if (authData.validatePassword || authData.password.isEmpty()) null else R.string.invalid_password
-        }
-    }.value?.let { stringResource(id = it) }
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +102,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AmIcon(
-                        modifier = Modifier.size(AmPadding.X_LARGE.value),
+                        modifier = Modifier.size(AmPadding.X_LARGE.value * 7),
                         amIconsType = AmIcons.AwesomeManagerIcon,
                     )
                     AmText(
@@ -116,10 +118,6 @@ fun AuthScreen(
             AmSpacerLargeHeight()
             AmSpacerLargeHeight()
             Column(Modifier.fillMaxWidth()) {
-                AmText(
-                    text = "Welcome Back !",
-                    style = MaterialTheme.typography.titleLarge
-                )
                 AmCard(
                     modifier = Modifier.fillMaxWidth(), positive = null,
                 ) {
@@ -137,7 +135,6 @@ fun AuthScreen(
                                 label = stringResource(R.string.email),
                                 icon = AmIcons.Email,
                                 hint = "Example@Example.com",
-                                error = emailErrorMessage,
                                 onTextChange = authScreenState::updateEmail,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Next,
@@ -152,8 +149,7 @@ fun AuthScreen(
                                 modifier = Modifier,
                                 label = stringResource(R.string.password),
                                 icon = AmIcons.Password,
-                                hint = "Your Top Secret Password",
-                                error = passwordErrorMessage,
+                                hint = "Your top secret password",
                                 onTextChange = authScreenState::updatePassword,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Done,

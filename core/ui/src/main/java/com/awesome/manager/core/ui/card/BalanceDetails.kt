@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.AmSurface
@@ -21,32 +22,36 @@ import com.awesome.manager.core.ui.R
 fun AmBalanceDetailsCard(
     creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
     income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
-    currencySymbol: String,
 ) {
-    Row(Modifier.padding(AmPadding.MEDIUM.value)) {
-        BalanceDetailsRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            negativeValue = creditor,
-            negativeLabel = stringResource(R.string.creditor),
-            positiveValue = debtor,
-            positiveLabel = stringResource(R.string.debtor),
-            balance = netDebtorAbs,
-            isPositiveBalance = isPositiveDebtor,
-        )
-        AmSpacerSmallWidth()
-        BalanceDetailsRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            positiveValue = income,
-            positiveLabel = stringResource(R.string.income),
-            negativeValue = expenses,
-            negativeLabel = stringResource(R.string.expenses),
-            balance = netIncomeAbs,
-            isPositiveBalance = isPositiveIncome,
-        )
+    AmSurface(
+        modifier = Modifier.padding(AmPadding.SMALL.value),
+        padding = AmPadding.LARGE
+    ) {
+        Row {
+            BalanceDetailsRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                positiveValue = income,
+                positiveLabel = stringResource(R.string.income),
+                negativeValue = expenses,
+                negativeLabel = stringResource(R.string.expenses),
+                balance = netIncomeAbs,
+                isPositiveBalance = isPositiveIncome,
+            )
+            AmSpacerSmallWidth()
+            BalanceDetailsRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                negativeValue = creditor,
+                negativeLabel = stringResource(R.string.creditor),
+                positiveValue = debtor,
+                positiveLabel = stringResource(R.string.debtor),
+                balance = netDebtorAbs,
+                isPositiveBalance = isPositiveDebtor,
+            )
+        }
     }
 }
 
@@ -62,7 +67,7 @@ fun BalanceDetailsRow(
             text = "$positiveLabel/$negativeLabel",
             style = MaterialTheme.typography.titleMedium
         )
-        AmSurface(
+        AmCard(
             positive = true
         ) {
             AmTextWithIcon(
@@ -72,7 +77,7 @@ fun BalanceDetailsRow(
             )
         }
         AmSpacerSmallHeight()
-        AmSurface(positive = false) {
+        AmCard(positive = false) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
                 text = "$negativeValue",
@@ -80,7 +85,7 @@ fun BalanceDetailsRow(
             )
         }
         AmSpacerSmallHeight()
-        AmSurface(positive = isPositiveBalance) {
+        AmCard(positive = isPositiveBalance) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
                 text = "$balance",

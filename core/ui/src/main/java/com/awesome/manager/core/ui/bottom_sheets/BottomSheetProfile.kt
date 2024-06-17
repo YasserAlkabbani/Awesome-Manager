@@ -27,8 +27,7 @@ fun BottomSheetProfile(profile: BottomSheetContent.Profile) {
         Spacer(modifier = Modifier.height(30.dp))
         AmButton(
             modifier = Modifier.fillMaxWidth(),
-            text = "LOGOUT", positive = false,
-            onClick = profile.logout
+            text = "LOGOUT", onClick = profile.logout
         )
     }
 }

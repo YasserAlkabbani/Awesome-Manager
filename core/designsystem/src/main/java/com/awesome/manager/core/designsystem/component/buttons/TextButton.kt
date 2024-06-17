@@ -9,7 +9,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 @Composable
 fun AmTextButton(
     modifier: Modifier = Modifier,
-    text: String, enabled: Boolean, onClick: () -> Unit
+    text: String, enabled: Boolean = true, onClick: () -> Unit
 ) {
     TextButton(modifier = modifier, onClick = onClick, enabled = enabled) {
         AmText(text = text)

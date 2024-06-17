@@ -1,5 +1,6 @@
 package com.awesome.manager.feature.account.editor
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.enums.EditorInputType
+import com.awesome.manager.core.common.enums.EditorInputType.*
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
@@ -58,30 +60,24 @@ fun AccountEditorRoute(
 
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
-    val context = LocalContext.current
+    val context: Context = LocalContext.current
     LaunchedEffect(key1 = accountEditorData) {
         if (accountEditorData is DataState.Success) {
             val accountEditor = accountEditorData.data
             val isValidInput = accountEditor.validateAccountData != null
             val errorMessage =
                 if (isValidInput) null else context.getString(R.string.invalidate_input)
-            val saveButton = if (isValidInput) accountEditorState.onSave else null
-
-            when (accountEditor.editorInputType) {
-                EditorInputType.Create -> accountEditorState.setForEditAccountScreen(
-                    onClickCancel = accountEditorState::navigatePopBack,
-                    onSaveButton = saveButton,
-                    saveButtonText = context.getString(R.string.create_account),
-                    errorMessage = errorMessage
-                )
-
-                EditorInputType.Edit -> accountEditorState.setForEditAccountScreen(
-                    onClickCancel = accountEditorState::navigatePopBack,
-                    onSaveButton = saveButton,
-                    saveButtonText = "${context.getString(R.string.update_account)} ${accountEditor.name.limitName()}",
-                    errorMessage = errorMessage
-                )
+            val buttonText = when (accountEditor.editorInputType) {
+                Create -> context.getString(R.string.create_account)
+                Edit -> "${context.getString(R.string.update_account)} ${accountEditor.name.limitName()}"
             }
+            accountEditorState.setForEditAccountScreen(
+                cancelButton = true,
+                saveButton = AppBarButton(
+                    text = buttonText, click = accountEditorState.onSave,
+                    errorMessage = errorMessage
+                ),
+            )
         }
     }
 
@@ -125,7 +121,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true, initTextValue = account.name,
                     label = "Account", icon = AmIcons.Title, hint = "Account Name",
-                    error = null, onTextChange = accountEditorState::updateName
+                    onTextChange = accountEditorState::updateName
                 )
             }
             if (account.allowToUpdateCurrency) {

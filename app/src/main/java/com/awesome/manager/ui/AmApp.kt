@@ -253,7 +253,7 @@ fun AppScreen(
                                     )
                                 }
                         },
-                        showMoreBottomSheet = {
+                        onShowMoreBottomSheet = {
                             userEmail?.let { email ->
                                 updateMainAction(
                                     BottomSheetAction.Open(
@@ -265,6 +265,9 @@ fun AppScreen(
                             }
                         },
                         appBarAction = appBarAction,
+                        transactionEditor = { updateMainAction(it.asNavigation()) },
+                        accountEditor = { updateMainAction(it.asNavigation()) },
+                        onNavigationUp = { updateMainAction(NavigationAction.NavigateUp) }
                     )
                 }
             },

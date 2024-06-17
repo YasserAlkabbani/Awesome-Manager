@@ -1,6 +1,7 @@
 package com.awesome.manager.core.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,13 +40,17 @@ fun AmSurface(
                 color = surfaceColors,
                 content = {
                     Column {
-                        Column(modifier = Modifier.padding(padding.value)) {
+                        Column(
+                            modifier = Modifier.padding(padding.value),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             content()
                         }
                         AnimatedVisibility(visible = loading) {
                             AmLinearProgress(
                                 modifier = Modifier.fillMaxWidth(),
-                                positive = positive == true
+                                positive = positive
                             )
                         }
                     }
@@ -61,15 +66,16 @@ fun AmSurface(
                 content = {
                     Column {
                         Column(
-                            modifier = modifier.padding(padding.value),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            modifier = Modifier.padding(padding.value),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
                             content()
                         }
                         AnimatedVisibility(visible = loading) {
                             AmLinearProgress(
                                 modifier = Modifier.fillMaxWidth(),
-                                positive = positive == true
+                                positive = positive
                             )
                         }
                     }
