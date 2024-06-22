@@ -1,5 +1,7 @@
 package com.awesome.manager.core.model
 
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 
@@ -11,19 +13,29 @@ enum class AmTransactionType(val positive: Boolean) {
 }
 
 data class BalanceDetails(
-    val income: Double, val expenses: Double,
-    val debtor: Double, val creditor: Double,
+    private val income: Double, private val expenses: Double,
+    private val debtor: Double, private val creditor: Double,
     val currency: AmCurrency,
 ) {
+
+    private fun Double.asFormatted() = NumberFormat.getNumberInstance(Locale.US).format(this)
+
     private val netIncome: Double = income - expenses
     private val netDebtor: Double = debtor - creditor
     private val input: Double = income + debtor
     private val output: Double = expenses + creditor
     private val netCash: Double = input - output
 
-    val netIncomeAbs: Double = netIncome.absoluteValue
-    val netDebtorAbs: Double = netDebtor.absoluteValue
-    val netCashAbs: Double = netCash.absoluteValue
+
+    val formattedIncome: String = income.asFormatted()
+    val formattedExpenses: String = expenses.asFormatted()
+    val formattedDebtor: String = debtor.asFormatted()
+    val formattedCreditor: String = creditor.asFormatted()
+
+    val formattedNetIncome: String = netIncome.absoluteValue.asFormatted()
+    val formattedNetDebtor: String = netDebtor.absoluteValue.asFormatted()
+    val formattedNetCash: String = netCash.absoluteValue.asFormatted()
+
     val isPositiveCash: Boolean = netCash >= 0
     val isPositiveIncome: Boolean = netIncome >= 0
     val isPositiveDebtor: Boolean = netDebtor >= 0

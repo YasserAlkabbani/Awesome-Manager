@@ -1,5 +1,8 @@
 package com.awesome.manager.core.model
 
+import java.text.NumberFormat
+import java.util.Locale
+
 data class AmTransaction(
     val id: String,
     val accountId: String,
@@ -15,7 +18,9 @@ data class AmTransaction(
     val updatedAt: Long,
     val transactionAt: Long,
     val transactionAtDate: String
-)
+){
+    val formattedAmount:String= NumberFormat.getNumberInstance(Locale.US).format(amount)
+}
 
 data class UpsertTransaction(
     val id: String,

@@ -75,6 +75,25 @@ fun AmNavHost(
 
 }
 
+//inline fun <reified T : NavigationDestination> NavGraphBuilder.composableWithAnimation(noinline content: @Composable () -> Unit) {
+//    composable<T>(
+//        enterTransition = {
+//            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
+//        },
+//        exitTransition ={
+//            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500))
+//        },
+//        popEnterTransition ={
+//            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500))
+//        },
+//        popExitTransition ={
+//            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
+//        }
+//    ) {
+//        content()
+//    }
+//}
+
 fun NavBackStackEntry.asNavigationDestination(): NavigationDestination? = when (destination.route) {
     NavigationDestination.Intro::class.qualifiedName -> toRoute<NavigationDestination.Intro>()
     NavigationDestination.Auth::class.qualifiedName -> toRoute<NavigationDestination.Auth>()

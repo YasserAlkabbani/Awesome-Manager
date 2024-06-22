@@ -132,9 +132,9 @@ fun AmApp() {
                 NavigationDestination.Auth -> Unit
                 NavigationDestination.Intro -> Unit
 
-                NavigationDestination.Home -> {}
-                NavigationDestination.Accounts -> {}
-                NavigationDestination.Transactions -> {}
+                NavigationDestination.Home -> mainActivityState.setForHomeScreen()
+                NavigationDestination.Accounts -> mainActivityState.setForAccountsScreen()
+                NavigationDestination.Transactions -> mainActivityState.setForTransactionsScreen()
 
                 is NavigationDestination.AccountDetails -> Unit
                 is NavigationDestination.AccountEditor -> Unit
@@ -193,7 +193,7 @@ fun AmApp() {
         ModalBottomSheet(
             modifier = Modifier
                 .padding(horizontal = AmPadding.SMALL.value)
-                .requiredHeightIn(max = 600.dp),
+                .requiredHeightIn(max = 500.dp),
             onDismissRequest = { mainActivityState.dismissBottomSheet() },
             sheetState = sheetState,
             properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = bottomSheetAction.isDismissible),
@@ -218,7 +218,13 @@ fun AmApp() {
         navHostController = navHostController,
         currentNavigationDestination = currentNavigationDestination,
         appBarAction = appBarAction, updateMainAction = mainActivityState::updateMainState,
-        userEmail = currentUserEmail, logout = mainActivityState.logout
+        showProfileBottomSheet = {
+            currentUserEmail?.let { email ->
+                mainActivityState.showProfileBottomSheet(
+                    email = email, logout = mainActivityState.logout
+                )
+            }
+        },
     )
 
 }
@@ -228,7 +234,7 @@ fun AppScreen(
     navHostController: NavHostController,
     currentNavigationDestination: NavigationDestination?,
     appBarAction: AppBarAction?, updateMainAction: (MainAction) -> Unit,
-    userEmail: String?, logout: () -> Unit
+    showProfileBottomSheet: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -253,17 +259,7 @@ fun AppScreen(
                                     )
                                 }
                         },
-                        onShowMoreBottomSheet = {
-                            userEmail?.let { email ->
-                                updateMainAction(
-                                    BottomSheetAction.Open(
-                                        BottomSheetContent.Profile(
-                                            email = email, logout = logout
-                                        )
-                                    )
-                                )
-                            }
-                        },
+                        onShowMoreBottomSheet = showProfileBottomSheet,
                         appBarAction = appBarAction,
                         transactionEditor = { updateMainAction(it.asNavigation()) },
                         accountEditor = { updateMainAction(it.asNavigation()) },

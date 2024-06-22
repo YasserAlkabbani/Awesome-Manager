@@ -14,6 +14,7 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
+import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.ui.R
 
 @Composable
@@ -25,7 +26,7 @@ fun BottomSheetProfile(profile: BottomSheetContent.Profile) {
             text = profile.email, positive = null
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AmButton(
+        AmFilledTonalButton(
             modifier = Modifier.fillMaxWidth(),
             text = "LOGOUT", onClick = profile.logout
         )

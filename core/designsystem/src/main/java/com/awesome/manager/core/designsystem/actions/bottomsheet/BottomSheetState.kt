@@ -1,6 +1,5 @@
 package com.awesome.manager.core.designsystem.actions.bottomsheet
 
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
@@ -47,7 +46,8 @@ class BottomSheetState : BottomSheetStateI {
     override val bottomSheetAction: StateFlow<BottomSheetAction?> = _bottomSheetAction.asStateFlow()
 
     override fun BottomSheetAction.applyAction() = _bottomSheetAction.update { this }
-    private fun BottomSheetContent.open() = BottomSheetAction.Open(this).applyAction()
+    private fun BottomSheetContent.open(isDismissible: Boolean) =
+        BottomSheetAction.Open(content = this, isDismissible = isDismissible).applyAction()
 
 
     override fun doneBottomSheetAction() = _bottomSheetAction.update { null }
@@ -57,7 +57,7 @@ class BottomSheetState : BottomSheetStateI {
     }
 
     override fun showProfileBottomSheet(email: String, logout: () -> Unit) =
-        BottomSheetContent.Profile(email = email, logout = logout).open()
+        BottomSheetContent.Profile(email = email, logout = logout).open(isDismissible = true)
 
     override fun showSearchWithContentBottomSheet(
         searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
@@ -65,44 +65,44 @@ class BottomSheetState : BottomSheetStateI {
     ) = BottomSheetContent.SearchWithContent(
         searchLabel = searchLabel, initSearch = initSearch,
         onReSearch = onReSearch, onSearchDone, content = content
-    ).open()
+    ).open(isDismissible = true)
 
     override fun showAccountCreatedBottomSheet() =
-        BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet).open()
+        BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet).open(isDismissible = true)
 
     override fun showPasswordRestedBottomSheet() =
-        BottomSheetContent.PasswordRested(dismiss = ::dismissBottomSheet).open()
+        BottomSheetContent.PasswordRested(dismiss = ::dismissBottomSheet).open(isDismissible = true)
 
     override fun showUnknownErrorBottomSheet() =
-        BottomSheetContent.UnknownError(dismiss = ::dismissBottomSheet).open()
+        BottomSheetContent.UnknownError(dismiss = ::dismissBottomSheet).open(isDismissible = true)
 
     override fun showAuthErrorBottomSheet(
         errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
     ) =
         BottomSheetContent.AuthError(
-            errorMessage = errorMessage,
-            createNewAccount = onCreateAccount,
+            errorMessage = errorMessage, createNewAccount = onCreateAccount,
             editCredentials = editCredentials
-        ).open()
+        ).open(isDismissible = true)
 
     override fun showConnectionErrorBottomSheet() =
-        BottomSheetContent.ConnectionError(dismiss = ::dismissBottomSheet).open()
+        BottomSheetContent.ConnectionError(dismiss = ::dismissBottomSheet)
+            .open(isDismissible = true)
 
     override fun showCustomErrorMessage(errorMessage: String) =
         BottomSheetContent.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
-            .open()
+            .open(isDismissible = true)
 
     override fun showPickDateBottomSheet(
         initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
     ) =
         BottomSheetContent.PickDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .open()
+            .open(isDismissible = true)
 
     override fun showPickRangeDateBottomSheet(
         initTime: Long, setDate: (Long, Long) -> Unit, dismiss: () -> Unit
     ) =
         BottomSheetContent.PickRangeDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .open()
+            .open(isDismissible = true)
 
 }
 

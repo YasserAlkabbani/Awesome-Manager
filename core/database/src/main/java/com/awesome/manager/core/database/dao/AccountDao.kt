@@ -22,14 +22,14 @@ interface AccountDao {
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:income, transactions.amount, 0)),0) AS income," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:expenses, transactions.amount, 0)),0) AS expenses," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:debtor, transactions.amount, 0)),0) AS debtor," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:creditor, transactions.amount, 0)),0) AS creditor " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END ),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END ),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END ),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END ),0) AS creditor " +
                 "FROM accounts " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
                 "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
-                "GROUP BY accounts.account_id "
+                "GROUP BY accounts.name "
     )
     fun returnAccounts(
         searchKey: String?,
@@ -42,14 +42,14 @@ interface AccountDao {
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:income, transactions.amount, 0)),0) AS income," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:expenses, transactions.amount, 0)),0) AS expenses," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:debtor, transactions.amount, 0)),0) AS debtor," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:creditor, transactions.amount, 0)),0) AS creditor " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END),0) AS creditor " +
                 "FROM accounts " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
                 "WHERE accounts.account_id=:accountId " +
-                "GROUP BY accounts.account_id "
+                "GROUP BY accounts.name "
     )
     fun returnAccountById(
         accountId: String,

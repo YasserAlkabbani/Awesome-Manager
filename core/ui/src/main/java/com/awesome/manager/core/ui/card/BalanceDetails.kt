@@ -20,8 +20,8 @@ import com.awesome.manager.core.ui.R
 
 @Composable
 fun AmBalanceDetailsCard(
-    creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
-    income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
+    creditor: String, debtor: String, netDebtorAbs: String, isPositiveDebtor: Boolean,
+    income: String, expenses: String, netIncomeAbs: String, isPositiveIncome: Boolean,
 ) {
     AmSurface(
         modifier = Modifier.padding(AmPadding.SMALL.value),
@@ -58,9 +58,9 @@ fun AmBalanceDetailsCard(
 @Composable
 fun BalanceDetailsRow(
     modifier: Modifier,
-    positiveValue: Double, positiveLabel: String,
-    negativeValue: Double, negativeLabel: String,
-    balance: Double, isPositiveBalance: Boolean,
+    positiveValue: String, positiveLabel: String,
+    negativeValue: String, negativeLabel: String,
+    balance: String, isPositiveBalance: Boolean,
 ) {
     Column(modifier = modifier) {
         AmText(
@@ -72,7 +72,7 @@ fun BalanceDetailsRow(
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = "$positiveValue",
+                text = positiveValue,
                 amIconsType = AmIcons.Input,
             )
         }
@@ -80,7 +80,7 @@ fun BalanceDetailsRow(
         AmCard(positive = false) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = "$negativeValue",
+                text = negativeValue,
                 amIconsType = AmIcons.Output,
             )
         }
@@ -88,7 +88,7 @@ fun BalanceDetailsRow(
         AmCard(positive = isPositiveBalance) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = "$balance",
+                text = balance,
                 amIconsType = AmIcons.Balance,
             )
         }

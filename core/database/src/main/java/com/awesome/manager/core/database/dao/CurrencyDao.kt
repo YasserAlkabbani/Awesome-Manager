@@ -24,10 +24,10 @@ interface CurrencyDao {
     @Transaction
     @Query(
         "SELECT currencies.* ," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:income, transactions.amount, 0)),0) AS income," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:expenses, transactions.amount, 0)),0) AS expenses," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:debtor, transactions.amount, 0)),0) AS debtor," +
-                "IFNULL(SUM( IIF(transactions.transaction_type=:creditor, transactions.amount, 0)),0) AS creditor " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END ),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END ),0) AS creditor " +
                 "FROM currencies " +
                 "JOIN accounts on currencies.currency_id=accounts.currency_id " +
                 "LEFT JOIN transactions on accounts.account_id=transactions.account_id " +

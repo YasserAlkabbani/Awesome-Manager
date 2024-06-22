@@ -21,7 +21,7 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     amount = amount,
     createdAt = createdAt.asTimestamp(),
     updatedAt = updatedAt.asTimestamp(),
-    transactionAt = updatedAt.asTimestamp(),
+    transactionAt = transactionAt.asTimestamp(),
     pending = false
 )
 

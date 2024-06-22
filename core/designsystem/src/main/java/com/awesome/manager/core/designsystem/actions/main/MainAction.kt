@@ -18,7 +18,7 @@ sealed class BottomSheetAction : MainAction() {
 
     data class Open(
         override val content: BottomSheetContent,
-        override val isDismissible: Boolean = false,
+        override val isDismissible: Boolean,
     ) : BottomSheetAction()
 
 }

@@ -26,8 +26,8 @@ fun AccountCard(
     title: String, imageUrl: String,
     loading: Boolean, withDetails: Boolean,
 
-    creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
-    income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
+    creditor: String, debtor: String, netDebtorAbs: String, isPositiveDebtor: Boolean,
+    income: String, expenses: String, netIncomeAbs: String, isPositiveIncome: Boolean,
     currencySymbol: String,
 
     onClick: (() -> Unit)?,
@@ -60,7 +60,7 @@ fun AccountCard(
                     AmIconButton(
                         modifier = Modifier,
                         amIconsType = AmIcons.TransactionAdd,
-                        onClick = it
+                        onClick = it,
                     )
                 }
                 onEditTransaction?.let {
@@ -97,9 +97,9 @@ fun AccountCardPreview() {
         title = "TITLE", imageUrl = "",
         loading = true, withDetails = true,
         onClick = {}, onAddTransaction = {}, onEditTransaction = {},
-        creditor = 100.0, debtor = 600.0,
-        income = 500.0, expenses = 300.0, currencySymbol = "$",
-        netDebtorAbs = 3000.0, netIncomeAbs = 5000.0,
+        creditor = "100.0", debtor = "600.0",
+        income = "500.0", expenses = "300.0", currencySymbol = "$",
+        netDebtorAbs = "3000.0", netIncomeAbs = "5000.0",
         isPositiveDebtor = true, isPositiveIncome = false,
     )
 }

@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.enums.EditorInputType
 import com.awesome.manager.core.common.enums.EditorInputType.*
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
@@ -29,12 +28,10 @@ import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
 import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
-import com.awesome.manager.core.designsystem.actions.picker.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
-import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
@@ -106,12 +103,12 @@ fun TransactionEditorRoute(
                                             },
                                             onAddTransaction = null,
                                             onEditTransaction = null,
-                                            income = balanceDetails.income,
-                                            expenses = balanceDetails.expenses,
-                                            netIncomeAbs = balanceDetails.netIncomeAbs,
-                                            debtor = balanceDetails.debtor,
-                                            creditor = balanceDetails.creditor,
-                                            netDebtorAbs = balanceDetails.netDebtorAbs,
+                                            income = balanceDetails.formattedIncome,
+                                            expenses = balanceDetails.formattedExpenses,
+                                            netIncomeAbs = balanceDetails.formattedNetIncome,
+                                            debtor = balanceDetails.formattedDebtor,
+                                            creditor = balanceDetails.formattedCreditor,
+                                            netDebtorAbs = balanceDetails.formattedNetDebtor,
                                             currencySymbol = balanceDetails.currency.currencySymbol,
                                             isPositiveIncome = balanceDetails.isPositiveIncome,
                                             isPositiveDebtor = balanceDetails.isPositiveDebtor
@@ -198,10 +195,12 @@ fun TransactionEditorScreen(
                     loading = account.pending, withDetails = true,
                     onClick = transactionEditorState::requestSearchForAnAccountBottomSheet,
                     onAddTransaction = null, onEditTransaction = null,
-                    income = balanceDetails.income, expenses = balanceDetails.expenses,
-                    netIncomeAbs = balanceDetails.netIncomeAbs,
-                    debtor = balanceDetails.debtor, creditor = balanceDetails.creditor,
-                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                    income = balanceDetails.formattedIncome,
+                    expenses = balanceDetails.formattedExpenses,
+                    netIncomeAbs = balanceDetails.formattedNetIncome,
+                    debtor = balanceDetails.formattedDebtor,
+                    creditor = balanceDetails.formattedCreditor,
+                    netDebtorAbs = balanceDetails.formattedNetDebtor,
                     currencySymbol = balanceDetails.currency.currencySymbol,
                     isPositiveIncome = balanceDetails.isPositiveIncome,
                     isPositiveDebtor = balanceDetails.isPositiveDebtor,
@@ -216,25 +215,16 @@ fun TransactionEditorScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             AmTextField(
-                hint = "Subtitle", label = "Transaction Subtitle",
-                icon = AmIcons.SubTitle,
-                onTextChange = transactionEditorState::updateSubTitle,
-                initTextValue = transaction.subtitle,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
-            )
-            AmTextField(
                 hint = "5000.0", icon = AmIcons.Money, label = "Amount",
                 initTextValue = transaction.amount.toString(),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Number,
                 ),
                 reformatText = { value ->
                     value
                         .filter { it.isDigit() || it == '.' }
                         .let {
-                            if (value.count { it == '.' } < 2) it else value.substringBeforeLast(
-                                "."
-                            )
+                            if (value.count { it == '.' } < 2) it else value.substringBeforeLast(".")
                         }
                         .let {
                             val splitNumber = it.split('.')
@@ -245,6 +235,12 @@ fun TransactionEditorScreen(
                         }
                 },
                 onTextChange = transactionEditorState::updateAmount,
+            )
+            AmTextField(
+                hint = "Subtitle", label = "Transaction Subtitle",
+                icon = AmIcons.SubTitle, singleLine = false,
+                onTextChange = transactionEditorState::updateSubTitle,
+                initTextValue = transaction.subtitle
             )
 
             AmFilledTonalIconWithTextButton(

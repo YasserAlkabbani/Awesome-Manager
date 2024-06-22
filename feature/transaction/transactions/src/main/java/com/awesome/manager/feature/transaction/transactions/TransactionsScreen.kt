@@ -67,10 +67,6 @@ fun TransactionsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, transactionsState::doneBottomSheetAction)
     })
 
-    LaunchedEffect(key1 = Unit) {
-        transactionsState.setForTransactionsScreen()
-    }
-
     TransactionScreen(transactionsState)
 }
 
@@ -95,30 +91,28 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
     }
 
     Column(Modifier.fillMaxSize()) {
-        AmLazyColumn(
-            isRefreshing = isLoading,
-            onRefresh = transactionsState.refreshTransactions,
-            content = {
-                if (noItems)
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .padding(AmPadding.X_LARGE.value)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            AmText(
-                                text = stringResource(R.string.theres_no_transactions_yet),
-                                maxLines = 3, textAlign = TextAlign.Center
-                            )
-                            AmFilledTonalButton(
-                                text = stringResource(R.string.create_a_transaction),
-                                onClick = { transactionsState.navigateToCreateTransaction(null) },
-                            )
-                        }
-                    }
-                else {
+        if (noItems)
+            Column(
+                modifier = Modifier
+                    .padding(AmPadding.X_LARGE.value)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AmText(
+                    text = stringResource(R.string.theres_no_transactions_yet),
+                    maxLines = 3, textAlign = TextAlign.Center
+                )
+                AmFilledTonalButton(
+                    text = stringResource(R.string.create_a_transaction),
+                    onClick = { transactionsState.navigateToCreateTransaction(null) },
+                )
+            }
+        else {
+            AmLazyColumn(
+                isRefreshing = isLoading,
+                onRefresh = transactionsState.refreshTransactions,
+                content = {
                     item(contentType = "FILTER", key = "FILTER") {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
@@ -179,7 +173,7 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                                     modifier = Modifier.animateItemPlacement(),
                                     account = transaction.accountName,
                                     title = transaction.title,
-                                    amount = transaction.amount,
+                                    amount = transaction.formattedAmount,
                                     pending = transaction.pending,
                                     date = transaction.transactionAtDate,
                                     transactionType = transaction.transactionType.getString(),
@@ -194,9 +188,9 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
                             }
                         }
                     )
-                }
-            },
-        )
+                },
+            )
+        }
     }
 }
 

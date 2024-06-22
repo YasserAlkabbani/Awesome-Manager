@@ -56,10 +56,6 @@ fun HomeRoute(
         bottomSheetAction.sendMainAction(sendMainAction, homeState::doneBottomSheetAction)
     })
 
-    LaunchedEffect(key1 = Unit) {
-        homeState.setForHomeScreen()
-    }
-
     HomeScreen(homeState)
 }
 
@@ -83,15 +79,15 @@ fun HomeScreen(homeState: HomeMainState) {
                     key = { it.currency.id },
                     itemContent = { balanceDetails ->
                         HomeCard(
-                            creditor = balanceDetails.creditor,
-                            debtor = balanceDetails.debtor,
-                            netDebtorAbs = balanceDetails.netDebtorAbs,
+                            creditor = balanceDetails.formattedCreditor,
+                            debtor = balanceDetails.formattedDebtor,
+                            netDebtorAbs = balanceDetails.formattedNetDebtor,
                             isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            income = balanceDetails.income,
-                            expenses = balanceDetails.expenses,
-                            netIncomeAbs = balanceDetails.netIncomeAbs,
+                            income = balanceDetails.formattedIncome,
+                            expenses = balanceDetails.formattedExpenses,
+                            netIncomeAbs = balanceDetails.formattedNetIncome,
                             isPositiveIncome = balanceDetails.isPositiveIncome,
-                            netCash = balanceDetails.netCashAbs,
+                            netCash = balanceDetails.formattedNetCash,
                             isPositiveCash = balanceDetails.isPositiveCash,
                             currencyCode = balanceDetails.currency.currencyCode,
                             currencySymbol = balanceDetails.currency.currencySymbol,
@@ -125,9 +121,9 @@ fun HomeScreen(homeState: HomeMainState) {
 
 @Composable
 fun HomeCard(
-    creditor: Double, debtor: Double, netDebtorAbs: Double, isPositiveDebtor: Boolean,
-    income: Double, expenses: Double, netIncomeAbs: Double, isPositiveIncome: Boolean,
-    netCash: Double, isPositiveCash: Boolean, currencyCode: String, currencySymbol: String,
+    creditor: String, debtor: String, netDebtorAbs: String, isPositiveDebtor: Boolean,
+    income: String, expenses: String, netIncomeAbs: String, isPositiveIncome: Boolean,
+    netCash: String, isPositiveCash: Boolean, currencyCode: String, currencySymbol: String,
 ) {
     AmCard(
         modifier = Modifier.fillMaxWidth(),

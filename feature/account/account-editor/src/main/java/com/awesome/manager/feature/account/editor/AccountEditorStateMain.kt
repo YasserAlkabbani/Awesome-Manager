@@ -31,13 +31,13 @@ class AccountEditorStateMain(
             AccountEditorData(
                 id = UUID.randomUUID().toString(), creatorUserId = creatorUserId,
                 name = "", imageUrl = images.random(),
-                currency = null, defaultTransactionType = null,
+                currency = null, defaultTransactionType = transactionTypes.first(),
                 editorInputType = EditorInputType.Create,
                 allowToUpdateCurrency = true
             )
         }
 
-    fun asEditAccount(currentUserId: String, amAccount: AmAccount,allowToUpdateCurrency: Boolean) {
+    fun asEditAccount(currentUserId: String, amAccount: AmAccount, allowToUpdateCurrency: Boolean) {
         if (currentUserId == amAccount.creatorUserId) _accountEditorData.setData {
             AccountEditorData(
                 id = amAccount.id, creatorUserId = amAccount.creatorUserId,
@@ -45,7 +45,7 @@ class AccountEditorStateMain(
                 currency = amAccount.balanceDetails.currency,
                 defaultTransactionType = amAccount.defaultTransactionType,
                 editorInputType = EditorInputType.Edit,
-                allowToUpdateCurrency=allowToUpdateCurrency
+                allowToUpdateCurrency = allowToUpdateCurrency
             )
         }
         else navigatePopBack()
@@ -72,9 +72,9 @@ data class AccountEditorData(
     val name: String,
     val imageUrl: String,
     val currency: AmCurrency?,
-    val defaultTransactionType: AmTransactionType?,
+    val defaultTransactionType: AmTransactionType,
     val editorInputType: EditorInputType,
-    val allowToUpdateCurrency:Boolean
+    val allowToUpdateCurrency: Boolean
 ) {
 
     fun updateName(name: String): AccountEditorData = copy(name = name)
@@ -87,7 +87,7 @@ data class AccountEditorData(
         copy(defaultTransactionType = transactionType)
 
     val validateAccountData: UpsertAccount? =
-        if (name.isNotEmpty() && currency != null && defaultTransactionType != null)
+        if (name.isNotEmpty() && currency != null)
             UpsertAccount(
                 id = id, creatorUserId = creatorUserId, name = name,
                 imageUrl = imageUrl, currencyId = currency.id,

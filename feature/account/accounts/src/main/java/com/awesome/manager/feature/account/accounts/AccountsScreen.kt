@@ -58,10 +58,6 @@ fun AccountsRoute(
         bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
     })
 
-    LaunchedEffect(key1 = Unit) {
-        accountsState.setForAccountsScreen()
-    }
-
     AccountsScreen(accountsState)
 }
 
@@ -84,30 +80,29 @@ fun AccountsScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        AmLazyColumn(
-            isRefreshing = isLoading,
-            onRefresh = accountsState.refreshAccounts,
-            content = {
-                if (noItems)
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .padding(AmPadding.X_LARGE.value)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            AmText(
-                                text = stringResource(R.string.theres_no_accounts_yet),
-                                maxLines = 3, textAlign = TextAlign.Center
-                            )
-                            AmFilledTonalButton(
-                                text = stringResource(R.string.create_an_account),
-                                onClick = accountsState::navigateToCreateAccount,
-                            )
-                        }
-                    }
-                else {
+        if (noItems)
+            Column(
+                modifier = Modifier
+                    .padding(AmPadding.X_LARGE.value)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AmText(
+                    text = stringResource(R.string.theres_no_accounts_yet),
+                    maxLines = 3, textAlign = TextAlign.Center
+                )
+                AmFilledTonalButton(
+                    text = stringResource(R.string.create_an_account),
+                    onClick = accountsState::navigateToCreateAccount,
+                )
+            }
+        else {
+            AmLazyColumn(
+                isRefreshing = isLoading,
+                onRefresh = accountsState.refreshAccounts,
+                content = {
+
                     item(contentType = "FILTER", key = "FILTER") {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
@@ -149,12 +144,12 @@ fun AccountsScreen(
                                         accountsState.navigateToCreateTransaction(account.id)
                                     },
                                     onEditTransaction = null,
-                                    income = balanceDetails.income,
-                                    expenses = balanceDetails.expenses,
-                                    netIncomeAbs = balanceDetails.netIncomeAbs,
-                                    debtor = balanceDetails.debtor,
-                                    creditor = balanceDetails.creditor,
-                                    netDebtorAbs = balanceDetails.netDebtorAbs,
+                                    income = balanceDetails.formattedIncome,
+                                    expenses = balanceDetails.formattedExpenses,
+                                    netIncomeAbs = balanceDetails.formattedNetIncome,
+                                    debtor = balanceDetails.formattedDebtor,
+                                    creditor = balanceDetails.formattedCreditor,
+                                    netDebtorAbs = balanceDetails.formattedNetDebtor,
                                     currencySymbol = balanceDetails.currency.currencySymbol,
                                     isPositiveIncome = balanceDetails.isPositiveIncome,
                                     isPositiveDebtor = balanceDetails.isPositiveDebtor
@@ -163,8 +158,7 @@ fun AccountsScreen(
                         }
                     )
                 }
-            }
-        )
-
+            )
+        }
     }
 }

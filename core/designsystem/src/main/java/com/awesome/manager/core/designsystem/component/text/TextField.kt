@@ -50,8 +50,7 @@ fun AmTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    var text by rememberSaveable { mutableStateOf(initTextValue) }
-    LaunchedEffect(key1 = text, block = { onTextChange(text) })
+    val text = rememberSaveable { mutableStateOf(initTextValue) }
 
     val isFocus = remember { mutableStateOf(false) }
     val color = animateColorAsState(
@@ -91,13 +90,17 @@ fun AmTextField(
                         color = MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.small
                     ),
-                value = text,
+                value = text.value,
                 enabled = enabled,
                 placeholder = { AmText(text = hint) },
-                onValueChange = { text = reformatText(it) },
+                onValueChange = {
+                    text.value = reformatText(it)
+                    onTextChange(it)
+                },
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = MaterialTheme.shapes.medium,
                 singleLine = singleLine,
+                maxLines = 3,
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
                 colors = TextFieldDefaults.colors(
@@ -119,14 +122,12 @@ fun AmTextField(
 fun AmPasswordTextField(
     modifier: Modifier = Modifier, onTextChange: (String) -> Unit,
     icon: AmIconsType? = null, label: String? = null, hint: String,
-    singleLine: Boolean = true,
-    enabled: Boolean = true, reformatText: (String) -> String = { it },
+    singleLine: Boolean = true, enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    var text by rememberSaveable { mutableStateOf("") }
-    LaunchedEffect(key1 = text, block = { onTextChange(text) })
+    val text = rememberSaveable { mutableStateOf("") }
 
     val isFocus = remember { mutableStateOf(false) }
     val color = animateColorAsState(
@@ -167,10 +168,13 @@ fun AmPasswordTextField(
                         color = MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.small
                     ),
-                value = text,
+                value = text.value,
                 enabled = enabled,
                 placeholder = { AmText(text = hint) },
-                onValueChange = { text = reformatText(it) },
+                onValueChange = {
+                    text.value = it
+                    onTextChange(it)
+                },
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = MaterialTheme.shapes.medium,
                 singleLine = singleLine,
