@@ -4,16 +4,16 @@ import com.awesome.manager.core.common.extentions.isValidEmail
 import com.awesome.manager.core.common.extentions.isValidPassword
 import com.awesome.manager.core.common.results.AmError
 import com.awesome.manager.core.common.results.AmResult
-import com.awesome.manager.core.designsystem.actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.StateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class AuthScreenStateMain(
+class AuthScreenState(
     val login: () -> Unit, val register: () -> Unit,
     val resetPassword: () -> Unit,
-) : MainState() {
+) : StateManager() {
 
     private val _authData: MutableStateFlow<AmAuthData> = MutableStateFlow(AmAuthData())
     val authData: StateFlow<AmAuthData> = _authData.asStateFlow()
@@ -23,7 +23,7 @@ class AuthScreenStateMain(
     fun updateStateBasedOnResult(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
-        endLoading()
+        setLoading(amResult is AmResult.Loading)
         when (amResult) {
             is AmResult.Error -> when (val amError = amResult.amError) {
 
@@ -48,7 +48,7 @@ class AuthScreenStateMain(
                 AmError.UnknownError -> {}
             }
 
-            is AmResult.Loading -> startLoading()
+            is AmResult.Loading -> Unit
             is AmResult.Success -> onSuccess()
         }
 

@@ -19,19 +19,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.enums.EditorInputType.*
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
+import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.getChipData
@@ -46,77 +45,29 @@ fun TransactionEditorRoute(
 ) {
 
     val context = LocalContext.current
-    val transactionEditorState: TransactionEditorStateMain =
+    val transactionEditorState: TransactionEditorState =
         transactionEditorViewModel.transactionEditorState
 
-    val navigationAction = transactionEditorState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(
-            sendMainAction, transactionEditorState::doneNavigationAction
-        )
-    })
-
-    val appBarAction = transactionEditorState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(
-            sendMainAction, transactionEditorState::doneAppBarAction
-        )
-    })
-
-    val bottomSheetAction = transactionEditorState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(
-            sendMainAction, transactionEditorState::doneBottomSheetAction
-        )
-    })
+    val mainAction = transactionEditorState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, transactionEditorState::doneMainAction)
+    }
 
     val accountsLazyPaging = transactionEditorState.accountsList.collectAsLazyPagingItems()
     val searchForAnAccountBottomSheet =
         transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
     val searchLabel = stringResource(id = R.string.search_in_accounts)
+
     LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
         if (searchForAnAccountBottomSheet) {
             transactionEditorState.doneSearchForAnAccountBottomSheet()
             transactionEditorState.showSearchWithContentBottomSheet(
                 searchLabel = searchLabel,
                 content = {
-                    AmLazyColumn(
-                        isRefreshing = true,
-                        onRefresh = {},
-                        content = {
-                            items(
-                                count = accountsLazyPaging.itemCount,
-                                contentType = { LAZY_ITEM_ACCOUNT },
-                                key = accountsLazyPaging.itemKey { transaction -> transaction.id },
-                                itemContent = { index ->
-                                    accountsLazyPaging[index]?.let { account ->
-                                        val balanceDetails = account.balanceDetails
-                                        AccountCard(
-                                            modifier = Modifier.animateItemPlacement(),
-                                            title = account.name,
-                                            imageUrl = account.imageUrl,
-                                            loading = account.pending,
-                                            withDetails = false,
-                                            onClick = {
-                                                transactionEditorState.selectAccount(account)
-                                                transactionEditorState.dismissBottomSheet()
-                                            },
-                                            onAddTransaction = null,
-                                            onEditTransaction = null,
-                                            income = balanceDetails.formattedIncome,
-                                            expenses = balanceDetails.formattedExpenses,
-                                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                                            debtor = balanceDetails.formattedDebtor,
-                                            creditor = balanceDetails.formattedCreditor,
-                                            netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                            currencySymbol = balanceDetails.currency.currencySymbol,
-                                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                                            isPositiveDebtor = balanceDetails.isPositiveDebtor
-                                        )
-                                    }
-                                }
-                            )
-                        }
+                    AccountLazyColumn(
+                        accountsLazyPaging = accountsLazyPaging,
+                        onSelectAccount = transactionEditorState::selectAccount,
+                        onDismiss = transactionEditorState::dismissBottomSheet
                     )
                 },
                 onReSearch = transactionEditorState::updateSearchKey,
@@ -165,7 +116,7 @@ fun TransactionEditorRoute(
 
 @Composable
 fun TransactionEditorScreen(
-    transactionEditorState: TransactionEditorStateMain,
+    transactionEditorState: TransactionEditorState,
 ) {
 
     val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value
@@ -265,7 +216,49 @@ fun TransactionEditorScreen(
             )
         }
     }
-
-
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AccountLazyColumn(
+    accountsLazyPaging: LazyPagingItems<AmAccount>,
+    onSelectAccount: (AmAccount) -> Unit, onDismiss: () -> Unit
+) = AmLazyColumn(
+    isRefreshing = true,
+    onRefresh = {},
+    content = {
+        items(
+            count = accountsLazyPaging.itemCount,
+            contentType = { LAZY_ITEM_ACCOUNT },
+            key = accountsLazyPaging.itemKey { transaction -> transaction.id },
+            itemContent = { index ->
+                accountsLazyPaging[index]?.let { account ->
+                    val balanceDetails = account.balanceDetails
+                    AccountCard(
+                        modifier = Modifier.animateItemPlacement(),
+                        title = account.name,
+                        imageUrl = account.imageUrl,
+                        loading = account.pending,
+                        withDetails = false,
+                        onClick = {
+                            onSelectAccount(account)
+                            onDismiss()
+                        },
+                        onAddTransaction = null,
+                        onEditTransaction = null,
+                        income = balanceDetails.formattedIncome,
+                        expenses = balanceDetails.formattedExpenses,
+                        netIncomeAbs = balanceDetails.formattedNetIncome,
+                        debtor = balanceDetails.formattedDebtor,
+                        creditor = balanceDetails.formattedCreditor,
+                        netDebtorAbs = balanceDetails.formattedNetDebtor,
+                        currencySymbol = balanceDetails.currency.currencySymbol,
+                        isPositiveIncome = balanceDetails.isPositiveIncome,
+                        isPositiveDebtor = balanceDetails.isPositiveDebtor
+                    )
+                }
+            }
+        )
+    }
+)
 

@@ -10,7 +10,6 @@ import com.awesome.manager.core.data.repository.transaction.TransactionRepositor
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,8 +23,8 @@ class TransactionEditorViewModel @Inject constructor(
 
     private val transactionEditorArg: NavigationDestination.TransactionEditor =
         savedStateHandle.toRoute()
-    val transactionEditorState: TransactionEditorStateMain =
-        TransactionEditorStateMain(
+    val transactionEditorState: TransactionEditorState =
+        TransactionEditorState(
             createTransaction = ::saveTransaction,
             accountsSearchResults = { accountRepository.returnAccounts(this) }
         )

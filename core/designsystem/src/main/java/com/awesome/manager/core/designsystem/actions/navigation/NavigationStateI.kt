@@ -8,58 +8,32 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 
-interface NavigationStateI {
-    val navigationAction: StateFlow<NavigationAction?>
+interface NavigationState {
+
     fun NavigationAction.applyAction()
-    fun doneNavigationAction()
-    fun navigatePopBack()
-    fun navigateToAccountDetails(accountId: String)
-    fun navigateToTransactionDetails(transactionId: String)
-    fun navigateToCreateAccount()
-    fun navigateToCreateTransaction(accountId: String? = null)
-    fun navigateToEditAccount(accountId: String)
-    fun navigateToEditTransaction(accountId: String?, transactionId: String)
-}
 
-class NavigationState : NavigationStateI {
+    fun navigatePopBack() = NavigationAction.NavigateUp.applyAction()
 
-    private val _navigationAction: MutableStateFlow<NavigationAction?> = MutableStateFlow(null)
-    override val navigationAction: StateFlow<NavigationAction?> = _navigationAction.asStateFlow()
-
-    override fun NavigationAction.applyAction() = _navigationAction.update { this }
-    override fun doneNavigationAction() = _navigationAction.update { null }
-
-    override fun navigatePopBack() = NavigationAction.NavigateUp.applyAction()
-
-    override fun navigateToAccountDetails(accountId: String) =
+    fun navigateToAccountDetails(accountId: String) =
         NavigationDestination.AccountDetails(accountId).asNavigation().applyAction()
 
-    override fun navigateToTransactionDetails(transactionId: String) =
+    fun navigateToTransactionDetails(transactionId: String) =
         NavigationDestination.TransactionDetails(transactionId).asNavigation().applyAction()
 
-    override fun navigateToCreateAccount() =
+    fun navigateToCreateAccount() =
         NavigationDestination.AccountEditor(null).asNavigation().applyAction()
 
-    override fun navigateToCreateTransaction(accountId: String?) =
+    fun navigateToCreateTransaction(accountId: String?) =
         NavigationDestination.TransactionEditor(accountId = accountId, transactionId = null)
             .asNavigation().applyAction()
 
-    override fun navigateToEditAccount(accountId: String) =
+    fun navigateToEditAccount(accountId: String) =
         NavigationDestination.AccountEditor(accountId).asNavigation().applyAction()
 
-    override fun navigateToEditTransaction(accountId: String?, transactionId: String) =
+    fun navigateToEditTransaction(accountId: String?, transactionId: String) =
         NavigationDestination.TransactionEditor(
             accountId = accountId,
             transactionId = transactionId
         ).asNavigation().applyAction()
 
-}
-
-fun NavigationAction?.sendMainAction(
-    sendMainAction: (MainAction) -> Unit, doneNavigationAction: () -> Unit
-) {
-    this?.let {
-        doneNavigationAction()
-        sendMainAction(this)
-    }
 }

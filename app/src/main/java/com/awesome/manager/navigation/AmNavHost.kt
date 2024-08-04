@@ -27,22 +27,17 @@ fun AmNavHost(
     startDistinction: NavigationDestination = NavigationDestination.Intro,
     sendMainAction: (MainAction) -> Unit
 ) {
-
     NavHost(
         modifier = modifier,
         navController = navHostController,
         startDestination = startDistinction,
     ) {
-
         composable<NavigationDestination.Intro> {
             IntroRoute(sendMainAction = sendMainAction)
         }
         composable<NavigationDestination.Auth> {
             AuthRoute(sendMainAction = sendMainAction)
         }
-
-
-
         composable<NavigationDestination.Home> {
             HomeRoute(sendMainAction = sendMainAction)
         }
@@ -53,24 +48,18 @@ fun AmNavHost(
             TransactionsRoute(sendMainAction = sendMainAction)
         }
 
-
-
         composable<NavigationDestination.AccountDetails> {
             AccountDetailsRoute(sendMainAction = sendMainAction)
         }
         composable<NavigationDestination.TransactionDetails> {
             TransactionDetailsRoute(sendMainAction = sendMainAction)
         }
-
-
-
         composable<NavigationDestination.AccountEditor> {
             AccountEditorRoute(sendMainAction = sendMainAction)
         }
         composable<NavigationDestination.TransactionEditor> {
             TransactionEditorRoute(sendMainAction = sendMainAction)
         }
-
     }
 
 }

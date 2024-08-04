@@ -27,7 +27,7 @@ class AccountEditorViewModel @Inject constructor(
 
     private val accountEditorArg: NavigationDestination.AccountEditor = savedStateHandle.toRoute()
 
-    val accountEditorState: AccountEditorStateMain = AccountEditorStateMain(
+    val accountEditorState: AccountEditorState = AccountEditorState(
         currencies = currencyRepository.returnCurrencies().asListDataStateFlow(viewModelScope),
         onSave = ::onSave,
     )

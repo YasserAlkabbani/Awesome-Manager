@@ -18,11 +18,8 @@ import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -36,22 +33,12 @@ fun AccountDetailsRoute(
     sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
-    val accountDetailsState: AccountDetailsState = accountDetailsViewModel.accountDetailsState
+    val accountDetailsState = accountDetailsViewModel.accountDetailsState
 
-    val navigationAction = accountDetailsState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountDetailsState::doneNavigationAction)
-    })
-
-    val appBarAction = accountDetailsState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountDetailsState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = accountDetailsState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountDetailsState::doneBottomSheetAction)
-    })
+    val mainAction = accountDetailsState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, accountDetailsState::doneMainAction)
+    }
 
     val accountState = accountDetailsState.amAccount.collectAsState().value
     val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value

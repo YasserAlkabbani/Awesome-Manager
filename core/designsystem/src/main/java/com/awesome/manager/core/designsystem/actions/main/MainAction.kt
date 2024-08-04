@@ -4,21 +4,18 @@ import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
 
-sealed class MainAction
+sealed class MainAction {
+    fun sendMainAction(sendMainAction: (MainAction) -> Unit, doneCurrentAction: () -> Unit) {
+        sendMainAction(this)
+        doneCurrentAction()
+    }
+}
 
 sealed class BottomSheetAction : MainAction() {
 
-    abstract val content: BottomSheetContent?
-    abstract val isDismissible: Boolean
-
-    data class Dismiss(
-        override val content: BottomSheetContent?,
-        override val isDismissible: Boolean = false,
-    ) : BottomSheetAction()
-
+    data object Dismiss : BottomSheetAction()
     data class Open(
-        override val content: BottomSheetContent,
-        override val isDismissible: Boolean,
+        val content: BottomSheetContent, val isDismissible: Boolean,
     ) : BottomSheetAction()
 
 }
@@ -42,10 +39,7 @@ data class AppBarAction(
     val appBarButton: AppBarButton? = null,
 ) : MainAction()
 
-sealed class PickerAction : MainAction() {
-
-
-}
+sealed class PickerAction : MainAction()
 
 
 

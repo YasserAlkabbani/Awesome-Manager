@@ -13,8 +13,8 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    val authScreenState: AuthScreenStateMain = AuthScreenStateMain(
-        login = ::login, register = ::register, resetPassword = ::resetPassword
+    val authScreenState: AuthScreenState = AuthScreenState(
+        login = ::login, register = ::register, resetPassword = ::resetPassword,
     )
     private val authData: AmAuthData get() = authScreenState.authData.value
     private val isValidateData: Boolean get() = authData.validateData

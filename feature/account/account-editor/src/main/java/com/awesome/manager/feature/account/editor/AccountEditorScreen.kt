@@ -22,10 +22,7 @@ import com.awesome.manager.core.common.enums.EditorInputType.*
 import com.awesome.manager.core.common.extentions.limitName
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
@@ -43,21 +40,10 @@ fun AccountEditorRoute(
 
     val accountEditorState = accountEditorViewModel.accountEditorState
 
-    val navigationAction = accountEditorState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountEditorState::doneNavigationAction)
-    })
-
-    val appBarAction = accountEditorState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountEditorState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = accountEditorState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountEditorState::doneBottomSheetAction)
-    })
-
+    val mainAction = accountEditorState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, accountEditorState::doneMainAction)
+    }
 
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
     val context: Context = LocalContext.current
@@ -87,7 +73,7 @@ fun AccountEditorRoute(
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState: AccountEditorStateMain) {
+fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     val context = LocalContext.current
     val accountData = accountEditorState.accountEditorData.collectAsState().value

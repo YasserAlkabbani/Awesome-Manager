@@ -16,46 +16,9 @@ data class AppBarButton(
     val showButton: Boolean = errorMessage == null
 }
 
-interface AppBarStateI {
+interface AppBarState {
 
-    val appBarAction: StateFlow<AppBarAction?>
     fun AppBarAction.applyAction()
-    fun doneAppBarAction()
-
-    fun setForAuth(isLoading: Boolean, loginButton: AppBarButton)
-
-    fun setForHomeScreen()
-
-    fun setForAccountsScreen()
-
-    fun setForTransactionsScreen()
-
-    fun setForAccountDetailsScreen(
-        backButton: Boolean, onEditButton: AppBarButton?,
-        transactionEditor: NavigationDestination.TransactionEditor?
-    )
-
-    fun setForEditAccountScreen(
-        cancelButton: Boolean, saveButton: AppBarButton
-    )
-
-    fun setForTransactionDetailsScreen(
-        backButton: Boolean, editButton: AppBarButton?
-    )
-
-    fun setForEditTransactionScreen(
-        cancelButton: Boolean, saveButton: AppBarButton?
-    )
-
-}
-
-class AppBarState : AppBarStateI {
-
-    private val _appBarAction: MutableStateFlow<AppBarAction?> = MutableStateFlow(null)
-    override val appBarAction: StateFlow<AppBarAction?> = _appBarAction.asStateFlow()
-
-    override fun AppBarAction.applyAction() = _appBarAction.update { this }
-    override fun doneAppBarAction() = _appBarAction.update { null }
 
     private fun updateAppBarData(
         visible: Boolean = true, isLoading: Boolean = false,
@@ -64,36 +27,34 @@ class AppBarState : AppBarStateI {
         transactionEditor: NavigationDestination.TransactionEditor? = null,
         backButton: Boolean = false, cancelButton: Boolean = false, moreButton: Boolean = false,
         appBarButton: AppBarButton? = null
-    ) = _appBarAction.update {
-        AppBarAction(
-            navigateToAccountEditor = accountEditor,
-            navigateToTransactionEditor = transactionEditor,
-            bottomNavigation = bottomNavigation,
-            visible = visible, isLoading = isLoading,
-            backButton = backButton, cancelButton = cancelButton,
-            moreButton = moreButton, appBarButton = appBarButton
-        )
-    }
+    ) = AppBarAction(
+        navigateToAccountEditor = accountEditor,
+        navigateToTransactionEditor = transactionEditor,
+        bottomNavigation = bottomNavigation,
+        visible = visible, isLoading = isLoading,
+        backButton = backButton, cancelButton = cancelButton,
+        moreButton = moreButton, appBarButton = appBarButton
+    ).applyAction()
 
-    override fun setForAuth(isLoading: Boolean, loginButton: AppBarButton) = updateAppBarData(
+    fun setForAuth(isLoading: Boolean, loginButton: AppBarButton) = updateAppBarData(
         isLoading = isLoading, appBarButton = loginButton
     )
 
-    override fun setForHomeScreen() = updateAppBarData(bottomNavigation = true, moreButton = true)
+    fun setForHomeScreen() = updateAppBarData(bottomNavigation = true, moreButton = true)
 
-    override fun setForAccountsScreen() = updateAppBarData(
+    fun setForAccountsScreen() = updateAppBarData(
         bottomNavigation = true,
         accountEditor = NavigationDestination.AccountEditor(accountId = null)
     )
 
-    override fun setForTransactionsScreen() = updateAppBarData(
+    fun setForTransactionsScreen() = updateAppBarData(
         bottomNavigation = true,
         transactionEditor = NavigationDestination.TransactionEditor(
             accountId = null, transactionId = null
         )
     )
 
-    override fun setForAccountDetailsScreen(
+    fun setForAccountDetailsScreen(
         backButton: Boolean, onEditButton: AppBarButton?,
         transactionEditor: NavigationDestination.TransactionEditor?
     ) = updateAppBarData(
@@ -101,29 +62,18 @@ class AppBarState : AppBarStateI {
         transactionEditor = transactionEditor,
     )
 
-    override fun setForEditAccountScreen(
+    fun setForEditAccountScreen(
         cancelButton: Boolean, saveButton: AppBarButton
     ) = updateAppBarData(cancelButton = cancelButton, appBarButton = saveButton)
 
-    override fun setForTransactionDetailsScreen(
+    fun setForTransactionDetailsScreen(
         backButton: Boolean, editButton: AppBarButton?
     ) = updateAppBarData(backButton = backButton, appBarButton = editButton)
 
-    override fun setForEditTransactionScreen(
+    fun setForEditTransactionScreen(
         cancelButton: Boolean, saveButton: AppBarButton?
     ) = updateAppBarData(
         cancelButton = cancelButton, appBarButton = saveButton
     )
-
-}
-
-fun AppBarAction?.sendMainAction(
-    sendMainAction: (MainAction) -> Unit,
-    doneAppBarAction: () -> Unit
-) {
-    this?.let {
-        doneAppBarAction()
-        sendMainAction(this)
-    }
 
 }

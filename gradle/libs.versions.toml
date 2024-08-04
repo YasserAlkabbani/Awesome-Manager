@@ -3,33 +3,32 @@ junit = "4.13.2"
 androidJuint = "1.1.5"
 androidEspresso = "3.5.1"
 androidCore = "1.13.1"
-activity = "1.9.0"
-coroutines = "1.7.3"
+activity = "1.9.1"
+coroutines = "1.8.0"
 timber = "5.0.1"
 composeBom = "2024.06.00"
-lifecycle = "2.8.2"
+material = "1.7.0-beta05"
+#materialNavigation = "1.7.0-beta01"
+lifecycle = "2.8.4"
 room = "2.6.1"
-paging = "3.3.0"
-navigation = "2.8.0-beta03"
+paging = "3.3.1"
+navigation = "2.8.0-beta06"
 hiltNavigation = "1.2.0"
-daggerHilt = "2.51"
+daggerHilt = "2.51.1"
 ktor = "2.3.4"
 androidGradlePlugin = "8.3.2"
 serialization = "1.6.3"
 datastore = "1.1.1"
 kotlinxDateTime = "0.5.0"
-coil = "2.5.0"
+coil = "2.6.0"
 work = "2.9.0"
 chucker = "4.0.0"
 
 androidApplicationPlugin = "8.2.2"
 androidLibraryPlugin = "8.2.2"
-kotlinAndroidPlugin = "1.9.24"
-androidxComposeCompiler = "1.5.14"
-devtoolsKspPlugin = "1.9.24-1.0.20"
-daggerHiltPlugin = "2.51"
-appcompat = "1.7.0"
-material = "1.12.0"
+kotlinAndroidPlugin = "2.0.0"
+devtoolsKspPlugin = "2.0.0-1.0.21"
+daggerHiltPlugin = "2.51.1"
 
 
 
@@ -54,6 +53,8 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+#compose-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
+#compose-material-navigation = { group = "androidx.compose.material", name = "material-navigation", version.ref = "materialNavigation" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -104,12 +105,11 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinAndroidPlugin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "devtoolsKspPlugin" }
 kotlinx-serialization-gradlePlugin = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [plugins]
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroidPlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinAndroidPlugin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinAndroidPlugin" }
 android-application = { id = "com.android.application", version.ref = "androidApplicationPlugin" }
 android-library = { id = "com.android.library", version.ref = "androidLibraryPlugin" }

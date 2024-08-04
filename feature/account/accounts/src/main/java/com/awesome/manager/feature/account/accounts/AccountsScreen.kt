@@ -23,10 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
@@ -43,20 +40,10 @@ fun AccountsRoute(
 
     val accountsState = accountsViewModel.accountsState
 
-    val navigationAction = accountsState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, accountsState::doneNavigationAction)
-    })
-
-    val appBarAction = accountsState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, accountsState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = accountsState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, accountsState::doneBottomSheetAction)
-    })
+    val mainAction = accountsState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
+    }
 
     AccountsScreen(accountsState)
 }

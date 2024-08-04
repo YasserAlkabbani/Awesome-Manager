@@ -2,8 +2,7 @@ package com.awesome.manager.feature.transaction.transactions
 
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.extentions.asDateRange
-import com.awesome.manager.core.common.extentions.asShortDate
-import com.awesome.manager.core.designsystem.actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.StateManager
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +13,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 
 
-class TransactionsMainState(
+class TransactionsState(
     val refreshTransactions: () -> Unit,
     val searchForTransaction: FilterData.() -> Flow<PagingData<AmTransaction>>
-) : MainState() {
+) : StateManager() {
 
     private val _filterData: MutableStateFlow<FilterData> = MutableStateFlow(FilterData())
     val filterData: StateFlow<FilterData> = _filterData.asStateFlow()

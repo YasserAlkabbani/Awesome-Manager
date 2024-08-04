@@ -13,7 +13,7 @@ class TransactionsViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    val transactionsState: TransactionsMainState = TransactionsMainState(
+    val transactionsState: TransactionsState = TransactionsState(
         refreshTransactions = ::refreshTransactions,
         searchForTransaction = {
             transactionRepository.returnTransactions(

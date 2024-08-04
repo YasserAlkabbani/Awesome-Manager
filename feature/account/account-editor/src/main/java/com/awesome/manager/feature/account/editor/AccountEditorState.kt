@@ -4,7 +4,7 @@ import com.awesome.manager.core.common.enums.EditorInputType
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.common.states.setData
 import com.awesome.manager.core.common.states.updateData
-import com.awesome.manager.core.designsystem.actions.main.MainState
+import com.awesome.manager.core.designsystem.actions.main.StateManager
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
-class AccountEditorStateMain(
+class AccountEditorState(
     val currencies: StateFlow<List<AmCurrency>>,
     val onSave: () -> Unit,
-) : MainState() {
+) : StateManager() {
 
     val transactionTypes: List<AmTransactionType> = AmTransactionType.entries.toList()
 

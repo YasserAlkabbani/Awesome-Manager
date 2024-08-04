@@ -14,7 +14,7 @@ class HomeViewModel @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
 
-    val homeState: HomeMainState = HomeMainState(
+    val homeState: HomeState = HomeState(
         currencyRepository.returnBalanceDetails()
             .map {
                 if (it.isNotEmpty()) DataState.Success(it)

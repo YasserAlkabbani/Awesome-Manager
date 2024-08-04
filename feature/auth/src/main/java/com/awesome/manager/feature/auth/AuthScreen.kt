@@ -31,10 +31,7 @@ import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
 
 @Composable
@@ -47,20 +44,10 @@ fun AuthRoute(
     val isLoading = authScreenState.isLoading.collectAsState().value
     val context = LocalContext.current
 
-    val navigationAction = authScreenState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, authScreenState::doneNavigationAction)
-    })
-
-    val appBarAction = authScreenState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, authScreenState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = authScreenState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, authScreenState::doneBottomSheetAction)
-    })
+    val mainAction = authScreenState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, authScreenState::doneMainAction)
+    }
 
     LaunchedEffect(key1 = authData, key2 = isLoading) {
         authScreenState.setForAuth(
@@ -83,7 +70,7 @@ fun AuthRoute(
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenStateMain
+    authScreenState: AuthScreenState
 ) {
     Column(
         modifier = Modifier
@@ -171,5 +158,5 @@ fun AuthScreen(
 @Preview
 @Composable
 fun AuthScreenPreview() {
-    AuthScreen(AuthScreenStateMain({}, {}, {}))
+    AuthScreen(AuthScreenState({}, {}, {}))
 }

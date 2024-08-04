@@ -2,116 +2,67 @@ package com.awesome.manager.core.designsystem.actions.bottomsheet
 
 import androidx.compose.runtime.Composable
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
-import com.awesome.manager.core.designsystem.actions.main.MainAction
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-interface BottomSheetStateI {
-    val bottomSheetAction: StateFlow<BottomSheetAction?>
+interface BottomSheetState {
+
+
     fun BottomSheetAction.applyAction()
-    fun doneBottomSheetAction()
-    fun dismissBottomSheet()
 
-    fun showProfileBottomSheet(email: String, logout: () -> Unit)
-    fun showSearchWithContentBottomSheet(
-        searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
-        onSearchDone: () -> Unit, content: @Composable () -> Unit,
-    )
-
-    fun showAccountCreatedBottomSheet()
-    fun showPasswordRestedBottomSheet()
-    fun showUnknownErrorBottomSheet()
-    fun showAuthErrorBottomSheet(
-        errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
-    )
-
-    fun showConnectionErrorBottomSheet()
-    fun showCustomErrorMessage(errorMessage: String)
-
-    fun showPickRangeDateBottomSheet(
-        initTime: Long,
-        setDate: (Long, Long) -> Unit,
-        dismiss: () -> Unit
-    )
-
-    fun showPickDateBottomSheet(initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit)
-
-}
-
-class BottomSheetState : BottomSheetStateI {
-
-    private val _bottomSheetAction: MutableStateFlow<BottomSheetAction?> = MutableStateFlow(null)
-    override val bottomSheetAction: StateFlow<BottomSheetAction?> = _bottomSheetAction.asStateFlow()
-
-    override fun BottomSheetAction.applyAction() = _bottomSheetAction.update { this }
-    private fun BottomSheetContent.open(isDismissible: Boolean) =
+    private fun BottomSheetContent.showBottomSheet(isDismissible: Boolean) =
         BottomSheetAction.Open(content = this, isDismissible = isDismissible).applyAction()
 
+    fun dismissBottomSheet() = BottomSheetAction.Dismiss.applyAction()
 
-    override fun doneBottomSheetAction() = _bottomSheetAction.update { null }
+    fun showProfileBottomSheet(email: String, logout: () -> Unit) =
+        BottomSheetContent.Profile(email = email, logout = logout)
+            .showBottomSheet(isDismissible = true)
 
-    override fun dismissBottomSheet() = _bottomSheetAction.update {
-        (it as? BottomSheetAction.Open).let { BottomSheetAction.Dismiss(it?.content) }
-    }
-
-    override fun showProfileBottomSheet(email: String, logout: () -> Unit) =
-        BottomSheetContent.Profile(email = email, logout = logout).open(isDismissible = true)
-
-    override fun showSearchWithContentBottomSheet(
+    fun showSearchWithContentBottomSheet(
         searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
         onSearchDone: () -> Unit, content: @Composable () -> Unit,
     ) = BottomSheetContent.SearchWithContent(
         searchLabel = searchLabel, initSearch = initSearch,
         onReSearch = onReSearch, onSearchDone, content = content
-    ).open(isDismissible = true)
+    ).showBottomSheet(isDismissible = true)
 
-    override fun showAccountCreatedBottomSheet() =
-        BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet).open(isDismissible = true)
+    fun showAccountCreatedBottomSheet() =
+        BottomSheetContent.AccountCreated(dismiss = ::dismissBottomSheet)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showPasswordRestedBottomSheet() =
-        BottomSheetContent.PasswordRested(dismiss = ::dismissBottomSheet).open(isDismissible = true)
+    fun showPasswordRestedBottomSheet() =
+        BottomSheetContent.PasswordRested(dismiss = ::dismissBottomSheet)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showUnknownErrorBottomSheet() =
-        BottomSheetContent.UnknownError(dismiss = ::dismissBottomSheet).open(isDismissible = true)
+    fun showUnknownErrorBottomSheet() =
+        BottomSheetContent.UnknownError(dismiss = ::dismissBottomSheet)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showAuthErrorBottomSheet(
+    fun showAuthErrorBottomSheet(
         errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
     ) =
         BottomSheetContent.AuthError(
             errorMessage = errorMessage, createNewAccount = onCreateAccount,
             editCredentials = editCredentials
-        ).open(isDismissible = true)
+        ).showBottomSheet(isDismissible = true)
 
-    override fun showConnectionErrorBottomSheet() =
+    fun showConnectionErrorBottomSheet() =
         BottomSheetContent.ConnectionError(dismiss = ::dismissBottomSheet)
-            .open(isDismissible = true)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showCustomErrorMessage(errorMessage: String) =
+    fun showCustomErrorMessage(errorMessage: String) =
         BottomSheetContent.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
-            .open(isDismissible = true)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showPickDateBottomSheet(
+    fun showPickDateBottomSheet(
         initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
     ) =
         BottomSheetContent.PickDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .open(isDismissible = true)
+            .showBottomSheet(isDismissible = true)
 
-    override fun showPickRangeDateBottomSheet(
+    fun showPickRangeDateBottomSheet(
         initTime: Long, setDate: (Long, Long) -> Unit, dismiss: () -> Unit
     ) =
         BottomSheetContent.PickRangeDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .open(isDismissible = true)
+            .showBottomSheet(isDismissible = true)
 
 }
-
-fun BottomSheetAction?.sendMainAction(
-    sendMainAction: (MainAction) -> Unit, doneBottomSheetAction: () -> Unit
-) {
-    this?.let {
-        doneBottomSheetAction()
-        sendMainAction(this)
-    }
-}
-

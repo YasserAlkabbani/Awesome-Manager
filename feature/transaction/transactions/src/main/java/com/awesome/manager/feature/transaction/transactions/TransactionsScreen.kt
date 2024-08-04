@@ -25,10 +25,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.extentions.currentTime
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
@@ -52,27 +49,17 @@ fun TransactionsRoute(
 
     val transactionsState = transactionsViewModel.transactionsState
 
-    val navigationAction = transactionsState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, transactionsState::doneNavigationAction)
-    })
-
-    val appBarAction = transactionsState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, transactionsState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = transactionsState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, transactionsState::doneBottomSheetAction)
-    })
+    val mainAction=transactionsState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction,transactionsState::doneMainAction)
+    }
 
     TransactionScreen(transactionsState)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionScreen(transactionsState: TransactionsMainState) {
+fun TransactionScreen(transactionsState: TransactionsState) {
 
     val context = LocalContext.current
     val isLoading = transactionsState.isLoading.collectAsState().value
@@ -195,7 +182,7 @@ fun TransactionScreen(transactionsState: TransactionsMainState) {
 }
 
 private fun searchAndFilter(
-    transactionsState: TransactionsMainState,
+    transactionsState: TransactionsState,
     searchLabel: String,
     filterData: () -> FilterData,
     transactionTypeChipData: List<ChipData<AmTransactionType, String>>

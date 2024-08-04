@@ -27,9 +27,6 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,27 +38,16 @@ fun HomeRoute(
 ) {
     val homeState = homeViewModel.homeState
 
-    val navigationAction = homeState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(sendMainAction, homeState::doneNavigationAction)
-    })
-
-    val appBarAction = homeState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, homeState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = homeState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(sendMainAction, homeState::doneBottomSheetAction)
-    })
-
+    val mainAction = homeState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, homeState::doneMainAction)
+    }
     HomeScreen(homeState)
 }
 
 
 @Composable
-fun HomeScreen(homeState: HomeMainState) {
+fun HomeScreen(homeState: HomeState) {
 
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is DataState.Success -> LazyColumn(
@@ -171,6 +157,6 @@ fun HomeCard(
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeMainState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
+    HomeScreen(HomeState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
 }
 

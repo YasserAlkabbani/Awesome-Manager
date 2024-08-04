@@ -15,10 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
-import com.awesome.manager.core.designsystem.actions.appbar.sendMainAction
-import com.awesome.manager.core.designsystem.actions.bottomsheet.sendMainAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.sendMainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
@@ -33,24 +30,10 @@ fun TransactionDetailsRoute(
     val transactionDetailsState: TransactionDetailsState =
         transactionDetailsViewModel.transactionDetailsState
 
-    val navigationAction = transactionDetailsState.navigationAction.collectAsState().value
-    LaunchedEffect(key1 = navigationAction, block = {
-        navigationAction.sendMainAction(
-            sendMainAction, transactionDetailsState::doneNavigationAction
-        )
-    })
-
-    val appBarAction = transactionDetailsState.appBarAction.collectAsState().value
-    LaunchedEffect(key1 = appBarAction, block = {
-        appBarAction.sendMainAction(sendMainAction, transactionDetailsState::doneAppBarAction)
-    })
-
-    val bottomSheetAction = transactionDetailsState.bottomSheetAction.collectAsState().value
-    LaunchedEffect(key1 = bottomSheetAction, block = {
-        bottomSheetAction.sendMainAction(
-            sendMainAction, transactionDetailsState::doneBottomSheetAction
-        )
-    })
+    val mainAction = transactionDetailsState.mainAction.collectAsState().value
+    LaunchedEffect(key1 = mainAction) {
+        mainAction?.sendMainAction(sendMainAction, transactionDetailsState::doneMainAction)
+    }
 
     val transactionState =
         transactionDetailsState.transactionDetailsData.collectAsState().value
