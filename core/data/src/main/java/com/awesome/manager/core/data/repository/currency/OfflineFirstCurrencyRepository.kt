@@ -1,11 +1,10 @@
 package com.awesome.manager.core.data.repository.currency
 
-import com.awesome.manager.core.common.results.amRequest
-import com.awesome.manager.core.common.extentions.asDateTime
+import com.awesome.manager.core.data.extention.amRequest
+import com.awesome.manager.core.data.extention.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.CurrencyDao
-import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.network.datasource.CurrencyNetworkDataSource

@@ -1,15 +1,15 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.extentions.asDate
-import com.awesome.manager.core.common.extentions.asTimestamp
-import com.awesome.manager.core.common.extentions.currentTime
+import com.awesome.manager.core.data.extention.asDate
+import com.awesome.manager.core.data.extention.asTimestamp
+import com.awesome.manager.core.data.extention.currentTime
+import com.awesome.manager.core.data.extention.toStringDateTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.UpsertTransaction
 import com.awesome.manager.core.network.model.TransactionNetworkRequest
 import com.awesome.manager.core.network.model.TransactionNetworkResponse
-import kotlinx.datetime.Instant
 
 fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     id = id,
@@ -50,7 +50,7 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     title = title,
     subtitle = subtitle,
     amount = amount,
-    transactionAt = Instant.fromEpochMilliseconds(transactionAt).toString()
+    transactionAt = transactionAt.toStringDateTime()
 )
 
 fun UpsertTransaction.asEntity() = TransactionEntity(

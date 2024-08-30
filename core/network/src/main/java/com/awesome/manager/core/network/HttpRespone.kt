@@ -1,12 +1,19 @@
 package com.awesome.manager.core.network
 
 import android.util.Log
-import com.awesome.manager.core.common.results.AmError
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
+sealed class AmError : Throwable() {
+    data object Unauthorized : AmError()
+    data object ConnectionError : AmError()
+    data object UnknownError : AmError()
+    data class BadRequest(val errorMessage: String) : AmError()
+    data class OtherError(val errorMessage: String?) : AmError()
+}
 
 @Serializable
 data class ErrorResponse(

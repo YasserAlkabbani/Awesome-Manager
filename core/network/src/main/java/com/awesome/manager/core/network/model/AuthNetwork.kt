@@ -25,3 +25,9 @@ data class Identity(
     @SerialName("user_id") val userId: String,
     @SerialName("provider") val provider: String,
 )
+
+@Serializable
+data class LoginRequest(@SerialName("email") val email: String,@SerialName("password") val password: String)
+
+@Serializable
+data class SignupRequest(@SerialName("email") val email: String,@SerialName("password") val password: String)

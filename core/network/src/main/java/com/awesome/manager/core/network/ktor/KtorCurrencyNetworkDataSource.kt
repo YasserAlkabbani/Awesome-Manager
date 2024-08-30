@@ -10,20 +10,20 @@ import io.ktor.resources.Resource
 import kotlinx.serialization.SerialName
 import javax.inject.Inject
 
-@Resource("rest/v1/currencies")
-private class CurrencyRequest {
-    @Resource("")
-    class GetCurrency(
-        val select: String = "*",
-        @SerialName("updated_at") val updatedAt: String,
-        val perant: CurrencyRequest = CurrencyRequest()
-    )
-}
-
 class KtorCurrencyNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     CurrencyNetworkDataSource {
 
     override suspend fun returnUpdatedCurrency(updatedAt: String): List<CurrencyNetwork> =
-        httpClient.get(CurrencyRequest.GetCurrency(updatedAt = "gt.$updatedAt")).asResult()
+        httpClient.get(GetCurrency(updatedAt = "gt.$updatedAt")).asResult()
 
 }
+
+
+private const val CURRENCY_URL:String="rest/v1/currencies"
+
+
+@Resource(CURRENCY_URL)
+private class GetCurrency(
+    @SerialName("select") val select: String = "*",
+    @SerialName("updated_at") val updatedAt: String
+)

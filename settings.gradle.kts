@@ -35,7 +35,7 @@ include(":core:datastore")
 include(":core:network")
 include(":core:notification")
 include(":core:ui")
-include(":core:designsystem")
+include(":core:design-system")
 include(":core:domain")
 include(":core:model")
 

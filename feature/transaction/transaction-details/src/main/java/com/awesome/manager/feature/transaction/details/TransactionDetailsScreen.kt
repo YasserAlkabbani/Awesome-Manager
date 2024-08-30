@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction

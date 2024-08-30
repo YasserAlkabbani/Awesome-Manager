@@ -13,27 +13,28 @@ import io.ktor.resources.Resource
 import kotlinx.serialization.SerialName
 import javax.inject.Inject
 
-@Resource("rest/v1/transactions")
-private class TransactionRequest {
-    @Resource("")
-    class ReturnTransactions(
-        val parent: TransactionRequest = TransactionRequest(),
-        @SerialName("updated_at") val updatedAt: String,
-        val select: String = "*"
-    )
-}
-
 class KtorTransactionNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     TransactionNetworkDataSource {
 
     override suspend fun upsertTransaction(transactionNetworkResponse: TransactionNetworkRequest) =
-        httpClient.post(TransactionRequest()) {
+        httpClient.post(UpsertTransaction) {
             header("Prefer", "resolution=merge-duplicates")
             setBody(transactionNetworkResponse)
         }.asResult<Any>()
 
     override suspend fun returnUpdatedTransactions(updatedAt: String): List<TransactionNetworkResponse> =
-        httpClient.get(TransactionRequest.ReturnTransactions(updatedAt = "gt.$updatedAt"))
+        httpClient.get(GetTransactions(updatedAt = "gt.$updatedAt"))
             .asResult()
 
 }
+
+private const val TRANSACTION_URL:String="rest/v1/transactions"
+
+@Resource(TRANSACTION_URL)
+private class UpsertTransaction
+
+@Resource(TRANSACTION_URL)
+private class GetTransactions(
+    @SerialName("updated_at") val updatedAt: String,
+    @SerialName("select") val select: String = "*"
+)

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard

@@ -15,8 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.extentions.limitName
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
@@ -51,7 +50,7 @@ fun AccountDetailsRoute(
             accountDetailsState.setForAccountDetailsScreen(
                 backButton = true,
                 onEditButton = AppBarButton(
-                    text = "$editAccount ${accountState.data.name.limitName()}",
+                    text = "$editAccount ${accountState.data.name}",
                     click = { accountDetailsState.navigateToEditAccount(accountState.data.id) }
                 ),
                 transactionEditor = if (allowToEdit)

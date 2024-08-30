@@ -1,9 +1,6 @@
 package com.awesome.manager.feature.auth
 
-import com.awesome.manager.core.common.extentions.isValidEmail
-import com.awesome.manager.core.common.extentions.isValidPassword
-import com.awesome.manager.core.common.results.AmError
-import com.awesome.manager.core.common.results.AmResult
+import com.awesome.manager.core.data.extention.AmResult
 import com.awesome.manager.core.designsystem.actions.main.StateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,33 +21,33 @@ class AuthScreenState(
         amResult: AmResult<Any>, onSuccess: () -> Unit,
     ) {
         setLoading(amResult is AmResult.Loading)
-        when (amResult) {
-            is AmResult.Error -> when (val amError = amResult.amError) {
-
-                is AmError.BadRequest -> {
-                    showAuthErrorBottomSheet(
-                        errorMessage = amError.errorMessage,
-                        onCreateAccount = {
-                            register()
-                            dismissBottomSheet()
-                        },
-                        editCredentials = ::dismissBottomSheet
-                    )
-                }
-
-                is AmError.OtherError -> {
-                    showCustomErrorMessage(errorMessage = amError.errorMessage.orEmpty())
-                }
-
-                AmError.Unauthorized -> showCustomErrorMessage(errorMessage = amError.message.orEmpty())
-
-                AmError.ConnectionError -> showConnectionErrorBottomSheet()
-                AmError.UnknownError -> {}
-            }
-
-            is AmResult.Loading -> Unit
-            is AmResult.Success -> onSuccess()
-        }
+//        when (amResult) {
+//            is AmResult.Error -> when (val amError = amResult.amError) {
+//
+//                is AmError.BadRequest -> {
+//                    showAuthErrorBottomSheet(
+//                        errorMessage = amError.errorMessage,
+//                        onCreateAccount = {
+//                            register()
+//                            dismissBottomSheet()
+//                        },
+//                        editCredentials = ::dismissBottomSheet
+//                    )
+//                }
+//
+//                is AmError.OtherError -> {
+//                    showCustomErrorMessage(errorMessage = amError.errorMessage.orEmpty())
+//                }
+//
+//                AmError.Unauthorized -> showCustomErrorMessage(errorMessage = amError.message.orEmpty())
+//
+//                AmError.ConnectionError -> showConnectionErrorBottomSheet()
+//                AmError.UnknownError -> {}
+//            }
+//
+//            is AmResult.Loading -> Unit
+//            is AmResult.Success -> onSuccess()
+//        }
 
     }
 
@@ -64,3 +61,9 @@ data class AmAuthData(
     val validatePassword: Boolean get() = password.isValidPassword()
     val validateData: Boolean get() = validateEmail && validatePassword
 }
+
+fun String.isValidEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
+fun String.isValidPassword() = this.length > 5
+
+fun String.limitName() = this.substringBefore(" ").take(10)

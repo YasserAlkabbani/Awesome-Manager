@@ -1,12 +1,11 @@
 package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.enums.EditorInputType
-import com.awesome.manager.core.common.extentions.asDate
-import com.awesome.manager.core.common.extentions.currentTime
-import com.awesome.manager.core.common.states.DataState
-import com.awesome.manager.core.common.states.setData
-import com.awesome.manager.core.common.states.updateData
+import com.awesome.manager.core.data.extention.asDate
+import com.awesome.manager.core.data.extention.currentTime
+import com.awesome.manager.core.data.states.DataState
+import com.awesome.manager.core.data.states.setData
+import com.awesome.manager.core.data.states.updateData
 import com.awesome.manager.core.designsystem.actions.main.StateManager
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -157,3 +156,7 @@ data class TransactionEditorInput(
 data class TransactionFilterData(
     val searchKey: String = ""
 )
+
+enum class EditorInputType {
+    Create, Edit
+}

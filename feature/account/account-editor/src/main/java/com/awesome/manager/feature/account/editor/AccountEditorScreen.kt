@@ -18,9 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.enums.EditorInputType.*
-import com.awesome.manager.core.common.extentions.limitName
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
@@ -54,8 +52,8 @@ fun AccountEditorRoute(
             val errorMessage =
                 if (isValidInput) null else context.getString(R.string.invalidate_input)
             val buttonText = when (accountEditor.editorInputType) {
-                Create -> context.getString(R.string.create_account)
-                Edit -> "${context.getString(R.string.update_account)} ${accountEditor.name.limitName()}"
+                EditorInputType.Create -> context.getString(R.string.create_account)
+                EditorInputType.Edit -> "${context.getString(R.string.update_account)} ${accountEditor.name}"
             }
             accountEditorState.setForEditAccountScreen(
                 cancelButton = true,

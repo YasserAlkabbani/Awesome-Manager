@@ -1,9 +1,6 @@
 plugins {
-    id("awesomemanager.android.application.compose")
     id("awesomemanager.android.application")
-    id("awesomemanager.android.hilt")
-    id("androidx.navigation.safeargs.kotlin")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    id("awesomemanager.android.application.compose")
 }
 
 @Suppress("UnstableApiUsage")
@@ -41,43 +38,6 @@ android {
 }
 
 dependencies {
-
-    testImplementation(libs.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    implementation(libs.activity.compose)
-    implementation(libs.timber)
-    implementation(libs.core.ktx)
-
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization)
-
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.runtime.compose)
-    testImplementation(libs.lifecycle.runtime.testing)
-
-    implementation(libs.navigation.compose)
-    implementation(libs.hilt.navigation.compose)
-    androidTestImplementation(libs.navigation.testing)
-
-    implementation(project(":feature:intro"))
-    implementation(project(":feature:auth"))
-    implementation(project(":feature:menu"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:account:accounts"))
-    implementation(project(":feature:account:account-editor"))
-    implementation(project(":feature:account:account-details"))
-    implementation(project(":feature:transaction:transaction-editor"))
-    implementation(project(":feature:transaction:transactions"))
-    implementation(project(":feature:transaction:transaction-details"))
-
-    implementation(project(":core:common"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:data"))
-    implementation(project(":core:model"))
 
 
 }

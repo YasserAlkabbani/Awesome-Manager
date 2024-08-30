@@ -1,8 +1,7 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.extentions.asDate
-import com.awesome.manager.core.common.extentions.asTimestamp
-import com.awesome.manager.core.common.extentions.currentTime
+import com.awesome.manager.core.data.extention.asTimestamp
+import com.awesome.manager.core.data.extention.currentTime
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount

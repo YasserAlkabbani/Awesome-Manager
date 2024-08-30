@@ -1,10 +1,10 @@
 package com.awesome.manager.core.data.repository.accounts
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.results.amInsert
-import com.awesome.manager.core.common.results.amRequest
-import com.awesome.manager.core.common.results.asAmResult
-import com.awesome.manager.core.common.extentions.asDateTime
+import com.awesome.manager.core.data.extention.amInsert
+import com.awesome.manager.core.data.extention.amRequest
+import com.awesome.manager.core.data.extention.asAmResult
+import com.awesome.manager.core.data.extention.asDateTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork

@@ -1,7 +1,7 @@
 package com.awesome.manager.feature.account.details
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.actions.main.StateManager
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction

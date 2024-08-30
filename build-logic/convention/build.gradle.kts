@@ -26,33 +26,41 @@ dependencies {
 
 gradlePlugin{
     plugins {
-        register("androidApplicationCompose"){
-            id="awesomemanager.android.application.compose"
-            implementationClass="AndroidApplicationConventionPlugin"
-        }
         register("androidApplication"){
             id="awesomemanager.android.application"
-            implementationClass="AndroidApplicationComposeConventionPlugin"
+            implementationClass="AndroidApplicationConventionPlugin"
         }
-        register("androidLibraryCompose"){
-            id="awesomemanager.android.library.compose"
-            implementationClass="AndroidLibraryComposeConventionPlugin"
+        register("androidApplicationCompose"){
+            id="awesomemanager.android.application.compose"
+            implementationClass="AndroidApplicationComposeConventionPlugin"
         }
         register("androidLibrary"){
             id="awesomemanager.android.library"
             implementationClass="AndroidLibraryConventionPlugin"
         }
+        register("androidLibraryCompose"){
+            id="awesomemanager.android.library.compose"
+            implementationClass="AndroidLibraryComposeConventionPlugin"
+        }
         register("androidHilt"){
             id="awesomemanager.android.hilt"
-            implementationClass="AndroidHiltConventionPlugin"
+            implementationClass="HiltConventionPlugin"
         }
         register("androidFeature"){
             id="awesomemanager.android.feature"
-            implementationClass="AndroidFeatureConventionPlugin"
+            implementationClass="FeatureConventionPlugin"
         }
         register("androidRoom"){
             id="awesomemanager.android.room"
-            implementationClass="AndroidRoomConventionPlugin"
+            implementationClass="RoomConventionPlugin"
+        }
+        register("androidKtor"){
+            id="awesomemanager.android.ktor"
+            implementationClass="KtorConventionPlugin"
+        }
+        register("androidWorkManager"){
+            id="awesomemanager.android.workmanager"
+            implementationClass="WorkManagerConventionPlugin"
         }
     }
 }

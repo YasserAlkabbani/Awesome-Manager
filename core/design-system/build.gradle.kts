@@ -1,0 +1,21 @@
+plugins {
+    id("awesomemanager.android.library.compose")
+}
+
+android {
+    namespace = "com.awesome.manager.core.design-system"
+}
+
+dependencies {
+
+    api(libs.compose.material3)
+    api(libs.compose.material.icons.extended)
+    api(libs.compose.ui)
+    api(libs.compose.foundation)
+    api(libs.compose.runtime)
+    api(libs.compose.ui.tooling.preview)
+    api(libs.coil.compose)
+
+    debugApi(libs.compose.ui.tooling)
+
+}

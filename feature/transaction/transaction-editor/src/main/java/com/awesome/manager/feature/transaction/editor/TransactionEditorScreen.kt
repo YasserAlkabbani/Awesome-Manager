@@ -22,8 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.enums.EditorInputType.*
-import com.awesome.manager.core.common.states.DataState
+import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
@@ -85,8 +84,8 @@ fun TransactionEditorRoute(
             val errorMessage =
                 if (isValidateInput) null else context.getString(R.string.invalidate_input)
             val buttonText = when (transactionEditor.editorInputType) {
-                Create -> context.getString(R.string.create_transaction)
-                Edit -> context.getString(R.string.update_transaction)
+                EditorInputType.Create -> context.getString(R.string.create_transaction)
+                EditorInputType.Edit -> context.getString(R.string.update_transaction)
             }
             when (transactionEditor.selectedAccount) {
                 null -> transactionEditorState.setForEditTransactionScreen(

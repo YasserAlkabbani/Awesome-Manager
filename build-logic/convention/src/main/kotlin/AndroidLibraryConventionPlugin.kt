@@ -22,21 +22,22 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 34
+                defaultConfig.targetSdk = 35
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
 
+                add("testImplementation", libs.findLibrary("junit").get())
+                add("testImplementation", libs.findLibrary("androidx.junit").get())
+                add("testImplementation", kotlin("test"))
+
+                add("androidTestImplementation", kotlin("test"))
+
                 add("implementation", libs.findLibrary("kotlinx.serialization").get())
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
 
-
-                add("androidTestImplementation", kotlin("test"))
-                add("testImplementation", kotlin("test"))
-
-                add("implementation", libs.findLibrary("junit").get())
-                add("implementation", libs.findLibrary("androidx.junit").get())
+                add("implementation", libs.findLibrary("timber").get())
 
             }
 

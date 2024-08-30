@@ -1,8 +1,7 @@
 plugins {
     id("awesomemanager.android.library")
-    id("awesomemanager.android.hilt")
-    id("org.jetbrains.kotlin.android")
     id("awesomemanager.android.room")
+    id("awesomemanager.android.hilt")
 }
 
 android {

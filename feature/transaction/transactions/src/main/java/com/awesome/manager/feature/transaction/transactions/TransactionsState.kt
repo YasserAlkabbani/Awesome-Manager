@@ -1,7 +1,7 @@
 package com.awesome.manager.feature.transaction.transactions
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.extentions.asDateRange
+import com.awesome.manager.core.data.extention.asDateRange
 import com.awesome.manager.core.designsystem.actions.main.StateManager
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType

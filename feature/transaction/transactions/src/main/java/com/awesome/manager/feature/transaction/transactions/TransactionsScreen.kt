@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.extentions.currentTime
+import com.awesome.manager.core.data.extention.currentTime
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmText

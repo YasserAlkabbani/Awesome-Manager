@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.auth
 
-import com.awesome.manager.core.common.results.AmResult
-import com.awesome.manager.core.common.results.amRequest
+import com.awesome.manager.core.data.extention.AmResult
+import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.AuthNetwork
