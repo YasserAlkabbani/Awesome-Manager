@@ -9,7 +9,7 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
         with(target) {
 
             with(pluginManager){
-                apply("com.android.library")
+                apply("awesomemanager.android.library")
                 apply("org.jetbrains.kotlin.plugin.compose")
             }
             val extension = extensions.getByType<LibraryExtension>()

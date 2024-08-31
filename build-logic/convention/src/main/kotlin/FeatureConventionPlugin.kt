@@ -9,9 +9,9 @@ class FeatureConventionPlugin : Plugin<Project> {
         with(target) {
 
             pluginManager.apply {
-                apply("awesomemanager.android.library")
                 apply("awesomemanager.android.library.compose")
                 apply("androidx.navigation.safeargs.kotlin")
+                apply("awesomemanager.android.hilt")
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")

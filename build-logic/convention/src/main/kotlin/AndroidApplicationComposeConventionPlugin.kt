@@ -31,7 +31,7 @@ class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
 
                 add("implementation", libs.findLibrary("hilt.navigation.compose").get())
 
-                add("implementation", project(":core:design-system"))
+                add("implementation", project(":core:ui"))
 
                 add("implementation", project(":feature:intro"))
                 add("implementation", project(":feature:auth"))

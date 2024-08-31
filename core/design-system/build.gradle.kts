@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.awesome.manager.core.design-system"
+    namespace = "com.awesome.manager.core.designsystem"
 }
 
 dependencies {
