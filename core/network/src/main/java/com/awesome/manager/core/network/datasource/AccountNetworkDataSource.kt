@@ -7,6 +7,6 @@ interface AccountNetworkDataSource {
 
     suspend fun returnUpdatedAccount(updatedAt: String): List<AccountNetworkResponse>
 
-    suspend fun upsertAccount(accountNetwork: AccountNetworkRequest)
+    suspend fun upsertAccount(accountNetwork: AccountNetworkRequest):Any
 
 }

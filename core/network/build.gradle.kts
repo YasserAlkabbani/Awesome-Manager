@@ -11,11 +11,10 @@ plugins {
 val networkFile = rootProject.file("local.properties")
 val networkProperties = Properties()
 networkProperties.load(FileInputStream(networkFile))
+//val localProperties = gradleLocalProperties(rootDir)
 
 android {
     namespace = "com.awesome.manager.core.network"
-
-    gradleLocalProperties(rootDir).getProperty("YOUR_PROP_NAME")
 
 
     buildTypes {

@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.extention
 
 import android.util.Log
-import com.awesome.manager.core.network.AmError
+import com.awesome.manager.core.network.NetworkError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -10,22 +10,23 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.net.UnknownHostException
 
 
 
 sealed interface AmResult<out T> {
     data class Success<T>(val data: T, val freshData: Boolean) : AmResult<T>
-    data class Error(val amError: AmError) : AmResult<Nothing>
+    data class Error(val networkError: NetworkError) : AmResult<Nothing>
     data class Loading(val progress: Int = 0) : AmResult<Nothing>
 
 }
 
 fun Throwable.asAmError(): AmResult.Error = AmResult.Error(
     when (this) {
-        is AmError -> this
-        is UnknownHostException -> AmError.ConnectionError
-        else -> AmError.OtherError(message)
+        is NetworkError -> this
+        is UnknownHostException -> NetworkError.ConnectionError
+        else -> message?.let { NetworkError.OtherError(it) }?:NetworkError.UnknownError
     }
 )
 
@@ -57,7 +58,10 @@ suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = fl
     emit(AmResult.Success(data = data, freshData = true))
 }
     .onStart { emit(AmResult.Loading()) }
-    .catch { throwable -> emit(throwable.asAmError()) }
+    .catch { throwable ->
+        Timber.d("TEST_AUTH CATCH_ERROR ${throwable.message}")
+        emit(throwable.asAmError())
+    }
     .flowOn(Dispatchers.Default)
 
 suspend inline fun amInsert(crossinline insertTask: suspend () -> Unit) {

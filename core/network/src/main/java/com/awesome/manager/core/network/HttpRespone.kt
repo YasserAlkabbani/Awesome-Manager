@@ -1,51 +1,32 @@
 package com.awesome.manager.core.network
 
-import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-sealed class AmError : Throwable() {
-    data object Unauthorized : AmError()
-    data object ConnectionError : AmError()
-    data object UnknownError : AmError()
-    data class BadRequest(val errorMessage: String) : AmError()
-    data class OtherError(val errorMessage: String?) : AmError()
+sealed class NetworkError : Throwable() {
+    data object ConnectionError:NetworkError()
+    data object Timeout:NetworkError()
+    data object BadRequest:NetworkError()
+    data object ConvertData:NetworkError()
+    data object InternalServerError:NetworkError()
+    data object RedirectResponseException:NetworkError()
+    data object Unauthorized:NetworkError()
+    data object Forbidden:NetworkError()
+    data object RequestTimeout:NetworkError()
+    data object UnknownError:NetworkError()
+    data object TooManyRequests:NetworkError()
+    data class OtherError(val errorMessage:String):NetworkError()
 }
 
 @Serializable
 data class ErrorResponse(
-    val error:String?=null,
-    val message:String?=null,
-    @SerialName("error_description") val errorDescription:String?=null,
-)
-
-@Serializable
-data class UnauthorizedResponse(
-    @SerialName("msg") val msg:String?=null
-)
-
-suspend inline fun <reified T> HttpResponse.asResult():T{
-    return when(status){
-        HttpStatusCode.OK , HttpStatusCode.Created , HttpStatusCode.Accepted->body()
-        HttpStatusCode.BadRequest,-> body<ErrorResponse>().let {
-            val errorMessage=it.errorDescription?:it.error?:it.message
-            throw when(errorMessage){
-                null-> AmError.UnknownError
-                else -> AmError.BadRequest(errorMessage = errorMessage)
-            }
-        }
-        HttpStatusCode.Unauthorized->body<UnauthorizedResponse>().let {
-            throw AmError.Unauthorized
-        }
-        HttpStatusCode.UnprocessableEntity->body<UnauthorizedResponse>().let {
-            throw AmError.OtherError(errorMessage = it.msg)
-        }
-        HttpStatusCode.TooManyRequests->body<UnauthorizedResponse>().let {
-            throw AmError.OtherError(errorMessage = it.msg)
-        }
-        else -> throw AmError.OtherError(null)
-    }
+    @SerialName("error") val error: String? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("error_description") val errorDescription: String? = null,
+    @SerialName("msg") val msg: String? = null
+){
+    fun getErrorMessage():String=message?:msg?:errorDescription?:error?:"Unknown Error"
 }
