@@ -11,19 +11,18 @@ plugins {
 val networkFile = rootProject.file("local.properties")
 val networkProperties = Properties()
 networkProperties.load(FileInputStream(networkFile))
+//val localProperties = gradleLocalProperties(rootDir)
 
 android {
     namespace = "com.awesome.manager.core.network"
 
-    gradleLocalProperties(rootDir).getProperty("YOUR_PROP_NAME")
-
 
     buildTypes {
-        release{
+        release {
             buildConfigField("String", "BASE_URL", "\"${networkProperties["base_url"]}\"")
             buildConfigField("String", "API_KEY", "\"${networkProperties["api_key"]}\"")
         }
-        debug{
+        debug {
             buildConfigField("String", "BASE_URL", "\"${networkProperties["base_url"]}\"")
             buildConfigField("String", "API_KEY", "\"${networkProperties["api_key"]}\"")
         }

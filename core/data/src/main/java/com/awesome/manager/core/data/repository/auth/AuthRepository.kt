@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.auth
 
 import com.awesome.manager.core.data.extention.AmResult
-import com.awesome.manager.core.network.model.AuthNetwork
+import com.awesome.manager.core.network.model.response.AuthNetwork
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -11,8 +11,6 @@ interface AuthRepository {
     suspend fun signUp(email: String, password: String): Flow<AmResult<Boolean>>
 
     suspend fun logout(): Flow<AmResult<Unit>>
-
-    suspend fun refreshUserInfo()
 
     suspend fun updateToken(authNetwork: AuthNetwork)
 

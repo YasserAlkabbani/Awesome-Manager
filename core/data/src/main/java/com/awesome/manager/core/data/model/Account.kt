@@ -7,8 +7,8 @@ import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.model.UpsertAccount
-import com.awesome.manager.core.network.model.AccountNetworkRequest
-import com.awesome.manager.core.network.model.AccountNetworkResponse
+import com.awesome.manager.core.network.model.request.AccountNetworkRequest
+import com.awesome.manager.core.network.model.response.AccountNetworkResponse
 
 
 fun AccountNetworkResponse.asEntity() = AccountEntity(

@@ -13,7 +13,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,18 +41,11 @@ fun AmLazyColumn(
     content: LazyListScope.() -> Unit,
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
-
-    LaunchedEffect(key1 = isRefreshing) {
-        if (!isRefreshing) pullToRefreshState.endRefresh()
-    }
-    LaunchedEffect(key1 = pullToRefreshState.isRefreshing) {
-        if (pullToRefreshState.isRefreshing) onRefresh()
-    }
-
-    Column(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
-        AnimatedVisibility(pullToRefreshState.isRefreshing) {
-            AmLinearProgress(modifier = Modifier.fillMaxWidth())
-        }
+    PullToRefreshBox(
+        modifier = Modifier, state = pullToRefreshState,
+        isRefreshing = isRefreshing, onRefresh = onRefresh,
+        indicator = { AmLinearProgress(modifier = Modifier.fillMaxWidth()) }
+    ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
@@ -59,18 +53,5 @@ fun AmLazyColumn(
             content = content
         )
     }
-//    PullToRefreshBox(
-//        modifier = Modifier,
-//        state = pullToRefreshState,
-//        isRefreshing = isRefreshing,
-//        onRefresh = onRefresh,
-//    ) {
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize(),
-//            contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
-//            verticalArrangement = Arrangement.spacedBy(AmLazyColumnPadding.SPACE_BETWEEN_ITEM.value),
-//            content = content
-//        )
-//    }
 
 }

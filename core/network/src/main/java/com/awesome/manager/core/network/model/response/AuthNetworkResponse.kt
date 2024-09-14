@@ -1,7 +1,8 @@
-package com.awesome.manager.core.network.model
+package com.awesome.manager.core.network.model.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
 
 @Serializable
 data class AuthNetwork(
@@ -14,20 +15,14 @@ data class AuthNetwork(
 data class AuthUserNetwork(
     @SerialName("id") val id: String,
     @SerialName("email") val email: String,
-    @SerialName("email_confirmed_at") val emailConfirmedAt: String?=null,
+    @SerialName("email_confirmed_at") val emailConfirmedAt: String? = null,
     @SerialName("created_at") val createdAt: String,
     @SerialName("updated_at") val updatedAt: String,
     @SerialName("identities") val identities: List<Identity>,
-)
-
-@Serializable
-data class Identity(
-    @SerialName("user_id") val userId: String,
-    @SerialName("provider") val provider: String,
-)
-
-@Serializable
-data class LoginRequest(@SerialName("email") val email: String,@SerialName("password") val password: String)
-
-@Serializable
-data class SignupRequest(@SerialName("email") val email: String,@SerialName("password") val password: String)
+) {
+    @Serializable
+    data class Identity(
+        @SerialName("user_id") val userId: String,
+        @SerialName("provider") val provider: String,
+    )
+}

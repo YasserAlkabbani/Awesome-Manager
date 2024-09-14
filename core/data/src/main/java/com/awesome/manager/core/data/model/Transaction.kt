@@ -8,8 +8,8 @@ import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.network.model.TransactionNetworkRequest
-import com.awesome.manager.core.network.model.TransactionNetworkResponse
+import com.awesome.manager.core.network.model.request.TransactionNetworkRequest
+import com.awesome.manager.core.network.model.response.TransactionNetworkResponse
 
 fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     id = id,

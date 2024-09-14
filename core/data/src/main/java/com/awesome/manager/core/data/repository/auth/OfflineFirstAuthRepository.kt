@@ -4,9 +4,10 @@ import com.awesome.manager.core.data.extention.AmResult
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
-import com.awesome.manager.core.network.model.AuthNetwork
+import com.awesome.manager.core.network.model.request.LoginRequest
+import com.awesome.manager.core.network.model.request.SignupRequest
+import com.awesome.manager.core.network.model.response.AuthNetwork
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -20,7 +21,9 @@ class OfflineFirstAuthRepository @Inject constructor(
 
     override suspend fun login(email: String, password: String): Flow<AmResult<Boolean>> =
         amRequest {
-            val authNetwork = authNetworkDataSource.login(email, password)
+            val authNetwork = authNetworkDataSource.login(
+                LoginRequest(email = email, password = password)
+            )
             updateToken(authNetwork)
             true
         }.map {
@@ -29,21 +32,15 @@ class OfflineFirstAuthRepository @Inject constructor(
 
     override suspend fun signUp(email: String, password: String): Flow<AmResult<Boolean>> =
         amRequest {
-            val response = authNetworkDataSource.signUp(email, password)
+            val response = authNetworkDataSource.signUp(
+                SignupRequest(email = email, password = password)
+            )
             response.identities.isEmpty()
         }
 
     override suspend fun logout(): Flow<AmResult<Unit>> = amRequest {
         authPreferencesDataStore.clearAuth()
         authNetworkDataSource.logout()
-    }
-
-    override suspend fun refreshUserInfo() {
-        amRequest {
-            authNetworkDataSource.refreshUser().let { authNetwork ->
-                updateToken(authNetwork)
-            }
-        }.collect()
     }
 
     override suspend fun updateToken(authNetwork: AuthNetwork) {

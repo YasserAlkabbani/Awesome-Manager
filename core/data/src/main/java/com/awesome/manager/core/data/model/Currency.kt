@@ -5,7 +5,7 @@ import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.BalanceDetails
-import com.awesome.manager.core.network.model.CurrencyNetwork
+import com.awesome.manager.core.network.model.response.CurrencyNetwork
 
 fun CurrencyNetwork.asEntity() = CurrencyEntity(
     id = id,
