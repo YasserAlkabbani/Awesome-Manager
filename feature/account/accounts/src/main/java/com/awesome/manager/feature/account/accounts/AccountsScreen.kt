@@ -70,7 +70,7 @@ fun AccountsScreen(
         if (noItems)
             Column(
                 modifier = Modifier
-                    .padding(AmPadding.X_LARGE.value)
+                    .padding(AmPadding.XX_LARGE.value)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally

@@ -48,9 +48,9 @@ fun AmBottomSheetMessage(
             text = subtitle, style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center, maxLines = 5
         )
-        Spacer(modifier = Modifier.height(AmPadding.X_LARGE.value))
-        Spacer(modifier = Modifier.height(AmPadding.X_LARGE.value))
-        Spacer(modifier = Modifier.height(AmPadding.X_LARGE.value))
+        Spacer(modifier = Modifier.height(AmPadding.XX_LARGE.value))
+        Spacer(modifier = Modifier.height(AmPadding.XX_LARGE.value))
+        Spacer(modifier = Modifier.height(AmPadding.XX_LARGE.value))
 
         button1?.let { button ->
             AmButton(

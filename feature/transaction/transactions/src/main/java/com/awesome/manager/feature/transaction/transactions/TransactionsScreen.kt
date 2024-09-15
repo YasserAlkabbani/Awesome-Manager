@@ -49,9 +49,9 @@ fun TransactionsRoute(
 
     val transactionsState = transactionsViewModel.transactionsState
 
-    val mainAction=transactionsState.mainAction.collectAsState().value
+    val mainAction = transactionsState.mainAction.collectAsState().value
     LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction,transactionsState::doneMainAction)
+        mainAction?.sendMainAction(sendMainAction, transactionsState::doneMainAction)
     }
 
     TransactionScreen(transactionsState)
@@ -81,7 +81,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
         if (noItems)
             Column(
                 modifier = Modifier
-                    .padding(AmPadding.X_LARGE.value)
+                    .padding(AmPadding.XX_LARGE.value)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally

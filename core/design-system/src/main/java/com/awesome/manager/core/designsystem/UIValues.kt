@@ -13,5 +13,5 @@ enum class AmLazyColumnPadding(val value: Dp) {
 }
 
 enum class AmPadding(val value: Dp) {
-    ZERO(0.dp), X_SMALL(2.dp), SMALL(4.dp), MEDIUM(6.dp), LARGE(8.dp), X_LARGE(16.dp)
+    ZERO(0.dp), X_SMALL(2.dp), SMALL(4.dp), MEDIUM(6.dp), LARGE(8.dp), X_LARGE(12.dp), XX_LARGE(16.dp)
 }

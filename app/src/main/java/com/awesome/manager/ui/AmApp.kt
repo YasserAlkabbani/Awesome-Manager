@@ -29,7 +29,7 @@ import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
-import com.awesome.manager.core.designsystem.actions.main.AppBarAction
+import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
 import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.main.NavigationAction
@@ -37,6 +37,7 @@ import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
 import com.awesome.manager.core.designsystem.component.AmDynamicBottomBar
 import com.awesome.manager.core.designsystem.actions.navigation.MainDistillation
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
@@ -67,7 +68,7 @@ fun AmApp() {
     val loginState = mainActivityState.isLogin.collectAsState().value
 
 
-    val appBarSate = remember { mutableStateOf<AppBarAction?>(null) }
+    val appBarSate = remember { mutableStateOf<DynamicBarAction?>(null) }
     val bottomSheetSate = remember { mutableStateOf<BottomSheetAction>(BottomSheetAction.Dismiss) }
 
     val mainAction = mainActivityState.mainAction.collectAsState().value
@@ -76,7 +77,7 @@ fun AmApp() {
             mainActivityState.doneMainAction()
             Timber.d("TEST_MAIN_ACTION $mainAction")
             when (mainAction) {
-                is AppBarAction -> appBarSate.value = mainAction
+                is DynamicBarAction -> appBarSate.value = mainAction
                 is BottomSheetAction -> {
                     when (mainAction) {
                         is BottomSheetAction.Dismiss -> launch { sheetState.hide() }
@@ -182,9 +183,30 @@ fun AmApp() {
                 NavigationDestination.Auth -> Unit
                 NavigationDestination.Intro -> Unit
 
-                NavigationDestination.Home -> mainActivityState.setForHomeScreen()
-                NavigationDestination.Accounts -> mainActivityState.setForAccountsScreen()
-                NavigationDestination.Transactions -> mainActivityState.setForTransactionsScreen()
+                NavigationDestination.Home -> mainActivityState.dynamicBarNavigation(
+                    extraButton = DynamicBarAction.ExtraButton(AmIcons.More) {
+                        currentUserEmail?.let { email ->
+                            mainActivityState.showProfileBottomSheet(
+                                email = email, logout = mainActivityState.logout
+                            )
+                        }
+                    },
+                    addButton = null
+                )
+
+                NavigationDestination.Accounts -> mainActivityState.dynamicBarNavigation(
+                    extraButton = null,
+                    addButton = DynamicBarAction.ExtraButton(
+                        AmIcons.AccountAdd, mainActivityState::navigateToCreateAccount
+                    )
+                )
+
+                NavigationDestination.Transactions -> mainActivityState.dynamicBarNavigation(
+                    extraButton = null,
+                    addButton = DynamicBarAction.ExtraButton(AmIcons.TransactionAdd) {
+                        mainActivityState.navigateToCreateTransaction(null)
+                    }
+                )
 
                 is NavigationDestination.AccountDetails -> Unit
                 is NavigationDestination.AccountEditor -> Unit
@@ -219,14 +241,7 @@ fun AmApp() {
     AppScreen(
         navHostController = navHostController,
         currentNavigationDestination = currentNavigationDestination,
-        appBarAction = appBarSate.value, updateMainAction = mainActivityState::updateMainState,
-        showProfileBottomSheet = {
-            currentUserEmail?.let { email ->
-                mainActivityState.showProfileBottomSheet(
-                    email = email, logout = mainActivityState.logout
-                )
-            }
-        },
+        dynamicBarAction = appBarSate.value, updateMainAction = mainActivityState::updateMainState,
     )
 
 }
@@ -235,14 +250,13 @@ fun AmApp() {
 fun AppScreen(
     navHostController: NavHostController,
     currentNavigationDestination: NavigationDestination?,
-    appBarAction: AppBarAction?, updateMainAction: (MainAction) -> Unit,
-    showProfileBottomSheet: () -> Unit
+    dynamicBarAction: DynamicBarAction?, updateMainAction: (MainAction) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
-                appBarAction?.let {
+                dynamicBarAction?.let {
                     AmDynamicBottomBar(
                         modifier = Modifier,
                         bottomBarItems = {
@@ -261,11 +275,7 @@ fun AppScreen(
                                     )
                                 }
                         },
-                        onShowMoreBottomSheet = showProfileBottomSheet,
-                        appBarAction = appBarAction,
-                        transactionEditor = { updateMainAction(it.asNavigation()) },
-                        accountEditor = { updateMainAction(it.asNavigation()) },
-                        onNavigationUp = { updateMainAction(NavigationAction.NavigateUp) }
+                        dynamicBarAction = dynamicBarAction
                     )
                 }
             },

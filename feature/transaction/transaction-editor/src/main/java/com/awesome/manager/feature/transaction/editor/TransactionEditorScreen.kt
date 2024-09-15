@@ -23,7 +23,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
@@ -88,24 +87,26 @@ fun TransactionEditorRoute(
                 EditorInputType.Edit -> context.getString(R.string.update_transaction)
             }
             when (transactionEditor.selectedAccount) {
-                null -> transactionEditorState.setForEditTransactionScreen(
-                    saveButton = AppBarButton(
-                        text = context.getString(R.string.select_account),
-                        click = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    ),
-                    cancelButton = true,
-                )
-
-                else -> {
-                    transactionEditorState.setForEditTransactionScreen(
-                        saveButton = AppBarButton(
-                            text = buttonText,
-                            click = transactionEditorState.createTransaction,
-                            errorMessage = errorMessage
-                        ),
-                        cancelButton = true,
-                    )
-                }
+                null -> Unit
+                else -> Unit
+//                null -> transactionEditorState.setForEditTransactionScreen(
+//                    saveButton = AppBarButton(
+//                        text = context.getString(R.string.select_account),
+//                        click = transactionEditorState::requestSearchForAnAccountBottomSheet,
+//                    ),
+//                    cancelButton = true,
+//                )
+//
+//                else -> {
+//                    transactionEditorState.setForEditTransactionScreen(
+//                        saveButton = AppBarButton(
+//                            text = buttonText,
+//                            click = transactionEditorState.createTransaction,
+//                            errorMessage = errorMessage
+//                        ),
+//                        cancelButton = true,
+//                    )
+//                }
             }
         }
     }

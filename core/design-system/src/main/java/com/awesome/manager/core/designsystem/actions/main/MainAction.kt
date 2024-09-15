@@ -1,8 +1,8 @@
 package com.awesome.manager.core.designsystem.actions.main
 
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 sealed class MainAction {
     fun sendMainAction(sendMainAction: (MainAction) -> Unit, doneCurrentAction: () -> Unit) {
@@ -27,17 +27,35 @@ sealed class NavigationAction : MainAction() {
 
 }
 
-data class AppBarAction(
-    val visible: Boolean = true,
-    val bottomNavigation: Boolean = false,
-    val moreButton: Boolean = false,
-    val backButton: Boolean = false,
-    val cancelButton: Boolean = false,
-    val isLoading: Boolean = false,
-    val navigateToAccountEditor: NavigationDestination.AccountEditor? = null,
-    val navigateToTransactionEditor: NavigationDestination.TransactionEditor? = null,
-    val appBarButton: AppBarButton? = null,
-) : MainAction()
+sealed class DynamicBarAction : MainAction() {
+
+    abstract val positive: Boolean
+
+    data object None : DynamicBarAction() {
+        override val positive: Boolean = true
+    }
+
+    data object Loading : DynamicBarAction() {
+        override val positive: Boolean = true
+    }
+
+    data class BottomNavigation(val extraButton: ExtraButton?, val addButton: ExtraButton?) :
+        DynamicBarAction() {
+        override val positive: Boolean = true
+    }
+
+    data class Message(
+        val text: String, override val positive: Boolean, val extraButton: ExtraButton?
+    ) : DynamicBarAction()
+
+    data class Button(
+        val text: String, val onClick: () -> Unit, override val positive: Boolean,
+        val extraButton: ExtraButton?
+    ) : DynamicBarAction()
+
+
+    data class ExtraButton(val amIconsType: AmIconsType, val onClick: () -> Unit)
+}
 
 sealed class PickerAction : MainAction()
 

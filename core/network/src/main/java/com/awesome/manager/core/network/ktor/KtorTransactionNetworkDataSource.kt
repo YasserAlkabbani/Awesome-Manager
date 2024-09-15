@@ -19,7 +19,7 @@ class KtorTransactionNetworkDataSource @Inject constructor(private val httpClien
         httpClient.get(Transaction.Get(updatedAt = "gt.$updatedAt")).body()
 
     override suspend fun upsertTransaction(transactionNetworkResponse: TransactionNetworkRequest): Unit =
-        httpClient.post(Transaction.Upsert) {
+        httpClient.post(Transaction.Upsert()) {
             header("Prefer", "resolution=merge-duplicates")
             setBody(transactionNetworkResponse)
         }.body()

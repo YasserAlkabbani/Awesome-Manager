@@ -56,7 +56,7 @@ fun HomeScreen(homeState: HomeState) {
             contentPadding = PaddingValues(
                 start = AmPadding.SMALL.value,
                 end = AmPadding.SMALL.value,
-                bottom = AmPadding.X_LARGE.value
+                bottom = AmPadding.XX_LARGE.value
             ),
             content = {
                 items(
@@ -85,7 +85,7 @@ fun HomeScreen(homeState: HomeState) {
         DataState.Error -> {
             Column(
                 modifier = Modifier
-                    .padding(AmPadding.X_LARGE.value)
+                    .padding(AmPadding.XX_LARGE.value)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally

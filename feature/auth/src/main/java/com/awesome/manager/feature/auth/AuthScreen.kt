@@ -20,10 +20,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
@@ -50,19 +50,28 @@ fun AuthRoute(
     }
 
     LaunchedEffect(key1 = authData, key2 = isLoading) {
-        authScreenState.setForAuth(
-            isLoading = isLoading,
-            loginButton = AppBarButton(
-                text = context.getString(R.string.start_accounting),
-                click = authScreenState.login,
-                errorMessage = when {
-                    !authData.validatePassword && !authData.validateEmail -> "Please, enter your credential"
-                    !authData.validateEmail -> context.getString(R.string.invalid_email)
-                    !authData.validatePassword -> context.getString(R.string.invalid_password)
-                    else -> null
+        when (isLoading) {
+            true -> authScreenState.dynamicBarLoading()
+            false -> {
+                when {
+                    authData.noData -> authScreenState.dynamicBarMessage(
+                        "Welcome Back", true, null
+                    )
+
+                    !authData.validateEmail -> authScreenState.dynamicBarMessage(
+                        "Please use a validate email", false, null
+                    )
+
+                    !authData.validatePassword -> authScreenState.dynamicBarMessage(
+                        "Please use a validate password", false, null
+                    )
+
+                    authData.validateData -> authScreenState.dynamicBarButton(
+                        "Start Managing", authScreenState.login, true, null,
+                    )
                 }
-            ),
-        )
+            }
+        }
     }
 
     AuthScreen(authScreenState)
@@ -75,7 +84,7 @@ fun AuthScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(AmPadding.X_LARGE.value)
+            .padding(AmPadding.XX_LARGE.value)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -89,7 +98,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AmIcon(
-                        modifier = Modifier.size(AmPadding.X_LARGE.value * 7),
+                        modifier = Modifier.size(AmPadding.XX_LARGE.value * 7),
                         amIconsType = AmIcons.AwesomeManagerIcon,
                     )
                     AmText(
@@ -112,7 +121,7 @@ fun AuthScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                vertical = AmPadding.X_LARGE.value,
+                                vertical = AmPadding.XX_LARGE.value,
                                 horizontal = AmPadding.X_SMALL.value
                             )
                     ) {
@@ -155,7 +164,9 @@ fun AuthScreen(
 
 }
 
-@Preview
+@Preview(
+    device = Devices.PIXEL_7, showBackground = true
+)
 @Composable
 fun AuthScreenPreview() {
     AuthScreen(AuthScreenState({}, {}, {}))

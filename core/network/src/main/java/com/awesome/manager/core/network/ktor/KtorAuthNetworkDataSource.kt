@@ -27,19 +27,19 @@ class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: Http
     }
 
     override suspend fun login(loginRequest: LoginRequest): AuthNetwork =
-        httpClient.post(Authorization.Login) {
+        httpClient.post(Authorization.Login()) {
             setBody(loginRequest)
         }.body<AuthNetwork>().loadToken()
 
     override suspend fun signUp(signupRequest: SignupRequest): AuthUserNetwork =
-        httpClient.post(Authorization.SignUp) {
+        httpClient.post(Authorization.SignUp()) {
             setBody(signupRequest)
         }.body()
 
     override suspend fun logout(): Unit =
-        httpClient.post(Authorization.Logout).body()
+        httpClient.post(Authorization.Logout()).body()
 
     override suspend fun recoverPassword(): Unit =
-        httpClient.get(Authorization.Recover).body()
+        httpClient.get(Authorization.Recover()).body()
 
 }

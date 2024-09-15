@@ -1,11 +1,13 @@
 package com.awesome.manager.core.designsystem.component.text
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import com.awesome.manager.core.designsystem.AmPadding
 
 @Composable
 fun AmText(
@@ -15,7 +17,7 @@ fun AmText(
     textAlign: TextAlign? = null
 ) {
     Text(
-        modifier = modifier, text = text,
+        modifier = modifier.padding(horizontal = AmPadding.LARGE.value), text = text,
         maxLines = maxLines, style = style,
         textAlign = textAlign,
     )

@@ -60,6 +60,7 @@ data class AmAuthData(
     val validateEmail: Boolean get() = email.isValidEmail()
     val validatePassword: Boolean get() = password.isValidPassword()
     val validateData: Boolean get() = validateEmail && validatePassword
+    val noData: Boolean get() = email.isBlank() && password.isBlank()
 }
 
 fun String.isValidEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()

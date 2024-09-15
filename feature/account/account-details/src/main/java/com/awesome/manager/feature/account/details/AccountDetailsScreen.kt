@@ -9,16 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
+import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -32,6 +33,8 @@ fun AccountDetailsRoute(
     sendMainAction: (MainAction) -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
+
+    val localContext = LocalContext.current
     val accountDetailsState = accountDetailsViewModel.accountDetailsState
 
     val mainAction = accountDetailsState.mainAction.collectAsState().value
@@ -42,22 +45,30 @@ fun AccountDetailsRoute(
     val accountState = accountDetailsState.amAccount.collectAsState().value
     val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
 
-    val editAccount = stringResource(R.string.edit_account_name)
     LaunchedEffect(key1 = accountState, allowToUpdate) {
         if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
             val allowToEdit = allowToUpdate.data
             val account = accountState.data
-            accountDetailsState.setForAccountDetailsScreen(
-                backButton = true,
-                onEditButton = AppBarButton(
-                    text = "$editAccount ${accountState.data.name}",
-                    click = { accountDetailsState.navigateToEditAccount(accountState.data.id) }
-                ),
-                transactionEditor = if (allowToEdit)
-                    NavigationDestination.TransactionEditor(
-                        accountId = account.id, transactionId = null
-                    ) else null,
-            )
+            when (allowToEdit) {
+                true -> accountDetailsState.dynamicBarMessage(
+                    "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
+                    false, null
+                )
+
+                else -> accountDetailsState.dynamicBarButton(
+                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
+                    positive = true,
+                    onClick = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
+                    extraButton = DynamicBarAction.ExtraButton(
+                        amIconsType = AmIcons.Edit,
+                        onClick = {
+                            NavigationDestination.TransactionEditor(
+                                accountId = account.id, transactionId = null
+                            )
+                        }
+                    )
+                )
+            }
         }
     }
 

@@ -14,9 +14,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.data.states.DataState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
+import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
+import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 
@@ -41,19 +42,33 @@ fun TransactionDetailsRoute(
         when (transactionState) {
             is DataState.Success -> {
                 val transactionData = transactionState.data
-                transactionDetailsState.setForTransactionDetailsScreen(
-                    editButton = if (transactionData.allowToUpdate)
-                        AppBarButton(
+                when (transactionData.allowToUpdate) {
+                    true -> {
+                        transactionDetailsState.dynamicBarButton(
                             text = context.getString(R.string.edit_transaction),
-                            click = {
+                            onClick = {
                                 transactionDetailsState.navigateToEditTransaction(
                                     accountId = transactionData.transaction.accountId,
                                     transactionId = transactionData.transaction.id
                                 )
                             },
-                        ) else null,
-                    backButton = true,
-                )
+                            positive = true,
+                            extraButton = DynamicBarAction.ExtraButton(
+                                AmIcons.ArrowBack, transactionDetailsState::navigatePopBack
+                            ),
+                        )
+                    }
+
+                    false -> {
+                        transactionDetailsState.dynamicBarMessage(
+                            text = "Transaction Details",
+                            positive = false,
+                            extraButton = DynamicBarAction.ExtraButton(
+                                AmIcons.ArrowBack, transactionDetailsState::navigatePopBack
+                            ),
+                        )
+                    }
+                }
             }
 
             DataState.Error, DataState.Loading -> {}

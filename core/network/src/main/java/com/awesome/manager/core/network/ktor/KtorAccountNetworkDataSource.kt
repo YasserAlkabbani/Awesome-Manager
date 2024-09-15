@@ -16,11 +16,11 @@ class KtorAccountNetworkDataSource @Inject constructor(private val httpClient: H
     AccountNetworkDataSource {
 
     override suspend fun returnUpdatedAccount(updatedAt: String): List<AccountNetworkResponse> =
-        httpClient.get(Account).body()
+        httpClient.get(Account.Get(updatedAt = "gt.$updatedAt")).body()
 
 
     override suspend fun upsertAccount(accountNetwork: AccountNetworkRequest): Unit =
-        httpClient.post(Account) {
+        httpClient.post(Account.Upsert()) {
             header("Prefer", "resolution=merge-duplicates")
             setBody(accountNetwork)
         }.body()

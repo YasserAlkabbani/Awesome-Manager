@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.appbar.AppBarButton
 import com.awesome.manager.core.designsystem.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
@@ -55,13 +54,13 @@ fun AccountEditorRoute(
                 EditorInputType.Create -> context.getString(R.string.create_account)
                 EditorInputType.Edit -> "${context.getString(R.string.update_account)} ${accountEditor.name}"
             }
-            accountEditorState.setForEditAccountScreen(
-                cancelButton = true,
-                saveButton = AppBarButton(
-                    text = buttonText, click = accountEditorState.onSave,
-                    errorMessage = errorMessage
-                ),
-            )
+//            accountEditorState.setForEditAccountScreen(
+//                cancelButton = true,
+//                saveButton = AppBarButton(
+//                    text = buttonText, click = accountEditorState.onSave,
+//                    errorMessage = errorMessage
+//                ),
+//            )
         }
     }
 
