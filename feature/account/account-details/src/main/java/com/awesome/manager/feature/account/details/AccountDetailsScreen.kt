@@ -15,11 +15,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
-import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
-import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -46,29 +43,29 @@ fun AccountDetailsRoute(
     val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
 
     LaunchedEffect(key1 = accountState, allowToUpdate) {
-        if (accountState is DataState.Success && allowToUpdate is DataState.Success) {
+        if (accountState is AmUIState.Success && allowToUpdate is AmUIState.Success) {
             val allowToEdit = allowToUpdate.data
             val account = accountState.data
-            when (allowToEdit) {
-                true -> accountDetailsState.dynamicBarMessage(
-                    "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
-                    false, null
-                )
-
-                else -> accountDetailsState.dynamicBarButton(
-                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
-                    positive = true,
-                    onClick = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
-                    extraButton = DynamicBarAction.ExtraButton(
-                        amIconsType = AmIcons.Edit,
-                        onClick = {
-                            NavigationDestination.TransactionEditor(
-                                accountId = account.id, transactionId = null
-                            )
-                        }
-                    )
-                )
-            }
+//            when (allowToEdit) {
+//                true -> accountDetailsState.dynamicFabMessage(
+//                    positive = false,
+//                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
+//                    dynamicFabExtraButton = DynamicFabExtraButton.None
+//                )
+//
+//                else -> accountDetailsState.dynamicFabButton(
+//                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
+//                    positive = true,
+//                    onClick = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
+//                    dynamicFabExtraButton = DynamicFabExtraButton.Edit(
+//                        onClick = {
+//                            NavigationDestination.TransactionEditor(
+//                                accountId = account.id, transactionId = null
+//                            )
+//                        }
+//                    )
+//                )
+//            }
         }
     }
 
@@ -77,17 +74,16 @@ fun AccountDetailsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
+fun AccountDetailsScreen(accountDetailsState: AccountDetailsActions) {
 
-    val isLoading: Boolean = accountDetailsState.isLoading.collectAsState().value
-    val accountState: DataState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
+    val accountState: AmUIState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
         accountDetailsState.amTransactions.collectAsLazyPagingItems()
 
     Column(Modifier.fillMaxSize()) {
 
         when (accountState) {
-            is DataState.Success -> {
+            is AmUIState.Success -> {
                 val account = accountState.data
                 val balanceDetails = account.balanceDetails
                 AccountCard(
@@ -108,13 +104,13 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
             }
 
-            DataState.Error, DataState.Loading -> {}
+            is AmUIState.Error, is AmUIState.Loading -> {}
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         AmLazyColumn(
-            isRefreshing = isLoading,
+            isRefreshing = true,
             onRefresh = accountDetailsState.refreshTransactions,
             content = {
                 items(

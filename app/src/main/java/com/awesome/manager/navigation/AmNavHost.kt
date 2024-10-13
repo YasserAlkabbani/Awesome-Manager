@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.ui.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.NavigationAction
 import com.awesome.manager.feature.account.accounts.AccountsRoute
 import com.awesome.manager.feature.account.details.AccountDetailsRoute
 import com.awesome.manager.feature.account.editor.AccountEditorRoute
@@ -24,7 +24,7 @@ import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
 fun AmNavHost(
     modifier: Modifier,
     navHostController: NavHostController,
-    startDistinction: NavigationDestination = NavigationDestination.Intro,
+    startDistinction: NavigationAction = NavigationAction.Intro,
     sendMainAction: (MainAction) -> Unit
 ) {
     NavHost(
@@ -32,32 +32,32 @@ fun AmNavHost(
         navController = navHostController,
         startDestination = startDistinction,
     ) {
-        composable<NavigationDestination.Intro> {
+        composable<NavigationAction.Intro> {
             IntroRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.Auth> {
+        composable<NavigationAction.Auth> {
             AuthRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.Home> {
+        composable<NavigationAction.Home> {
             HomeRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.Accounts> {
+        composable<NavigationAction.Accounts> {
             AccountsRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.Transactions> {
+        composable<NavigationAction.Transactions> {
             TransactionsRoute(sendMainAction = sendMainAction)
         }
 
-        composable<NavigationDestination.AccountDetails> {
+        composable<NavigationAction.AccountDetails> {
             AccountDetailsRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.TransactionDetails> {
+        composable<NavigationAction.TransactionDetails> {
             TransactionDetailsRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.AccountEditor> {
+        composable<NavigationAction.AccountEditor> {
             AccountEditorRoute(sendMainAction = sendMainAction)
         }
-        composable<NavigationDestination.TransactionEditor> {
+        composable<NavigationAction.TransactionEditor> {
             TransactionEditorRoute(sendMainAction = sendMainAction)
         }
     }
@@ -83,15 +83,15 @@ fun AmNavHost(
 //    }
 //}
 
-fun NavBackStackEntry.asNavigationDestination(): NavigationDestination? = when (destination.route) {
-    NavigationDestination.Intro::class.qualifiedName -> toRoute<NavigationDestination.Intro>()
-    NavigationDestination.Auth::class.qualifiedName -> toRoute<NavigationDestination.Auth>()
-    NavigationDestination.Home::class.qualifiedName -> toRoute<NavigationDestination.Home>()
-    NavigationDestination.Accounts::class.qualifiedName -> toRoute<NavigationDestination.Accounts>()
-    NavigationDestination.Transactions::class.qualifiedName -> toRoute<NavigationDestination.Transactions>()
-    NavigationDestination.AccountDetails::class.qualifiedName -> toRoute<NavigationDestination.AccountDetails>()
-    NavigationDestination.TransactionDetails::class.qualifiedName -> toRoute<NavigationDestination.TransactionDetails>()
-    NavigationDestination.AccountEditor::class.qualifiedName -> toRoute<NavigationDestination.AccountEditor>()
-    NavigationDestination.TransactionEditor::class.qualifiedName -> toRoute<NavigationDestination.TransactionEditor>()
+fun NavBackStackEntry.asNavigationDestination(): NavigationAction? = when (destination.route) {
+    NavigationAction.Intro::class.qualifiedName -> toRoute<NavigationAction.Intro>()
+    NavigationAction.Auth::class.qualifiedName -> toRoute<NavigationAction.Auth>()
+    NavigationAction.Home::class.qualifiedName -> toRoute<NavigationAction.Home>()
+    NavigationAction.Accounts::class.qualifiedName -> toRoute<NavigationAction.Accounts>()
+    NavigationAction.Transactions::class.qualifiedName -> toRoute<NavigationAction.Transactions>()
+    NavigationAction.AccountDetails::class.qualifiedName -> toRoute<NavigationAction.AccountDetails>()
+    NavigationAction.TransactionDetails::class.qualifiedName -> toRoute<NavigationAction.TransactionDetails>()
+    NavigationAction.AccountEditor::class.qualifiedName -> toRoute<NavigationAction.AccountEditor>()
+    NavigationAction.TransactionEditor::class.qualifiedName -> toRoute<NavigationAction.TransactionEditor>()
     else -> null
 }

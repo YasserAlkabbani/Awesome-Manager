@@ -100,16 +100,16 @@ object NetworkModule {
         HttpResponseValidator {
             handleResponseExceptionWithRequest { exception, request ->
                 throw when (exception) {
-                    is UnknownHostException -> NetworkError.InternalServerError
-                    is ConnectTimeoutException, is SocketTimeoutException -> NetworkError.ConnectionError
-                    is JsonConvertException -> NetworkError.ConvertDataError
-                    is ServerResponseException -> NetworkError.InternalServerError
-                    is RedirectResponseException -> NetworkError.ConnectionError
+                    is UnknownHostException -> NetworkError.InternalServerError()
+                    is ConnectTimeoutException, is SocketTimeoutException -> NetworkError.ConnectionError()
+                    is JsonConvertException -> NetworkError.ConvertDataError()
+                    is ServerResponseException -> NetworkError.InternalServerError()
+                    is RedirectResponseException -> NetworkError.ConnectionError()
                     is ClientRequestException -> when (exception.response.status) {
-                        Unauthorized -> NetworkError.Unauthorized
-                        Forbidden -> NetworkError.Forbidden
-                        RequestTimeout -> NetworkError.RequestTimeout
-                        TooManyRequests -> NetworkError.TooManyRequests
+                        Unauthorized -> NetworkError.Unauthorized()
+                        Forbidden -> NetworkError.Forbidden()
+                        RequestTimeout -> NetworkError.RequestTimeout()
+                        TooManyRequests -> NetworkError.TooManyRequests()
                         BadRequest -> NetworkError.BadRequest(
                             exception.response.body<ErrorResponse>().getErrorMessage()
                         )
@@ -119,7 +119,7 @@ object NetworkModule {
                         )
                     }
 
-                    else -> NetworkError.ConnectionError
+                    else -> NetworkError.ConnectionError()
                 }
             }
         }

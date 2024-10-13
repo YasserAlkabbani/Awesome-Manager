@@ -13,7 +13,7 @@ class TransactionsViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    val transactionsState: TransactionsState = TransactionsState(
+    val transactionsState: TransactionsActions = TransactionsActions(
         refreshTransactions = ::refreshTransactions,
         searchForTransaction = {
             transactionRepository.returnTransactions(
@@ -26,7 +26,7 @@ class TransactionsViewModel @Inject constructor(
     private fun refreshTransactions() {
         viewModelScope.launch {
             transactionsState.apply {
-                transactionRepository::refreshTransactions.processWitLoading()
+                transactionRepository::refreshTransactions
             }
         }
     }

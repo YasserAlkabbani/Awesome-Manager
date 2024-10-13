@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmSurface
 
 @Composable

@@ -1,13 +1,20 @@
 package com.awesome.manager.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
+import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
@@ -18,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,21 +35,24 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
+import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
-import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
-import com.awesome.manager.core.designsystem.actions.main.BottomSheetAction
-import com.awesome.manager.core.designsystem.actions.main.MainAction
-import com.awesome.manager.core.designsystem.actions.main.NavigationAction
-import com.awesome.manager.core.designsystem.component.AmNavigationCustomItem
-import com.awesome.manager.core.designsystem.component.AmDynamicBottomBar
-import com.awesome.manager.core.designsystem.actions.navigation.MainDistillation
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
-import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.AmSize
+import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.ui.actions.main.DynamicFabAction
+import com.awesome.manager.core.ui.actions.main.BottomSheetAction
+import com.awesome.manager.core.ui.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.NavigationAction
+import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFab
+import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicBarLoading
+import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicText
+import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFabExtraButton
+import com.awesome.manager.core.designsystem.component.dynamic_bar.AmFabButton
+import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.ui.actions.main.ErrorAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
-import com.awesome.manager.core.ui.bottom_sheets.BottomSheetSearchWithContent
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAccountCreated
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetAuthError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetConnectionError
@@ -49,7 +60,9 @@ import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestored
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
 import com.awesome.manager.navigation.AmNavHost
+import com.awesome.manager.navigation.MainDestination
 import com.awesome.manager.navigation.asNavigationDestination
+import com.awesome.manager.navigation.isMainDistinction
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -68,7 +81,7 @@ fun AmApp() {
     val loginState = mainActivityState.isLogin.collectAsState().value
 
 
-    val appBarSate = remember { mutableStateOf<DynamicBarAction?>(null) }
+    val dynamicFabState = remember { mutableStateOf<DynamicFabAction>(DynamicFabAction.None) }
     val bottomSheetSate = remember { mutableStateOf<BottomSheetAction>(BottomSheetAction.Dismiss) }
 
     val mainAction = mainActivityState.mainAction.collectAsState().value
@@ -77,37 +90,49 @@ fun AmApp() {
             mainActivityState.doneMainAction()
             Timber.d("TEST_MAIN_ACTION $mainAction")
             when (mainAction) {
-                is DynamicBarAction -> appBarSate.value = mainAction
+                is DynamicFabAction -> dynamicFabState.value = mainAction
                 is BottomSheetAction -> {
                     when (mainAction) {
                         is BottomSheetAction.Dismiss -> launch { sheetState.hide() }
                             .invokeOnCompletion { bottomSheetSate.value = mainAction }
 
-                        is BottomSheetAction.Open -> bottomSheetSate.value = mainAction
+                        else -> bottomSheetSate.value = mainAction
                     }
                 }
 
                 is NavigationAction -> {
+                    val mainDestinationNavOption =
+                        when (mainAction.isMainDistinction()) {
+                            true -> navOptions {
+                                popUpTo(NavigationAction.Home) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+
+                            false -> null
+                        }
                     when (mainAction) {
                         NavigationAction.NavigateUp -> navHostController.navigateUp()
-                        is NavigationAction.Navigate -> {
-                            val mainDestinationNavOption =
-                                when (mainAction.navigationDestination.isMainDistinction()) {
-                                    true -> navOptions {
-                                        popUpTo(NavigationDestination.Home) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                        else -> navHostController.navigate(
+                            route = mainAction,
+                            navOptions = mainDestinationNavOption
+                        )
+                    }
+                }
 
-                                    false -> null
-                                }
-                            navHostController.navigate(
-                                route = mainAction.navigationDestination,
-                                navOptions = mainDestinationNavOption
-                            )
-                        }
+                is ErrorAction -> {
+                    Timber.d("TEST_MAIN_ACTION ${mainAction.amUIError}")
+                    when (mainAction.amUIError) {
+                        is AmUIError.BadRequest -> Unit
+                        is AmUIError.OtherUIError -> Unit
+                        AmUIError.ConnectionUIError -> Unit
+                        AmUIError.NoDataError -> Unit
+                        AmUIError.NoError -> Unit
+                        AmUIError.PoorConnection -> Unit
+                        AmUIError.Unauthorized -> Unit
+                        AmUIError.UnknownUIError -> Unit
                     }
                 }
             }
@@ -123,22 +148,22 @@ fun AmApp() {
         loginState?.let {
             when (loginState) {
                 true -> when (currentNavigationDestination) {
-                    NavigationDestination.Auth -> {
+                    NavigationAction.Auth -> {
                         val homeNavOption = navOptions {
-                            popUpTo(NavigationDestination.Auth) { this.inclusive = true }
+                            popUpTo(NavigationAction.Auth) { this.inclusive = true }
                         }
                         navHostController.navigate(
-                            route = NavigationDestination.Home,
+                            route = NavigationAction.Home,
                             navOptions = homeNavOption
                         )
                     }
 
-                    NavigationDestination.Intro -> {
+                    NavigationAction.Intro -> {
                         val navOption = navOptions {
-                            popUpTo(NavigationDestination.Intro) { this.inclusive = true }
+                            popUpTo(NavigationAction.Intro) { this.inclusive = true }
                         }
                         navHostController.navigate(
-                            route = NavigationDestination.Home,
+                            route = NavigationAction.Home,
                             navOptions = navOption
                         )
                     }
@@ -148,23 +173,23 @@ fun AmApp() {
 
                 false -> {
                     when (currentNavigationDestination) {
-                        NavigationDestination.Auth -> {}
-                        NavigationDestination.Intro -> {
+                        NavigationAction.Auth -> {}
+                        NavigationAction.Intro -> {
                             val navOption = navOptions {
-                                popUpTo(NavigationDestination.Intro) { this.inclusive = true }
+                                popUpTo(NavigationAction.Intro) { this.inclusive = true }
                             }
                             navHostController.navigate(
-                                route = NavigationDestination.Auth,
+                                route = NavigationAction.Auth,
                                 navOptions = navOption
                             )
                         }
 
-                        NavigationDestination.Home -> {
+                        NavigationAction.Home -> {
                             val authNavOption = navOptions {
-                                popUpTo(NavigationDestination.Home) { this.inclusive = true }
+                                popUpTo(NavigationAction.Home) { this.inclusive = true }
                             }
                             navHostController.navigate(
-                                route = NavigationDestination.Intro,
+                                route = NavigationAction.Intro,
                                 navOptions = authNavOption
                             )
                         }
@@ -180,106 +205,134 @@ fun AmApp() {
     LaunchedEffect(key1 = currentNavigationDestination) {
         currentNavigationDestination?.let {
             when (currentNavigationDestination) {
-                NavigationDestination.Auth -> Unit
-                NavigationDestination.Intro -> Unit
+                NavigationAction.NavigateUp -> Unit
+                NavigationAction.Auth -> Unit
+                NavigationAction.Intro -> Unit
 
-                NavigationDestination.Home -> mainActivityState.dynamicBarNavigation(
-                    extraButton = DynamicBarAction.ExtraButton(AmIcons.More) {
-                        currentUserEmail?.let { email ->
-                            mainActivityState.showProfileBottomSheet(
-                                email = email, logout = mainActivityState.logout
-                            )
-                        }
-                    },
-                    addButton = null
-                )
+                NavigationAction.Home -> Unit
+//                    mainActivityState.dynamicBarNavigation(
+//                    extraButton = ExtraButton.More {
+//                        currentUserEmail?.let { email ->
+//                            mainActivityState.showProfileBottomSheet(
+//                                email = email, logout = mainActivityState.logout
+//                            )
+//                        }
+//                    },
+//                    addButton = ExtraButton.None
+//                )
 
-                NavigationDestination.Accounts -> mainActivityState.dynamicBarNavigation(
-                    extraButton = null,
-                    addButton = DynamicBarAction.ExtraButton(
-                        AmIcons.AccountAdd, mainActivityState::navigateToCreateAccount
-                    )
-                )
+                NavigationAction.Accounts -> Unit
+//                    mainActivityState.dynamicBarNavigation(
+//                    extraButton = ExtraButton.None,
+//                    addButton = ExtraButton.AddAccount(mainActivityState::navigateToCreateAccount)
+//                )
 
-                NavigationDestination.Transactions -> mainActivityState.dynamicBarNavigation(
-                    extraButton = null,
-                    addButton = DynamicBarAction.ExtraButton(AmIcons.TransactionAdd) {
-                        mainActivityState.navigateToCreateTransaction(null)
-                    }
-                )
+                NavigationAction.Transactions -> Unit
+//                    mainActivityState.dynamicBarNavigation(
+//                    extraButton = ExtraButton.None,
+//                    addButton = ExtraButton.AddTransaction {
+//                        mainActivityState.navigateToCreateTransaction(null)
+//                    }
+//                )
 
-                is NavigationDestination.AccountDetails -> Unit
-                is NavigationDestination.AccountEditor -> Unit
-                is NavigationDestination.TransactionDetails -> Unit
-                is NavigationDestination.TransactionEditor -> Unit
+                is NavigationAction.AccountDetails -> Unit
+                is NavigationAction.AccountEditor -> Unit
+                is NavigationAction.TransactionDetails -> Unit
+                is NavigationAction.TransactionEditor -> Unit
             }
         }
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    bottomSheetSate.value.takeIf { it !is BottomSheetAction.Dismiss }?.let {bottomSheetAction ->
+        Timber.d("TEST_MAIN_ACTION BOTTOM_SHEET SHOW $bottomSheetAction")
+        ModalBottomSheet(
+            modifier = Modifier
+                .padding(horizontal = AmPadding.SMALL.value)
+                .requiredHeightIn(max = 500.dp),
+            onDismissRequest = mainActivityState::dismissBottomSheet,
+            sheetState = sheetState,
+            properties = ModalBottomSheetProperties(),
+            content = {
+                Column(
+                    modifier = Modifier.padding(6.dp),
+                    content = { bottomSheetAction.Content() }
+                )
+            }
+        )
+    }
 
-    bottomSheetSate.value.let { it as? BottomSheetAction.Open }
-        ?.let { openBottomSheet ->
-            Timber.d("TEST_MAIN_ACTION BOTTOM_SHEET SHOW $openBottomSheet")
-            ModalBottomSheet(
-                modifier = Modifier
-                    .padding(horizontal = AmPadding.SMALL.value)
-                    .requiredHeightIn(max = 500.dp),
-                onDismissRequest = mainActivityState::dismissBottomSheet,
-                sheetState = sheetState,
-                properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = openBottomSheet.isDismissible),
-                content = {
-                    Column(
-                        modifier = Modifier.padding(6.dp),
-                        content = { openBottomSheet.Content() }
-                    )
-                }
-            )
-        }
-
-    AppScreen(
-        navHostController = navHostController,
-        currentNavigationDestination = currentNavigationDestination,
-        dynamicBarAction = appBarSate.value, updateMainAction = mainActivityState::updateMainState,
-    )
+    dynamicFabState.value.let { dynamicFab ->
+        AppScreen(
+            navHostController = navHostController,
+            currentNavigation = currentNavigationDestination,
+            dynamicFabAction = dynamicFab,
+            updateMainAction = mainActivityState::updateMainState,
+        )
+    }
 
 }
 
 @Composable
 fun AppScreen(
     navHostController: NavHostController,
-    currentNavigationDestination: NavigationDestination?,
-    dynamicBarAction: DynamicBarAction?, updateMainAction: (MainAction) -> Unit,
+    currentNavigation: NavigationAction?,
+    dynamicFabAction: DynamicFabAction, updateMainAction: (MainAction) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            floatingActionButton = {
-                dynamicBarAction?.let {
-                    AmDynamicBottomBar(
-                        modifier = Modifier,
-                        bottomBarItems = {
-                            MainDistillation.entries
-                                .forEach { destination ->
-                                    val navigationDestination = destination.navigationDestination
-                                    AmNavigationCustomItem(
-                                        isSelected = navigationDestination == currentNavigationDestination,
-                                        selectedIcon = destination.selectedAmIconsType,
-                                        unSelectedIcon = destination.unSelectedAmIconsType,
-                                        onSelect = {
-                                            updateMainAction(
-                                                navigationDestination.asNavigation()
-                                            )
-                                        }
+            floatingActionButton = { dynamicFabAction.Content() },
+            floatingActionButtonPosition = FabPosition.End,
+            bottomBar = {
+                AnimatedVisibility(currentNavigation?.isMainDistinction() == true) {
+                    NavigationBar(
+                        modifier = Modifier.height(60.dp)
+                    ) {
+//                    val navigateUp = { updateMainAction(NavigationAction.NavigateUp) }
+//                    DynamicBarNavigation(
+//                        extraButton = this.extraButton.asDynamicBarButtonData(navigateUp),
+//                        navigation = {
+//                            MainDestination.entries.forEach { destination ->
+//                                val navigationDestination =
+//                                    destination.navigationDestination
+//                                AmNavigationItem(
+//                                    isSelected = navigationDestination == currentNavigationDestination,
+//                                    selectedIcon = destination.selectedAmIconsType,
+//                                    unSelectedIcon = destination.unSelectedAmIconsType,
+//                                    onSelect = {
+//                                        updateMainAction(
+//                                            navigationDestination.asNavigation()
+//                                        )
+//                                    },
+//                                    label = ""
+//                                )
+//                            }
+//                        },
+//                        addButton = extraButton.asDynamicBarButtonData()
+//                    )
+                        MainDestination.entries.forEach { destination ->
+                            val navigationDestination = destination.navigationDestination
+                            NavigationBarItem(
+                                modifier = Modifier.height(40.dp),
+                                icon = {
+                                    AmIcon(
+                                        modifier = Modifier.height(20.dp),
+                                        amIconsType = if (navigationDestination == currentNavigation)
+                                            destination.selectedAmIconsType else destination.unSelectedAmIconsType
                                     )
-                                }
-                        },
-                        dynamicBarAction = dynamicBarAction
-                    )
+                                },
+                                label = { AmText(text = "LABEL") },
+                                selected = navigationDestination == currentNavigation,
+                                onClick = {
+                                    updateMainAction(navigationDestination)
+                                },
+                            )
+                        }
+                    }
                 }
-            },
-            floatingActionButtonPosition = FabPosition.Center,
+            }
         ) { padding ->
             AmNavHost(
                 modifier = Modifier
@@ -293,21 +346,63 @@ fun AppScreen(
 }
 
 @Composable
-private fun BottomSheetAction.Open.Content(): Unit =
-    content.let { bottomSheetContent ->
-        when (bottomSheetContent) {
-            is BottomSheetContent.AccountCreated -> BottomSheetAccountCreated(bottomSheetContent)
-            is BottomSheetContent.AuthError -> BottomSheetAuthError(bottomSheetContent)
-            is BottomSheetContent.ConnectionError -> BottomSheetConnectionError(bottomSheetContent)
-            is BottomSheetContent.CustomError -> BottomSheetCustomError(bottomSheetContent)
-            is BottomSheetContent.PasswordRested -> BottomSheetPasswordRestored(bottomSheetContent)
-            is BottomSheetContent.Profile -> BottomSheetProfile(bottomSheetContent)
-            is BottomSheetContent.UnknownError -> BottomSheetUnknownError(bottomSheetContent)
-            is BottomSheetContent.SearchWithContent -> BottomSheetSearchWithContent(
-                bottomSheetContent
-            )
+private fun BottomSheetAction.Content(): Unit =
+    when (this) {
+        is BottomSheetAction.AccountCreated -> BottomSheetAccountCreated()
+        is BottomSheetAction.AuthError -> BottomSheetAuthError()
+        is BottomSheetAction.ConnectionError -> BottomSheetConnectionError()
+        is BottomSheetAction.CustomError -> BottomSheetCustomError()
+        is BottomSheetAction.PasswordRested -> BottomSheetPasswordRestored()
+        is BottomSheetAction.Profile -> BottomSheetProfile()
+        is BottomSheetAction.UnknownError -> BottomSheetUnknownError()
+        is BottomSheetAction.PickDate -> BottomSheetDatePicker()
+        is BottomSheetAction.PickRangeDate -> BottomSheetDateRangePicker()
+        BottomSheetAction.Dismiss -> Unit
+    }
 
-            is BottomSheetContent.PickDate -> BottomSheetDatePicker(bottomSheetContent)
-            is BottomSheetContent.PickRangeDate -> BottomSheetDateRangePicker(bottomSheetContent)
+@Composable
+private fun DynamicFabAction.Content(): Unit =
+    AnimatedContent(
+        targetState = this@Content,
+        label = "DYNAMIC_BAR"
+    ) { dynamicFabAction ->
+        Row(
+            modifier = Modifier.height(AmSize.XX_LARGE.value),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            when (dynamicFabAction) {
+
+                DynamicFabAction.None -> {}
+
+                DynamicFabAction.Loading -> {
+                    AmDynamicBarLoading()
+                }
+
+                is DynamicFabAction.Fab -> {
+                    AmDynamicFab(dynamicFabAction.dynamicFab)
+                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
+                        AmDynamicFabExtraButton(dynamicFabExtraButton)
+                    }
+                }
+
+                is DynamicFabAction.Button -> {
+                    AmFabButton(dynamicFabAction.dynamicFabButton)
+                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
+                        AmDynamicFabExtraButton(dynamicFabExtraButton)
+                    }
+                }
+
+                is DynamicFabAction.Message -> {
+                    AmDynamicText(dynamicFabAction.dynamicFabText)
+                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
+                        AmDynamicFabExtraButton(dynamicFabExtraButton)
+                    }
+                }
+
+
+            }
         }
     }
+
+

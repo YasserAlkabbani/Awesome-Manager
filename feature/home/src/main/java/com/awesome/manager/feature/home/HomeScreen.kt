@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.data.states.DataState
+import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
@@ -47,10 +47,10 @@ fun HomeRoute(
 
 
 @Composable
-fun HomeScreen(homeState: HomeState) {
+fun HomeScreen(homeState: HomeActions) {
 
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
-        is DataState.Success -> LazyColumn(
+        is AmUIState.Success -> LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
             contentPadding = PaddingValues(
@@ -82,7 +82,7 @@ fun HomeScreen(homeState: HomeState) {
                 )
             })
 
-        DataState.Error -> {
+        is AmUIState.Error -> {
             Column(
                 modifier = Modifier
                     .padding(AmPadding.XX_LARGE.value)
@@ -101,7 +101,7 @@ fun HomeScreen(homeState: HomeState) {
             }
         }
 
-        DataState.Loading -> {}
+        is AmUIState.Loading -> {}
     }
 }
 
@@ -157,6 +157,6 @@ fun HomeCard(
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeState(balanceDetails = MutableStateFlow(DataState.Success(listOf()))))
+    HomeScreen(HomeActions(balanceDetails = MutableStateFlow(AmUIState.Success(listOf()))))
 }
 

@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class AmSize(val value: Dp) {
-    XX_SMALL(12.dp), X_SMALL(20.dp), MID_SMALL(25.dp), SMALL(30.dp), MEDIUM(40.dp),
+    XXX_SMALL(6.dp),XX_SMALL(12.dp), X_SMALL(20.dp), MID_SMALL(25.dp), SMALL(30.dp), MEDIUM(40.dp),
     LARGE(50.dp), X_LARGE(54.dp), XX_LARGE(80.dp), XXX_LARGE(120.dp)
 }
 

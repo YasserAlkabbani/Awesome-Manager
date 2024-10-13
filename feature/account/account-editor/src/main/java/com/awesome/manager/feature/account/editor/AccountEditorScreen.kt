@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
@@ -45,7 +45,7 @@ fun AccountEditorRoute(
     val accountEditorData = accountEditorState.accountEditorData.collectAsState().value
     val context: Context = LocalContext.current
     LaunchedEffect(key1 = accountEditorData) {
-        if (accountEditorData is DataState.Success) {
+        if (accountEditorData is AmUIState.Success) {
             val accountEditor = accountEditorData.data
             val isValidInput = accountEditor.validateAccountData != null
             val errorMessage =
@@ -70,13 +70,13 @@ fun AccountEditorRoute(
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState: AccountEditorState) {
+fun AccountEditorScreen(accountEditorState: AccountEditorActions) {
 
     val context = LocalContext.current
     val accountData = accountEditorState.accountEditorData.collectAsState().value
     val currencies = accountEditorState.currencies.collectAsState().value
     val currencyChipData = remember(currencies) {
-        currencies.map {
+        (currencies as? AmUIState.Success)?.data.orEmpty().map {
             getChipData(id = it.id, title = it.currencyName, data = it)
         }
     }
@@ -87,7 +87,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
         }
     }
 
-    if (accountData is DataState.Success) {
+    if (accountData is AmUIState.Success) {
         val account = accountData.data
         Column(
             modifier = Modifier
@@ -102,7 +102,7 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                 Spacer(modifier = Modifier.width(12.dp))
                 AmTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true, initTextValue = account.name,
+                    singleLine = true, text = "",
                     label = "Account", icon = AmIcons.Title, hint = "Account Name",
                     onTextChange = accountEditorState::updateName
                 )

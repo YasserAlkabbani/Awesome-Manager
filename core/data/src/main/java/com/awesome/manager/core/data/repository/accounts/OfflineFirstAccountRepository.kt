@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import com.awesome.manager.core.data.extention.amInsert
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.extention.asAmResult
-import com.awesome.manager.core.data.extention.asDateTime
+import com.awesome.manager.core.common.asDateTimeString
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork
@@ -39,7 +39,7 @@ class OfflineFirstAccountRepository @Inject constructor(
 
     override suspend fun refreshAccounts() = amRequest {
         val lastUpdateAccountTime = (accountDao.returnLastUpdatedAccount()?.updatedAt ?: 0) + 1
-        val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTime().toString()
+        val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTimeString()
         val accountsEntity = accountNetworkDataSource
             .returnUpdatedAccount(lastUpdatedAccountDateTime).map { it.asEntity() }
         accountDao.upsertAccount(accountsEntity)

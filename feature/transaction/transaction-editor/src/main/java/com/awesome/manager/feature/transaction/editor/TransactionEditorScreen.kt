@@ -22,8 +22,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -43,7 +43,7 @@ fun TransactionEditorRoute(
 ) {
 
     val context = LocalContext.current
-    val transactionEditorState: TransactionEditorState =
+    val transactionEditorState: TransactionEditorActions =
         transactionEditorViewModel.transactionEditorState
 
     val mainAction = transactionEditorState.mainAction.collectAsState().value
@@ -59,25 +59,25 @@ fun TransactionEditorRoute(
     LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
         if (searchForAnAccountBottomSheet) {
             transactionEditorState.doneSearchForAnAccountBottomSheet()
-            transactionEditorState.showSearchWithContentBottomSheet(
-                searchLabel = searchLabel,
-                content = {
-                    AccountLazyColumn(
-                        accountsLazyPaging = accountsLazyPaging,
-                        onSelectAccount = transactionEditorState::selectAccount,
-                        onDismiss = transactionEditorState::dismissBottomSheet
-                    )
-                },
-                onReSearch = transactionEditorState::updateSearchKey,
-                onSearchDone = transactionEditorState::dismissBottomSheet,
-                initSearch = ""
-            )
+//            transactionEditorState.showSearchWithContentBottomSheet(
+//                searchLabel = searchLabel,
+//                content = {
+//                    AccountLazyColumn(
+//                        accountsLazyPaging = accountsLazyPaging,
+//                        onSelectAccount = transactionEditorState::selectAccount,
+//                        onDismiss = transactionEditorState::dismissBottomSheet
+//                    )
+//                },
+//                onReSearch = transactionEditorState::updateSearchKey,
+//                onSearchDone = transactionEditorState::dismissBottomSheet,
+//                initSearch = ""
+//            )
         }
     })
 
     val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
     LaunchedEffect(key1 = transactionData) {
-        if (transactionData is DataState.Success) {
+        if (transactionData is AmUIState.Success) {
             val transactionEditor = transactionData.data
             val isValidateInput = transactionEditor.validateTransactionData != null
             val errorMessage =
@@ -116,13 +116,13 @@ fun TransactionEditorRoute(
 
 @Composable
 fun TransactionEditorScreen(
-    transactionEditorState: TransactionEditorState,
+    transactionEditorState: TransactionEditorActions,
 ) {
 
     val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value
     val context = LocalContext.current
 
-    if (transactionInput is DataState.Success) {
+    if (transactionInput is AmUIState.Success) {
 
         val transaction = transactionInput.data
 
@@ -161,18 +161,17 @@ fun TransactionEditorScreen(
             AmTextField(
                 hint = "Title", icon = AmIcons.Title, label = "Transaction Title",
                 onTextChange = transactionEditorState::updateTitle,
-                initTextValue = transaction.title,
                 keyboardActions = KeyboardActions(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                text = ""
             )
             AmTextField(
                 hint = "5000.0", icon = AmIcons.Money, label = "Amount",
-                initTextValue = transaction.amount.toString(),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next, keyboardType = KeyboardType.Number,
                 ),
-                reformatText = { value ->
-                    value
+                onTextChange = {value->
+                    val formattedValue=value
                         .filter { it.isDigit() || it == '.' }
                         .let {
                             if (value.count { it == '.' } < 2) it else value.substringBeforeLast(".")
@@ -184,14 +183,16 @@ fun TransactionEditorScreen(
                                 splitNumber.getOrNull(1)?.take(3)?.let { ".".plus(it) }.orEmpty()
                             "$newBefore$newAfter"
                         }
-                },
-                onTextChange = transactionEditorState::updateAmount,
+                    transactionEditorState.updateAmount(formattedValue)
+                }
+                        ,
+                text = ""
             )
             AmTextField(
                 hint = "Subtitle", label = "Transaction Subtitle",
                 icon = AmIcons.SubTitle, singleLine = false,
                 onTextChange = transactionEditorState::updateSubTitle,
-                initTextValue = transaction.subtitle
+                text = ""
             )
 
             AmFilledTonalIconWithTextButton(

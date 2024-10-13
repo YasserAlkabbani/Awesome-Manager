@@ -42,15 +42,16 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmTextField(
     modifier: Modifier = Modifier,
-    initTextValue: String = "", onTextChange: (String) -> Unit,
-    icon: AmIconsType? = null, label: String? = null, hint: String,
+    onTextChange: (String) -> Unit,
+    text:String,
+    icon: AmIconsType? = null,
+    label: String? = null,
+    hint: String,
     singleLine: Boolean = true,
-    enabled: Boolean = true, reformatText: (String) -> String = { it },
+    enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-
-    val text = rememberSaveable { mutableStateOf(initTextValue) }
 
     val isFocus = remember { mutableStateOf(false) }
     val color = animateColorAsState(
@@ -90,13 +91,10 @@ fun AmTextField(
                         color = MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.small
                     ),
-                value = text.value,
+                value = text,
                 enabled = enabled,
                 placeholder = { AmText(text = hint) },
-                onValueChange = {
-                    text.value = reformatText(it)
-                    onTextChange(it)
-                },
+                onValueChange = onTextChange,
                 textStyle = MaterialTheme.typography.titleMedium,
                 shape = MaterialTheme.shapes.medium,
                 singleLine = singleLine,
@@ -212,7 +210,8 @@ fun AmTextFieldPreview() {
         hint = "HINT",
         icon = AmIcons.Email,
         label = "LABEL",
-        onTextChange = {}
+        onTextChange = {},
+        text = ""
     )
 }
 

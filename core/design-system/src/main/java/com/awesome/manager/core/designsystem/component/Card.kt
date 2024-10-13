@@ -8,14 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.component.text.AmText
 
 @Composable
 fun AmCard(
@@ -55,7 +58,8 @@ fun AmCard(
                     }
                 },
                 colors = CardDefaults.cardColors(containerColor = cardColors),
-                shape = shape
+                shape = shape,
+//                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
             )
         }
 
@@ -85,4 +89,20 @@ fun AmCard(
     }
 
 
+}
+
+@Preview
+@Composable
+fun AmCardPreview() {
+    AmCard(
+        content = {
+            Column {
+                AmText(text = "TEXT 1")
+                AmText(text = "TEXT 2")
+                AmText(text = "TEXT 3")
+            }
+        },
+        loading = true,
+        positive = true
+    )
 }

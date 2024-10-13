@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
@@ -18,24 +17,24 @@ import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButt
 import com.awesome.manager.core.ui.R
 
 @Composable
-fun BottomSheetProfile(profile: BottomSheetContent.Profile) {
-    AmSurface(modifier = Modifier.padding(vertical = 5.dp), positive = null) {
-        AmTextWithLabel(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(R.string.email),
-            text = profile.email, positive = null
-        )
-        Spacer(modifier = Modifier.height(30.dp))
-        AmFilledTonalButton(
-            modifier = Modifier.fillMaxWidth(),
-            text = "LOGOUT", onClick = profile.logout
-        )
-    }
+fun BottomSheetProfile() {
+//    AmSurface(modifier = Modifier.padding(vertical = 5.dp), positive = null) {
+//        AmTextWithLabel(
+//            modifier = Modifier.fillMaxWidth(),
+//            label = stringResource(R.string.email),
+//            text = profile.email, positive = null
+//        )
+//        Spacer(modifier = Modifier.height(30.dp))
+//        AmFilledTonalButton(
+//            modifier = Modifier.fillMaxWidth(),
+//            text = "LOGOUT", onClick = profile.logout
+//        )
+//    }
 }
 
 
 @Preview
 @Composable
 fun BottomSheetProfilePreview() {
-    BottomSheetProfile(BottomSheetContent.Profile("YASSER@GMAIL.COM", {}))
+//    BottomSheetProfile(com.awesome.manager.core.data.model.actions.bottomsheet.BottomSheetContent.Profile("YASSER@GMAIL.COM", {}))
 }

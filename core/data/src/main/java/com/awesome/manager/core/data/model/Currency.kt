@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.data.extention.asTimestamp
+import com.awesome.manager.core.common.asTimestamp
 import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.database.model.CurrencyEntityWithData
 import com.awesome.manager.core.model.AmCurrency

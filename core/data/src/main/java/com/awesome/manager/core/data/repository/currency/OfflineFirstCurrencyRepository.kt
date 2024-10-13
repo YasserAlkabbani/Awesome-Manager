@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.currency
 
 import com.awesome.manager.core.data.extention.amRequest
-import com.awesome.manager.core.data.extention.asDateTime
+import com.awesome.manager.core.common.asDateTimeString
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.CurrencyDao
@@ -22,7 +22,7 @@ class OfflineFirstCurrencyRepository @Inject constructor(
         amRequest {
             val lastUpdateCurrencyTime =
                 (currencyDao.returnLastUpdatedCurrencyType()?.updatedAt ?: 0) + 1
-            val lastUpdatedCurrencyDateTime = lastUpdateCurrencyTime.asDateTime().toString()
+            val lastUpdatedCurrencyDateTime = lastUpdateCurrencyTime.asDateTimeString()
             val currencies = currencyNetworkDataSource
                 .returnUpdatedCurrency(lastUpdatedCurrencyDateTime).map { it.asEntity() }
             currencyDao.upsertCurrency(currencies)

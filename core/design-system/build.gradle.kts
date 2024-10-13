@@ -18,4 +18,6 @@ dependencies {
 
     debugApi(libs.compose.ui.tooling)
 
+    api(project(":core:common"))
+
 }

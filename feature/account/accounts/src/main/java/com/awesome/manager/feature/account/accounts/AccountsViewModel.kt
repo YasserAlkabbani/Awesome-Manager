@@ -12,7 +12,7 @@ class AccountsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
 ) : ViewModel() {
 
-    val accountsState: AccountsState = AccountsState(
+    val accountsState: AccountsActions = AccountsActions(
         searchForAccounts = {
             accountRepository.returnAccounts(this.searchKey)
         },
@@ -22,7 +22,7 @@ class AccountsViewModel @Inject constructor(
     private fun refreshAccounts() {
         viewModelScope.launch {
             accountsState.apply {
-                accountRepository::refreshAccounts.processWitLoading()
+                accountRepository::refreshAccounts
             }
         }
     }

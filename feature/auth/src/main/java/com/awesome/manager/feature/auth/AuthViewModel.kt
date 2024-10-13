@@ -1,8 +1,11 @@
 package com.awesome.manager.feature.auth
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.data.repository.auth.AuthRepository
+import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -11,23 +14,35 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val authScreenState: AuthScreenState = AuthScreenState(
-        login = ::login, register = ::register, resetPassword = ::resetPassword,
+    val authScreenState: AuthScreenActions = AuthScreenActions(
+        login = ::login,
+        register = ::register,
+        resetPassword = ::resetPassword,
+        savedStateHandle = savedStateHandle,
     )
-    private val authData: AmAuthData get() = authScreenState.authData.value
-    private val isValidateData: Boolean get() = authData.validateData
-    private val email: String get() = authData.email
-    private val password: String get() = authData.password
+
+    private val errorState = authScreenState.syncValidation(viewModelScope)
+    private val isValidateData: Boolean
+        get() = errorState.value
 
     private fun login() {
         viewModelScope.launch {
             if (isValidateData) {
-                authRepository.login(email, password).collectLatest { amResult ->
-                    authScreenState.updateStateBasedOnResult(
-                        amResult = amResult, onSuccess = {},
-                    )
+                authScreenState.apply {
+                    authRepository
+                        .login(email = email.value, password = password.value)
+                        .processRequest(onSuccess = {}, onError = {
+                            when (it) {
+                                is AmUIError.BadRequest -> dynamicFabMessage(
+                                    dynamicFabText = DynamicFabText.InvalidLoginCredential
+                                )
+
+                                else -> addError(it)
+                            }
+                        })
                 }
             }
         }
@@ -36,13 +51,11 @@ class AuthViewModel @Inject constructor(
     private fun register() {
         viewModelScope.launch {
             if (isValidateData) {
-                authRepository.signUp(email = email, password = password)
-                    .collectLatest { amResult ->
-                        authScreenState.updateStateBasedOnResult(
-                            amResult = amResult,
-                            onSuccess = authScreenState::showAccountCreatedBottomSheet,
-                        )
-                    }
+                authScreenState.apply {
+                    authRepository
+                        .signUp(email = email.value, password = password.value)
+                        .processRequest(onSuccess = authScreenState::showAccountCreatedBottomSheet)
+                }
             }
         }
     }
@@ -50,11 +63,10 @@ class AuthViewModel @Inject constructor(
     private fun resetPassword() {
         viewModelScope.launch {
             if (isValidateData) {
-                authRepository.signUp(email, password).collectLatest { amResult ->
-                    authScreenState.updateStateBasedOnResult(
-                        amResult = amResult,
-                        onSuccess = authScreenState::showPasswordRestedBottomSheet,
-                    )
+                authScreenState.apply {
+                    authRepository
+                        .signUp(email = email.value, password = password.value)
+                        .processRequest(onSuccess = authScreenState::showPasswordRestedBottomSheet)
                 }
             }
         }

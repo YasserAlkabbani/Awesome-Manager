@@ -24,7 +24,6 @@ fun AmNavigationBar(
 
 @Composable
 fun RowScope.AmNavigationItem(
-    modifier: Modifier,
     isSelected: Boolean,
     selectedIcon: AmIconsType,
     unSelectedIcon: AmIconsType,
@@ -32,7 +31,7 @@ fun RowScope.AmNavigationItem(
     onSelect: () -> Unit,
 ) {
     NavigationBarItem(
-        modifier = modifier,
+        modifier = Modifier,
         selected = isSelected,
         icon = { AmIcon(amIconsType = if (isSelected) selectedIcon else unSelectedIcon) },
         onClick = onSelect,

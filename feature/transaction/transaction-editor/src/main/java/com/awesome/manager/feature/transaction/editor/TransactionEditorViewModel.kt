@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -21,10 +21,10 @@ class TransactionEditorViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
-    private val transactionEditorArg: NavigationDestination.TransactionEditor =
+    private val transactionEditorArg: NavigationAction.TransactionEditor =
         savedStateHandle.toRoute()
-    val transactionEditorState: TransactionEditorState =
-        TransactionEditorState(
+    val transactionEditorState: TransactionEditorActions =
+        TransactionEditorActions(
             createTransaction = ::saveTransaction,
             accountsSearchResults = { accountRepository.returnAccounts(this) }
         )

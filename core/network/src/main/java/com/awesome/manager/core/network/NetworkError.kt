@@ -3,14 +3,14 @@ package com.awesome.manager.core.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-sealed class NetworkError : Throwable() {
-    data object ConnectionError : NetworkError()
-    data object ConvertDataError : NetworkError()
-    data object InternalServerError : NetworkError()
-    data object Unauthorized : NetworkError()
-    data object Forbidden : NetworkError()
-    data object RequestTimeout : NetworkError()
-    data object TooManyRequests : NetworkError()
+sealed class NetworkError:Throwable() {
+    class ConnectionError : NetworkError()
+    class ConvertDataError : NetworkError()
+    class InternalServerError : NetworkError()
+    class Unauthorized : NetworkError()
+    class Forbidden : NetworkError()
+    class RequestTimeout : NetworkError()
+    class TooManyRequests : NetworkError()
     data class BadRequest(val errorMessage: String) : NetworkError()
     data class OtherError(val errorMessage: String) : NetworkError()
 }

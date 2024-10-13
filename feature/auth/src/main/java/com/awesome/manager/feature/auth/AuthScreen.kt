@@ -14,15 +14,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
@@ -31,7 +35,7 @@ import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
 
 @Composable
@@ -40,38 +44,10 @@ fun AuthRoute(
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val authScreenState = authViewModel.authScreenState
-    val authData = authScreenState.authData.collectAsState().value
-    val isLoading = authScreenState.isLoading.collectAsState().value
-    val context = LocalContext.current
 
     val mainAction = authScreenState.mainAction.collectAsState().value
     LaunchedEffect(key1 = mainAction) {
         mainAction?.sendMainAction(sendMainAction, authScreenState::doneMainAction)
-    }
-
-    LaunchedEffect(key1 = authData, key2 = isLoading) {
-        when (isLoading) {
-            true -> authScreenState.dynamicBarLoading()
-            false -> {
-                when {
-                    authData.noData -> authScreenState.dynamicBarMessage(
-                        "Welcome Back", true, null
-                    )
-
-                    !authData.validateEmail -> authScreenState.dynamicBarMessage(
-                        "Please use a validate email", false, null
-                    )
-
-                    !authData.validatePassword -> authScreenState.dynamicBarMessage(
-                        "Please use a validate password", false, null
-                    )
-
-                    authData.validateData -> authScreenState.dynamicBarButton(
-                        "Start Managing", authScreenState.login, true, null,
-                    )
-                }
-            }
-        }
     }
 
     AuthScreen(authScreenState)
@@ -79,8 +55,13 @@ fun AuthRoute(
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenState
+    authScreenState: AuthScreenActions
 ) {
+
+    val email: String = authScreenState.email.collectAsState().value
+    val password: String = authScreenState.password.collectAsState().value
+    var passwordHidden by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -131,7 +112,8 @@ fun AuthScreen(
                                 label = stringResource(R.string.email),
                                 icon = AmIcons.Email,
                                 hint = "Example@Example.com",
-                                onTextChange = authScreenState::updateEmail,
+                                onTextChange = authScreenState::onUpdateEmail,
+                                text = email,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Next,
                                     keyboardType = KeyboardType.Email
@@ -146,7 +128,7 @@ fun AuthScreen(
                                 label = stringResource(R.string.password),
                                 icon = AmIcons.Password,
                                 hint = "Your top secret password",
-                                onTextChange = authScreenState::updatePassword,
+                                onTextChange = authScreenState::onUpdatePassword,
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     imeAction = ImeAction.Done,
                                     keyboardType = KeyboardType.Password
@@ -169,5 +151,12 @@ fun AuthScreen(
 )
 @Composable
 fun AuthScreenPreview() {
-    AuthScreen(AuthScreenState({}, {}, {}))
+    AuthScreen(
+        AuthScreenActions(
+            {},
+            {},
+            {},
+            SavedStateHandle(),
+           )
+    )
 }

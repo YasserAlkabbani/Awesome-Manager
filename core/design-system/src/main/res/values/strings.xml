@@ -4,4 +4,9 @@
     <string name="expenses">Expenses</string>
     <string name="debtor">Debtor</string>
     <string name="creditor">Creditor</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="invalid_password">Invalid Password</string>
+    <string name="invalid_login_credential">Invalid Login Credentials</string>
+    <string name="start_accounting">Start Accounting</string>
 </resources>

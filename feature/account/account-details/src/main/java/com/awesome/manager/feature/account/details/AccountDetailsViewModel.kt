@@ -4,12 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.data.states.DataState
-import com.awesome.manager.core.data.states.asDataStateFlow
+import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.ui.actions.asDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -24,26 +24,26 @@ class AccountDetailsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val accountDetailsArg: NavigationDestination.AccountDetails = savedStateHandle.toRoute()
+    private val accountDetailsArg: NavigationAction.AccountDetails = savedStateHandle.toRoute()
 
-    val accountDetailsState: AccountDetailsState = AccountDetailsState(
+    val accountDetailsState: AccountDetailsActions = AccountDetailsActions(
         refreshTransactions = ::refreshTransactions,
         amAccount = accountRepository
             .returnAccountById(accountDetailsArg.accountId)
-            .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
+            .map { AmUIState.Success(it) }.asDataStateFlow(viewModelScope),
         amTransactions = transactionRepository
             .returnTransactionsByAccountId(accountDetailsArg.accountId, ""),
         allowToUpdate = accountRepository
             .returnAccountById(accountDetailsArg.accountId).flatMapLatest { account ->
                 authRepository.currentUserId().map { it == account.creatorUserId }
             }
-            .map { DataState.Success(it) }.asDataStateFlow(viewModelScope),
+            .map { AmUIState.Success(it) }.asDataStateFlow(viewModelScope),
     )
 
     private fun refreshTransactions() {
         viewModelScope.launch {
             accountDetailsState.apply {
-                transactionRepository::refreshTransactions.processWitLoading()
+                transactionRepository::refreshTransactions
             }
         }
     }

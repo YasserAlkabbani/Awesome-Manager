@@ -12,12 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.data.states.DataState
+import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.main.DynamicBarAction
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
-import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 
@@ -28,7 +26,7 @@ fun TransactionDetailsRoute(
 ) {
 
     val context: Context = LocalContext.current
-    val transactionDetailsState: TransactionDetailsState =
+    val transactionDetailsState: TransactionDetailsActions =
         transactionDetailsViewModel.transactionDetailsState
 
     val mainAction = transactionDetailsState.mainAction.collectAsState().value
@@ -40,38 +38,35 @@ fun TransactionDetailsRoute(
         transactionDetailsState.transactionDetailsData.collectAsState().value
     LaunchedEffect(key1 = transactionState) {
         when (transactionState) {
-            is DataState.Success -> {
-                val transactionData = transactionState.data
-                when (transactionData.allowToUpdate) {
-                    true -> {
-                        transactionDetailsState.dynamicBarButton(
-                            text = context.getString(R.string.edit_transaction),
-                            onClick = {
-                                transactionDetailsState.navigateToEditTransaction(
-                                    accountId = transactionData.transaction.accountId,
-                                    transactionId = transactionData.transaction.id
-                                )
-                            },
-                            positive = true,
-                            extraButton = DynamicBarAction.ExtraButton(
-                                AmIcons.ArrowBack, transactionDetailsState::navigatePopBack
-                            ),
-                        )
-                    }
-
-                    false -> {
-                        transactionDetailsState.dynamicBarMessage(
-                            text = "Transaction Details",
-                            positive = false,
-                            extraButton = DynamicBarAction.ExtraButton(
-                                AmIcons.ArrowBack, transactionDetailsState::navigatePopBack
-                            ),
-                        )
-                    }
-                }
+            is AmUIState.Success -> {
+//                val transactionData = transactionState.data
+//                when (transactionData.allowToUpdate) {
+//                    true -> {
+//                        transactionDetailsState.dynamicFabButton(
+//                            dynamicFabButton = DynamicFabButton(
+//                                t
+//                            ),
+//                            onClick = {
+//                                transactionDetailsState.navigateToEditTransaction(
+//                                    accountId = transactionData.transaction.accountId,
+//                                    transactionId = transactionData.transaction.id
+//                                )
+//                            },
+//                            dynamicFabExtraButton = DynamicFabExtraButton.Back(),
+//                        )
+//                    }
+//
+//                    false -> {
+//                        transactionDetailsState.dynamicFabMessage(
+//                            text = "Transaction Details",
+//                            positive = false,
+//                            dynamicFabExtraButton = DynamicFabExtraButton.Back,
+//                        )
+//                    }
+//                }
             }
 
-            DataState.Error, DataState.Loading -> {}
+            is AmUIState.Error, is AmUIState.Loading -> {}
         }
     }
 
@@ -80,14 +75,14 @@ fun TransactionDetailsRoute(
 
 @Composable
 fun TransactionDetailsScreen(
-    transactionDetailsState: TransactionDetailsState
+    transactionDetailsState: TransactionDetailsActions
 ) {
 
     val transactionDetailsData =
         transactionDetailsState.transactionDetailsData.collectAsState().value
 
     when (transactionDetailsData) {
-        is DataState.Success -> {
+        is AmUIState.Success -> {
             val transaction = transactionDetailsData.data.transaction
             val account = transactionDetailsData.data.account
             Column(
@@ -152,7 +147,7 @@ fun TransactionDetailsScreen(
             }
         }
 
-        DataState.Error, DataState.Loading -> {}
+        is AmUIState.Error, is AmUIState.Loading -> {}
     }
 
 }

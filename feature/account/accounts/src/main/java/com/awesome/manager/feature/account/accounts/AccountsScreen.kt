@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
@@ -52,9 +52,9 @@ fun AccountsRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AccountsScreen(
-    accountsState: AccountsState
+    accountsState: AccountsActions
 ) {
-    val isLoading = accountsState.isLoading.collectAsState().value
+    val isLoading =false// accountsState.isLoading.collectAsState().value
     val accountsLazyPaging = accountsState.accounts.collectAsLazyPagingItems()
     val filterData by accountsState.filterData.collectAsState()
     val noItems = remember {
@@ -100,13 +100,13 @@ fun AccountsScreen(
                                     value = filterData.searchKey,
                                     amIconsType = AmIcons.Search,
                                     onClick = {
-                                        accountsState.showSearchWithContentBottomSheet(
-                                            searchLabel = searchLabel,
-                                            initSearch = filterData.searchKey.orEmpty(),
-                                            onReSearch = accountsState::updateSearchKey,
-                                            onSearchDone = accountsState::dismissBottomSheet,
-                                            content = {}
-                                        )
+//                                        accountsState.showSearchWithContentBottomSheet(
+//                                            searchLabel = searchLabel,
+//                                            initSearch = filterData.searchKey.orEmpty(),
+//                                            onReSearch = accountsState::updateSearchKey,
+//                                            onSearchDone = accountsState::dismissBottomSheet,
+//                                            content = {}
+//                                        )
                                     },
                                     onRemove = accountsState::clearSearch
                                 )

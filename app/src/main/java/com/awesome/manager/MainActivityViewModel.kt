@@ -22,7 +22,7 @@ class MainActivityViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    val mainActivityState = MainActivityState(
+    val mainActivityState = MainActivityActions(
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),

@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.actions.bottomsheet.BottomSheetContent
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.buttons.AmTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -33,46 +32,46 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetDateRangePicker(bottomSheetContent: BottomSheetContent.PickRangeDate) {
-    val snackScope = rememberCoroutineScope()
-    val state = rememberDateRangePickerState()
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            IconButton(
-                content = { AmIcon(amIconsType = AmIcons.Close) },
-                onClick = bottomSheetContent.dismiss
-            )
-            AmTextButton(
-                text = stringResource(id = R.string.confirm),
-                onClick = {
-                    snackScope.launch {
-                        state.selectedStartDateMillis?.let { startDate ->
-                            state.selectedEndDateMillis?.let { endDate ->
-                                bottomSheetContent.setDate(startDate, endDate)
-                                bottomSheetContent.dismiss()
-                            }
-                        }
-                    }
-                },
-                enabled = state.selectedEndDateMillis != null
-            )
-        }
-        DateRangePicker(
-            state = state,
-            title = null,
-            showModeToggle = false,
-        )
-    }
+fun BottomSheetDateRangePicker() {
+//    val snackScope = rememberCoroutineScope()
+//    val state = rememberDateRangePickerState()
+//    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//        ) {
+//            IconButton(
+//                content = { AmIcon(amIconsType = AmIcons.Close) },
+//                onClick = bottomSheetContent.dismiss
+//            )
+//            AmTextButton(
+//                text = stringResource(id = R.string.confirm),
+//                onClick = {
+//                    snackScope.launch {
+//                        state.selectedStartDateMillis?.let { startDate ->
+//                            state.selectedEndDateMillis?.let { endDate ->
+//                                bottomSheetContent.setDate(startDate, endDate)
+//                                bottomSheetContent.dismiss()
+//                            }
+//                        }
+//                    }
+//                },
+//                enabled = state.selectedEndDateMillis != null
+//            )
+//        }
+//        DateRangePicker(
+//            state = state,
+//            title = null,
+//            showModeToggle = false,
+//        )
+//    }
 }
 
 
 @Preview
 @Composable
 fun BottomSheetDateRangePickerPreview() {
-    BottomSheetDateRangePicker(bottomSheetContent = BottomSheetContent.PickRangeDate(0,
-        { a, b -> },
-        {}))
+//    BottomSheetDateRangePicker(bottomSheetContent = com.awesome.manager.core.data.model.actions.bottomsheet.BottomSheetContent.PickRangeDate(0,
+//        { a, b -> },
+//        {}))
 }

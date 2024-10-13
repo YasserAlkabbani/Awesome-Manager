@@ -23,9 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.data.extention.currentTime
+import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.actions.main.MainAction
+import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.component.chips.AmFilterChip
@@ -33,7 +33,6 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.getChipData
@@ -59,10 +58,10 @@ fun TransactionsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionScreen(transactionsState: TransactionsState) {
+fun TransactionScreen(transactionsState: TransactionsActions) {
 
     val context = LocalContext.current
-    val isLoading = transactionsState.isLoading.collectAsState().value
+    val isLoading = false //transactionsState.isLoading.collectAsState().value
     val transactionsLazyPaging = transactionsState.transactions.collectAsLazyPagingItems()
     val filterData by transactionsState.filterData.collectAsState()
     val noItems = remember {
@@ -182,26 +181,26 @@ fun TransactionScreen(transactionsState: TransactionsState) {
 }
 
 private fun searchAndFilter(
-    transactionsState: TransactionsState,
+    transactionsState: TransactionsActions,
     searchLabel: String,
     filterData: () -> FilterData,
     transactionTypeChipData: List<ChipData<AmTransactionType, String>>
 ) {
-    transactionsState.showSearchWithContentBottomSheet(
-        searchLabel = searchLabel,
-        initSearch = filterData().searchKey.orEmpty(),
-        onReSearch = transactionsState::updateSearchKey,
-        onSearchDone = transactionsState::dismissBottomSheet,
-        content = {
-            AmChipsContainer(
-                title = stringResource(R.string.transaction_type),
-                chipDataList = transactionTypeChipData,
-                onSelect = {
-                    transactionsState.updateTransactionType(it.data)
-                },
-                selectedItem = filterData().transactionType?.name,
-                content = null
-            )
-        }
-    )
+//    transactionsState.showSearchWithContentBottomSheet(
+//        searchLabel = searchLabel,
+//        initSearch = filterData().searchKey.orEmpty(),
+//        onReSearch = transactionsState::updateSearchKey,
+//        onSearchDone = transactionsState::dismissBottomSheet,
+//        content = {
+//            AmChipsContainer(
+//                title = stringResource(R.string.transaction_type),
+//                chipDataList = transactionTypeChipData,
+//                onSelect = {
+//                    transactionsState.updateTransactionType(it.data)
+//                },
+//                selectedItem = filterData().transactionType?.name,
+//                content = null
+//            )
+//        }
+//    )
 }

@@ -1,9 +1,9 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.data.extention.asDate
-import com.awesome.manager.core.data.extention.asTimestamp
-import com.awesome.manager.core.data.extention.currentTime
-import com.awesome.manager.core.data.extention.toStringDateTime
+import com.awesome.manager.core.common.asDate
+import com.awesome.manager.core.common.asTimestamp
+import com.awesome.manager.core.common.currentTime
+import com.awesome.manager.core.common.toStringDateTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction

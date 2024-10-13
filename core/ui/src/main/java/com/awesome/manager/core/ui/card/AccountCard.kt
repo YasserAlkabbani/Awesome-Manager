@@ -16,6 +16,7 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
+import com.awesome.manager.core.designsystem.component.cards.ItemCard
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
@@ -34,11 +35,11 @@ fun AccountCard(
     onAddTransaction: (() -> Unit)?,
     onEditTransaction: (() -> Unit)?,
 ) {
-    AmCard(
+    ItemCard (
         modifier = modifier,
         positive = isPositiveDebtor,
         loading = loading,
-        onClick = onClick,
+        onClick = onClick?:{},
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically

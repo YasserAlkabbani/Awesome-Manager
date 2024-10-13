@@ -4,14 +4,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.data.states.asListDataStateFlow
+import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.ui.actions.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.designsystem.actions.navigation.NavigationDestination
+import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,10 +27,10 @@ class AccountEditorViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val accountEditorArg: NavigationDestination.AccountEditor = savedStateHandle.toRoute()
+    private val accountEditorArg: NavigationAction.AccountEditor = savedStateHandle.toRoute()
 
-    val accountEditorState: AccountEditorState = AccountEditorState(
-        currencies = currencyRepository.returnCurrencies().asListDataStateFlow(viewModelScope),
+    val accountEditorState: AccountEditorActions = AccountEditorActions(
+        currencies = currencyRepository.returnCurrencies().map { AmUIState.Success(it) }.asListDataStateFlow(viewModelScope),
         onSave = ::onSave,
     )
 
