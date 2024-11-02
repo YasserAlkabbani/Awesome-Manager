@@ -107,7 +107,7 @@ object AmIcons {
 
     val Date = AmIconsType.ImageVictorAmIconsType(Icons.Filled.DateRange)
     val Category = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Category)
-    val Profile = AmIconsType.ImageVictorAmIconsType(Icons.Filled.AccountCircle)
+    val Profile = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Person)
 
 }
 

@@ -26,19 +26,7 @@ fun AmChip(
         selected = selected,
         label = { Text(text = label) },
         shape = shape,
-        border = FilterChipDefaults.filterChipBorder(
-            borderWidth = 1.5.dp,
-            enabled = false,
-            selected = true
-        ),
         onClick = onClick,
-        colors = FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-            selectedLabelColor = MaterialTheme.colorScheme.surface,
-            selectedTrailingIconColor = MaterialTheme.colorScheme.surface,
-            selectedLeadingIconColor = MaterialTheme.colorScheme.surface
-        )
     )
 }
 

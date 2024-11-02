@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
@@ -20,13 +21,24 @@ fun <T> MutableStateFlow<AmUIState<T>>.updateData(newData: (T) -> T) =
         else it
     }
 
-fun <T> Flow<AmUIState<T>>.asDataStateFlow(scope: CoroutineScope): StateFlow<AmUIState<T>> =
-    flowOn(Dispatchers.Default)
+//fun <T> Flow<AmUIState<T>>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
+//    flowOn(Dispatchers.Default)
+//        .stateIn(
+//            scope = scope,
+//            started = SharingStarted.WhileSubscribed(10000),
+//            initialValue = AmUIState.Loading()
+//        )
+
+fun <T> Flow<T>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
+    map { AmUIState.Success(it) }
+        .flowOn(Dispatchers.Default)
         .stateIn(
-            scope = scope, started = SharingStarted.WhileSubscribed(10000), initialValue = AmUIState.Loading()
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(10000),
+            initialValue = AmUIState.Loading()
         )
 
-fun <T> Flow<AmUIState<List<T>>>.asListDataStateFlow(scope: CoroutineScope): StateFlow<AmUIState<List<T>>> =
-    flowOn(Dispatchers.Default).stateIn(
-        scope = scope, started = SharingStarted.WhileSubscribed(10000), initialValue = AmUIState.Loading()
-    )
+//fun <T> Flow<AmUIState<List<T>>>.asListDataStateFlow(scope: CoroutineScope): StateFlow<AmUIState<List<T>>> =
+//    flowOn(Dispatchers.Default).stateIn(
+//        scope = scope, started = SharingStarted.WhileSubscribed(10000), initialValue = AmUIState.Loading()
+//    )

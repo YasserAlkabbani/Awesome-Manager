@@ -127,9 +127,7 @@ fun AccountsScreen(
                                     loading = account.pending,
                                     withDetails = false,
                                     onClick = { accountsState.navigateToAccountDetails(account.id) },
-                                    onAddTransaction = {
-                                        accountsState.navigateToCreateTransaction(account.id)
-                                    },
+                                    onAddTransaction = null,
                                     onEditTransaction = null,
                                     income = balanceDetails.formattedIncome,
                                     expenses = balanceDetails.formattedExpenses,

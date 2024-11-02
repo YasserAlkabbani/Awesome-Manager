@@ -128,7 +128,7 @@ fun TransactionEditorScreen(
 
         val transactionTypeChipData = remember {
             transactionEditorState.transactionTypes.map {
-                getChipData(id = it.name, title = context.enumToString(it), data = it)
+                getChipData(id = it.name, title = context.enumToString(it))
             }
         }
 
@@ -211,7 +211,7 @@ fun TransactionEditorScreen(
             AmChipsContainer(
                 title = stringResource(R.string.transaction_type),
                 chipDataList = transactionTypeChipData,
-                onSelect = { transactionEditorState.selectTransactionType(it.data) },
+                onSelect = { /*transactionEditorState.selectTransactionType(it)*/ },
                 selectedItem = transaction.selectedTransactionType?.name,
                 content = null
             )

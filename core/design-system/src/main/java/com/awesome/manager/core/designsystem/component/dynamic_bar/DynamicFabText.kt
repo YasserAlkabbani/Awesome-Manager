@@ -15,9 +15,9 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 
 @Composable
 fun AmDynamicText(
-    dynamicFabText:DynamicFabText
-){
-    AmCard (
+    dynamicFabText: DynamicFabText
+) {
+    AmCard(
         padding = AmPadding.LARGE,
         positive = dynamicFabText.isPositive
     ) {
@@ -30,17 +30,20 @@ fun AmDynamicText(
 }
 
 
-sealed class DynamicFabText(val isPositive: Boolean, @StringRes val text: Int) {
+sealed class DynamicFabText(val isPositive: Boolean, @StringRes val text: Int, val index: Int) {
     data object WelcomeBack :
-        DynamicFabText(isPositive = true, text = R.string.welcome_back)
+        DynamicFabText(isPositive = true, text = R.string.welcome_back, index = 0)
 
     data object InvalidEmail :
-        DynamicFabText(isPositive = false, text = R.string.invalid_email)
+        DynamicFabText(isPositive = false, text = R.string.invalid_email, index = 1)
 
     data object InvalidPassword :
-        DynamicFabText(isPositive = false, text = R.string.invalid_password)
+        DynamicFabText(isPositive = false, text = R.string.invalid_password, index = 2)
 
     data object InvalidLoginCredential :
-        DynamicFabText(isPositive = false, text = R.string.invalid_login_credential)
+        DynamicFabText(isPositive = false, text = R.string.invalid_login_credential, index = 3)
+
+    data object InvalidInput :
+        DynamicFabText(isPositive = false, text = R.string.invalid_input, index = 4)
 
 }

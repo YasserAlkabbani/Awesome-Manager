@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.awesome.manager.core.common.AmUIState
-import com.awesome.manager.core.ui.actions.asDataStateFlow
+import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
@@ -37,13 +37,11 @@ class TransactionDetailsViewModel @Inject constructor(
                     .map { currentUserId -> Triple(account, transaction, currentUserId) }
             }
             .map { (account, transaction, currentUserId) ->
-                AmUIState.Success(
                     TransactionDetailsData(
                         account = account, transaction = transaction,
                         allowToUpdate = transaction.creatorUserId == currentUserId
                     )
-                )
             }
-            .asDataStateFlow(viewModelScope)
+            .asUIState(viewModelScope)
     )
 }

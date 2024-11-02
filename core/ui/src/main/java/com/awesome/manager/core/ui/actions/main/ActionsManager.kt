@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
 
@@ -40,6 +42,14 @@ abstract class ActionsManager : NavigationState, DynamicFabState, BottomSheetSta
             is AmUIState.Success -> onSuccess()
         }
     }
+
+    fun <T> Flow<AmUIState<T>>.processUIState() = onEach {
+        when (it) {
+            is AmUIState.Error -> addError(it.amUIError)
+            is AmUIState.Loading -> dynamicFabLoading()
+            is AmUIState.Success -> Unit
+        }
+    }.filterIsInstance<AmUIState.Success<T>>()
 
     private val _mainAction: MutableStateFlow<MainAction?> = MutableStateFlow(null)
     val mainAction: StateFlow<MainAction?> = _mainAction

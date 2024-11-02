@@ -72,7 +72,7 @@ fun TransactionScreen(transactionsState: TransactionsActions) {
 
     val transactionTypeChipData = remember {
         transactionsState.transactionTypes.map {
-            getChipData(id = it.name, title = context.enumToString(it), data = it)
+            getChipData(id = it.name, title = context.enumToString(it))
         }
     }
 
@@ -184,7 +184,7 @@ private fun searchAndFilter(
     transactionsState: TransactionsActions,
     searchLabel: String,
     filterData: () -> FilterData,
-    transactionTypeChipData: List<ChipData<AmTransactionType, String>>
+    transactionTypeChipData: List<ChipData>
 ) {
 //    transactionsState.showSearchWithContentBottomSheet(
 //        searchLabel = searchLabel,

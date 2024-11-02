@@ -12,11 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
-import com.awesome.manager.core.designsystem.component.cards.ItemCard
+import com.awesome.manager.core.designsystem.component.cards.AmItemCard
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
@@ -35,7 +34,7 @@ fun AccountCard(
     onAddTransaction: (() -> Unit)?,
     onEditTransaction: (() -> Unit)?,
 ) {
-    ItemCard (
+    AmItemCard (
         modifier = modifier,
         positive = isPositiveDebtor,
         loading = loading,

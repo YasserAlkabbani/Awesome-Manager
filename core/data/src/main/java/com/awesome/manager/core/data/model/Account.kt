@@ -4,6 +4,7 @@ import com.awesome.manager.core.common.asTimestamp
 import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
+import com.awesome.manager.core.database.model.TransactionTypeEntity
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.model.UpsertAccount
@@ -53,7 +54,7 @@ fun UpsertAccount.asEntity() = AccountEntity(
     name = name,
     imageUrl = imageUrl,
     currencyId = currencyId,
-    defaultTransactionType = defaultTransactionType.asEntity(),
+    defaultTransactionType = TransactionTypeEntity.valueOf(defaultTransactionType),
     pending = true,
     createdAt = currentTime(),
     updatedAt = currentTime(),

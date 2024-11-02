@@ -57,7 +57,8 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                onClick = button.onClick
+                onClick = button.onClick,
+                amIconsType = null
             )
         }
         button2?.let { button ->
@@ -65,7 +66,8 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                onClick = button.onClick
+                onClick = button.onClick,
+                amIconsType = null
             )
         }
         button3?.let { button ->
@@ -73,7 +75,8 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                onClick = button.onClick
+                onClick = button.onClick,
+                amIconsType = null
             )
         }
     }

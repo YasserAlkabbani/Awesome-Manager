@@ -2,18 +2,34 @@ package com.awesome.manager.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -27,6 +43,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -39,6 +58,9 @@ import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.AmNavigationBar
+import com.awesome.manager.core.designsystem.component.AmNavigationItem
+import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
 import com.awesome.manager.core.ui.actions.main.DynamicFabAction
 import com.awesome.manager.core.ui.actions.main.BottomSheetAction
 import com.awesome.manager.core.ui.actions.main.MainAction
@@ -48,6 +70,7 @@ import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicBarL
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicText
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFabExtraButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmFabButton
+import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFab
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.ui.actions.main.ErrorAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
@@ -133,6 +156,7 @@ fun AmApp() {
                         AmUIError.PoorConnection -> Unit
                         AmUIError.Unauthorized -> Unit
                         AmUIError.UnknownUIError -> Unit
+                        AmUIError.NoPermissionError -> Unit
                     }
                 }
             }
@@ -209,31 +233,30 @@ fun AmApp() {
                 NavigationAction.Auth -> Unit
                 NavigationAction.Intro -> Unit
 
-                NavigationAction.Home -> Unit
-//                    mainActivityState.dynamicBarNavigation(
-//                    extraButton = ExtraButton.More {
-//                        currentUserEmail?.let { email ->
-//                            mainActivityState.showProfileBottomSheet(
-//                                email = email, logout = mainActivityState.logout
-//                            )
-//                        }
-//                    },
-//                    addButton = ExtraButton.None
-//                )
+                NavigationAction.Home -> mainActivityState.dynamicFab(
+                    dynamicFab = DynamicFab.Profile(
+                        onClick = {
+                            currentUserEmail?.let { email ->
+                                mainActivityState.showProfileBottomSheet(
+                                    email = email, logout = mainActivityState.logout
+                                )
+                            }
+                        }
+                    ),
+                    dynamicFabExtraButton = null
+                )
 
-                NavigationAction.Accounts -> Unit
-//                    mainActivityState.dynamicBarNavigation(
-//                    extraButton = ExtraButton.None,
-//                    addButton = ExtraButton.AddAccount(mainActivityState::navigateToCreateAccount)
-//                )
+                NavigationAction.Accounts -> mainActivityState.dynamicFab(
+                    dynamicFab = DynamicFab.AddAccount(
+                        onClick = mainActivityState::navigateToCreateAccount
+                    )
+                )
 
-                NavigationAction.Transactions -> Unit
-//                    mainActivityState.dynamicBarNavigation(
-//                    extraButton = ExtraButton.None,
-//                    addButton = ExtraButton.AddTransaction {
-//                        mainActivityState.navigateToCreateTransaction(null)
-//                    }
-//                )
+                NavigationAction.Transactions -> mainActivityState.dynamicFab(
+                    dynamicFab = DynamicFab.AddTransaction(
+                        onClick = mainActivityState::navigateToCreateAccount
+                    )
+                )
 
                 is NavigationAction.AccountDetails -> Unit
                 is NavigationAction.AccountEditor -> Unit
@@ -245,7 +268,7 @@ fun AmApp() {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    bottomSheetSate.value.takeIf { it !is BottomSheetAction.Dismiss }?.let {bottomSheetAction ->
+    bottomSheetSate.value.takeIf { it !is BottomSheetAction.Dismiss }?.let { bottomSheetAction ->
         Timber.d("TEST_MAIN_ACTION BOTTOM_SHEET SHOW $bottomSheetAction")
         ModalBottomSheet(
             modifier = Modifier
@@ -286,50 +309,18 @@ fun AppScreen(
             floatingActionButton = { dynamicFabAction.Content() },
             floatingActionButtonPosition = FabPosition.End,
             bottomBar = {
-                AnimatedVisibility(currentNavigation?.isMainDistinction() == true) {
-                    NavigationBar(
-                        modifier = Modifier.height(60.dp)
-                    ) {
-//                    val navigateUp = { updateMainAction(NavigationAction.NavigateUp) }
-//                    DynamicBarNavigation(
-//                        extraButton = this.extraButton.asDynamicBarButtonData(navigateUp),
-//                        navigation = {
-//                            MainDestination.entries.forEach { destination ->
-//                                val navigationDestination =
-//                                    destination.navigationDestination
-//                                AmNavigationItem(
-//                                    isSelected = navigationDestination == currentNavigationDestination,
-//                                    selectedIcon = destination.selectedAmIconsType,
-//                                    unSelectedIcon = destination.unSelectedAmIconsType,
-//                                    onSelect = {
-//                                        updateMainAction(
-//                                            navigationDestination.asNavigation()
-//                                        )
-//                                    },
-//                                    label = ""
-//                                )
-//                            }
-//                        },
-//                        addButton = extraButton.asDynamicBarButtonData()
-//                    )
-                        MainDestination.entries.forEach { destination ->
-                            val navigationDestination = destination.navigationDestination
-                            NavigationBarItem(
-                                modifier = Modifier.height(40.dp),
-                                icon = {
-                                    AmIcon(
-                                        modifier = Modifier.height(20.dp),
-                                        amIconsType = if (navigationDestination == currentNavigation)
-                                            destination.selectedAmIconsType else destination.unSelectedAmIconsType
-                                    )
-                                },
-                                label = { AmText(text = "LABEL") },
-                                selected = navigationDestination == currentNavigation,
-                                onClick = {
-                                    updateMainAction(navigationDestination)
-                                },
-                            )
-                        }
+                AmNavigationBar(
+                    visible = currentNavigation?.isMainDistinction() == true
+                ) {
+                    MainDestination.entries.forEach { destination ->
+                        val navigationDestination = destination.navigationDestination
+                        AmNavigationItem(
+                            isSelected = navigationDestination == currentNavigation,
+                            title = stringResource(destination.title),
+                            selectedIcon = destination.selectedAmIconsType,
+                            unSelectedIcon = destination.unSelectedAmIconsType,
+                            onSelect = { updateMainAction(navigationDestination) }
+                        )
                     }
                 }
             }
@@ -364,13 +355,60 @@ private fun BottomSheetAction.Content(): Unit =
 private fun DynamicFabAction.Content(): Unit =
     AnimatedContent(
         targetState = this@Content,
-        label = "DYNAMIC_BAR"
+        label = "DYNAMIC_BAR",
+        transitionSpec = {
+            val initDynamicFab: DynamicFabAction = initialState
+            val targetDynamicFab: DynamicFabAction = targetState
+            if (initDynamicFab.index > targetDynamicFab.index) {
+                slideInHorizontally { width -> width } + fadeIn() togetherWith
+                        slideOutHorizontally { width -> -width } + fadeOut()
+
+                slideInHorizontally { width -> -width } + fadeIn() togetherWith
+                        slideOutHorizontally { width -> width } + fadeOut()
+            } else when {
+                initDynamicFab is DynamicFabAction.Fab && targetDynamicFab is DynamicFabAction.Fab -> {
+                    when (initDynamicFab.dynamicFab.index > targetDynamicFab.dynamicFab.index) {
+                        true -> slideInVertically { height -> height } + fadeIn() togetherWith
+                                slideOutVertically { height -> -height } + fadeOut()
+
+                        false -> slideInVertically { height -> -height } + fadeIn() togetherWith
+                                slideOutVertically { height -> height } + fadeOut()
+                    }
+                }
+
+                initDynamicFab is DynamicFabAction.Button && targetDynamicFab is DynamicFabAction.Button -> {
+                    when (initDynamicFab.dynamicFabButton.index > targetDynamicFab.dynamicFabButton.index) {
+                        true -> slideInVertically { height -> height } + fadeIn() togetherWith
+                                slideOutVertically { height -> -height } + fadeOut()
+
+                        false -> slideInVertically { height -> -height } + fadeIn() togetherWith
+                                slideOutVertically { height -> height } + fadeOut()
+                    }
+                }
+
+                initDynamicFab is DynamicFabAction.Message && targetDynamicFab is DynamicFabAction.Message -> {
+                    when (initDynamicFab.dynamicFabText.index > targetDynamicFab.dynamicFabText.index) {
+                        true -> slideInVertically { height -> height } + fadeIn() togetherWith
+                                slideOutVertically { height -> -height } + fadeOut()
+
+                        false -> slideInVertically { height -> -height } + fadeIn() togetherWith
+                                slideOutVertically { height -> height } + fadeOut()
+                    }
+                }
+
+                else -> {
+                    slideInHorizontally { width -> width } + fadeIn() togetherWith
+                            slideOutHorizontally { width -> -width } + fadeOut()
+                }
+            }.using(
+                SizeTransform(clip = false)
+            )
+        }
     ) { dynamicFabAction ->
         Row(
-            modifier = Modifier.height(AmSize.XX_LARGE.value),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.height(AmSize.XXX_LARGE.value),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-
             when (dynamicFabAction) {
 
                 DynamicFabAction.None -> {}
@@ -380,26 +418,28 @@ private fun DynamicFabAction.Content(): Unit =
                 }
 
                 is DynamicFabAction.Fab -> {
-                    AmDynamicFab(dynamicFabAction.dynamicFab)
                     dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
                         AmDynamicFabExtraButton(dynamicFabExtraButton)
+                        AmSpacerLargeWidth()
                     }
+                    AmDynamicFab(dynamicFabAction.dynamicFab)
                 }
 
                 is DynamicFabAction.Button -> {
-                    AmFabButton(dynamicFabAction.dynamicFabButton)
                     dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
                         AmDynamicFabExtraButton(dynamicFabExtraButton)
+                        AmSpacerLargeWidth()
                     }
+                    AmFabButton(dynamicFabAction.dynamicFabButton)
                 }
 
                 is DynamicFabAction.Message -> {
-                    AmDynamicText(dynamicFabAction.dynamicFabText)
                     dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
                         AmDynamicFabExtraButton(dynamicFabExtraButton)
+                        AmSpacerLargeWidth()
                     }
+                    AmDynamicText(dynamicFabAction.dynamicFabText)
                 }
-
 
             }
         }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -43,7 +44,7 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmTextField(
     modifier: Modifier = Modifier,
     onTextChange: (String) -> Unit,
-    text:String,
+    text: String,
     icon: AmIconsType? = null,
     label: String? = null,
     hint: String,
@@ -53,67 +54,104 @@ fun AmTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
-    val isFocus = remember { mutableStateOf(false) }
-    val color = animateColorAsState(
-        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
-        else MaterialTheme.colorScheme.secondaryContainer,
-        label = "COLOR"
-    ).value
-
-    Surface(
-        modifier = modifier, color = color,
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Column(Modifier.padding(AmPadding.SMALL.value)) {
-            if (label != null && icon != null) {
-                Row(
+//    val isFocus = remember { mutableStateOf(false) }
+//    val color = animateColorAsState(
+//        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
+//        else MaterialTheme.colorScheme.secondaryContainer,
+//        label = "COLOR"
+//    ).value
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth().wrapContentHeight()
+//            .onFocusChanged { isFocus.value = it.hasFocus }
+//            .background(
+//                color = MaterialTheme.colorScheme.surface,
+//                shape = MaterialTheme.shapes.small
+//            )
+        ,
+        value = text,
+        enabled = enabled,
+//        placeholder = { AmText(text = hint) },
+        label = { AmText(text = hint) },
+        onValueChange = onTextChange,
+        leadingIcon = {
+            icon?.let {
+                AmIcon(
+                    modifier = Modifier.height(IntrinsicSize.Max),
+                    amIconsType = icon
+                )
+            }
+        },
+        textStyle = MaterialTheme.typography.titleMedium,
+        shape = MaterialTheme.shapes.medium,
+        singleLine = singleLine,
+        maxLines = 3,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+//        colors = TextFieldDefaults.colors(
+//            unfocusedIndicatorColor = Color.Transparent,
+//            disabledIndicatorColor = Color.Transparent,
+//            errorIndicatorColor = Color.Transparent,
+//            focusedIndicatorColor = Color.Transparent,
+//            focusedContainerColor = MaterialTheme.colorScheme.surface,
+//            errorContainerColor = MaterialTheme.colorScheme.surface,
+//            disabledContainerColor = MaterialTheme.colorScheme.surface,
+//            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+//        ),
+    )
+    /*    Surface(
+            modifier = modifier, color = color,
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Column(Modifier.padding(AmPadding.X_SMALL.value)) {
+                if (label != null && icon != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AmPadding.MEDIUM.value)
+                            .padding(bottom = AmPadding.SMALL.value),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
+                        AmSpacerMediumWidth()
+                        AmText(
+                            modifier = Modifier.wrapContentHeight(),
+                            text = label,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+                TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AmPadding.MEDIUM.value)
-                        .padding(bottom = AmPadding.SMALL.value),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AmIcon(modifier = Modifier.height(IntrinsicSize.Max), amIconsType = icon)
-                    AmSpacerMediumWidth()
-                    AmText(
-                        modifier = Modifier.wrapContentHeight(),
-                        text = label,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .onFocusChanged { isFocus.value = it.hasFocus }
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = MaterialTheme.shapes.small
+                        .wrapContentHeight()
+                        .onFocusChanged { isFocus.value = it.hasFocus }
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.small
+                        ),
+                    value = text,
+                    enabled = enabled,
+                    placeholder = { AmText(text = hint) },
+                    onValueChange = onTextChange,
+                    textStyle = MaterialTheme.typography.titleMedium,
+                    shape = MaterialTheme.shapes.medium,
+                    singleLine = singleLine,
+                    maxLines = 3,
+                    keyboardOptions = keyboardOptions,
+                    keyboardActions = keyboardActions,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        errorContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
-                value = text,
-                enabled = enabled,
-                placeholder = { AmText(text = hint) },
-                onValueChange = onTextChange,
-                textStyle = MaterialTheme.typography.titleMedium,
-                shape = MaterialTheme.shapes.medium,
-                singleLine = singleLine,
-                maxLines = 3,
-                keyboardOptions = keyboardOptions,
-                keyboardActions = keyboardActions,
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    errorContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                ),
-            )
-        }
-    }
+                )
+            }
+        }*/
 }
 
 @Composable

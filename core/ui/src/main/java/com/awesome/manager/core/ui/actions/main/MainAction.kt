@@ -95,26 +95,26 @@ sealed class NavigationAction : MainAction {
 
 }
 
-sealed class DynamicFabAction : MainAction {
+sealed class DynamicFabAction(val index: Int) : MainAction {
 
-    data object None : DynamicFabAction()
+    data object None : DynamicFabAction(0)
 
-    data object Loading:DynamicFabAction()
+    data object Loading:DynamicFabAction(1)
 
     data class Fab(
         val dynamicFab: DynamicFab,
         val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction()
+    ) : DynamicFabAction(2)
 
     data class Message(
         val dynamicFabText: DynamicFabText,
         val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction()
+    ) : DynamicFabAction(3)
 
     data class Button(
         val dynamicFabButton: DynamicFabButton,
         val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction()
+    ) : DynamicFabAction(4)
 
 }
 

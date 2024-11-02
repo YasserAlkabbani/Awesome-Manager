@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
+import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSurface
+import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 
@@ -16,23 +18,15 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmDynamicFabExtraButton(
     dynamicFabExtraButton: DynamicFabExtraButton
 ) {
-    AmSurface(
-        modifier = Modifier.padding(horizontal = AmPadding.X_SMALL.value),
-        padding = AmPadding.X_SMALL,
-        shape = MaterialTheme.shapes.extraLarge,
+    AmIconButton(
+        modifier = Modifier,
+        amIconsType = dynamicFabExtraButton.amIconsType,
         onClick = dynamicFabExtraButton.onClick,
-    ) {
-        AmIcon(
-            modifier = Modifier
-                .padding(AmPadding.MEDIUM.value)
-                .size(AmSize.MID_SMALL.value),
-            amIconsType = dynamicFabExtraButton.amIconsType,
-        )
-    }
+    )
 }
 
 
-sealed class DynamicFabExtraButton(val isPositave: Boolean,val amIconsType: AmIconsType) {
+sealed class DynamicFabExtraButton(val isPositave: Boolean, val amIconsType: AmIconsType) {
     abstract val onClick: () -> Unit
 
     data class Back(override val onClick: () -> Unit) :

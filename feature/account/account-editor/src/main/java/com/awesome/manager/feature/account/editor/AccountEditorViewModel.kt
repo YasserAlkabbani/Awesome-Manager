@@ -4,15 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.AmUIState
-import com.awesome.manager.core.ui.actions.asListDataStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
-import com.awesome.manager.core.data.repository.transaction.TransactionRepository
+import com.awesome.manager.core.model.UpsertAccount
+import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,51 +21,46 @@ import javax.inject.Inject
 class AccountEditorViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
-    private val transactionRepository: TransactionRepository,
     savedStateHandle: SavedStateHandle,
     currencyRepository: CurrencyRepository,
 ) : ViewModel() {
 
-
     private val accountEditorArg: NavigationAction.AccountEditor = savedStateHandle.toRoute()
+    private val accountID = accountEditorArg.accountId
 
-    val accountEditorState: AccountEditorActions = AccountEditorActions(
-        currencies = currencyRepository.returnCurrencies().map { AmUIState.Success(it) }.asListDataStateFlow(viewModelScope),
-        onSave = ::onSave,
+    val accountEditorState: AccountEditorState = AccountEditorState(
+        currencies = currencyRepository.returnCurrencies().asUIState(viewModelScope),
+        accountEditorData = authRepository.currentUserId().flatMapLatest { currentUserID ->
+            when (accountID) {
+                null -> flowOf(
+                    AccountEditorData.asCreate(currentUserID)
+                )
+
+                else -> accountRepository
+                    .returnAccountById(accountID).map { account ->
+                        AccountEditorData.asEdit(account)
+                    }
+            }
+        }.asUIState(viewModelScope),
+        onUpsert = ::onUpsert,
+        savedStateHandle = savedStateHandle,
     )
 
     init {
-        fillAccountData()
-    }
-
-    private fun fillAccountData() {
-
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserId().first()
-            val account = accountEditorArg.accountId
-                ?.let { accountRepository.returnAccountById(it).first() }
-            when (account) {
-                null -> accountEditorState.asCreateAccount(creatorUserId = currentUserId)
-                else -> {
-                    val allowToUpdateCurrency =
-                        transactionRepository.returnTransactionCount(account.id) == 0
-                    accountEditorState
-                        .asEditAccount(
-                            currentUserId = currentUserId, amAccount = account,
-                            allowToUpdateCurrency = allowToUpdateCurrency
-                        )
-                }
+            launch {
+                accountEditorState.syncAccountData()
+            }
+            launch {
+                accountEditorState.syncUIState()
             }
         }
-
     }
 
-    private fun onSave() {
+    private fun onUpsert(upsertAccount: UpsertAccount) {
         viewModelScope.launch {
-            accountEditorState.checkValidateAccount()?.let {
-                accountRepository.upsertAccount(it)
-                accountEditorState.navigatePopBack()
-            }
+            accountRepository.upsertAccount(upsertAccount)
+            accountEditorState.navigatePopBack()
         }
     }
 

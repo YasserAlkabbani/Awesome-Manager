@@ -4,8 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.AmUIState
-import com.awesome.manager.core.ui.actions.asDataStateFlow
+import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
@@ -25,19 +24,21 @@ class AccountDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val accountDetailsArg: NavigationAction.AccountDetails = savedStateHandle.toRoute()
+    private val accountID: String = accountDetailsArg.accountId
 
-    val accountDetailsState: AccountDetailsActions = AccountDetailsActions(
+    val accountDetailsState: AccountDetailsState = AccountDetailsState(
         refreshTransactions = ::refreshTransactions,
         amAccount = accountRepository
             .returnAccountById(accountDetailsArg.accountId)
-            .map { AmUIState.Success(it) }.asDataStateFlow(viewModelScope),
+            .asUIState(viewModelScope),
         amTransactions = transactionRepository
             .returnTransactionsByAccountId(accountDetailsArg.accountId, ""),
         allowToUpdate = accountRepository
-            .returnAccountById(accountDetailsArg.accountId).flatMapLatest { account ->
+            .returnAccountById(accountDetailsArg.accountId)
+            .flatMapLatest { account ->
                 authRepository.currentUserId().map { it == account.creatorUserId }
             }
-            .map { AmUIState.Success(it) }.asDataStateFlow(viewModelScope),
+            .asUIState(viewModelScope),
     )
 
     private fun refreshTransactions() {

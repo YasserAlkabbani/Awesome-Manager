@@ -74,7 +74,7 @@ fun AccountDetailsRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsActions) {
+fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
     val accountState: AmUIState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
@@ -109,37 +109,37 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsActions) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        AmLazyColumn(
-            isRefreshing = true,
-            onRefresh = accountDetailsState.refreshTransactions,
-            content = {
-                items(
-                    count = transactionsLazyPaging.itemCount,
-                    contentType = { LAZY_ITEM_TRANSACTION },
-                    key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
-                    itemContent = { index ->
-                        transactionsLazyPaging[index]?.let { transaction ->
-                            TransactionCard(
-                                modifier = Modifier.animateItemPlacement(),
-                                account = transaction.accountName,
-                                title = transaction.title,
-                                amount = transaction.formattedAmount,
-                                pending = transaction.pending,
-                                date = transaction.transactionAtDate,
-                                transactionType = transaction.transactionType.getString(),
-                                isPay = transaction.transactionType.positive,
-                                currency = transaction.currency.currencySymbol,
-                                onClick = {
-                                    accountDetailsState.navigateToTransactionDetails(
-                                        transaction.id
-                                    )
-                                }
-                            )
-                        }
-                    }
-                )
-            }
-        )
+//        AmLazyColumn(
+//            isRefreshing = true,
+//            onRefresh = accountDetailsState.refreshTransactions,
+//            content = {
+//                items(
+//                    count = transactionsLazyPaging.itemCount,
+//                    contentType = { LAZY_ITEM_TRANSACTION },
+//                    key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
+//                    itemContent = { index ->
+//                        transactionsLazyPaging[index]?.let { transaction ->
+//                            TransactionCard(
+//                                modifier = Modifier.animateItemPlacement(),
+//                                account = transaction.accountName,
+//                                title = transaction.title,
+//                                amount = transaction.formattedAmount,
+//                                pending = transaction.pending,
+//                                date = transaction.transactionAtDate,
+//                                transactionType = transaction.transactionType.getString(),
+//                                isPay = transaction.transactionType.positive,
+//                                currency = transaction.currency.currencySymbol,
+//                                onClick = {
+//                                    accountDetailsState.navigateToTransactionDetails(
+//                                        transaction.id
+//                                    )
+//                                }
+//                            )
+//                        }
+//                    }
+//                )
+//            }
+//        )
 
     }
 

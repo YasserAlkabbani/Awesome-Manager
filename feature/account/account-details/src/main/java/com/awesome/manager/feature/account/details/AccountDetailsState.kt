@@ -8,7 +8,7 @@ import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-class AccountDetailsActions(
+class AccountDetailsState(
     val refreshTransactions: () -> Unit,
     val amAccount: StateFlow<AmUIState<AmAccount>>,
     val amTransactions: Flow<PagingData<AmTransaction>>,

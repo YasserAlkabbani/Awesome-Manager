@@ -15,6 +15,6 @@ fun AmDynamicBarLoading(){
         modifier = Modifier
             .padding(AmPadding.XX_LARGE.value)
             .height(AmSize.XX_SMALL.value)
-            .width(AmSize.XXX_LARGE.value),
+            .width(AmSize.XXXX_LARGE.value),
     )
 }

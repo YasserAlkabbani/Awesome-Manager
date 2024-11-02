@@ -9,37 +9,34 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSurface
+import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
 @Composable
 fun AmFabButton(dynamicFabButton: DynamicFabButton) {
-    AmSurface(
+    AmButton(
         modifier = Modifier,
-        padding = AmPadding.X_LARGE,
-        positive = dynamicFabButton.isPositive,
-        onClick = dynamicFabButton.onClick,
-    ) {
-        Row {
-            AmText(text = stringResource(dynamicFabButton.text))
-            AmIcon(amIconsType = AmIcons.ArrowForward)
-        }
-    }
+        text = stringResource(dynamicFabButton.text),
+        amIconsType = AmIcons.ArrowForward,
+        onClick = dynamicFabButton.onClick
+    )
 }
 
 
-sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int) {
+sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int,val index:Int) {
     abstract val onClick: () -> Unit
 
     data class Login(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.start_accounting)
+        DynamicFabButton(isPositive = true, text = R.string.start_accounting, index = 0)
 
-    data class Save(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.welcome_back)
-
-    data class Update(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = false, text = R.string.invalid_email)
+    data class Create(override val onClick: () -> Unit) :
+        DynamicFabButton(isPositive = true, text = R.string.create, index = 1)
 
     data class Edit(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = false, text = R.string.invalid_password)
+        DynamicFabButton(isPositive = true, text = R.string.edit, index = 2)
+
+    data class Update(override val onClick: () -> Unit) :
+        DynamicFabButton(isPositive = true, text = R.string.update, index = 3)
+
 }

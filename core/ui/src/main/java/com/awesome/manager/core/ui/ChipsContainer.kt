@@ -18,48 +18,46 @@ import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.chips.AmChip
 import com.awesome.manager.core.designsystem.component.text.AmText
 
-data class ChipData<T, R>(val id: R, val title: String, val data: T)
+data class ChipData(val id: String, val title: String)
 
-fun <T, R> getChipData(id: R, title: String, data: T) =
-    ChipData(id = id, title = title, data = data)
+fun getChipData(id: String, title: String) =
+    ChipData(id = id, title = title)
 
 @Composable
-fun <T, R> AmChipsContainer(
+fun <T> AmChipsContainer(
     title: String,
-    chipDataList: List<ChipData<T, R>>,
-    selectedItem: R?,
-    onSelect: (ChipData<T, R>) -> Unit,
+    chipDataList: List<ChipData>,
+    selectedItem: T?,
+    onSelect: (ChipData) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
 
-    AmCard(padding = AmPadding.ZERO) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        AmText(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            text = title,
+            style = MaterialTheme.typography.titleLarge
+        )
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
-            AmText(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                text = title,
-                style = MaterialTheme.typography.titleMedium
-            )
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                items(
-                    items = chipDataList,
-                    key = { it.id.toString() },
-                    contentType = { "CHIP_DATA" }) { chipData ->
-                    AmChip(
-                        selected = chipData.id == selectedItem, label = chipData.title,
-                        onClick = { onSelect(chipData) }
-                    )
-                }
+            items(
+                items = chipDataList,
+                key = { it.id },
+                contentType = { "CHIP_DATA" }) { chipData ->
+                AmChip(
+                    selected = chipData.id == selectedItem, label = chipData.title,
+                    onClick = { onSelect(chipData) }
+                )
             }
-            content?.invoke()
         }
+        content?.invoke()
     }
 
 }
