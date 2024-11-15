@@ -3,6 +3,7 @@ package com.awesome.manager.core.model
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 
 enum class AmTransactionType(val positive: Boolean) {
@@ -39,5 +40,15 @@ data class BalanceDetails(
     val isPositiveCash: Boolean = netCash >= 0
     val isPositiveIncome: Boolean = netIncome >= 0
     val isPositiveDebtor: Boolean = netDebtor >= 0
+
+    companion object {
+        fun createDemo()=BalanceDetails(
+            income=Random.nextDouble(100.0,100000.0),
+            expenses =Random.nextDouble(100.0,100000.0),
+            debtor =Random.nextDouble(100.0,100000.0),
+            creditor =Random.nextDouble(100.0,100000.0),
+            currency=AmCurrency.createDemo(),
+        )
+    }
 
 }

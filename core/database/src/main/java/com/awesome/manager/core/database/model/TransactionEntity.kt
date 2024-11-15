@@ -11,7 +11,7 @@ data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
     @ColumnInfo("creator_user_id") val creatorUserId: String,
     @ColumnInfo("account_id") val accountId: String,
-    @ColumnInfo("transaction_type") val transactionType: TransactionTypeEntity,
+    @ColumnInfo("transaction_type") val transactionType: String,
     @ColumnInfo("title") val title: String,
     @ColumnInfo("subtitle") val subtitle: String,
     @ColumnInfo("amount") val amount: Double,
@@ -26,5 +26,6 @@ data class TransactionEntityWithData(
     @Relation(
         parentColumn = "account_id", entityColumn = "account_id",
         entity = AccountEntity::class
-    ) val accountEntityWithBasic: AccountEntityWithBasic
+    )
+    val accountEntityWithBasic: AccountEntityWithBasic
 )

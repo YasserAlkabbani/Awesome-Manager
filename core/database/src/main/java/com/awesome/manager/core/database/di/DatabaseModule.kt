@@ -2,7 +2,6 @@ package com.awesome.manager.core.database.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.awesome.manager.core.database.AmDatabase
 import dagger.Module
 import dagger.Provides
@@ -13,12 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule{
+object DatabaseModule {
 
     @Provides
     @Singleton
     fun providesAmDatabase(
         @ApplicationContext context: Context
-    )=Room.databaseBuilder(context,AmDatabase::class.java,"am_database").fallbackToDestructiveMigration().build()
+    ) = Room
+        .databaseBuilder(context, AmDatabase::class.java, "am_database")
+        .fallbackToDestructiveMigration()
+        .build()
 
 }

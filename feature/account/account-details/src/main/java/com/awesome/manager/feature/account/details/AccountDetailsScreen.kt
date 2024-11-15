@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -31,7 +31,6 @@ fun AccountDetailsRoute(
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
 ) {
 
-    val localContext = LocalContext.current
     val accountDetailsState = accountDetailsViewModel.accountDetailsState
 
     val mainAction = accountDetailsState.mainAction.collectAsState().value
@@ -39,35 +38,7 @@ fun AccountDetailsRoute(
         mainAction?.sendMainAction(sendMainAction, accountDetailsState::doneMainAction)
     }
 
-    val accountState = accountDetailsState.amAccount.collectAsState().value
-    val allowToUpdate = accountDetailsState.allowToUpdate.collectAsState().value
-
-    LaunchedEffect(key1 = accountState, allowToUpdate) {
-        if (accountState is AmUIState.Success && allowToUpdate is AmUIState.Success) {
-            val allowToEdit = allowToUpdate.data
-            val account = accountState.data
-//            when (allowToEdit) {
-//                true -> accountDetailsState.dynamicFabMessage(
-//                    positive = false,
-//                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
-//                    dynamicFabExtraButton = DynamicFabExtraButton.None
-//                )
-//
-//                else -> accountDetailsState.dynamicFabButton(
-//                    text = "${localContext.getString(R.string.edit_account_name)} ${accountState.data.name}",
-//                    positive = true,
-//                    onClick = { accountDetailsState.navigateToEditAccount(accountState.data.id) },
-//                    dynamicFabExtraButton = DynamicFabExtraButton.Edit(
-//                        onClick = {
-//                            NavigationDestination.TransactionEditor(
-//                                accountId = account.id, transactionId = null
-//                            )
-//                        }
-//                    )
-//                )
-//            }
-        }
-    }
+    accountDetailsState.uiState.collectAsStateWithLifecycle(null)
 
     AccountDetailsScreen(accountDetailsState)
 }
@@ -76,9 +47,12 @@ fun AccountDetailsRoute(
 @Composable
 fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
-    val accountState: AmUIState<AmAccount> = accountDetailsState.amAccount.collectAsState().value
+    val accountState: AmUIState<AmAccount> =
+        accountDetailsState.account.collectAsStateWithLifecycle().value
+    val refreshingTransactions: Boolean =
+        accountDetailsState.refreshing.collectAsStateWithLifecycle().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
-        accountDetailsState.amTransactions.collectAsLazyPagingItems()
+        accountDetailsState.transactions.collectAsLazyPagingItems()
 
     Column(Modifier.fillMaxSize()) {
 
@@ -109,37 +83,37 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-//        AmLazyColumn(
-//            isRefreshing = true,
-//            onRefresh = accountDetailsState.refreshTransactions,
-//            content = {
-//                items(
-//                    count = transactionsLazyPaging.itemCount,
-//                    contentType = { LAZY_ITEM_TRANSACTION },
-//                    key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
-//                    itemContent = { index ->
-//                        transactionsLazyPaging[index]?.let { transaction ->
-//                            TransactionCard(
-//                                modifier = Modifier.animateItemPlacement(),
-//                                account = transaction.accountName,
-//                                title = transaction.title,
-//                                amount = transaction.formattedAmount,
-//                                pending = transaction.pending,
-//                                date = transaction.transactionAtDate,
-//                                transactionType = transaction.transactionType.getString(),
-//                                isPay = transaction.transactionType.positive,
-//                                currency = transaction.currency.currencySymbol,
-//                                onClick = {
-//                                    accountDetailsState.navigateToTransactionDetails(
-//                                        transaction.id
-//                                    )
-//                                }
-//                            )
-//                        }
-//                    }
-//                )
-//            }
-//        )
+        AmLazyColumn(
+            isRefreshing = refreshingTransactions,
+            onRefresh = accountDetailsState.refreshTransactions,
+            content = {
+                items(
+                    count = transactionsLazyPaging.itemCount,
+                    contentType = { LAZY_ITEM_TRANSACTION },
+                    key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
+                    itemContent = { index ->
+                        transactionsLazyPaging[index]?.let { transaction ->
+                            TransactionCard(
+                                modifier = Modifier.animateItemPlacement(),
+                                account = transaction.accountName,
+                                title = transaction.title,
+                                amount = transaction.formattedAmount,
+                                pending = transaction.pending,
+                                date = transaction.transactionAtDate,
+                                transactionType = transaction.transactionType.getString(),
+                                isPay = transaction.transactionType.positive,
+                                currency = transaction.currency.currencySymbol,
+                                onClick = {
+                                    accountDetailsState.navigateToTransactionDetails(
+                                        transaction.id
+                                    )
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        )
 
     }
 

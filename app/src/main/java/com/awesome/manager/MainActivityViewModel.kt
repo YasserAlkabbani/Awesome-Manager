@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +27,7 @@ class MainActivityViewModel @Inject constructor(
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),
-        currentUserEmail = authRepository.currentUserEmail()
+        currentUser = authRepository.currentUser()
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),
         logout = ::logout
     )
@@ -48,9 +49,13 @@ class MainActivityViewModel @Inject constructor(
     private fun refreshData() {
         viewModelScope.launch {
             launch {
-                currencyRepository.refreshCurrency()
-                accountRepository.refreshAccounts()
-                transactionRepository.refreshTransactions()
+                Timber.d("TEST_AM I")
+                currencyRepository.refreshCurrency().collect()
+                Timber.d("TEST_AM II")
+                accountRepository.refreshAccounts().collect()
+                Timber.d("TEST_AM III")
+                transactionRepository.refreshTransactions().collect()
+                Timber.d("TEST_AM VI")
             }
             launch {
                 accountRepository.syncAccount()

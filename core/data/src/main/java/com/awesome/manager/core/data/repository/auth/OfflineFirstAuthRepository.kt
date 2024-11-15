@@ -1,11 +1,15 @@
 package com.awesome.manager.core.data.repository.auth
 
 import com.awesome.manager.core.data.extention.amRequest
+import com.awesome.manager.core.data.model.asEntity
+import com.awesome.manager.core.data.model.asModel
+import com.awesome.manager.core.database.AmDatabase
+import com.awesome.manager.core.database.dao.UserDao
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
+import com.awesome.manager.core.model.AmUser
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.request.LoginRequest
 import com.awesome.manager.core.network.model.request.SignupRequest
-import com.awesome.manager.core.network.model.response.AuthNetwork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -15,7 +19,7 @@ import javax.inject.Inject
 
 class OfflineFirstAuthRepository @Inject constructor(
     private val authNetworkDataSource: AuthNetworkDataSource,
-    private val authPreferencesDataStore: AuthPreferencesDataStore,
+    private val userDao: UserDao,
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String) =
@@ -23,7 +27,8 @@ class OfflineFirstAuthRepository @Inject constructor(
             val authNetwork = authNetworkDataSource.login(
                 LoginRequest(email = email, password = password)
             )
-            updateToken(authNetwork)
+            val userNetwork = authNetwork.asUserNetwork()
+            userDao.upsertUser(userNetwork.asEntity())
         }
 
     override suspend fun signUp(email: String, password: String) =
@@ -35,28 +40,18 @@ class OfflineFirstAuthRepository @Inject constructor(
         }
 
     override suspend fun logout() = amRequest {
-        authPreferencesDataStore.clearAuth()
         authNetworkDataSource.logout()
     }
 
-    override suspend fun updateToken(authNetwork: AuthNetwork) {
-        authPreferencesDataStore.updateToken(
-            accessToken = authNetwork.accessToken,
-            refreshToken = authNetwork.refreshToken,
-            currentUserId = authNetwork.authUserNetwork.id,
-            email = authNetwork.authUserNetwork.email
-        )
-    }
-
     override fun isLogin(): Flow<Boolean> =
-        authPreferencesDataStore.returnAccessToken()
-            .map { it.isNullOrBlank().not() }
+        userDao.returnCurrentUser()
+            .map { it != null }
             .distinctUntilChanged()
 
-    override fun currentUserId(): Flow<String> =
-        authPreferencesDataStore.returnCurrentUserId().filterNotNull()
+    override fun currentUser(): Flow<AmUser> =
+        userDao.returnCurrentUser()
+            .filterNotNull()
+            .map { it.asModel() }
 
-    override fun currentUserEmail(): Flow<String> =
-        authPreferencesDataStore.returnCurrentUserEmail().filterNotNull()
 
 }

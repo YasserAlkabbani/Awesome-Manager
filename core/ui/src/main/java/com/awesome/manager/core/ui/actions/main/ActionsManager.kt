@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
@@ -20,17 +19,10 @@ import kotlinx.coroutines.flow.update
 abstract class ActionsManager : NavigationState, DynamicFabState, BottomSheetState, ErrorState,
     PickerState {
 
-//    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-//    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-//    fun setLoading(loading: Boolean) {
-//        _isLoading.update { loading }
-//    }
-
-//    suspend fun (suspend () -> Unit).processWitLoading() {
-//        setLoading(true)
-//        this.invoke()
-//        setLoading(false)
-//    }
+    private val _refreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val refreshing: MutableStateFlow<Boolean> = _refreshing
+    fun startRefreshing() = _refreshing.update { true }
+    fun endRefreshing() = _refreshing.update { false }
 
     suspend inline fun <T> Flow<AmUIState<T>>.processRequest(
         crossinline onSuccess: () -> Unit,
@@ -54,18 +46,15 @@ abstract class ActionsManager : NavigationState, DynamicFabState, BottomSheetSta
     private val _mainAction: MutableStateFlow<MainAction?> = MutableStateFlow(null)
     val mainAction: StateFlow<MainAction?> = _mainAction
 
-    private fun updateAction(mainAction: MainAction) =
-        _mainAction.update { mainAction }
-
-    fun doneMainAction() {
-        _mainAction.update { null }
-    }
+    private fun updateAction(mainAction: MainAction) = _mainAction.update { mainAction }
+    fun doneMainAction() = _mainAction.update { null }
 
     override fun NavigationAction.applyAction() = updateAction(this)
     override fun DynamicFabAction.applyAction() = updateAction(this)
     override fun BottomSheetAction.applyAction() = updateAction(this)
     override fun PickerAction.applyAction() = updateAction(this)
     override fun ErrorAction.applyAction() = updateAction(this)
+
     fun MainAction.applyMainAction() {
         when (this) {
             is DynamicFabAction -> applyAction()

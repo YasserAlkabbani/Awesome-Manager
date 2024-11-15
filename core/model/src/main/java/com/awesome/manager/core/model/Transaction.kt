@@ -14,10 +14,11 @@ data class AmTransaction(
     val pending: Boolean,
     val accountName: String,
     val currency: AmCurrency,
+    val updatePermission:Boolean,
     val createdAt: Long,
     val updatedAt: Long,
     val transactionAt: Long,
-    val transactionAtDate: String
+    val transactionAtDate: String,
 ){
     val formattedAmount:String= NumberFormat.getNumberInstance(Locale.US).format(amount)
 }

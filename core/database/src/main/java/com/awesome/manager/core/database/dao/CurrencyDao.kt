@@ -6,7 +6,6 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.awesome.manager.core.database.model.CurrencyEntity
 import com.awesome.manager.core.database.model.CurrencyEntityWithData
-import com.awesome.manager.core.database.model.TransactionTypeEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,20 +23,20 @@ interface CurrencyDao {
     @Transaction
     @Query(
         "SELECT currencies.* ," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END ),0) AS income," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END),0) AS expenses," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END),0) AS debtor," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END ),0) AS creditor " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor " +
                 "FROM currencies " +
                 "JOIN accounts on currencies.currency_id=accounts.currency_id " +
                 "LEFT JOIN transactions on accounts.account_id=transactions.account_id " +
                 "GROUP BY currencies.currency_id"
     )
-    fun returnCurrenciesBalance(
-        income: TransactionTypeEntity = TransactionTypeEntity.INCOME,
-        expenses: TransactionTypeEntity = TransactionTypeEntity.EXPENSES,
-        debtor: TransactionTypeEntity = TransactionTypeEntity.DEBTOR,
-        creditor: TransactionTypeEntity = TransactionTypeEntity.CREDITOR,
-    ): Flow<List<CurrencyEntityWithData>>
+    fun returnCurrenciesBalance(): Flow<List<CurrencyEntityWithData>>
 
 }
+
+const val INCOME: String = "INCOME"
+const val EXPENSES: String = "EXPENSES"
+const val DEBTOR: String = "DEBTOR"
+const val CREDITOR: String = "CREDITOR"

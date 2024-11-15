@@ -27,6 +27,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmLazyColumnPadding
 import com.awesome.manager.core.designsystem.component.AmLinearProgress
+import timber.log.Timber
 
 
 const val LAZY_ITEM_ACCOUNT = "LAZY_ITEM_ACCOUNT"
@@ -42,14 +43,14 @@ fun AmLazyColumn(
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
     PullToRefreshBox(
-        modifier = Modifier, state = pullToRefreshState,
-        isRefreshing = isRefreshing, onRefresh = onRefresh,
-        indicator = { AmLinearProgress(modifier = Modifier.fillMaxWidth()) }
+        modifier = Modifier.fillMaxSize(),
+        state = pullToRefreshState,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
-            verticalArrangement = Arrangement.spacedBy(AmLazyColumnPadding.SPACE_BETWEEN_ITEM.value),
             content = content
         )
     }

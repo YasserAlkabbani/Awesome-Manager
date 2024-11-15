@@ -1,16 +1,34 @@
 package com.awesome.manager.core.model
 
+import java.util.UUID
+
 data class AmAccount(
     val id: String,
-    val creatorUserId: String,
+    val creatorUserID: String,
     val name: String,
     val imageUrl: String,
     val defaultTransactionType: AmTransactionType,
     val balanceDetails: BalanceDetails,
     val pending: Boolean,
+    val updatePermission: Boolean,
     val createdAt: Long,
     val updatedAt: Long,
-)
+) {
+    companion object {
+        fun createDemo(index: Int) = AmAccount(
+            id = index.toString(),
+            creatorUserID = "USER_ID",
+            name = "ACCOUNT $index",
+            imageUrl = "",
+            defaultTransactionType = AmTransactionType.entries.toTypedArray().random(),
+            balanceDetails = BalanceDetails.createDemo(),
+            pending = listOf(true, false).random(),
+            updatePermission = listOf(true, false).random(),
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis(),
+        )
+    }
+}
 
 data class UpsertAccount(
     val id: String,

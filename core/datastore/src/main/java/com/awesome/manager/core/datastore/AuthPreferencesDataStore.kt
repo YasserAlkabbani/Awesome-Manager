@@ -13,18 +13,14 @@ class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val au
 
     private val accessTokenKey = stringPreferencesKey("access_token")
     private val refreshTokenKey = stringPreferencesKey("refresh_token")
-    private val currentUserIdKey = stringPreferencesKey("current_user_id")
-    private val currentUserEmailKey = stringPreferencesKey("current_email")
 
     suspend fun updateToken(
-        accessToken: String, refreshToken: String,
-        currentUserId: String, email: String
+        accessToken: String,
+        refreshToken: String
     ) {
         authDataStore.edit {
             it[accessTokenKey] = Uri.encode(accessToken)
             it[refreshTokenKey] = Uri.encode(refreshToken)
-            it[currentUserIdKey] = Uri.encode(currentUserId)
-            it[currentUserEmailKey] = Uri.encode(email)
         }
     }
 
@@ -39,14 +35,5 @@ class AuthPreferencesDataStore @Inject constructor(@DataStoreAuth private val au
     fun returnRefreshToken() = authDataStore.data.map {
         Uri.decode(it[refreshTokenKey])
     }
-
-    fun returnCurrentUserId() = authDataStore.data.map {
-        Uri.decode(it[currentUserIdKey])
-    }
-
-    fun returnCurrentUserEmail() = authDataStore.data.map {
-        Uri.decode(it[currentUserEmailKey])
-    }
-
 
 }

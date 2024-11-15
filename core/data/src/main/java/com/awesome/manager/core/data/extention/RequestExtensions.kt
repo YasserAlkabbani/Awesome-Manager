@@ -34,7 +34,7 @@ inline fun <T> Flow<T>.asAmResult(
         }
         .flowOn(Dispatchers.Default)
 
-suspend inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmUIState<T>> {
+inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmUIState<T>> {
     val data: T = requestData()!!
     emit(AmUIState.Success(data = data))
 }

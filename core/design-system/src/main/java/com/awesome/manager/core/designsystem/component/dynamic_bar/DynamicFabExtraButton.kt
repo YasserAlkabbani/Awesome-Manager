@@ -26,19 +26,23 @@ fun AmDynamicFabExtraButton(
 }
 
 
-sealed class DynamicFabExtraButton(val isPositave: Boolean, val amIconsType: AmIconsType) {
+sealed class DynamicFabExtraButton(
+    val isPositave: Boolean,
+    val amIconsType: AmIconsType,
+    val index: Int
+) {
     abstract val onClick: () -> Unit
 
     data class Back(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.ArrowBack)
+        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.ArrowBack, index = 1)
 
     data class Cancel(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.Close)
+        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.Close, index = 2)
 
     data class Edit(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.Edit)
+        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.Edit, index = 3)
 
     data class More(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.More)
+        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.More, index = 4)
 
 }

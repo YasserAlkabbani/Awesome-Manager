@@ -154,7 +154,6 @@ object NetworkModule {
                     authNetwork.run {
                         authPreferencesDataStore.updateToken(
                             accessToken = accessToken, refreshToken = refreshToken,
-                            currentUserId = authUserNetwork.id, email = authUserNetwork.email
                         )
                         BearerTokens(accessToken, refreshToken)
                     }

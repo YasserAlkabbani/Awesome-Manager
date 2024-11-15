@@ -9,7 +9,18 @@ data class AuthNetwork(
     @SerialName("access_token") val accessToken: String,
     @SerialName("refresh_token") val refreshToken: String,
     @SerialName("user") val authUserNetwork: AuthUserNetwork,
-)
+){
+    fun asUserNetwork(): UserNetwork = UserNetwork(
+        id = authUserNetwork.id,
+        name = "",
+        imageUrl = "",
+        email = authUserNetwork.email,
+        createdAt = authUserNetwork.createdAt,
+        updatedAt = authUserNetwork.updatedAt,
+        accessToken = accessToken,
+        refreshToken=refreshToken
+    )
+}
 
 @Serializable
 data class AuthUserNetwork(

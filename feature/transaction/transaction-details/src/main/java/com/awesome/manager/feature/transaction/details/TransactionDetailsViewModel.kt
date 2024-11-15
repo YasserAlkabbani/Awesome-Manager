@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
@@ -29,17 +28,13 @@ class TransactionDetailsViewModel @Inject constructor(
     val transactionDetailsState: TransactionDetailsActions = TransactionDetailsActions(
         transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
             .flatMapLatest { transaction ->
-                accountRepository.returnAccountById(transaction.accountId)
-                    .map { account -> account to transaction }
+                    accountRepository.returnAccountById(transaction.accountId)
+                        .map { account -> account to transaction }
             }
-            .flatMapLatest { (account, transaction) ->
-                authRepository.currentUserId()
-                    .map { currentUserId -> Triple(account, transaction, currentUserId) }
-            }
-            .map { (account, transaction, currentUserId) ->
+            .map { (account, transaction) ->
                     TransactionDetailsData(
                         account = account, transaction = transaction,
-                        allowToUpdate = transaction.creatorUserId == currentUserId
+                        allowToUpdate = transaction.updatePermission
                     )
             }
             .asUIState(viewModelScope)

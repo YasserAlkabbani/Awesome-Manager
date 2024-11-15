@@ -38,11 +38,11 @@ sealed class DynamicFab(
     abstract val onClick: () -> Unit
 
     data class Profile(override val onClick: () -> Unit) :
-        DynamicFab(isPositive = true, amIconsType = AmIcons.Profile, index = 0)
+        DynamicFab(isPositive = true, amIconsType = AmIcons.Profile, index = 1)
 
     data class AddAccount(override val onClick: () -> Unit) :
-        DynamicFab(isPositive = true, amIconsType = AmIcons.AccountAdd, index = 1)
+        DynamicFab(isPositive = true, amIconsType = AmIcons.AccountAdd, index = 2)
 
     data class AddTransaction(override val onClick: () -> Unit) :
-        DynamicFab(isPositive = true, amIconsType = AmIcons.TransactionAdd, index = 2)
+        DynamicFab(isPositive = true, amIconsType = AmIcons.TransactionAdd, index = 3)
 }

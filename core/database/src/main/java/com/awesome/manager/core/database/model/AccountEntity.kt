@@ -11,7 +11,7 @@ data class AccountEntity(
     @ColumnInfo("account_id") @PrimaryKey val id: String,
     @ColumnInfo("creator_user_id") val creatorUserId: String,
     @ColumnInfo("currency_id") val currencyId: String,
-    @ColumnInfo("default_transaction_type") val defaultTransactionType: TransactionTypeEntity,
+    @ColumnInfo("default_transaction_type") val defaultTransactionType: String,
     @ColumnInfo("name") val name: String,
     @ColumnInfo("image_url") val imageUrl: String,
     @ColumnInfo("created_at") val createdAt: Long,
@@ -28,6 +28,7 @@ data class AccountEntityWithData(
     @ColumnInfo("expenses") val expenses: Double,
     @ColumnInfo("debtor") val debtor: Double,
     @ColumnInfo("creditor") val creditor: Double,
+    @ColumnInfo("update_permission") val updatePermission: Boolean,
 )
 
 data class AccountEntityWithBasic(

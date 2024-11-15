@@ -95,30 +95,46 @@ sealed class NavigationAction : MainAction {
 
 }
 
-sealed class DynamicFabAction(val index: Int) : MainAction {
+sealed interface DynamicFabAction : MainAction {
 
-    data object None : DynamicFabAction(0)
+    val dynamicFabExtraButton: DynamicFabExtraButton?
+    val index: Int
 
-    data object Loading:DynamicFabAction(1)
+
+    data object None : DynamicFabAction {
+        override val dynamicFabExtraButton: DynamicFabExtraButton? = null
+        override val index: Int = 100
+    }
+
+    data object Loading : DynamicFabAction {
+        override val dynamicFabExtraButton: DynamicFabExtraButton? = null
+        override val index: Int = 200
+    }
 
     data class Fab(
+        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
         val dynamicFab: DynamicFab,
-        val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction(2)
+    ) : DynamicFabAction {
+        override val index: Int = 300 + dynamicFab.index
+    }
 
     data class Message(
+        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
         val dynamicFabText: DynamicFabText,
-        val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction(3)
+    ) : DynamicFabAction {
+        override val index: Int = 400 + dynamicFabText.index
+    }
 
     data class Button(
-        val dynamicFabButton: DynamicFabButton,
-        val dynamicFabExtraButton: DynamicFabExtraButton?
-    ) : DynamicFabAction(4)
+        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
+        val dynamicFabButton: DynamicFabButton
+    ) : DynamicFabAction {
+        override val index: Int = 500 + (dynamicFabExtraButton?.index ?: 0)
+    }
 
 }
 
-data class ErrorAction(val amUIError: AmUIError):MainAction
+data class ErrorAction(val amUIError: AmUIError) : MainAction
 
 sealed class PickerAction : MainAction
 

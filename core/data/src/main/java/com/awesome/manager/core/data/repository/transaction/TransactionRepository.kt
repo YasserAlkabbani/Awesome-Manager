@@ -1,6 +1,7 @@
 package com.awesome.manager.core.data.repository.transaction
 
 import androidx.paging.PagingData
+import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
@@ -15,13 +16,13 @@ interface TransactionRepository {
         fromDate: Long?, toDate: Long?
     ): Flow<PagingData<AmTransaction>>
 
-    fun returnTransactionsByAccountId(
+    fun returnTransactionsByAccountID(
         accountId: String, searchKey: String
     ): Flow<PagingData<AmTransaction>>
 
     fun returnTransactionById(transactionId: String): Flow<AmTransaction>
 
-    suspend fun refreshTransactions()
+    fun refreshTransactions(): Flow<AmUIState<Unit>>
 
     suspend fun synTransactions()
 

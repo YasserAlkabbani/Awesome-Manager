@@ -49,6 +49,8 @@ fun AccountEditorRoute(
         mainAction?.sendMainAction(sendMainAction, accountEditorState::doneMainAction)
     }
 
+    accountEditorState.accountEditorUIState.collectAsStateWithLifecycle(null)
+
     AccountEditorScreen(accountEditorState)
 
 }
@@ -93,7 +95,10 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
                 ) {
-                    AmImage(modifier = Modifier.size(AmSize.XX_LARGE.value), imageUrl = accountImageUrl)
+                    AmImage(
+                        modifier = Modifier.size(AmSize.XX_LARGE.value),
+                        imageUrl = accountImageUrl
+                    )
                     AmTextField(
                         modifier = Modifier,
                         singleLine = true, text = accountName,

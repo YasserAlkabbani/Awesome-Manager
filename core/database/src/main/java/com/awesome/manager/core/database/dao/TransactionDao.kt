@@ -7,7 +7,6 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
-import com.awesome.manager.core.database.model.TransactionTypeEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -32,7 +31,7 @@ interface TransactionDao {
                 "ORDER BY transactions.transaction_at DESC"
     )
     fun returnTransactions(
-        searchKey: String?, transactionType: TransactionTypeEntity?, fromDate: Long?, toDate: Long?
+        searchKey: String?, transactionType: String?, fromDate: Long?, toDate: Long?
     ): PagingSource<Int, TransactionEntityWithData>
 
     @Transaction

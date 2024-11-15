@@ -1,5 +1,6 @@
 package com.awesome.manager.core.network.ktor
 
+import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.request.Authorization
 import com.awesome.manager.core.network.model.request.LoginRequest
@@ -17,10 +18,14 @@ import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.setBody
 import javax.inject.Inject
 
-class KtorAuthNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
+class KtorAuthNetworkDataSource @Inject constructor(
+    private val httpClient: HttpClient,
+    private val authPreferencesDataStore: AuthPreferencesDataStore,
+) :
     AuthNetworkDataSource {
 
-    private fun AuthNetwork.loadToken(): AuthNetwork = apply {
+    private suspend fun AuthNetwork.loadToken(): AuthNetwork = apply {
+        authPreferencesDataStore.updateToken(accessToken,refreshToken)
         httpClient.plugin(Auth).bearer {
             loadTokens { BearerTokens(accessToken, refreshToken) }
         }

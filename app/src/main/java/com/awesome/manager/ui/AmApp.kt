@@ -1,36 +1,25 @@
 package com.awesome.manager.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,8 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,7 +44,6 @@ import com.awesome.manager.MainActivityViewModel
 import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
@@ -71,7 +57,6 @@ import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicText
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFabExtraButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmFabButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFab
-import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.ui.actions.main.ErrorAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
@@ -88,6 +73,7 @@ import com.awesome.manager.navigation.asNavigationDestination
 import com.awesome.manager.navigation.isMainDistinction
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +86,7 @@ fun AmApp() {
     val mainActivityViewModel: MainActivityViewModel = viewModel()
     val mainActivityState = mainActivityViewModel.mainActivityState
 
-    val currentUserEmail = mainActivityState.currentUserEmail.collectAsState().value
+    val currentUser = mainActivityState.currentUser.collectAsState().value
     val loginState = mainActivityState.isLogin.collectAsState().value
 
 
@@ -236,9 +222,9 @@ fun AmApp() {
                 NavigationAction.Home -> mainActivityState.dynamicFab(
                     dynamicFab = DynamicFab.Profile(
                         onClick = {
-                            currentUserEmail?.let { email ->
+                            currentUser?.let { email ->
                                 mainActivityState.showProfileBottomSheet(
-                                    email = email, logout = mainActivityState.logout
+                                    email = currentUser.email, logout = mainActivityState.logout
                                 )
                             }
                         }
@@ -328,7 +314,8 @@ fun AppScreen(
             AmNavHost(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .imePadding(),
                 navHostController = navHostController,
                 sendMainAction = updateMainAction
             )
@@ -359,35 +346,15 @@ private fun DynamicFabAction.Content(): Unit =
         transitionSpec = {
             val initDynamicFab: DynamicFabAction = initialState
             val targetDynamicFab: DynamicFabAction = targetState
-            if (initDynamicFab.index > targetDynamicFab.index) {
-                slideInHorizontally { width -> width } + fadeIn() togetherWith
-                        slideOutHorizontally { width -> -width } + fadeOut()
-
-                slideInHorizontally { width -> -width } + fadeIn() togetherWith
-                        slideOutHorizontally { width -> width } + fadeOut()
-            } else when {
-                initDynamicFab is DynamicFabAction.Fab && targetDynamicFab is DynamicFabAction.Fab -> {
-                    when (initDynamicFab.dynamicFab.index > targetDynamicFab.dynamicFab.index) {
-                        true -> slideInVertically { height -> height } + fadeIn() togetherWith
-                                slideOutVertically { height -> -height } + fadeOut()
-
-                        false -> slideInVertically { height -> -height } + fadeIn() togetherWith
-                                slideOutVertically { height -> height } + fadeOut()
-                    }
+            val indexDifferance = (initDynamicFab.index - targetDynamicFab.index).absoluteValue
+            when (indexDifferance) {
+                0 -> {
+                    slideInHorizontally { width -> 0 } togetherWith
+                            slideOutHorizontally { width -> 0 }
                 }
 
-                initDynamicFab is DynamicFabAction.Button && targetDynamicFab is DynamicFabAction.Button -> {
-                    when (initDynamicFab.dynamicFabButton.index > targetDynamicFab.dynamicFabButton.index) {
-                        true -> slideInVertically { height -> height } + fadeIn() togetherWith
-                                slideOutVertically { height -> -height } + fadeOut()
-
-                        false -> slideInVertically { height -> -height } + fadeIn() togetherWith
-                                slideOutVertically { height -> height } + fadeOut()
-                    }
-                }
-
-                initDynamicFab is DynamicFabAction.Message && targetDynamicFab is DynamicFabAction.Message -> {
-                    when (initDynamicFab.dynamicFabText.index > targetDynamicFab.dynamicFabText.index) {
+                in 1..100 -> {
+                    when (initDynamicFab.index > targetDynamicFab.index) {
                         true -> slideInVertically { height -> height } + fadeIn() togetherWith
                                 slideOutVertically { height -> -height } + fadeOut()
 
@@ -397,8 +364,13 @@ private fun DynamicFabAction.Content(): Unit =
                 }
 
                 else -> {
-                    slideInHorizontally { width -> width } + fadeIn() togetherWith
-                            slideOutHorizontally { width -> -width } + fadeOut()
+                    when (initDynamicFab.index > targetDynamicFab.index) {
+                        true -> slideInHorizontally { width -> width } + fadeIn() togetherWith
+                                slideOutHorizontally { width -> -width } + fadeOut()
+
+                        false -> slideInHorizontally { width -> -width } + fadeIn() togetherWith
+                                slideOutHorizontally { width -> width } + fadeOut()
+                    }
                 }
             }.using(
                 SizeTransform(clip = false)
@@ -409,37 +381,23 @@ private fun DynamicFabAction.Content(): Unit =
             modifier = Modifier.height(AmSize.XXX_LARGE.value),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
+                AmDynamicFabExtraButton(dynamicFabExtraButton)
+                AmSpacerLargeWidth()
+            }
             when (dynamicFabAction) {
 
                 DynamicFabAction.None -> {}
 
-                DynamicFabAction.Loading -> {
-                    AmDynamicBarLoading()
-                }
+                DynamicFabAction.Loading -> AmDynamicBarLoading()
 
-                is DynamicFabAction.Fab -> {
-                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
-                        AmDynamicFabExtraButton(dynamicFabExtraButton)
-                        AmSpacerLargeWidth()
-                    }
-                    AmDynamicFab(dynamicFabAction.dynamicFab)
-                }
 
-                is DynamicFabAction.Button -> {
-                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
-                        AmDynamicFabExtraButton(dynamicFabExtraButton)
-                        AmSpacerLargeWidth()
-                    }
-                    AmFabButton(dynamicFabAction.dynamicFabButton)
-                }
+                is DynamicFabAction.Fab -> AmDynamicFab(dynamicFabAction.dynamicFab)
 
-                is DynamicFabAction.Message -> {
-                    dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
-                        AmDynamicFabExtraButton(dynamicFabExtraButton)
-                        AmSpacerLargeWidth()
-                    }
-                    AmDynamicText(dynamicFabAction.dynamicFabText)
-                }
+                is DynamicFabAction.Button -> AmFabButton(dynamicFabAction.dynamicFabButton)
+
+                is DynamicFabAction.Message -> AmDynamicText(dynamicFabAction.dynamicFabText)
+
 
             }
         }

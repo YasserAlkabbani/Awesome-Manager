@@ -13,7 +13,12 @@ import com.awesome.manager.core.database.model.UserEntity
 
 
 @Database(
-    entities = [UserEntity::class, CurrencyEntity::class, AccountEntity::class, TransactionEntity::class],
+    entities = [
+        UserEntity::class,
+        CurrencyEntity::class,
+        AccountEntity::class,
+        TransactionEntity::class
+    ],
     version = 56, exportSchema = false
 )
 abstract class AmDatabase : RoomDatabase() {

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class OfflineFirstTransactionRepository @Inject constructor(
@@ -36,13 +37,13 @@ class OfflineFirstTransactionRepository @Inject constructor(
         fromDate: Long?, toDate: Long?
     ): Flow<PagingData<AmTransaction>> = {
         transactionDao.returnTransactions(
-            searchKey = searchKey, transactionType = transactionType?.asEntity(),
+            searchKey = searchKey, transactionType = transactionType?.name,
             fromDate = fromDate, toDate = toDate
         )
     }.asPagingDataFlow(asModel = { asModel() })
 
 
-    override fun returnTransactionsByAccountId(
+    override fun returnTransactionsByAccountID(
         accountId: String, searchKey: String
     ): Flow<PagingData<AmTransaction>> = {
         transactionDao.returnTransactionsByAccountId(
@@ -53,15 +54,16 @@ class OfflineFirstTransactionRepository @Inject constructor(
     override fun returnTransactionById(transactionId: String): Flow<AmTransaction> =
         transactionDao.returnTransactionById(transactionId).map { it.asModel() }
 
-    override suspend fun refreshTransactions() = amRequest {
+    override fun refreshTransactions() = amRequest {
         val lastUpdateTransactionTime =
             (transactionDao.returnLastUpdatedTransaction()?.updatedAt ?: 0) + 1
         val lastUpdatedTransactionDateTime = lastUpdateTransactionTime.asDateTimeString()
-        val transactions =
+
+        val transactionsNetwork =
             transactionNetworkDataSource.returnUpdatedTransactions(lastUpdatedTransactionDateTime)
-                .map { it.asEntity() }
-        transactionDao.upsertTransaction(transactions)
-    }.collect()
+        val transactionsEntity=transactionsNetwork.map { it.asEntity() }
+        transactionDao.upsertTransaction(transactionsEntity)
+    }
 
     override suspend fun synTransactions() {
         transactionDao.returnPendingTransaction().filterNotNull().distinctUntilChanged()

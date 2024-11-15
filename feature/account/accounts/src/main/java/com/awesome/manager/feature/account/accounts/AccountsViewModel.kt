@@ -9,13 +9,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
-    private val accountRepository: AccountRepository,
+    private val accountRepository: AccountRepository
 ) : ViewModel() {
 
-    val accountsState: AccountsActions = AccountsActions(
-        searchForAccounts = {
-            accountRepository.returnAccounts(this.searchKey)
-        },
+    val accountsState: AccountsState = AccountsState(
+        pagingAccounts = accountRepository.returnAccounts(null),
         refreshAccounts = ::refreshAccounts
     )
 

@@ -7,7 +7,6 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
-import com.awesome.manager.core.database.model.TransactionTypeEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,42 +21,32 @@ interface AccountDao {
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END ),0) AS income," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END ),0) AS expenses," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END ),0) AS debtor," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END ),0) AS creditor " +
-                "FROM accounts " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='EXPENSES' THEN transactions.amount ELSE 0 END ),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='DEBTOR' THEN transactions.amount ELSE 0 END ),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor, " +
+                "(accounts.creator_user_id == users.user_id) AS update_permission " +
+                "FROM accounts,users " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
                 "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
                 "GROUP BY accounts.name "
     )
-    fun returnAccounts(
-        searchKey: String?,
-        income: TransactionTypeEntity = TransactionTypeEntity.INCOME,
-        expenses: TransactionTypeEntity = TransactionTypeEntity.EXPENSES,
-        debtor: TransactionTypeEntity = TransactionTypeEntity.DEBTOR,
-        creditor: TransactionTypeEntity = TransactionTypeEntity.CREDITOR,
-    ): PagingSource<Int, AccountEntityWithData>
+    fun returnAccounts(searchKey: String?): PagingSource<Int, AccountEntityWithData>
 
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:income THEN transactions.amount ELSE 0 END),0) AS income," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:expenses THEN transactions.amount ELSE 0 END),0) AS expenses," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:debtor THEN transactions.amount ELSE 0 END),0) AS debtor," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=:creditor THEN transactions.amount ELSE 0 END),0) AS creditor " +
-                "FROM accounts " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type='INCOME' THEN transactions.amount ELSE 0 END),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type='CREDITOR' THEN transactions.amount ELSE 0 END),0) AS creditor, " +
+                "(accounts.creator_user_id == users.user_id) AS update_permission " +
+                "FROM accounts,users " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
                 "WHERE accounts.account_id=:accountId " +
                 "GROUP BY accounts.name "
     )
-    fun returnAccountById(
-        accountId: String,
-        income: TransactionTypeEntity = TransactionTypeEntity.INCOME,
-        expenses: TransactionTypeEntity = TransactionTypeEntity.EXPENSES,
-        debtor: TransactionTypeEntity = TransactionTypeEntity.DEBTOR,
-        creditor: TransactionTypeEntity = TransactionTypeEntity.CREDITOR,
-    ): Flow<AccountEntityWithData>
+    fun returnAccountById(accountId: String): Flow<AccountEntityWithData>
 
 
     @Query("SELECT * FROM accounts WHERE pending=1")

@@ -11,11 +11,8 @@ import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertAccount
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import java.util.UUID
 
 private const val ACCOUNT_NAME: String = "ACCOUNT_NAME"
@@ -51,20 +48,7 @@ class AccountEditorState(
     val selectedTransactionType: StateFlow<String> =
         savedStateHandle.getStateFlow(TRANSACTION_TYPE, transactionTypes.first().name)
 
-    suspend fun syncAccountData() {
-        accountEditorData
-            .filterIsInstance<AmUIState.Success<AccountEditorData>>()
-            .filterIsInstance<AccountEditorData.EditAccount>()
-            .mapLatest { it.account }
-            .collect { account ->
-                onUpdateAccountName(account.name)
-                onUpdateAccountImage(account.imageUrl)
-                onUpdateCurrency(account.balanceDetails.currency.id)
-                onUpdateTransactionType(account.defaultTransactionType.name)
-            }
-    }
-
-    suspend fun syncUIState() = accountEditorData
+    val accountEditorUIState = accountEditorData
         .processUIState()
         .flatMapLatest { accountEditorData ->
             combine(
@@ -74,6 +58,7 @@ class AccountEditorState(
                 selectedTransactionType
             ) { name, imageUrl, currencyID, transactionType ->
 
+
                 when (name.isNotBlank() && currencyID != null) {
                     false -> dynamicFabMessage(
                         dynamicFabText = DynamicFabText.InvalidInput,
@@ -81,38 +66,33 @@ class AccountEditorState(
                     )
 
                     true -> {
-                        when (val accountData = accountEditorData.data) {
+                        val accountData = accountEditorData.data
+                        val upsertAccount = accountData.asUpsert(
+                            name = name,
+                            imageUrl = imageUrl,
+                            currencyID = currencyID,
+                            defaultTransactionType = transactionType
+                        )
+                        when (accountData) {
                             is AccountEditorData.CreateAccount -> {
-                                val upsertAccount = accountData.asUpsert(
-                                    name = name,
-                                    imageUrl = imageUrl,
-                                    currencyID = currencyID,
-                                    defaultTransactionType = transactionType
-                                )
                                 dynamicFabButton(
                                     dynamicFabButton = DynamicFabButton.Create {
                                         onUpsert(
                                             upsertAccount
                                         )
                                     },
-                                    dynamicFabExtraButton = DynamicFabExtraButton.Back(::navigatePopBack)
+                                    dynamicFabExtraButton = DynamicFabExtraButton.Cancel(::navigatePopBack)
                                 )
                             }
 
                             is AccountEditorData.EditAccount -> {
-                                val upsertAccount = accountData.asUpsert(
-                                    name = name,
-                                    imageUrl = imageUrl,
-                                    currencyID = currencyID,
-                                    defaultTransactionType = transactionType
-                                )
                                 dynamicFabButton(
                                     dynamicFabButton = DynamicFabButton.Update {
                                         onUpsert(
                                             upsertAccount
                                         )
                                     },
-                                    dynamicFabExtraButton = DynamicFabExtraButton.Back(::navigatePopBack)
+                                    dynamicFabExtraButton = DynamicFabExtraButton.Cancel(::navigatePopBack)
                                 )
                             }
                         }
@@ -120,7 +100,7 @@ class AccountEditorState(
                 }
             }
 
-        }.collect()
+        }
 
 }
 
@@ -162,7 +142,7 @@ sealed interface AccountEditorData {
             defaultTransactionType: String
         ) = UpsertAccount(
             id = account.id,
-            creatorUserId = account.creatorUserId,
+            creatorUserId = account.creatorUserID,
             name = name,
             imageUrl = imageUrl,
             currencyId = currencyID,

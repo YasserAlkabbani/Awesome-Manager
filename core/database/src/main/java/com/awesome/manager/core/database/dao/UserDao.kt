@@ -1,6 +1,7 @@
 package com.awesome.manager.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.awesome.manager.core.database.model.UserEntity
@@ -13,6 +14,9 @@ interface UserDao {
     suspend fun upsertUser(userEntity: UserEntity)
 
     @Query("SELECT * FROM users")
-    fun returnUser():Flow<UserEntity>
+    fun returnCurrentUser():Flow<UserEntity?>
+
+    @Query("DELETE FROM users")
+    suspend fun deletesUsers()
 
 }
