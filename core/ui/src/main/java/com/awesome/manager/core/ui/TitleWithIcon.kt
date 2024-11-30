@@ -25,8 +25,9 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmTextWithIcon(
     modifier: Modifier = Modifier,
-    text: String, textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-    amIconsType: AmIconsType,
+    text: String, textStyle:
+    TextStyle = MaterialTheme.typography.bodyLarge,
+    amIconsType: AmIconsType.ImageVictorAmIconsType,
 ) {
     Row(
         modifier = modifier,
@@ -48,7 +49,7 @@ fun AmTitleWithIconPreview() {
     Surface {
         AmTextWithIcon(
             text = "TITLE",
-            amIconsType = AmIcons.AwesomeManagerIcon,
+            amIconsType = AmIcons.HomeSelected,
         )
     }
 }

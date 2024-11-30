@@ -26,9 +26,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.component.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
@@ -37,6 +36,7 @@ import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun AuthRoute(
@@ -50,12 +50,14 @@ fun AuthRoute(
         mainAction?.sendMainAction(sendMainAction, authScreenState::doneMainAction)
     }
 
+    authScreenState.authUI.collectAsStateWithLifecycle(null)
+
     AuthScreen(authScreenState)
 }
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenActions
+    authScreenState: AuthScreenState
 ) {
 
     val email: String = authScreenState.email.collectAsState().value
@@ -95,9 +97,6 @@ fun AuthScreen(
             AmSpacerLargeHeight()
             AmSpacerLargeHeight()
             Column(Modifier.fillMaxWidth()) {
-                AmCard(
-                    modifier = Modifier.fillMaxWidth(), positive = null,
-                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,8 +135,6 @@ fun AuthScreen(
                                 enabled = true,
                             )
                         }
-
-                    }
                 }
             }
         }
@@ -151,12 +148,12 @@ fun AuthScreen(
 )
 @Composable
 fun AuthScreenPreview() {
+    val a={MutableStateFlow("")}
     AuthScreen(
-        AuthScreenActions(
+        AuthScreenState(
             {},
-            {},
-            {},
-            SavedStateHandle(),
+            {MutableStateFlow("")},
+            {_,_->},
            )
     )
 }

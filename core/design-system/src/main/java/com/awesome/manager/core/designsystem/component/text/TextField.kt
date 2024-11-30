@@ -45,7 +45,7 @@ fun AmTextField(
     modifier: Modifier = Modifier,
     onTextChange: (String) -> Unit,
     text: String,
-    icon: AmIconsType? = null,
+    icon: AmIconsType.ImageVictorAmIconsType? = null,
     label: String? = null,
     hint: String,
     singleLine: Boolean = true,
@@ -61,17 +61,18 @@ fun AmTextField(
 //        label = "COLOR"
 //    ).value
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth().wrapContentHeight()
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
 //            .onFocusChanged { isFocus.value = it.hasFocus }
 //            .background(
 //                color = MaterialTheme.colorScheme.surface,
 //                shape = MaterialTheme.shapes.small
 //            )
-        ,
         value = text,
         enabled = enabled,
-//        placeholder = { AmText(text = hint) },
-        label = { AmText(text = hint) },
+        placeholder = { AmText(text = hint) },
+        label = label?.let { { AmText(text = label) } },
         onValueChange = onTextChange,
         leadingIcon = {
             icon?.let {
@@ -157,7 +158,7 @@ fun AmTextField(
 @Composable
 fun AmPasswordTextField(
     modifier: Modifier = Modifier, onTextChange: (String) -> Unit,
-    icon: AmIconsType? = null, label: String? = null, hint: String,
+    icon: AmIconsType.ImageVictorAmIconsType? = null, label: String? = null, hint: String,
     singleLine: Boolean = true, enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,

@@ -103,33 +103,33 @@ sealed interface DynamicFabAction : MainAction {
 
     data object None : DynamicFabAction {
         override val dynamicFabExtraButton: DynamicFabExtraButton? = null
-        override val index: Int = 100
+        override val index: Int = 1000
     }
 
     data object Loading : DynamicFabAction {
         override val dynamicFabExtraButton: DynamicFabExtraButton? = null
-        override val index: Int = 200
+        override val index: Int = 2000
     }
 
     data class Fab(
         override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
         val dynamicFab: DynamicFab,
     ) : DynamicFabAction {
-        override val index: Int = 300 + dynamicFab.index
+        override val index: Int = 3000 + dynamicFab.index
     }
 
     data class Message(
         override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
         val dynamicFabText: DynamicFabText,
     ) : DynamicFabAction {
-        override val index: Int = 400 + dynamicFabText.index
+        override val index: Int = 4000 + dynamicFabText.index
     }
 
     data class Button(
         override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
         val dynamicFabButton: DynamicFabButton
     ) : DynamicFabAction {
-        override val index: Int = 500 + (dynamicFabExtraButton?.index ?: 0)
+        override val index: Int = 5000 + dynamicFabButton.index
     }
 
 }

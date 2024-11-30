@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.update
 
 
 class AccountsState(
+    override val setString: String.(value: String) -> Unit,
+    override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val pagingAccounts: Flow<PagingData<AmAccount>>,
-    val refreshAccounts: () -> Unit
+    val refreshAccounts: () -> Unit,
 ) : ActionsManager() {
 
 }

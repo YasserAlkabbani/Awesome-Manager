@@ -26,6 +26,8 @@ class TransactionEditorViewModel @Inject constructor(
         savedStateHandle.toRoute()
     val transactionEditorState: TransactionEditorActions =
         TransactionEditorActions(
+            setString = { savedStateHandle[this] = it },
+            getString = { savedStateHandle.getStateFlow(this, it) },
             createTransaction = ::saveTransaction,
             accountsSearchResults = {
                 accountRepository.returnAccounts(this)

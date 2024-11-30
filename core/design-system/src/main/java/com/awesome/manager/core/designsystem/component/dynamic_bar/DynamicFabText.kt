@@ -43,7 +43,10 @@ sealed class DynamicFabText(val isPositive: Boolean, @StringRes val text: Int, v
     data object InvalidLoginCredential :
         DynamicFabText(isPositive = false, text = R.string.invalid_login_credential, index = 4)
 
+    data object ConnectionError :
+        DynamicFabText(isPositive = false, text = R.string.connection_error, index = 5)
+
     data object InvalidInput :
-        DynamicFabText(isPositive = false, text = R.string.invalid_input, index = 5)
+        DynamicFabText(isPositive = false, text = R.string.invalid_input, index = 6)
 
 }

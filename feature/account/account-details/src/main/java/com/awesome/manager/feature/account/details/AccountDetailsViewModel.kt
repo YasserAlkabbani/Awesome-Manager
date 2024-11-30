@@ -7,12 +7,10 @@ import androidx.navigation.toRoute
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
-import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +29,8 @@ class AccountDetailsViewModel @Inject constructor(
         .asUIState(viewModelScope)
 
     val accountDetailsState: AccountDetailsState = AccountDetailsState(
+        setString = { savedStateHandle[this] = it },
+        getString = { savedStateHandle.getStateFlow(this, it) },
         refreshTransactions = ::refreshTransactions,
         account = accountUIState,
         transactions = transactionRepository.returnTransactionsByAccountID(accountID, ""),

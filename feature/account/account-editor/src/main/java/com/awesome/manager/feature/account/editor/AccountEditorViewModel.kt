@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -33,28 +34,22 @@ class AccountEditorViewModel @Inject constructor(
     private val accountID = accountEditorArg.accountId
 
     private val accountEditorData: StateFlow<AmUIState<AccountEditorData>> =
-        authRepository.currentUser()
-            .flatMapLatest { user ->
-                when (accountID) {
-                    null -> flowOf(AccountEditorData.asCreate(user.id))
+        when (accountID) {
+            null -> authRepository
+                .currentUser()
+                .map { user -> AccountEditorData.create(user.id) }
 
-                    else -> accountRepository
-                        .returnAccountById(accountID = accountID)
-                        .map { account ->
-                            accountEditorState.onUpdateAccountName(account.name)
-                            accountEditorState.onUpdateAccountImage(account.imageUrl)
-                            accountEditorState.onUpdateCurrency(account.balanceDetails.currency.id)
-                            accountEditorState.onUpdateTransactionType(account.defaultTransactionType.name)
-                            AccountEditorData.asEdit(account)
-                        }
-                }
-            }.asUIState(viewModelScope)
+            else -> accountRepository
+                .returnAccountById(accountID = accountID)
+                .map { account -> AccountEditorData.create(account) }
+        }.asUIState(viewModelScope)
 
     val accountEditorState: AccountEditorState = AccountEditorState(
+        setString = { savedStateHandle[this] = it },
+        getString = { savedStateHandle.getStateFlow(this, it) },
         currencies = currencyRepository.returnCurrencies().asUIState(viewModelScope),
         accountEditorData = accountEditorData,
         onUpsert = ::onUpsert,
-        savedStateHandle = savedStateHandle
     )
 
     private fun onUpsert(upsertAccount: UpsertAccount) {

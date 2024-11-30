@@ -22,7 +22,7 @@ fun AmButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
-    amIconsType: AmIconsType?
+    amIconsType: AmIconsType.ImageVictorAmIconsType?
 ) {
     Button(
         modifier = modifier,

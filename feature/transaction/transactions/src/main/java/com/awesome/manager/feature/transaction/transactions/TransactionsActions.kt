@@ -14,8 +14,10 @@ import kotlinx.coroutines.flow.update
 
 
 class TransactionsActions(
+    override val setString: String.(value: String) -> Unit,
+    override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val refreshTransactions: () -> Unit,
-    val searchForTransaction: FilterData.() -> Flow<PagingData<AmTransaction>>
+    val searchForTransaction: FilterData.() -> Flow<PagingData<AmTransaction>>,
 ) : ActionsManager() {
 
     private val _filterData: MutableStateFlow<FilterData> = MutableStateFlow(FilterData())

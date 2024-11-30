@@ -28,7 +28,7 @@ fun AmDynamicFabExtraButton(
 
 sealed class DynamicFabExtraButton(
     val isPositave: Boolean,
-    val amIconsType: AmIconsType,
+    val amIconsType: AmIconsType.ImageVictorAmIconsType,
     val index: Int
 ) {
     abstract val onClick: () -> Unit
@@ -44,5 +44,8 @@ sealed class DynamicFabExtraButton(
 
     data class More(override val onClick: () -> Unit) :
         DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.More, index = 4)
+
+    data class TryAgain(override val onClick: () -> Unit) :
+        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.Retry, index = 5)
 
 }

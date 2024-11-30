@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.common.AmUIError
+import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.data.repository.auth.AuthRepository
+import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabExtraButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -14,63 +16,33 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val authScreenState: AuthScreenActions = AuthScreenActions(
+    val authScreenState: AuthScreenState = AuthScreenState(
+        setString = { savedStateHandle[this] = it },
+        getString = { savedStateHandle.getStateFlow(this, it) },
         login = ::login,
-        register = ::register,
-        resetPassword = ::resetPassword,
-        savedStateHandle = savedStateHandle,
     )
 
-    private val errorState = authScreenState.syncValidation(viewModelScope)
-    private val isValidateData: Boolean
-        get() = errorState.value
 
-    private fun login() {
+    private fun login(email: String, password: String) {
         viewModelScope.launch {
-            if (isValidateData) {
-                authScreenState.apply {
-                    authRepository
-                        .login(email = email.value, password = password.value)
-                        .processRequest(onSuccess = {}, onError = {
-                            when (it) {
-                                is AmUIError.BadRequest -> dynamicFabMessage(
-                                    dynamicFabText = DynamicFabText.InvalidLoginCredential
-                                )
+            authRepository.login(email = email, password = password).collectLatest {
+                when (it) {
+                    is AmUIState.Error -> when (it.amUIError) {
+                        AmUIError.ConnectionUIError -> authScreenState.dynamicFabConnectionError {
+                            login(email, password)
+                        }
+                        is AmUIError.BadRequest ->authScreenState.dynamicFabCertificationError()
+                        else -> authScreenState.addError(it.amUIError)
+                    }
 
-                                else -> addError(it)
-                            }
-                        })
+                    is AmUIState.Loading -> authScreenState.dynamicFabLoading()
+                    is AmUIState.Success -> Unit
                 }
             }
         }
     }
-
-    private fun register() {
-        viewModelScope.launch {
-            if (isValidateData) {
-                authScreenState.apply {
-                    authRepository
-                        .signUp(email = email.value, password = password.value)
-                        .processRequest(onSuccess = authScreenState::showAccountCreatedBottomSheet)
-                }
-            }
-        }
-    }
-
-    private fun resetPassword() {
-        viewModelScope.launch {
-            if (isValidateData) {
-                authScreenState.apply {
-                    authRepository
-                        .signUp(email = email.value, password = password.value)
-                        .processRequest(onSuccess = authScreenState::showPasswordRestedBottomSheet)
-                }
-            }
-        }
-    }
-
 
 }

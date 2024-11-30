@@ -14,25 +14,97 @@ interface DynamicFabState {
     fun dynamicFabLoading() =
         DynamicFabAction.Loading.applyAction()
 
-    fun dynamicFab(
+    fun dynamicFabWelcome() = dynamicFabMessage(
+        dynamicFabText = DynamicFabText.WelcomeBack
+    )
+
+    fun dynamicFabInvalidEmail() = dynamicFabMessage(
+        dynamicFabText = DynamicFabText.InvalidEmail
+    )
+
+    fun dynamicFabInvalidPassword() = dynamicFabMessage(
+        dynamicFabText = DynamicFabText.InvalidPassword
+    )
+
+    fun dynamicFabLogin(login: () -> Unit) = dynamicFabButton(
+        dynamicFabButton = DynamicFabButton.Login(
+            onClick = login
+        )
+    )
+
+    fun dynamicFabProfile(showProfileBottomSheet: () -> Unit) = dynamicFab(
+        dynamicFab = DynamicFab.Profile(
+            onClick = showProfileBottomSheet
+        ),
+    )
+
+    fun dynamicFabAddAccount(navigateToCreateAccount: () -> Unit) = dynamicFab(
+        dynamicFab = DynamicFab.AddAccount(
+            onClick = navigateToCreateAccount
+        )
+    )
+
+    fun dynamicFabAddTransaction(navigateToCreateAccount: () -> Unit) = dynamicFab(
+        dynamicFab = DynamicFab.AddTransaction(
+            onClick = navigateToCreateAccount
+        )
+    )
+
+    fun dynamicFabConnectionError(tryAgain: () -> Unit) = dynamicFabMessage(
+        dynamicFabText = DynamicFabText.ConnectionError,
+        dynamicFabExtraButton = DynamicFabExtraButton.TryAgain(tryAgain)
+    )
+
+    fun dynamicFabCertificationError() = dynamicFabMessage(
+        dynamicFabText = DynamicFabText.InvalidLoginCredential
+    )
+
+    fun dynamicFabInvalidInput(navigatePopBack: () -> Unit) = DynamicFabAction.Message(
+        dynamicFabText = DynamicFabText.InvalidInput,
+        dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack)
+    ).applyAction()
+
+    fun dynamicFabCreateAccount(onCreate: () -> Unit, navigatePopBack: () -> Unit) =
+        DynamicFabAction.Button(
+            dynamicFabButton = DynamicFabButton.Create(onCreate),
+            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
+        ).applyAction()
+
+    fun dynamicFabUpdateAccount(onUpdate: () -> Unit, navigatePopBack: () -> Unit) =
+        DynamicFabAction.Button(
+            dynamicFabButton = DynamicFabButton.Update(onUpdate),
+            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
+        ).applyAction()
+
+    fun dynamicFabAddTransaction(
+        navigateToCreateTransaction: () -> Unit,
+        navigateToEditAccount: (() -> Unit)?,
+    ) {
+        dynamicFab(
+            dynamicFab = DynamicFab.AddTransaction(navigateToCreateTransaction),
+            dynamicFabExtraButton = navigateToEditAccount?.let(DynamicFabExtraButton::Edit)
+        )
+    }
+
+    private fun dynamicFab(
         dynamicFab: DynamicFab,
-        dynamicFabExtraButton: DynamicFabExtraButton? = null
+        dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Fab(
         dynamicFab = dynamicFab,
         dynamicFabExtraButton = dynamicFabExtraButton
     ).applyAction()
 
-    fun dynamicFabButton(
+    private fun dynamicFabButton(
         dynamicFabButton: DynamicFabButton,
-        dynamicFabExtraButton: DynamicFabExtraButton? = null
+        dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Button(
         dynamicFabButton = dynamicFabButton,
         dynamicFabExtraButton = dynamicFabExtraButton
     ).applyAction()
 
-    fun dynamicFabMessage(
+    private fun dynamicFabMessage(
         dynamicFabText: DynamicFabText,
-        dynamicFabExtraButton: DynamicFabExtraButton? = null
+        dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Message(
         dynamicFabText = dynamicFabText,
         dynamicFabExtraButton = dynamicFabExtraButton

@@ -25,8 +25,10 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmFilledTonalIconWithTextButton(
     modifier: Modifier = Modifier,
-    text: String, amIconsType: AmIconsType,
-    positive: Boolean?, onClick: () -> Unit
+    text: String,
+    amIconsType: AmIconsType.ImageVictorAmIconsType,
+    positive: Boolean?,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier,

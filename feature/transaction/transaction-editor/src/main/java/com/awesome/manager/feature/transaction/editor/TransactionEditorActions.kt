@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class TransactionEditorActions(
+    override val setString: String.(value: String) -> Unit,
+    override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val accountsSearchResults: String.() -> Flow<PagingData<AmAccount>>,
     val createTransaction: () -> Unit,
 ) : ActionsManager() {

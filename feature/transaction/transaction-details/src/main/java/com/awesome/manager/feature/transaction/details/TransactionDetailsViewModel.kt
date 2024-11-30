@@ -26,6 +26,8 @@ class TransactionDetailsViewModel @Inject constructor(
         savedStateHandle.toRoute()
 
     val transactionDetailsState: TransactionDetailsActions = TransactionDetailsActions(
+        setString = { savedStateHandle[this] = it },
+        getString = { savedStateHandle.getStateFlow(this, it) },
         transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
             .flatMapLatest { transaction ->
                     accountRepository.returnAccountById(transaction.accountId)

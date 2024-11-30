@@ -21,9 +21,12 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmFilterChip(
-    modifier: Modifier = Modifier, selected: Boolean,
-    amIconsType: AmIconsType, label: String, value: String?,
-    onClick: () -> Unit, onRemove: () -> Unit
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    amIconsType: AmIconsType.ImageVictorAmIconsType,
+    label: String, value: String?,
+    onClick: () -> Unit,
+    onRemove: () -> Unit
 ) {
     val shape = if (selected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
     val icon: @Composable () -> Unit = {

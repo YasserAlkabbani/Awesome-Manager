@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -34,11 +35,10 @@ fun <T> Flow<T>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
         .flowOn(Dispatchers.Default)
         .stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(10000),
+            started = SharingStarted.WhileSubscribed(60000),
             initialValue = AmUIState.Loading()
         )
 
-//fun <T> Flow<AmUIState<List<T>>>.asListDataStateFlow(scope: CoroutineScope): StateFlow<AmUIState<List<T>>> =
-//    flowOn(Dispatchers.Default).stateIn(
-//        scope = scope, started = SharingStarted.WhileSubscribed(10000), initialValue = AmUIState.Loading()
-//    )
+fun <T> StateFlow<AmUIState<T>>.filterSuccessData() =
+    filterIsInstance<AmUIState.Success<T>>()
+        .map { it.data }

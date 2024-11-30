@@ -1,7 +1,5 @@
 package com.awesome.manager.core.model
 
-import java.util.UUID
-
 data class AmAccount(
     val id: String,
     val creatorUserID: String,
@@ -37,4 +35,6 @@ data class UpsertAccount(
     val imageUrl: String,
     val currencyId: String,
     val defaultTransactionType: String
-)
+){
+    fun isValid() = name.isNotBlank() && currencyId.isNotBlank()
+}

@@ -22,7 +22,8 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmIconButton(
     modifier: Modifier = Modifier,
-    amIconsType: AmIconsType, onClick: () -> Unit
+    amIconsType: AmIconsType.ImageVictorAmIconsType,
+    onClick: () -> Unit
 ) {
     AmCard(
         modifier=modifier,

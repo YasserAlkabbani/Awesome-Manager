@@ -46,8 +46,8 @@ fun AmNavigationBar(
 @Composable
 fun RowScope.AmNavigationItem(
     isSelected: Boolean,
-    selectedIcon: AmIconsType,
-    unSelectedIcon: AmIconsType,
+    selectedIcon: AmIconsType.ImageVictorAmIconsType,
+    unSelectedIcon: AmIconsType.ImageVictorAmIconsType,
     title: String,
     onSelect: () -> Unit,
 ) {

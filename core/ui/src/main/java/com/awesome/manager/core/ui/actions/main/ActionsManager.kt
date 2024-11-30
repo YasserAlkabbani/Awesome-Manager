@@ -19,29 +19,13 @@ import kotlinx.coroutines.flow.update
 abstract class ActionsManager : NavigationState, DynamicFabState, BottomSheetState, ErrorState,
     PickerState {
 
+    abstract val setString: String.(value: String) -> Unit
+    abstract val getString: String.(defaultValue: String) -> StateFlow<String>
+
     private val _refreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val refreshing: MutableStateFlow<Boolean> = _refreshing
     fun startRefreshing() = _refreshing.update { true }
     fun endRefreshing() = _refreshing.update { false }
-
-    suspend inline fun <T> Flow<AmUIState<T>>.processRequest(
-        crossinline onSuccess: () -> Unit,
-        crossinline onError: (AmUIError) -> Unit = { addError(it) }
-    ) = collectLatest {
-        when (it) {
-            is AmUIState.Error -> onError(it.amUIError)
-            is AmUIState.Loading -> dynamicFabLoading()
-            is AmUIState.Success -> onSuccess()
-        }
-    }
-
-    fun <T> Flow<AmUIState<T>>.processUIState() = onEach {
-        when (it) {
-            is AmUIState.Error -> addError(it.amUIError)
-            is AmUIState.Loading -> dynamicFabLoading()
-            is AmUIState.Success -> Unit
-        }
-    }.filterIsInstance<AmUIState.Success<T>>()
 
     private val _mainAction: MutableStateFlow<MainAction?> = MutableStateFlow(null)
     val mainAction: StateFlow<MainAction?> = _mainAction

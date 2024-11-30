@@ -33,7 +33,7 @@ fun AmDynamicFab(dynamicFab:DynamicFab) {
 
 
 sealed class DynamicFab(
-    val isPositive: Boolean, val amIconsType: AmIconsType,val index:Int,
+    val isPositive: Boolean, val amIconsType: AmIconsType.ImageVictorAmIconsType,val index:Int,
 ) {
     abstract val onClick: () -> Unit
 

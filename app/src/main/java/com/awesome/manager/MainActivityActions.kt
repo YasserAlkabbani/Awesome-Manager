@@ -6,6 +6,8 @@ import com.awesome.manager.core.ui.actions.main.ActionsManager
 import kotlinx.coroutines.flow.StateFlow
 
 class MainActivityActions(
+    override val setString: String.(value: String) -> Unit,
+    override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val isLogin: StateFlow<Boolean?>,
     val currentUser: StateFlow<AmUser?>,
     val logout: () -> Unit,

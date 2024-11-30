@@ -1,5 +1,6 @@
 package com.awesome.manager
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
@@ -20,10 +21,13 @@ class MainActivityViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val currencyRepository: CurrencyRepository,
     private val accountRepository: AccountRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val mainActivityState = MainActivityActions(
+        setString = { savedStateHandle[this] = it },
+        getString = { savedStateHandle.getStateFlow(this, it) },
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),

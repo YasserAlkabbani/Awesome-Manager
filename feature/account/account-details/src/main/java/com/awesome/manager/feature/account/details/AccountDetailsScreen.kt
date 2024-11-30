@@ -28,7 +28,7 @@ import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
 @Composable
 fun AccountDetailsRoute(
     sendMainAction: (MainAction) -> Unit,
-    accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel()
+    accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel(),
 ) {
 
     val accountDetailsState = accountDetailsViewModel.accountDetailsState
@@ -38,12 +38,11 @@ fun AccountDetailsRoute(
         mainAction?.sendMainAction(sendMainAction, accountDetailsState::doneMainAction)
     }
 
-    accountDetailsState.uiState.collectAsStateWithLifecycle(null)
+    accountDetailsState.accountDetailsUI.collectAsStateWithLifecycle(null)
 
     AccountDetailsScreen(accountDetailsState)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
@@ -78,7 +77,8 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
             }
 
-            is AmUIState.Error, is AmUIState.Loading -> {}
+            is AmUIState.Error -> Unit
+            is AmUIState.Loading -> Unit
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -94,7 +94,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                     itemContent = { index ->
                         transactionsLazyPaging[index]?.let { transaction ->
                             TransactionCard(
-                                modifier = Modifier.animateItemPlacement(),
+                                modifier = Modifier.animateItem(),
                                 account = transaction.accountName,
                                 title = transaction.title,
                                 amount = transaction.formattedAmount,

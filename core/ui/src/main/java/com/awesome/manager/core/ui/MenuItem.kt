@@ -18,8 +18,10 @@ import com.awesome.manager.core.designsystem.text.AmTextManager
 
 @Composable
 fun MenuItem(
-    title: AmTextManager, subTitle: AmTextManager,
-    amIconsType: AmIconsType?, imageUrl: String?,
+    title: AmTextManager,
+    subTitle: AmTextManager,
+    amIconsType: AmIconsType.ImageVictorAmIconsType?,
+    imageUrl: String?,
     loading: Boolean, onClick: () -> Unit
 ) {
 
@@ -31,7 +33,8 @@ fun MenuItem(
             imageUrl?.let { AmImage(modifier = Modifier.size(AmSize.MEDIUM.value), imageUrl = it) }
             amIconsType?.let {
                 AmIcon(
-                    modifier = Modifier.size(AmSize.MEDIUM.value), amIconsType = it
+                    modifier = Modifier.size(AmSize.MEDIUM.value),
+                    amIconsType = it
                 )
             }
             AmSpacerSmallWidth()

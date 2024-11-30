@@ -10,8 +10,8 @@ import com.awesome.manager.core.ui.actions.main.NavigationAction
 enum class MainDestination(
     val navigationDestination: NavigationAction,
     @StringRes val title:Int,
-    val selectedAmIconsType: AmIconsType,
-    val unSelectedAmIconsType: AmIconsType,
+    val selectedAmIconsType: AmIconsType.ImageVictorAmIconsType,
+    val unSelectedAmIconsType: AmIconsType.ImageVictorAmIconsType,
 ) {
     Home(
         navigationDestination = NavigationAction.Home,

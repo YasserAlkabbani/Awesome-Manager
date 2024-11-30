@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -28,13 +29,14 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
 
 @Composable
 fun AccountsRoute(
     sendMainAction: (MainAction) -> Unit,
-    accountsViewModel: AccountsViewModel = hiltViewModel()
+    accountsViewModel: AccountsViewModel = hiltViewModel(),
 ) {
 
     val accountsState = accountsViewModel.accountsState
@@ -50,12 +52,14 @@ fun AccountsRoute(
 
 @Composable
 fun AccountsScreen(
-    accountsState: AccountsState
+    accountsState: AccountsState,
 ) {
-    val accountsLazyPaging = accountsState.pagingAccounts.collectAsLazyPagingItems()
-    val isEmptyList = remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
-
-    Timber.d("TEST_AM TEST_PAGING $isEmptyList ${accountsLazyPaging.itemCount}")
+    val accountsLazyPaging =
+        accountsState.pagingAccounts.collectAsLazyPagingItems()
+    val isEmptyList =
+        remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
+    val isRefreshing =
+        accountsState.refreshing.collectAsStateWithLifecycle().value
 
     Column(
         modifier = Modifier
@@ -75,7 +79,8 @@ fun AccountsScreen(
                     ) {
                         AmText(
                             text = stringResource(R.string.theres_no_accounts_yet),
-                            maxLines = 3, textAlign = TextAlign.Center
+                            maxLines = 3,
+                            textAlign = TextAlign.Center
                         )
                         AmFilledTonalButton(
                             text = stringResource(R.string.create_an_account),
@@ -86,7 +91,7 @@ fun AccountsScreen(
 
                 false -> {
                     AmLazyColumn(
-                        isRefreshing = false,
+                        isRefreshing = isRefreshing,
                         onRefresh = accountsState.refreshAccounts,
                         content = {
                             items(
@@ -139,6 +144,8 @@ fun AccountsScreenPreview() {
         }
     }
     val accountState = AccountsState(
+        {},
+        { MutableStateFlow("") },
         refreshAccounts = {},
         pagingAccounts = flowOf(PagingData.from(accountsList))
     )

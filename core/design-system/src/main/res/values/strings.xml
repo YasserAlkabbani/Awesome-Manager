@@ -13,4 +13,6 @@
     <string name="create">Create</string>
     <string name="edit">Edit</string>
     <string name="update">Update</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="try_again">Try Again</string>
 </resources>

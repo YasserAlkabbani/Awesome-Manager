@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subtitles
@@ -97,6 +98,7 @@ object AmIcons {
     val Search = AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
 
     val Error = AmIconsType.ImageVictorAmIconsType(Icons.Default.Error)
+    val Retry = AmIconsType.ImageVictorAmIconsType(Icons.Default.Replay)
 
     val Visibility = AmIconsType.ImageVictorAmIconsType(Icons.Filled.Visibility)
     val VisibilityOff = AmIconsType.ImageVictorAmIconsType(Icons.Filled.VisibilityOff)

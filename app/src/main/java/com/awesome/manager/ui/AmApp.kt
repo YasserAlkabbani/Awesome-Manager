@@ -9,9 +9,11 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -57,6 +59,7 @@ import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicText
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFabExtraButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmFabButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFab
+import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabText
 import com.awesome.manager.core.ui.actions.main.ErrorAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
@@ -219,29 +222,21 @@ fun AmApp() {
                 NavigationAction.Auth -> Unit
                 NavigationAction.Intro -> Unit
 
-                NavigationAction.Home -> mainActivityState.dynamicFab(
-                    dynamicFab = DynamicFab.Profile(
-                        onClick = {
-                            currentUser?.let { email ->
-                                mainActivityState.showProfileBottomSheet(
-                                    email = currentUser.email, logout = mainActivityState.logout
-                                )
-                            }
-                        }
-                    ),
-                    dynamicFabExtraButton = null
+                NavigationAction.Home -> mainActivityState.dynamicFabProfile {
+                    currentUser?.let {
+                        mainActivityState.showProfileBottomSheet(
+                            email = currentUser.email,
+                            logout = mainActivityState.logout
+                        )
+                    }
+                }
+
+                NavigationAction.Accounts -> mainActivityState.dynamicFabAddAccount(
+                    mainActivityState::navigateToCreateAccount
                 )
 
-                NavigationAction.Accounts -> mainActivityState.dynamicFab(
-                    dynamicFab = DynamicFab.AddAccount(
-                        onClick = mainActivityState::navigateToCreateAccount
-                    )
-                )
-
-                NavigationAction.Transactions -> mainActivityState.dynamicFab(
-                    dynamicFab = DynamicFab.AddTransaction(
-                        onClick = mainActivityState::navigateToCreateAccount
-                    )
+                NavigationAction.Transactions -> mainActivityState.dynamicFabAddTransaction(
+                    mainActivityState::navigateToCreateAccount
                 )
 
                 is NavigationAction.AccountDetails -> Unit
@@ -353,7 +348,7 @@ private fun DynamicFabAction.Content(): Unit =
                             slideOutHorizontally { width -> 0 }
                 }
 
-                in 1..100 -> {
+                in 1..99 -> {
                     when (initDynamicFab.index > targetDynamicFab.index) {
                         true -> slideInVertically { height -> height } + fadeIn() togetherWith
                                 slideOutVertically { height -> -height } + fadeOut()
@@ -378,8 +373,9 @@ private fun DynamicFabAction.Content(): Unit =
         }
     ) { dynamicFabAction ->
         Row(
-            modifier = Modifier.height(AmSize.XXX_LARGE.value),
+            modifier = Modifier.height(AmSize.XXX_LARGE.value).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         ) {
             dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
                 AmDynamicFabExtraButton(dynamicFabExtraButton)

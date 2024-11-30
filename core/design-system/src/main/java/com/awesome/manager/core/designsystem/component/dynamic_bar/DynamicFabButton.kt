@@ -39,4 +39,7 @@ sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int,
     data class Update(override val onClick: () -> Unit) :
         DynamicFabButton(isPositive = true, text = R.string.update, index = 3)
 
+    data class TryAgain(override val onClick: () -> Unit) :
+        DynamicFabButton(isPositive = false, text = R.string.try_again, index = 4)
+
 }

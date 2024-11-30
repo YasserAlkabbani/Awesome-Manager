@@ -12,25 +12,30 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 @Composable
 fun AmIcon(
     modifier: Modifier = Modifier,
-    amIconsType: AmIconsType
+    amIconsType: AmIconsType.ImageVictorAmIconsType
 ) {
-    when (amIconsType) {
-        is AmIconsType.ImageVictorAmIconsType ->
-            Icon(
-                modifier = modifier, imageVector = amIconsType.imageVector,
-                contentDescription = null
-            )
-
-        is AmIconsType.DrawableResourceAmIconsType ->
-            Icon(
-                modifier = modifier, painter = painterResource(id = amIconsType.id),
-                contentDescription = null
-            )
-
-        is AmIconsType.PainterAmIconsType ->
-            Icon(
-                modifier = modifier, painter = amIconsType.painter,
-                contentDescription = null
-            )
-    }
+    Icon(
+        modifier = modifier, imageVector = amIconsType.imageVector,
+        contentDescription = null
+    )
+}
+@Composable
+fun AmIcon(
+    modifier: Modifier = Modifier,
+    amIconsType: AmIconsType.DrawableResourceAmIconsType
+) {
+    Icon(
+        modifier = modifier, painter = painterResource(id = amIconsType.id),
+        contentDescription = null
+    )
+}
+@Composable
+fun AmIcon(
+    modifier: Modifier = Modifier,
+    amIconsType: AmIconsType.PainterAmIconsType
+) {
+    Icon(
+        modifier = modifier, painter = amIconsType.painter,
+        contentDescription = null
+    )
 }

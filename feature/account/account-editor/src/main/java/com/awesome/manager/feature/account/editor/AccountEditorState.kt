@@ -1,18 +1,17 @@
 package com.awesome.manager.feature.account.editor
 
-import androidx.lifecycle.SavedStateHandle
 import com.awesome.manager.core.common.AmUIState
-import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabButton
-import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabExtraButton
-import com.awesome.manager.core.designsystem.component.dynamic_bar.DynamicFabText
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.actions.main.ActionsManager
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertAccount
+import com.awesome.manager.core.ui.actions.filterSuccessData
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
 import java.util.UUID
 
 private const val ACCOUNT_NAME: String = "ACCOUNT_NAME"
@@ -24,32 +23,30 @@ class AccountEditorState(
     val currencies: StateFlow<AmUIState<List<AmCurrency>>>,
     val accountEditorData: StateFlow<AmUIState<AccountEditorData>>,
     val onUpsert: (UpsertAccount) -> Unit,
-    private val savedStateHandle: SavedStateHandle,
+    override val setString: String.(value: String) -> Unit,
+    override val getString: String.(defaultValue: String) -> StateFlow<String>,
 ) : ActionsManager() {
 
     val transactionTypes: List<AmTransactionType> = AmTransactionType.entries.toList()
 
-    fun onUpdateAccountName(name: String) = savedStateHandle.set(ACCOUNT_NAME, name)
-    val accountName: StateFlow<String> = savedStateHandle.getStateFlow(ACCOUNT_NAME, "")
+    fun onUpdateAccountName(name: String) = ACCOUNT_NAME.setString(name)
+    val accountName: StateFlow<String> = ACCOUNT_NAME.getString("")
 
+    fun onUpdateAccountImage(imageUrl: String) = IMAGE_URL.setString(imageUrl)
+    val accountImageUrl: StateFlow<String> = IMAGE_URL.getString(images.random())
 
-    fun onUpdateAccountImage(imageUrl: String) = savedStateHandle.set(IMAGE_URL, imageUrl)
-    val accountImageUrl: StateFlow<String> =
-        savedStateHandle.getStateFlow(IMAGE_URL, images.random())
-
-
-    fun onUpdateCurrency(currencyID: String) = savedStateHandle.set(CURRENCY, currencyID)
-    val selectedCurrency: StateFlow<String?> = savedStateHandle.getStateFlow(CURRENCY, null)
-
+    fun onUpdateCurrency(currencyID: String) = CURRENCY.setString(currencyID)
+    val selectedCurrency: StateFlow<String> = CURRENCY.getString("")
 
     fun onUpdateTransactionType(transactionType: String) =
-        savedStateHandle.set(TRANSACTION_TYPE, transactionType)
+        TRANSACTION_TYPE.setString(transactionType)
 
     val selectedTransactionType: StateFlow<String> =
-        savedStateHandle.getStateFlow(TRANSACTION_TYPE, transactionTypes.first().name)
+        TRANSACTION_TYPE.getString(transactionTypes.first().name)
 
-    val accountEditorUIState = accountEditorData
-        .processUIState()
+    val accountEditorUI = accountEditorData
+        .filterSuccessData()
+        .checkInitData()
         .flatMapLatest { accountEditorData ->
             combine(
                 accountName,
@@ -57,103 +54,75 @@ class AccountEditorState(
                 selectedCurrency,
                 selectedTransactionType
             ) { name, imageUrl, currencyID, transactionType ->
-
-
-                when (name.isNotBlank() && currencyID != null) {
-                    false -> dynamicFabMessage(
-                        dynamicFabText = DynamicFabText.InvalidInput,
-                        dynamicFabExtraButton = DynamicFabExtraButton.Back(::navigatePopBack)
-                    )
-
-                    true -> {
-                        val accountData = accountEditorData.data
-                        val upsertAccount = accountData.asUpsert(
-                            name = name,
-                            imageUrl = imageUrl,
-                            currencyID = currencyID,
-                            defaultTransactionType = transactionType
-                        )
-                        when (accountData) {
-                            is AccountEditorData.CreateAccount -> {
-                                dynamicFabButton(
-                                    dynamicFabButton = DynamicFabButton.Create {
-                                        onUpsert(
-                                            upsertAccount
-                                        )
-                                    },
-                                    dynamicFabExtraButton = DynamicFabExtraButton.Cancel(::navigatePopBack)
-                                )
-                            }
-
-                            is AccountEditorData.EditAccount -> {
-                                dynamicFabButton(
-                                    dynamicFabButton = DynamicFabButton.Update {
-                                        onUpsert(
-                                            upsertAccount
-                                        )
-                                    },
-                                    dynamicFabExtraButton = DynamicFabExtraButton.Cancel(::navigatePopBack)
-                                )
-                            }
-                        }
-                    }
-                }
+                UpsertAccount(
+                    id = accountEditorData.accountID,
+                    creatorUserId = accountEditorData.creatorUserID,
+                    name = name,
+                    imageUrl = imageUrl,
+                    currencyId = currencyID,
+                    defaultTransactionType = transactionType
+                ).processUIState(accountEditorData)
             }
-
         }
+
+
+    private fun Flow<AccountEditorData>.checkInitData()=onEach { accountEditorData ->
+        if (accountEditorData is AccountEditorData.EditAccount){
+            accountEditorData.account.apply {
+                onUpdateAccountName(name)
+                onUpdateAccountImage(imageUrl)
+                onUpdateCurrency(balanceDetails.currency.id)
+                onUpdateTransactionType(defaultTransactionType.name)
+            }
+        }
+    }
+
+    private fun UpsertAccount.processUIState(accountEditorData: AccountEditorData) {
+        when (isValid()) {
+            false -> dynamicFabInvalidInput(::navigatePopBack)
+            true -> when (accountEditorData) {
+                is AccountEditorData.CreateAccount -> dynamicFabCreateAccount(
+                    onCreate = { onUpsert(this) },
+                    navigatePopBack = ::navigatePopBack
+                )
+
+                is AccountEditorData.EditAccount -> dynamicFabUpdateAccount(
+                    onUpdate = { onUpsert(this) },
+                    navigatePopBack = ::navigatePopBack
+                )
+            }
+        }
+    }
+
 
 }
 
 sealed interface AccountEditorData {
 
-    fun asUpsert(
-        name: String,
-        imageUrl: String,
-        currencyID: String,
-        defaultTransactionType: String
-    ): UpsertAccount
+    val accountID: String
+    val creatorUserID: String
 
     data class CreateAccount(
-        val accountId: String = UUID.randomUUID().toString(),
-        val creatorUserID: String
-    ) : AccountEditorData {
-        override fun asUpsert(
-            name: String,
-            imageUrl: String,
-            currencyID: String,
-            defaultTransactionType: String
-        ) = UpsertAccount(
-            id = accountId,
-            creatorUserId = creatorUserID,
-            name = name,
-            imageUrl = imageUrl,
-            currencyId = currencyID,
-            defaultTransactionType = defaultTransactionType,
-        )
-    }
+        override val accountID: String = UUID.randomUUID().toString(),
+        override val creatorUserID: String,
+    ) : AccountEditorData
 
     data class EditAccount(
-        val account: AmAccount
-    ) : AccountEditorData {
-        override fun asUpsert(
-            name: String,
-            imageUrl: String,
-            currencyID: String,
-            defaultTransactionType: String
-        ) = UpsertAccount(
-            id = account.id,
-            creatorUserId = account.creatorUserID,
-            name = name,
-            imageUrl = imageUrl,
-            currencyId = currencyID,
-            defaultTransactionType = defaultTransactionType,
-        )
-    }
+        override val accountID: String,
+        override val creatorUserID: String,
+        val account: AmAccount,
+    ) : AccountEditorData
 
     companion object {
-        fun asCreate(currentUserId: String) = CreateAccount(creatorUserID = currentUserId)
+        fun create(currentUserId: String) = CreateAccount(
+            creatorUserID = currentUserId
+        )
 
-        fun asEdit(account: AmAccount) = EditAccount(account = account)
+        fun create(account: AmAccount) = EditAccount(
+            accountID = account.id,
+            creatorUserID = account.creatorUserID,
+            account = account
+        )
     }
 }
 
