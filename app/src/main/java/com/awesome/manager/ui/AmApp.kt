@@ -373,7 +373,9 @@ private fun DynamicFabAction.Content(): Unit =
         }
     ) { dynamicFabAction ->
         Row(
-            modifier = Modifier.height(AmSize.XXX_LARGE.value).fillMaxWidth(),
+            modifier = Modifier
+                .height(AmSize.XXX_LARGE.value)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {

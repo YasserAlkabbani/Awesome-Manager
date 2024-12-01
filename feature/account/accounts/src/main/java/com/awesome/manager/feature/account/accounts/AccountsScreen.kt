@@ -41,7 +41,7 @@ fun AccountsRoute(
 
     val accountsState = accountsViewModel.accountsState
 
-    val mainAction = accountsState.mainAction.collectAsState().value
+    val mainAction = accountsState.mainAction.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = mainAction) {
         mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
     }
@@ -62,9 +62,7 @@ fun AccountsScreen(
         accountsState.refreshing.collectAsStateWithLifecycle().value
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .animateContentSize(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
         AnimatedContent(isEmptyList, label = "ACCOUNTS_ANIMATED") {

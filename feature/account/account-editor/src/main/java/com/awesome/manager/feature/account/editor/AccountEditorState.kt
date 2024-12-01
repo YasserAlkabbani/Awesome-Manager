@@ -46,7 +46,7 @@ class AccountEditorState(
 
     val accountEditorUI = accountEditorData
         .filterSuccessData()
-        .checkInitData()
+        .setInitData()
         .flatMapLatest { accountEditorData ->
             combine(
                 accountName,
@@ -66,7 +66,7 @@ class AccountEditorState(
         }
 
 
-    private fun Flow<AccountEditorData>.checkInitData()=onEach { accountEditorData ->
+    private fun Flow<AccountEditorData>.setInitData()=onEach { accountEditorData ->
         if (accountEditorData is AccountEditorData.EditAccount){
             accountEditorData.account.apply {
                 onUpdateAccountName(name)

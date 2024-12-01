@@ -1,9 +1,11 @@
 package com.awesome.manager.feature.account.editor
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,12 +38,12 @@ fun AccountEditorRoute(
 
     val accountEditorState = accountEditorViewModel.accountEditorState
 
+    accountEditorState.accountEditorUI.collectAsStateWithLifecycle(null)
+
     val mainAction = accountEditorState.mainAction.collectAsState().value
     LaunchedEffect(key1 = mainAction) {
         mainAction?.sendMainAction(sendMainAction, accountEditorState::doneMainAction)
     }
-
-    accountEditorState.accountEditorUI.collectAsStateWithLifecycle(null)
 
     AccountEditorScreen(accountEditorState)
 
@@ -72,51 +74,55 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
         }
     }
 
-    AnimatedContent(accountData, label = "ACCOUNTS_DETAILS") {
-        when(it){
-            is AmUIState.Error -> Unit
-            is AmUIState.Loading -> Unit
-            is AmUIState.Success -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(AmPadding.MEDIUM.value),
-                    verticalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
-                ) {
-                    Row(
-                        modifier = Modifier,
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AnimatedContent(accountData, label = "ACCOUNTS_DETAILS") {
+            when (it) {
+                is AmUIState.Error -> Unit
+                is AmUIState.Loading -> Unit
+                is AmUIState.Success -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = AmPadding.MEDIUM.value),
+                        verticalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
                     ) {
-                        AmImage(
-                            modifier = Modifier.size(AmSize.XX_LARGE.value),
-                            imageUrl = accountImageUrl
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
+                        ) {
+                            AmImage(
+                                modifier = Modifier.size(AmSize.XX_LARGE.value),
+                                imageUrl = accountImageUrl
+                            )
+                            AmTextField(
+                                modifier = Modifier,
+                                singleLine = true, text = accountName,
+                                label = "Account", icon = AmIcons.Title, hint = "Account Name",
+                                onTextChange = accountEditorState::onUpdateAccountName
+                            )
+                        }
+                        AmChipsContainer(
+                            title = "Currency",
+                            chipDataList = currencyChipData,
+                            selectedItem = selectedCurrencyID,
+                            onSelect = { accountEditorState.onUpdateCurrency(it.id) },
+                            content = null
                         )
-                        AmTextField(
-                            modifier = Modifier,
-                            singleLine = true, text = accountName,
-                            label = "Account", icon = AmIcons.Title, hint = "Account Name",
-                            onTextChange = accountEditorState::onUpdateAccountName
+                        AmChipsContainer(
+                            title = stringResource(R.string.default_transaction_type),
+                            chipDataList = transactionTypeChipData,
+                            selectedItem = selectedTransactionType,
+                            onSelect = { accountEditorState.onUpdateTransactionType(it.id) },
+                            content = null
                         )
                     }
-                    AmChipsContainer(
-                        title = "Currency",
-                        chipDataList = currencyChipData,
-                        selectedItem = selectedCurrencyID,
-                        onSelect = { accountEditorState.onUpdateCurrency(it.id) },
-                        content = null
-                    )
-                    AmChipsContainer(
-                        title = stringResource(R.string.default_transaction_type),
-                        chipDataList = transactionTypeChipData,
-                        selectedItem = selectedTransactionType,
-                        onSelect = { accountEditorState.onUpdateTransactionType(it.id) },
-                        content = null
-                    )
-
                 }
             }
         }
+
     }
 
 }

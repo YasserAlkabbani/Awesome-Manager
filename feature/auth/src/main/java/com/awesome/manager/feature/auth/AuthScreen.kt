@@ -45,12 +45,13 @@ fun AuthRoute(
 ) {
     val authScreenState = authViewModel.authScreenState
 
-    val mainAction = authScreenState.mainAction.collectAsState().value
+    authScreenState.authUI.collectAsStateWithLifecycle(null)
+
+    val mainAction = authScreenState.mainAction.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = mainAction) {
         mainAction?.sendMainAction(sendMainAction, authScreenState::doneMainAction)
     }
 
-    authScreenState.authUI.collectAsStateWithLifecycle(null)
 
     AuthScreen(authScreenState)
 }
