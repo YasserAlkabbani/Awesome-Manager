@@ -46,7 +46,8 @@ fun AmLazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = pullToRefreshState,
         isRefreshing = isRefreshing,
-        onRefresh = onRefresh
+        onRefresh = onRefresh,
+        contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

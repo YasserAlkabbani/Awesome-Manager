@@ -6,7 +6,7 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import kotlinx.coroutines.flow.StateFlow
 
-class TransactionDetailsActions(
+class TransactionDetailsState(
     override val setString: String.(value: String) -> Unit,
     override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val transactionDetailsData: StateFlow<AmUIState<TransactionDetailsData>>,
@@ -18,5 +18,4 @@ class TransactionDetailsActions(
 data class TransactionDetailsData(
     val account: AmAccount,
     val transaction: AmTransaction,
-    val allowToUpdate: Boolean
 )

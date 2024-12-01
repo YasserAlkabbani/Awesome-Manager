@@ -21,7 +21,9 @@ interface TransactionDao {
 
     @Transaction
     @Query(
-        "SELECT * FROM transactions " +
+        "SELECT transactions.* ," +
+                "(transactions.creator_user_id == users.user_id) AS update_permission " +
+                "FROM transactions ,users " +
                 "WHERE ((transactions.title LIKE '%' || :searchKey || '%') " +
                 "OR (transactions.subtitle LIKE '%' || :searchKey || '%') " +
                 "OR (:searchKey IS NULL)) " +
@@ -31,22 +33,29 @@ interface TransactionDao {
                 "ORDER BY transactions.transaction_at DESC"
     )
     fun returnTransactions(
-        searchKey: String?, transactionType: String?, fromDate: Long?, toDate: Long?
+        searchKey: String?, transactionType: String?, fromDate: Long?, toDate: Long?,
     ): PagingSource<Int, TransactionEntityWithData>
 
     @Transaction
     @Query(
-        "SELECT * FROM transactions " +
+        "SELECT transactions.* ," +
+                "(transactions.creator_user_id == users.user_id) AS update_permission " +
+                "FROM transactions ,users " +
                 "WHERE (transactions.account_id=:accountId) " +
                 "AND (transactions.title LIKE '%' || :searchKey || '%') " +
                 "ORDER BY transactions.transaction_at DESC"
     )
     fun returnTransactionsByAccountId(
-        accountId: String, searchKey: String
+        accountId: String, searchKey: String,
     ): PagingSource<Int, TransactionEntityWithData>
 
     @Transaction
-    @Query("SELECT * FROM transactions WHERE transaction_id=:transactionId")
+    @Query(
+        "SELECT transactions.* ," +
+                "(transactions.creator_user_id == users.user_id) AS update_permission " +
+                "FROM transactions ,users " +
+                "WHERE transaction_id=:transactionId"
+    )
     fun returnTransactionById(transactionId: String): Flow<TransactionEntityWithData>
 
     @Query("SELECT * FROM transactions WHERE pending=1")

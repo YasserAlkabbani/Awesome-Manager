@@ -74,55 +74,56 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    AnimatedContent(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter,
+        targetState = accountData,
+        label = "ACCOUNTS_EDITORS"
     ) {
-        AnimatedContent(accountData, label = "ACCOUNTS_DETAILS") {
-            when (it) {
-                is AmUIState.Error -> Unit
-                is AmUIState.Loading -> Unit
-                is AmUIState.Success -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = AmPadding.MEDIUM.value),
-                        verticalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
+        when (it) {
+            is AmUIState.Error -> Unit
+            is AmUIState.Loading -> Unit
+            is AmUIState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = AmPadding.MEDIUM.value),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(AmPadding.MEDIUM.value)
-                        ) {
-                            AmImage(
-                                modifier = Modifier.size(AmSize.XX_LARGE.value),
-                                imageUrl = accountImageUrl
-                            )
-                            AmTextField(
-                                modifier = Modifier,
-                                singleLine = true, text = accountName,
-                                label = "Account", icon = AmIcons.Title, hint = "Account Name",
-                                onTextChange = accountEditorState::onUpdateAccountName
-                            )
-                        }
-                        AmChipsContainer(
-                            title = "Currency",
-                            chipDataList = currencyChipData,
-                            selectedItem = selectedCurrencyID,
-                            onSelect = { accountEditorState.onUpdateCurrency(it.id) },
-                            content = null
+                        AmImage(
+                            modifier = Modifier.size(AmSize.XX_LARGE.value),
+                            imageUrl = accountImageUrl
                         )
-                        AmChipsContainer(
-                            title = stringResource(R.string.default_transaction_type),
-                            chipDataList = transactionTypeChipData,
-                            selectedItem = selectedTransactionType,
-                            onSelect = { accountEditorState.onUpdateTransactionType(it.id) },
-                            content = null
+                        AmTextField(
+                            modifier = Modifier,
+                            singleLine = true, text = accountName,
+                            label = "Account", icon = AmIcons.Title, hint = "Account Name",
+                            onTextChange = accountEditorState::onUpdateAccountName
                         )
                     }
+                    AmChipsContainer(
+                        title = "Currency",
+                        chipDataList = currencyChipData,
+                        selectedItem = selectedCurrencyID,
+                        onSelect = { accountEditorState.onUpdateCurrency(it.id) },
+                        content = null
+                    )
+                    AmChipsContainer(
+                        title = stringResource(R.string.default_transaction_type),
+                        chipDataList = transactionTypeChipData,
+                        selectedItem = selectedTransactionType,
+                        onSelect = { accountEditorState.onUpdateTransactionType(it.id) },
+                        content = null
+                    )
                 }
             }
         }
-
     }
 
 }

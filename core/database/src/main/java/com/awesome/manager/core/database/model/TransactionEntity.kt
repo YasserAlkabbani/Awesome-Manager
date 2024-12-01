@@ -27,5 +27,6 @@ data class TransactionEntityWithData(
         parentColumn = "account_id", entityColumn = "account_id",
         entity = AccountEntity::class
     )
-    val accountEntityWithBasic: AccountEntityWithBasic
+    val accountEntityWithBasic: AccountEntityWithBasic,
+    @ColumnInfo("update_permission") val updatePermission: Boolean,
 )

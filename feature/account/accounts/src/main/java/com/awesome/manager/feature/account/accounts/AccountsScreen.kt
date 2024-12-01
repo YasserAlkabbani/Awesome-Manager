@@ -5,7 +5,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,73 +63,73 @@ fun AccountsScreen(
     val isRefreshing =
         accountsState.refreshing.collectAsStateWithLifecycle().value
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
+    AnimatedContent(
+        modifier = Modifier.fillMaxWidth(),
+        targetState = isEmptyList,
+        label = "ACCOUNTS",
+        contentAlignment = Alignment.TopCenter
     ) {
-        AnimatedContent(isEmptyList, label = "ACCOUNTS_ANIMATED") {
-            when (it) {
-                true -> {
-                    Column(
-                        modifier = Modifier
-                            .padding(AmPadding.XX_LARGE.value)
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AmText(
-                            text = stringResource(R.string.theres_no_accounts_yet),
-                            maxLines = 3,
-                            textAlign = TextAlign.Center
-                        )
-                        AmFilledTonalButton(
-                            text = stringResource(R.string.create_an_account),
-                            onClick = accountsState::navigateToCreateAccount,
-                        )
-                    }
-                }
-
-                false -> {
-                    AmLazyColumn(
-                        isRefreshing = isRefreshing,
-                        onRefresh = accountsState.refreshAccounts,
-                        content = {
-                            items(
-                                count = accountsLazyPaging.itemCount,
-                                contentType = { LAZY_ITEM_ACCOUNT },
-                                key = accountsLazyPaging.itemKey { it.id },
-                                itemContent = { index ->
-                                    accountsLazyPaging[index]?.let { account ->
-                                        val balanceDetails = account.balanceDetails
-                                        AccountCard(
-                                            modifier = Modifier.animateItem(),
-                                            title = account.name,
-                                            imageUrl = account.imageUrl,
-                                            loading = account.pending,
-                                            withDetails = false,
-                                            onClick = {
-                                                accountsState.navigateToAccountDetails(
-                                                    account.id
-                                                )
-                                            },
-                                            onAddTransaction = null,
-                                            onEditTransaction = null,
-                                            income = balanceDetails.formattedIncome,
-                                            expenses = balanceDetails.formattedExpenses,
-                                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                                            debtor = balanceDetails.formattedDebtor,
-                                            creditor = balanceDetails.formattedCreditor,
-                                            netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                            currencySymbol = balanceDetails.currency.currencySymbol,
-                                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                                            isPositiveDebtor = balanceDetails.isPositiveDebtor
-                                        )
-                                    }
-                                }
-                            )
-                        }
+        when (it) {
+            true -> {
+                Column(
+                    modifier = Modifier
+                        .padding(AmPadding.XX_LARGE.value)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    AmText(
+                        text = stringResource(R.string.theres_no_accounts_yet),
+                        maxLines = 3,
+                        textAlign = TextAlign.Center
+                    )
+                    AmFilledTonalButton(
+                        text = stringResource(R.string.create_an_account),
+                        onClick = accountsState::navigateToCreateAccount,
                     )
                 }
+            }
+
+            false -> {
+                AmLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh = accountsState.refreshAccounts,
+                    content = {
+                        items(
+                            count = accountsLazyPaging.itemCount,
+                            contentType = { LAZY_ITEM_ACCOUNT },
+                            key = accountsLazyPaging.itemKey { it.id },
+                            itemContent = { index ->
+                                accountsLazyPaging[index]?.let { account ->
+                                    val balanceDetails = account.balanceDetails
+                                    AccountCard(
+                                        modifier = Modifier.animateItem(),
+                                        title = account.name,
+                                        imageUrl = account.imageUrl,
+                                        loading = account.pending,
+                                        withDetails = false,
+                                        onClick = {
+                                            accountsState.navigateToAccountDetails(
+                                                account.id
+                                            )
+                                        },
+                                        onAddTransaction = null,
+                                        onEditTransaction = null,
+                                        income = balanceDetails.formattedIncome,
+                                        expenses = balanceDetails.formattedExpenses,
+                                        netIncomeAbs = balanceDetails.formattedNetIncome,
+                                        debtor = balanceDetails.formattedDebtor,
+                                        creditor = balanceDetails.formattedCreditor,
+                                        netDebtorAbs = balanceDetails.formattedNetDebtor,
+                                        currencySymbol = balanceDetails.currency.currencySymbol,
+                                        isPositiveIncome = balanceDetails.isPositiveIncome,
+                                        isPositiveDebtor = balanceDetails.isPositiveDebtor
+                                    )
+                                }
+                            }
+                        )
+                    }
+                )
             }
         }
     }

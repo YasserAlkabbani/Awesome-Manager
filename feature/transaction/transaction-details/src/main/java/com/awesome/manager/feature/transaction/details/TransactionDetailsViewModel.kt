@@ -18,27 +18,29 @@ import javax.inject.Inject
 class TransactionDetailsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository,
-    private val authRepository: AuthRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val transactionDetails: NavigationAction.TransactionDetails =
         savedStateHandle.toRoute()
 
-    val transactionDetailsState: TransactionDetailsActions = TransactionDetailsActions(
+    private val transactionUIState = transactionRepository
+        .returnTransactionById(transactionDetails.transactionId)
+        .flatMapLatest { transaction ->
+            accountRepository
+                .returnAccountById(transaction.accountId)
+                .map { account ->
+                    TransactionDetailsData(
+                        account = account,
+                        transaction = transaction,
+                    )
+                }
+        }
+        .asUIState(viewModelScope)
+
+    val transactionDetailsState: TransactionDetailsState = TransactionDetailsState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
-        transactionDetailsData = transactionRepository.returnTransactionById(transactionDetails.transactionId)
-            .flatMapLatest { transaction ->
-                    accountRepository.returnAccountById(transaction.accountId)
-                        .map { account -> account to transaction }
-            }
-            .map { (account, transaction) ->
-                    TransactionDetailsData(
-                        account = account, transaction = transaction,
-                        allowToUpdate = transaction.updatePermission
-                    )
-            }
-            .asUIState(viewModelScope)
+        transactionDetailsData = transactionUIState
     )
 }

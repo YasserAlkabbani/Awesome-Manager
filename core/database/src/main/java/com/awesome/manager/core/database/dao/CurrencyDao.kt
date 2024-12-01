@@ -35,8 +35,3 @@ interface CurrencyDao {
     fun returnCurrenciesBalance(): Flow<List<CurrencyEntityWithData>>
 
 }
-
-const val INCOME: String = "INCOME"
-const val EXPENSES: String = "EXPENSES"
-const val DEBTOR: String = "DEBTOR"
-const val CREDITOR: String = "CREDITOR"

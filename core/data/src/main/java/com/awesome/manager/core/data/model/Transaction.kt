@@ -39,7 +39,7 @@ fun TransactionEntityWithData.asModel() = AmTransaction(
     transactionAt = transactionEntity.transactionAt,
     accountName = accountEntityWithBasic.accountEntity.name,
     currency = accountEntityWithBasic.currencyEntity.asModel(),
-    updatePermission = false,
+    updatePermission = updatePermission,
     transactionAtDate = transactionEntity.transactionAt.asDate()
 )
 

@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class OfflineFirstTransactionRepository @Inject constructor(
     private val transactionNetworkDataSource: TransactionNetworkDataSource,
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
 ) : TransactionRepository {
 
     override suspend fun upsertTransaction(upsertTransaction: UpsertTransaction) = amInsert {
@@ -33,8 +33,10 @@ class OfflineFirstTransactionRepository @Inject constructor(
     }
 
     override fun returnTransactions(
-        searchKey: String?, transactionType: AmTransactionType?,
-        fromDate: Long?, toDate: Long?
+        searchKey: String?,
+        transactionType: AmTransactionType?,
+        fromDate: Long?,
+        toDate: Long?,
     ): Flow<PagingData<AmTransaction>> = {
         transactionDao.returnTransactions(
             searchKey = searchKey, transactionType = transactionType?.name,
@@ -44,7 +46,8 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
 
     override fun returnTransactionsByAccountID(
-        accountId: String, searchKey: String
+        accountId: String,
+        searchKey: String,
     ): Flow<PagingData<AmTransaction>> = {
         transactionDao.returnTransactionsByAccountId(
             accountId = accountId, searchKey = searchKey
@@ -61,7 +64,7 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
         val transactionsNetwork =
             transactionNetworkDataSource.returnUpdatedTransactions(lastUpdatedTransactionDateTime)
-        val transactionsEntity=transactionsNetwork.map { it.asEntity() }
+        val transactionsEntity = transactionsNetwork.map { it.asEntity() }
         transactionDao.upsertTransaction(transactionsEntity)
     }
 

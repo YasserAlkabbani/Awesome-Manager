@@ -13,13 +13,13 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val accountsState: AccountsState = AccountsState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
-        pagingAccounts = accountRepository.returnAccounts(null),
+        pagingAccounts = accountRepository.returnAccounts(),
         refreshAccounts = ::refreshAccounts
     )
 
@@ -30,7 +30,7 @@ class AccountsViewModel @Inject constructor(
     private fun refreshAccounts() {
         viewModelScope.launch {
             accountRepository.refreshAccounts().collectLatest {
-                when(it){
+                when (it) {
                     is AmUIState.Error -> accountsState.endRefreshing()
                     is AmUIState.Loading -> accountsState.startRefreshing()
                     is AmUIState.Success -> accountsState.endRefreshing()
