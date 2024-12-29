@@ -10,6 +10,7 @@ import com.awesome.manager.core.data.repository.transaction.TransactionRepositor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -25,9 +26,10 @@ class MainActivityViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val mainActivityState = MainActivityActions(
+    val mainActivityState = MainActivityState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
+        getAccountsSearchPagingData = { flatMapLatest { accountRepository.returnAccounts(it) } },
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),
@@ -38,7 +40,6 @@ class MainActivityViewModel @Inject constructor(
 
     private fun logout() {
         viewModelScope.launch {
-            mainActivityState.dismissBottomSheet()
             authRepository.logout().collect()
         }
     }

@@ -31,7 +31,7 @@ fun Long.asDateTimeString() =
 fun String?.asTimestamp() =
     Instant.parse(this.orEmpty()).toEpochMilliseconds()
 
-fun Long.toStringDateTime() =
+fun Long.asStringDateTime() =
     Instant.fromEpochMilliseconds(this).toString()
 
 fun currentTime() = Clock.System.now().toEpochMilliseconds()

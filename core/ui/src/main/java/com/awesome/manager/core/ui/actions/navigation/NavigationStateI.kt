@@ -12,28 +12,36 @@ interface NavigationState {
 
     fun NavigationAction.applyAction()
 
-    fun navigatePopBack() = NavigationAction.NavigateUp.applyAction()
+    fun navigatePopBack() = NavigationAction
+        .NavigateUp
+        .applyAction()
 
-    fun navigateToAccountDetails(accountId: String) =
-        NavigationAction.AccountDetails(accountId).applyAction()
+    fun navigateToAccountDetails(accountId: String) = NavigationAction
+        .AccountDetails(accountId)
+        .applyAction()
 
-    fun navigateToTransactionDetails(transactionId: String) =
-        NavigationAction.TransactionDetails(transactionId).applyAction()
+    fun navigateToTransactionDetails(transactionId: String) = NavigationAction
+        .TransactionDetails(transactionId)
+        .applyAction()
 
-    fun navigateToCreateAccount() =
-        NavigationAction.AccountEditor(null).applyAction()
+    fun navigateToCreateAccount() = NavigationAction
+        .AccountEditor(null)
+        .applyAction()
 
-    fun navigateToCreateTransaction(accountId: String?) =
-        NavigationAction.TransactionEditor(accountId = accountId, transactionId = null)
-            .applyAction()
+    fun navigateToCreateTransaction(accountId: String?) = NavigationAction
+        .TransactionEditor(accountId = accountId, transactionId = null)
+        .applyAction()
 
-    fun navigateToEditAccount(accountId: String) =
-        NavigationAction.AccountEditor(accountId).applyAction()
+    fun navigateToEditAccount(accountId: String) = NavigationAction
+        .AccountEditor(accountId)
+        .applyAction()
 
-    fun navigateToEditTransaction(accountId: String?, transactionId: String) =
-        NavigationAction.TransactionEditor(
-            accountId = accountId,
-            transactionId = transactionId
-        ).applyAction()
+    fun navigateToEditTransaction(
+        accountId: String,
+        transactionId: String
+    ) = NavigationAction.TransactionEditor(
+        accountId = accountId,
+        transactionId = transactionId
+    ).applyAction()
 
 }

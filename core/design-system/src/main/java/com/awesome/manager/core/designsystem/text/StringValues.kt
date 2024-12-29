@@ -12,6 +12,8 @@ fun Context.enumToString(const: Enum<*>): String =
         "EXPENSES" -> getString(R.string.expenses)
         "DEBTOR" -> getString(R.string.debtor)
         "CREDITOR" -> getString(R.string.creditor)
+        "ACCOUNT" -> getString(R.string.account)
+        "TRANSACTION" -> getString(R.string.transaction)
         else -> const.name
     }
 

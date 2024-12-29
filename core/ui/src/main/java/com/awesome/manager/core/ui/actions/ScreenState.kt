@@ -42,3 +42,10 @@ fun <T> Flow<T>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
 fun <T> StateFlow<AmUIState<T>>.filterSuccessData() =
     filterIsInstance<AmUIState.Success<T>>()
         .map { it.data }
+
+fun <T> Flow<T?>.asStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?> =
+    stateIn(
+        scope = scope,
+        initialValue = initValue,
+        started = SharingStarted.WhileSubscribed(60000)
+    )

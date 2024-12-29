@@ -24,22 +24,25 @@ fun AmFabButton(dynamicFabButton: DynamicFabButton) {
 }
 
 
-sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int,val index:Int) {
+sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int, val index: Int) {
     abstract val onClick: () -> Unit
 
     data class Login(override val onClick: () -> Unit) :
         DynamicFabButton(isPositive = true, text = R.string.start_accounting, index = 0)
 
+    data class SearchForAccount(override val onClick: () -> Unit) :
+        DynamicFabButton(isPositive = true, text = R.string.search_for_account, index = 1)
+
     data class Create(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.create, index = 1)
+        DynamicFabButton(isPositive = true, text = R.string.create, index = 2)
 
     data class Edit(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.edit, index = 2)
+        DynamicFabButton(isPositive = true, text = R.string.edit, index = 3)
 
     data class Update(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.update, index = 3)
+        DynamicFabButton(isPositive = true, text = R.string.update, index = 4)
 
     data class TryAgain(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = false, text = R.string.try_again, index = 4)
+        DynamicFabButton(isPositive = false, text = R.string.try_again, index = 5)
 
 }

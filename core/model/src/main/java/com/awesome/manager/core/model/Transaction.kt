@@ -6,7 +6,7 @@ import java.util.Locale
 data class AmTransaction(
     val id: String,
     val accountId: String,
-    val creatorUserId: String,
+    val creatorUserID: String,
     val transactionType: AmTransactionType,
     val title: String,
     val subtitle: String,
@@ -14,13 +14,13 @@ data class AmTransaction(
     val pending: Boolean,
     val accountName: String,
     val currency: AmCurrency,
-    val updatePermission:Boolean,
+    val updatePermission: Boolean,
     val createdAt: Long,
     val updatedAt: Long,
     val transactionAt: Long,
     val transactionAtDate: String,
-){
-    val formattedAmount:String= NumberFormat.getNumberInstance(Locale.US).format(amount)
+) {
+    val formattedAmount: String = NumberFormat.getNumberInstance(Locale.US).format(amount)
 }
 
 data class UpsertTransaction(
@@ -30,6 +30,8 @@ data class UpsertTransaction(
     val title: String,
     val subtitle: String,
     val amount: Double,
-    val transactionType: AmTransactionType,
+    val transactionType: String,
     val transactionAt: Long,
-)
+) {
+    fun isValid() = true
+}

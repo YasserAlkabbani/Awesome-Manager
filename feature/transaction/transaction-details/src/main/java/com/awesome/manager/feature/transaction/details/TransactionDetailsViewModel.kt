@@ -10,6 +10,7 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class TransactionDetailsViewModel @Inject constructor(
         .flatMapLatest { transaction ->
             accountRepository
                 .returnAccountById(transaction.accountId)
+                .filterNotNull()
                 .map { account ->
                     TransactionDetailsData(
                         account = account,

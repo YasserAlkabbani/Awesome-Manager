@@ -20,14 +20,11 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 
 data class ChipData(val id: String, val title: String)
 
-fun getChipData(id: String, title: String) =
-    ChipData(id = id, title = title)
-
 @Composable
-fun <T> AmChipsContainer(
+fun AmChipsContainer(
     title: String,
     chipDataList: List<ChipData>,
-    selectedItem: T?,
+    selectedItem: String?,
     onSelect: (ChipData) -> Unit,
     content: (@Composable () -> Unit)?
 ) {

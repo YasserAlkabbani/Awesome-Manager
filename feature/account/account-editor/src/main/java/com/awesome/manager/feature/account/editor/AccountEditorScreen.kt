@@ -1,7 +1,6 @@
 package com.awesome.manager.feature.account.editor
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,7 @@ import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.ui.AmChipsContainer
-import com.awesome.manager.core.ui.getChipData
+import com.awesome.manager.core.ui.ChipData
 
 @Composable
 fun AccountEditorRoute(
@@ -59,18 +58,18 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
     val accountName = accountEditorState.accountName.collectAsStateWithLifecycle().value
     val accountImageUrl = accountEditorState.accountImageUrl.collectAsStateWithLifecycle().value
     val selectedCurrencyID = accountEditorState.selectedCurrency.collectAsStateWithLifecycle().value
-    val selectedTransactionType =
-        accountEditorState.selectedTransactionType.collectAsStateWithLifecycle().value
+    val selectedTransactionTypeID =
+        accountEditorState.selectedTransactionTypeID.collectAsStateWithLifecycle().value
 
     val currencyChipData = remember(currencies) {
         (currencies as? AmUIState.Success)?.data.orEmpty().map {
-            getChipData(id = it.id, title = it.currencyName)
+            ChipData(id = it.id, title = it.currencyName)
         }
     }
     val transactionTypeChipData = remember {
         accountEditorState.transactionTypes.map {
             val title = context.enumToString(it)
-            getChipData(id = it.name, title = title)
+            ChipData(id = it.id, title = title)
         }
     }
 
@@ -104,21 +103,21 @@ fun AccountEditorScreen(accountEditorState: AccountEditorState) {
                             modifier = Modifier,
                             singleLine = true, text = accountName,
                             label = "Account", icon = AmIcons.Title, hint = "Account Name",
-                            onTextChange = accountEditorState::onUpdateAccountName
+                            onTextChange = accountEditorState::updateAccountName
                         )
                     }
                     AmChipsContainer(
                         title = "Currency",
                         chipDataList = currencyChipData,
                         selectedItem = selectedCurrencyID,
-                        onSelect = { accountEditorState.onUpdateCurrency(it.id) },
+                        onSelect = { accountEditorState.updateCurrency(it.id) },
                         content = null
                     )
                     AmChipsContainer(
                         title = stringResource(R.string.default_transaction_type),
                         chipDataList = transactionTypeChipData,
-                        selectedItem = selectedTransactionType,
-                        onSelect = { accountEditorState.onUpdateTransactionType(it.id) },
+                        selectedItem = selectedTransactionTypeID,
+                        onSelect = { accountEditorState.updateTransactionType(it.id) },
                         content = null
                     )
                 }

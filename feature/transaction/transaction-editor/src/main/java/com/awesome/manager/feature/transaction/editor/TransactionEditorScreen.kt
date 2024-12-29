@@ -1,8 +1,10 @@
 package com.awesome.manager.feature.transaction.editor
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -19,10 +22,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.asDate
+import com.awesome.manager.core.common.asTimestamp
 import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
@@ -31,9 +36,7 @@ import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
-import com.awesome.manager.core.ui.getChipData
-import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
-import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
+import com.awesome.manager.core.ui.ChipData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -43,7 +46,7 @@ fun TransactionEditorRoute(
 ) {
 
     val context = LocalContext.current
-    val transactionEditorState: TransactionEditorActions =
+    val transactionEditorState: TransactionEditorState =
         transactionEditorViewModel.transactionEditorState
 
     val mainAction = transactionEditorState.mainAction.collectAsState().value
@@ -51,215 +54,137 @@ fun TransactionEditorRoute(
         mainAction?.sendMainAction(sendMainAction, transactionEditorState::doneMainAction)
     }
 
-    val accountsLazyPaging = transactionEditorState.accountsList.collectAsLazyPagingItems()
-    val searchForAnAccountBottomSheet =
-        transactionEditorState.searchForAnAccountBottomSheet.collectAsState().value
-    val searchLabel = stringResource(id = R.string.search_in_accounts)
-
-    LaunchedEffect(key1 = searchForAnAccountBottomSheet, block = {
-        if (searchForAnAccountBottomSheet) {
-            transactionEditorState.doneSearchForAnAccountBottomSheet()
-//            transactionEditorState.showSearchWithContentBottomSheet(
-//                searchLabel = searchLabel,
-//                content = {
-//                    AccountLazyColumn(
-//                        accountsLazyPaging = accountsLazyPaging,
-//                        onSelectAccount = transactionEditorState::selectAccount,
-//                        onDismiss = transactionEditorState::dismissBottomSheet
-//                    )
-//                },
-//                onReSearch = transactionEditorState::updateSearchKey,
-//                onSearchDone = transactionEditorState::dismissBottomSheet,
-//                initSearch = ""
-//            )
-        }
-    })
-
-    val transactionData = transactionEditorState.transactionEditorInput.collectAsState().value
-    LaunchedEffect(key1 = transactionData) {
-        if (transactionData is AmUIState.Success) {
-            val transactionEditor = transactionData.data
-            val isValidateInput = transactionEditor.validateTransactionData != null
-            val errorMessage =
-                if (isValidateInput) null else context.getString(R.string.invalidate_input)
-            val buttonText = when (transactionEditor.editorInputType) {
-                EditorInputType.Create -> context.getString(R.string.create_transaction)
-                EditorInputType.Edit -> context.getString(R.string.update_transaction)
-            }
-            when (transactionEditor.selectedAccount) {
-                null -> Unit
-                else -> Unit
-//                null -> transactionEditorState.setForEditTransactionScreen(
-//                    saveButton = AppBarButton(
-//                        text = context.getString(R.string.select_account),
-//                        click = transactionEditorState::requestSearchForAnAccountBottomSheet,
-//                    ),
-//                    cancelButton = true,
-//                )
-//
-//                else -> {
-//                    transactionEditorState.setForEditTransactionScreen(
-//                        saveButton = AppBarButton(
-//                            text = buttonText,
-//                            click = transactionEditorState.createTransaction,
-//                            errorMessage = errorMessage
-//                        ),
-//                        cancelButton = true,
-//                    )
-//                }
-            }
-        }
-    }
+    transactionEditorState.transactionEditorUI.collectAsStateWithLifecycle(null)
 
     TransactionEditorScreen(transactionEditorState = transactionEditorState)
 }
 
 @Composable
 fun TransactionEditorScreen(
-    transactionEditorState: TransactionEditorActions,
+    transactionEditorState: TransactionEditorState,
 ) {
-
-    val transactionInput = transactionEditorState.transactionEditorInput.collectAsState().value
     val context = LocalContext.current
 
-    if (transactionInput is AmUIState.Success) {
+    val transactionEditorData: AmUIState<TransactionEditorData> =
+        transactionEditorState.transactionEditorData.collectAsState().value
+    val selectedAccount: AmAccount? =
+        transactionEditorState.account.collectAsStateWithLifecycle().value
 
-        val transaction = transactionInput.data
+    val title: String = transactionEditorState.title.collectAsStateWithLifecycle().value
+    val subtitle: String = transactionEditorState.subtitle.collectAsStateWithLifecycle().value
+    val amount: String = transactionEditorState.amount.collectAsStateWithLifecycle().value
+    val transactionAt: Long =
+        transactionEditorState.transactionAt.collectAsStateWithLifecycle().value
+    val formattedTransactionAt: String = remember(transactionAt) { transactionAt.asDate() }
+    val selectedTransactionTypeID =
+        transactionEditorState.selectedTransactionTypeID.collectAsStateWithLifecycle().value
 
-        val transactionTypeChipData = remember {
-            transactionEditorState.transactionTypes.map {
-                getChipData(id = it.name, title = context.enumToString(it))
-            }
-        }
 
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 6.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            transaction.selectedAccount?.let { account ->
-                val balanceDetails = account.balanceDetails
-                AccountCard(
-                    modifier = Modifier,
-                    title = account.name, imageUrl = account.imageUrl,
-                    loading = account.pending, withDetails = true,
-                    onClick = transactionEditorState::requestSearchForAnAccountBottomSheet,
-                    onAddTransaction = null, onEditTransaction = null,
-                    income = balanceDetails.formattedIncome,
-                    expenses = balanceDetails.formattedExpenses,
-                    netIncomeAbs = balanceDetails.formattedNetIncome,
-                    debtor = balanceDetails.formattedDebtor,
-                    creditor = balanceDetails.formattedCreditor,
-                    netDebtorAbs = balanceDetails.formattedNetDebtor,
-                    currencySymbol = balanceDetails.currency.currencySymbol,
-                    isPositiveIncome = balanceDetails.isPositiveIncome,
-                    isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                )
-            }
-
-            AmTextField(
-                hint = "Title", icon = AmIcons.Title, label = "Transaction Title",
-                onTextChange = transactionEditorState::updateTitle,
-                keyboardActions = KeyboardActions(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                text = ""
-            )
-            AmTextField(
-                hint = "5000.0", icon = AmIcons.Money, label = "Amount",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Number,
-                ),
-                onTextChange = {value->
-                    val formattedValue=value
-                        .filter { it.isDigit() || it == '.' }
-                        .let {
-                            if (value.count { it == '.' } < 2) it else value.substringBeforeLast(".")
-                        }
-                        .let {
-                            val splitNumber = it.split('.')
-                            val newBefore = splitNumber.first().ifBlank { "0" }.take(20)
-                            val newAfter =
-                                splitNumber.getOrNull(1)?.take(3)?.let { ".".plus(it) }.orEmpty()
-                            "$newBefore$newAfter"
-                        }
-                    transactionEditorState.updateAmount(formattedValue)
-                }
-                        ,
-                text = ""
-            )
-            AmTextField(
-                hint = "Subtitle", label = "Transaction Subtitle",
-                icon = AmIcons.SubTitle, singleLine = false,
-                onTextChange = transactionEditorState::updateSubTitle,
-                text = ""
-            )
-
-            AmFilledTonalIconWithTextButton(
-                text = transaction.transactionAtDate,
-                amIconsType = AmIcons.Date,
-                positive = null,
-                onClick = {
-                    transactionEditorState.showPickDateBottomSheet(
-                        initTime = transaction.transactionAtTimestamp,
-                        setDate = transactionEditorState::updateTransactionAt,
-                        dismiss = transactionEditorState::dismissBottomSheet
-                    )
-                }
-            )
-
-            AmChipsContainer(
-                title = stringResource(R.string.transaction_type),
-                chipDataList = transactionTypeChipData,
-                onSelect = { /*transactionEditorState.selectTransactionType(it)*/ },
-                selectedItem = transaction.selectedTransactionType?.name,
-                content = null
-            )
+    val transactionTypeChipData = remember {
+        transactionEditorState.transactionTypes.map {
+            val transactionTypeTitle = context.enumToString(it)
+            ChipData(id = it.id, title = transactionTypeTitle)
         }
     }
-}
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun AccountLazyColumn(
-    accountsLazyPaging: LazyPagingItems<AmAccount>,
-    onSelectAccount: (AmAccount) -> Unit, onDismiss: () -> Unit
-) = AmLazyColumn(
-    isRefreshing = true,
-    onRefresh = {},
-    content = {
-        items(
-            count = accountsLazyPaging.itemCount,
-            contentType = { LAZY_ITEM_ACCOUNT },
-            key = accountsLazyPaging.itemKey { transaction -> transaction.id },
-            itemContent = { index ->
-                accountsLazyPaging[index]?.let { account ->
-                    val balanceDetails = account.balanceDetails
-                    AccountCard(
-                        modifier = Modifier.animateItemPlacement(),
-                        title = account.name,
-                        imageUrl = account.imageUrl,
-                        loading = account.pending,
-                        withDetails = false,
-                        onClick = {
-                            onSelectAccount(account)
-                            onDismiss()
+    AnimatedContent(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter,
+        targetState = transactionEditorData,
+        label = "TRANSACTION_EDITOR"
+    ) {
+        when (it) {
+            is AmUIState.Error -> Unit
+            is AmUIState.Loading -> Unit
+            is AmUIState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 6.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    selectedAccount?.let { account ->
+                        val balanceDetails = account.balanceDetails
+                        AccountCard(
+                            modifier = Modifier,
+                            title = account.name, imageUrl = account.imageUrl,
+                            loading = account.pending, withDetails = true,
+                            onClick = {},
+                            onAddTransaction = null, onEditTransaction = null,
+                            income = balanceDetails.formattedIncome,
+                            expenses = balanceDetails.formattedExpenses,
+                            netIncomeAbs = balanceDetails.formattedNetIncome,
+                            debtor = balanceDetails.formattedDebtor,
+                            creditor = balanceDetails.formattedCreditor,
+                            netDebtorAbs = balanceDetails.formattedNetDebtor,
+                            currencySymbol = balanceDetails.currency.currencySymbol,
+                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                        )
+                    }
+
+                    AmTextField(
+                        hint = "Title", icon = AmIcons.Title, label = "Transaction Title",
+                        onTextChange = transactionEditorState::updateTitle,
+                        keyboardActions = KeyboardActions(),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                        text = title
+                    )
+                    AmTextField(
+                        hint = "5000.0", icon = AmIcons.Money, label = "Amount",
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next, keyboardType = KeyboardType.Number,
+                        ),
+                        onTextChange = { value ->
+                            val formattedValue = value
+                                .filter { it.isDigit() || it == '.' }
+                                .let {
+                                    if (value.count { it == '.' } < 2) it else value.substringBeforeLast(
+                                        "."
+                                    )
+                                }
+                                .let {
+                                    val splitNumber = it.split('.')
+                                    val newBefore = splitNumber.first().ifBlank { "0" }.take(20)
+                                    val newAfter =
+                                        splitNumber.getOrNull(1)?.take(3)?.let { ".".plus(it) }
+                                            .orEmpty()
+                                    "$newBefore$newAfter"
+                                }
+                            transactionEditorState.updateAmount(formattedValue)
                         },
-                        onAddTransaction = null,
-                        onEditTransaction = null,
-                        income = balanceDetails.formattedIncome,
-                        expenses = balanceDetails.formattedExpenses,
-                        netIncomeAbs = balanceDetails.formattedNetIncome,
-                        debtor = balanceDetails.formattedDebtor,
-                        creditor = balanceDetails.formattedCreditor,
-                        netDebtorAbs = balanceDetails.formattedNetDebtor,
-                        currencySymbol = balanceDetails.currency.currencySymbol,
-                        isPositiveIncome = balanceDetails.isPositiveIncome,
-                        isPositiveDebtor = balanceDetails.isPositiveDebtor
+                        text = amount
+                    )
+                    AmTextField(
+                        hint = "Subtitle", label = "Transaction Subtitle",
+                        icon = AmIcons.SubTitle, singleLine = false,
+                        onTextChange = transactionEditorState::updateSubtitle,
+                        text = subtitle
+                    )
+
+                    AmFilledTonalIconWithTextButton(
+                        text = formattedTransactionAt,
+                        amIconsType = AmIcons.Date,
+                        positive = null,
+                        onClick = {
+                            transactionEditorState.showPickDateBottomSheet(
+                                initTime = transactionAt,
+                                setDate = transactionEditorState::updateTransactionAt
+                            )
+                        }
+                    )
+
+                    AmChipsContainer(
+                        title = stringResource(R.string.transaction_type),
+                        chipDataList = transactionTypeChipData,
+                        onSelect = { transactionEditorState.updateTransactionType(it.id) },
+                        selectedItem = selectedTransactionTypeID,
+                        content = null
                     )
                 }
             }
-        )
+        }
     }
-)
+
+}
 

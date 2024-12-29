@@ -23,15 +23,10 @@ class AccountDetailsState(
         .processUIState()
 
     private fun Flow<AmAccount>.processUIState() = onEach { account ->
-        dynamicFabAddTransaction(
+        dynamicFabAccountDetails(
             navigateToCreateTransaction = { navigateToCreateTransaction(account.id) },
-            navigateToEditAccount = when (account.updatePermission) {
-                true -> {
-                    { navigateToEditAccount(account.id) }
-                }
-
-                false -> null
-            },
+            navigateToEditAccount = { navigateToEditAccount(account.id) },
+            hasEditPermission = account.updatePermission
         )
     }
 

@@ -29,7 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
@@ -54,6 +56,9 @@ fun AmTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
 
+    val textField = remember(text) {
+        TextFieldValue(text, TextRange(text.length))
+    }
 //    val isFocus = remember { mutableStateOf(false) }
 //    val color = animateColorAsState(
 //        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
@@ -69,11 +74,11 @@ fun AmTextField(
 //                color = MaterialTheme.colorScheme.surface,
 //                shape = MaterialTheme.shapes.small
 //            )
-        value = text,
+        value = textField,
         enabled = enabled,
         placeholder = { AmText(text = hint) },
         label = label?.let { { AmText(text = label) } },
-        onValueChange = onTextChange,
+        onValueChange = { onTextChange(it.text) },
         leadingIcon = {
             icon?.let {
                 AmIcon(
@@ -83,7 +88,7 @@ fun AmTextField(
             }
         },
         textStyle = MaterialTheme.typography.titleMedium,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         singleLine = singleLine,
         maxLines = 3,
         keyboardOptions = keyboardOptions,

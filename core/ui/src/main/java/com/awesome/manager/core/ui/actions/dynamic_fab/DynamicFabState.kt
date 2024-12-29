@@ -11,6 +11,9 @@ interface DynamicFabState {
 
     fun DynamicFabAction.applyAction()
 
+
+    ///////// AUTH
+
     fun dynamicFabLoading() =
         DynamicFabAction.Loading.applyAction()
 
@@ -32,6 +35,8 @@ interface DynamicFabState {
         )
     )
 
+    ///////// HOME
+
     fun dynamicFabProfile(showProfileBottomSheet: () -> Unit) = dynamicFab(
         dynamicFab = DynamicFab.Profile(
             onClick = showProfileBottomSheet
@@ -44,11 +49,78 @@ interface DynamicFabState {
         )
     )
 
-    fun dynamicFabAddTransaction(navigateToCreateAccount: () -> Unit) = dynamicFab(
+    fun dynamicFabAddTransaction(navigateToCreateTransaction: () -> Unit) = dynamicFab(
         dynamicFab = DynamicFab.AddTransaction(
-            onClick = navigateToCreateAccount
+            onClick = navigateToCreateTransaction
         )
     )
+
+    ///////// ACCOUNT
+
+    fun dynamicFabAccountDetails(
+        navigateToCreateTransaction: () -> Unit,
+        navigateToEditAccount: () -> Unit,
+        hasEditPermission: Boolean
+    ) = dynamicFab(
+        dynamicFab = DynamicFab.AddTransaction(
+            onClick = navigateToCreateTransaction
+        ),
+        dynamicFabExtraButton = when (hasEditPermission) {
+            true -> DynamicFabExtraButton.Edit(onClick = navigateToEditAccount)
+            false -> null
+        }
+    )
+
+    fun dynamicFabCreateAccount(createAccount: () -> Unit, navigatePopBack: () -> Unit) =
+        dynamicFabButton(
+            dynamicFabButton = DynamicFabButton.Create(createAccount),
+            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
+        )
+
+    fun dynamicFabUpdateAccount(updateAccount: () -> Unit, navigatePopBack: () -> Unit) =
+        dynamicFabButton(
+            dynamicFabButton = DynamicFabButton.Update(updateAccount),
+            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
+        )
+
+    ///////// TRANSACTION
+
+    fun dynamicFabTransactionDetails(
+        navigateToTransaction: () -> Unit,
+        hasEditTransactionPermission: Boolean
+    ) = if (hasEditTransactionPermission) dynamicFabExtraButton(
+        dynamicFabExtraButton = DynamicFabExtraButton.Edit(onClick = navigateToTransaction)
+    ) else Unit
+
+    fun dynamicFabSearchForAccount(
+        searchForAccount: () -> Unit,
+        navigatePopBack: () -> Unit
+    ) {
+        dynamicFabButton(
+            dynamicFabButton = DynamicFabButton.SearchForAccount(searchForAccount),
+            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
+        )
+    }
+
+    fun dynamicFabCreateTransaction(
+        createTransaction: () -> Unit,
+        navigatePopBack: () -> Unit
+    ) {
+        dynamicFabButton(
+            dynamicFabButton = DynamicFabButton.Create(createTransaction),
+            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
+        )
+    }
+
+    fun dynamicFabUpdateTransaction(
+        updateTransaction: () -> Unit,
+        navigatePopBack: () -> Unit
+    ) {
+        dynamicFabButton(
+            dynamicFabButton = DynamicFabButton.Update(updateTransaction),
+            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
+        )
+    }
 
     fun dynamicFabConnectionError(tryAgain: () -> Unit) = dynamicFabMessage(
         dynamicFabText = DynamicFabText.ConnectionError,
@@ -64,27 +136,6 @@ interface DynamicFabState {
         dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack)
     ).applyAction()
 
-    fun dynamicFabCreateAccount(onCreate: () -> Unit, navigatePopBack: () -> Unit) =
-        DynamicFabAction.Button(
-            dynamicFabButton = DynamicFabButton.Create(onCreate),
-            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
-        ).applyAction()
-
-    fun dynamicFabUpdateAccount(onUpdate: () -> Unit, navigatePopBack: () -> Unit) =
-        DynamicFabAction.Button(
-            dynamicFabButton = DynamicFabButton.Update(onUpdate),
-            dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack)
-        ).applyAction()
-
-    fun dynamicFabAddTransaction(
-        navigateToCreateTransaction: () -> Unit,
-        navigateToEditAccount: (() -> Unit)?,
-    ) {
-        dynamicFab(
-            dynamicFab = DynamicFab.AddTransaction(navigateToCreateTransaction),
-            dynamicFabExtraButton = navigateToEditAccount?.let(DynamicFabExtraButton::Edit)
-        )
-    }
 
     private fun dynamicFab(
         dynamicFab: DynamicFab,
@@ -107,6 +158,12 @@ interface DynamicFabState {
         dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Message(
         dynamicFabText = dynamicFabText,
+        dynamicFabExtraButton = dynamicFabExtraButton
+    ).applyAction()
+
+    private fun dynamicFabExtraButton(
+        dynamicFabExtraButton: DynamicFabExtraButton
+    ) = DynamicFabAction.ExtraButton(
         dynamicFabExtraButton = dynamicFabExtraButton
     ).applyAction()
 

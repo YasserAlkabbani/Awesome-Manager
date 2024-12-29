@@ -41,6 +41,7 @@ class AccountEditorViewModel @Inject constructor(
 
             else -> accountRepository
                 .returnAccountById(accountID = accountID)
+                .filterNotNull()
                 .map { account -> AccountEditorData.create(account) }
         }.asUIState(viewModelScope)
 
@@ -48,14 +49,14 @@ class AccountEditorViewModel @Inject constructor(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
         currencies = currencyRepository.returnCurrencies().asUIState(viewModelScope),
+        transactionTypes = AmTransactionType.getTypes(),
         accountEditorData = accountEditorData,
-        onUpsert = ::onUpsert,
+        upsertAccount = { upsertAccount() },
     )
 
-    private fun onUpsert(upsertAccount: UpsertAccount) {
+    private fun UpsertAccount.upsertAccount() {
         viewModelScope.launch {
-            accountRepository.upsertAccount(upsertAccount)
-            accountEditorState.navigatePopBack()
+            accountRepository.upsertAccount(this@upsertAccount)
         }
     }
 

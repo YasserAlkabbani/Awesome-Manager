@@ -46,7 +46,7 @@ interface AccountDao {
                 "WHERE accounts.account_id=:accountId " +
                 "GROUP BY accounts.name "
     )
-    fun returnAccountById(accountId: String): Flow<AccountEntityWithData>
+    fun returnAccountById(accountId: String): Flow<AccountEntityWithData?>
 
 
     @Query("SELECT * FROM accounts WHERE pending=1")

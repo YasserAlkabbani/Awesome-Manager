@@ -64,34 +64,16 @@ fun AmNavHost(
 
 }
 
-//inline fun <reified T : NavigationDestination> NavGraphBuilder.composableWithAnimation(noinline content: @Composable () -> Unit) {
-//    composable<T>(
-//        enterTransition = {
-//            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
-//        },
-//        exitTransition ={
-//            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500))
-//        },
-//        popEnterTransition ={
-//            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500))
-//        },
-//        popExitTransition ={
-//            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500))
-//        }
-//    ) {
-//        content()
-//    }
-//}
-
-fun NavBackStackEntry.asNavigationDestination(): NavigationAction? = when (destination.route) {
-    NavigationAction.Intro::class.qualifiedName -> toRoute<NavigationAction.Intro>()
-    NavigationAction.Auth::class.qualifiedName -> toRoute<NavigationAction.Auth>()
-    NavigationAction.Home::class.qualifiedName -> toRoute<NavigationAction.Home>()
-    NavigationAction.Accounts::class.qualifiedName -> toRoute<NavigationAction.Accounts>()
-    NavigationAction.Transactions::class.qualifiedName -> toRoute<NavigationAction.Transactions>()
-    NavigationAction.AccountDetails::class.qualifiedName -> toRoute<NavigationAction.AccountDetails>()
-    NavigationAction.TransactionDetails::class.qualifiedName -> toRoute<NavigationAction.TransactionDetails>()
-    NavigationAction.AccountEditor::class.qualifiedName -> toRoute<NavigationAction.AccountEditor>()
-    NavigationAction.TransactionEditor::class.qualifiedName -> toRoute<NavigationAction.TransactionEditor>()
-    else -> null
-}
+fun NavBackStackEntry.asNavigationDestination(): NavigationAction =
+    when (destination.route?.substringBefore("/")) {
+        NavigationAction.Intro::class.qualifiedName -> toRoute<NavigationAction.Intro>()
+        NavigationAction.Auth::class.qualifiedName -> toRoute<NavigationAction.Auth>()
+        NavigationAction.Home::class.qualifiedName -> toRoute<NavigationAction.Home>()
+        NavigationAction.Accounts::class.qualifiedName -> toRoute<NavigationAction.Accounts>()
+        NavigationAction.Transactions::class.qualifiedName -> toRoute<NavigationAction.Transactions>()
+        NavigationAction.AccountDetails::class.qualifiedName -> toRoute<NavigationAction.AccountDetails>()
+        NavigationAction.TransactionDetails::class.qualifiedName -> toRoute<NavigationAction.TransactionDetails>()
+        NavigationAction.AccountEditor::class.qualifiedName -> toRoute<NavigationAction.AccountEditor>()
+        NavigationAction.TransactionEditor::class.qualifiedName -> toRoute<NavigationAction.TransactionEditor>()
+        else -> throw ClassNotFoundException("NAVIGATION DESTINATION NOT FOUND")
+    }

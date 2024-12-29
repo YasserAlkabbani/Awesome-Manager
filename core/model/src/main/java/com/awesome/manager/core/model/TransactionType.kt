@@ -10,7 +10,11 @@ enum class AmTransactionType(val positive: Boolean) {
     INCOME(positive = true),
     EXPENSES(positive = false),
     DEBTOR(positive = true),
-    CREDITOR(positive = false)
+    CREDITOR(positive = false);
+    val id=name
+    companion object{
+        fun getTypes()=AmTransactionType.entries.toList()
+    }
 }
 
 data class BalanceDetails(
@@ -42,12 +46,12 @@ data class BalanceDetails(
     val isPositiveDebtor: Boolean = netDebtor >= 0
 
     companion object {
-        fun createDemo()=BalanceDetails(
-            income=Random.nextDouble(100.0,100000.0),
-            expenses =Random.nextDouble(100.0,100000.0),
-            debtor =Random.nextDouble(100.0,100000.0),
-            creditor =Random.nextDouble(100.0,100000.0),
-            currency=AmCurrency.createDemo(),
+        fun createDemo() = BalanceDetails(
+            income = Random.nextDouble(100.0, 100000.0),
+            expenses = Random.nextDouble(100.0, 100000.0),
+            debtor = Random.nextDouble(100.0, 100000.0),
+            creditor = Random.nextDouble(100.0, 100000.0),
+            currency = AmCurrency.createDemo(),
         )
     }
 

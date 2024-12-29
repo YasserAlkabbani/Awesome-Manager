@@ -15,34 +15,34 @@ import kotlinx.coroutines.flow.onEach
 import java.util.UUID
 
 private const val ACCOUNT_NAME: String = "ACCOUNT_NAME"
-private const val IMAGE_URL: String = "IMAGE_URL"
-private const val CURRENCY: String = "CURRENCY_ID"
-private const val TRANSACTION_TYPE: String = "TRANSACTION_TYPE"
+private const val ACCOUNT_IMAGE_URL: String = "ACCOUNT_IMAGE_URL"
+private const val ACCOUNT_CURRENCY: String = "ACCOUNT_CURRENCY"
+private const val ACCOUNT_TRANSACTION_TYPE: String = "ACCOUNT_TRANSACTION_TYPE"
 
 class AccountEditorState(
-    val currencies: StateFlow<AmUIState<List<AmCurrency>>>,
-    val accountEditorData: StateFlow<AmUIState<AccountEditorData>>,
-    val onUpsert: (UpsertAccount) -> Unit,
     override val setString: String.(value: String) -> Unit,
     override val getString: String.(defaultValue: String) -> StateFlow<String>,
+    val transactionTypes: List<AmTransactionType>,
+    val currencies: StateFlow<AmUIState<List<AmCurrency>>>,
+    val accountEditorData: StateFlow<AmUIState<AccountEditorData>>,
+    private val upsertAccount: UpsertAccount.() -> Unit,
 ) : ActionsManager() {
 
-    val transactionTypes: List<AmTransactionType> = AmTransactionType.entries.toList()
 
-    fun onUpdateAccountName(name: String) = ACCOUNT_NAME.setString(name)
+    fun updateAccountName(name: String) = ACCOUNT_NAME.setString(name)
     val accountName: StateFlow<String> = ACCOUNT_NAME.getString("")
 
-    fun onUpdateAccountImage(imageUrl: String) = IMAGE_URL.setString(imageUrl)
-    val accountImageUrl: StateFlow<String> = IMAGE_URL.getString(images.random())
+    fun updateAccountImage(imageUrl: String) = ACCOUNT_IMAGE_URL.setString(imageUrl)
+    val accountImageUrl: StateFlow<String> = ACCOUNT_IMAGE_URL.getString(images.random())
 
-    fun onUpdateCurrency(currencyID: String) = CURRENCY.setString(currencyID)
-    val selectedCurrency: StateFlow<String> = CURRENCY.getString("")
+    fun updateCurrency(currencyID: String) = ACCOUNT_CURRENCY.setString(currencyID)
+    val selectedCurrency: StateFlow<String> = ACCOUNT_CURRENCY.getString("")
 
-    fun onUpdateTransactionType(transactionType: String) =
-        TRANSACTION_TYPE.setString(transactionType)
+    fun updateTransactionType(transactionType: String) =
+        ACCOUNT_TRANSACTION_TYPE.setString(transactionType)
 
-    val selectedTransactionType: StateFlow<String> =
-        TRANSACTION_TYPE.getString(transactionTypes.first().name)
+    val selectedTransactionTypeID: StateFlow<String> =
+        ACCOUNT_TRANSACTION_TYPE.getString(transactionTypes.first().id)
 
     val accountEditorUI = accountEditorData
         .filterSuccessData()
@@ -52,7 +52,7 @@ class AccountEditorState(
                 accountName,
                 accountImageUrl,
                 selectedCurrency,
-                selectedTransactionType
+                selectedTransactionTypeID
             ) { name, imageUrl, currencyID, transactionType ->
                 UpsertAccount(
                     id = accountEditorData.accountID,
@@ -60,20 +60,22 @@ class AccountEditorState(
                     name = name,
                     imageUrl = imageUrl,
                     currencyId = currencyID,
-                    defaultTransactionType = transactionType
+                    defaultTransactionTypeID = transactionType
                 ).processUIState(accountEditorData)
             }
         }
 
 
-    private fun Flow<AccountEditorData>.setInitData()=onEach { accountEditorData ->
-        if (accountEditorData is AccountEditorData.EditAccount){
-            accountEditorData.account.apply {
-                onUpdateAccountName(name)
-                onUpdateAccountImage(imageUrl)
-                onUpdateCurrency(balanceDetails.currency.id)
-                onUpdateTransactionType(defaultTransactionType.name)
+    private fun Flow<AccountEditorData>.setInitData() = onEach { accountEditorData ->
+        when (accountEditorData) {
+            is AccountEditorData.EditAccount -> accountEditorData.account.apply {
+                updateAccountName(name)
+                updateAccountImage(imageUrl)
+                updateCurrency(balanceDetails.currency.id)
+                updateTransactionType(defaultTransactionType.id)
             }
+
+            else -> Unit
         }
     }
 
@@ -82,12 +84,12 @@ class AccountEditorState(
             false -> dynamicFabInvalidInput(::navigatePopBack)
             true -> when (accountEditorData) {
                 is AccountEditorData.CreateAccount -> dynamicFabCreateAccount(
-                    onCreate = { onUpsert(this) },
+                    createAccount = { upsertAccount() },
                     navigatePopBack = ::navigatePopBack
                 )
 
                 is AccountEditorData.EditAccount -> dynamicFabUpdateAccount(
-                    onUpdate = { onUpsert(this) },
+                    updateAccount = { upsertAccount() },
                     navigatePopBack = ::navigatePopBack
                 )
             }

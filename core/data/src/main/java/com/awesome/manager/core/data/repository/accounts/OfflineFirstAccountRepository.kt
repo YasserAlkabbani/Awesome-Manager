@@ -10,7 +10,6 @@ import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork
 import com.awesome.manager.core.data.repository.asPagingDataFlow
-import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.database.dao.AccountDao
 import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.model.AmAccount
@@ -36,15 +35,15 @@ class OfflineFirstAccountRepository @Inject constructor(
     override fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
         { accountDao.returnAccounts(searchKey) }.asPagingDataFlow { asModel() }
 
-    override fun returnAccountById(accountID: String): Flow<AmAccount> =
-        accountDao.returnAccountById(accountID).map { it.asModel() }
+    override fun returnAccountById(accountID: String): Flow<AmAccount?> =
+        accountDao.returnAccountById(accountID).map { it?.asModel() }
 
     override fun refreshAccounts(): Flow<AmUIState<Unit>> = amRequest {
         val lastUpdateAccountTime = (accountDao.returnLastUpdatedAccount()?.updatedAt ?: 0) + 1
         val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTimeString()
         val accountsNetwork = accountNetworkDataSource
             .returnUpdatedAccount(lastUpdatedAccountDateTime)
-        val accountsEntity=accountsNetwork.map { it.asEntity() }
+        val accountsEntity = accountsNetwork.map { it.asEntity() }
         accountDao.upsertAccount(accountsEntity)
     }
 

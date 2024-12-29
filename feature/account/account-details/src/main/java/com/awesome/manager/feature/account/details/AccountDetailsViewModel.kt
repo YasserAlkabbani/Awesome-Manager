@@ -11,6 +11,7 @@ import com.awesome.manager.core.data.repository.transaction.TransactionRepositor
 import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class AccountDetailsViewModel @Inject constructor(
 
     private val accountUIState = accountRepository
         .returnAccountById(accountID = accountID)
+        .filterNotNull()
         .asUIState(viewModelScope)
 
     val accountDetailsState: AccountDetailsState = AccountDetailsState(

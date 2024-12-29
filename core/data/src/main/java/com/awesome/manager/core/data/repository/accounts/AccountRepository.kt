@@ -12,7 +12,7 @@ interface AccountRepository {
 
     fun returnAccounts(searchKey: String? = null): Flow<PagingData<AmAccount>>
 
-    fun returnAccountById(accountID: String): Flow<AmAccount>
+    fun returnAccountById(accountID: String): Flow<AmAccount?>
 
     fun refreshAccounts(): Flow<AmUIState<Unit>>
 

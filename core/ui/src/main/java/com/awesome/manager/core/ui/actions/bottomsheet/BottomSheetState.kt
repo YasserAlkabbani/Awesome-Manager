@@ -7,57 +7,56 @@ interface BottomSheetState {
 
     fun BottomSheetAction.applyAction()
 
-    fun dismissBottomSheet() = BottomSheetAction.Dismiss.applyAction()
+    fun showAccountCreatedBottomSheet() = BottomSheetAction
+        .AccountCreated
+        .applyAction()
+
+    fun showPasswordRestedBottomSheet() =
+        BottomSheetAction.PasswordRested.applyAction()
+
+    fun showUnknownErrorBottomSheet() =
+        BottomSheetAction.UnknownError.applyAction()
+
+    fun showConnectionErrorBottomSheet() =
+        BottomSheetAction.ConnectionError.applyAction()
 
     fun showProfileBottomSheet(email: String, logout: () -> Unit) =
         BottomSheetAction.Profile(email = email, logout = logout).applyAction()
 
-//    fun showSearchWithContentBottomSheet(
-//        searchLabel: String, initSearch: String, onReSearch: (String) -> Unit,
-//        onSearchDone: () -> Unit, content: @Composable () -> Unit,
-//    ) = BottomSheetContent.SearchWithContent(
-//        searchLabel = searchLabel, initSearch = initSearch,
-//        onReSearch = onReSearch, onSearchDone, content = content
-//    ).showBottomSheet(isDismissible = true)
+    fun showCustomErrorMessage(errorMessage: String) =
+        BottomSheetAction.CustomError(errorMessage = errorMessage).applyAction()
 
-    fun showAccountCreatedBottomSheet() =
-        BottomSheetAction.AccountCreated(dismiss = ::dismissBottomSheet)
-            .applyAction()
-
-    fun showPasswordRestedBottomSheet() =
-        BottomSheetAction.PasswordRested(dismiss = ::dismissBottomSheet)
-            .applyAction()
-
-    fun showUnknownErrorBottomSheet() =
-        BottomSheetAction.UnknownError(dismiss = ::dismissBottomSheet)
-            .applyAction()
-
-    fun showAuthErrorBottomSheet(
-        errorMessage: String, onCreateAccount: () -> Unit, editCredentials: () -> Unit
-    ) =
-        BottomSheetAction.AuthError(
-            errorMessage = errorMessage, createNewAccount = onCreateAccount,
-            editCredentials = editCredentials
+    fun showSearchForAccount(initSearch: String, onSelectAccount: (String) -> Unit) =
+        BottomSheetAction.SearchForAccount(
+            initSearch = initSearch,
+            onSelectAccount = onSelectAccount,
         ).applyAction()
 
-    fun showConnectionErrorBottomSheet() =
-        BottomSheetAction.ConnectionError(dismiss = ::dismissBottomSheet)
-            .applyAction()
-
-    fun showCustomErrorMessage(errorMessage: String) =
-        BottomSheetAction.CustomError(dismiss = ::dismissBottomSheet, errorMessage = errorMessage)
-            .applyAction()
-
     fun showPickDateBottomSheet(
-        initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
-    ) =
-        BottomSheetAction.PickDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .applyAction()
+        initTime: Long, setDate: (Long) -> Unit
+    ) = BottomSheetAction.PickDate(
+        initTime = initTime,
+        setDate = setDate,
+    ).applyAction()
 
     fun showPickRangeDateBottomSheet(
-        initTime: Long, setDate: (Long, Long) -> Unit, dismiss: () -> Unit
-    ) =
-        BottomSheetAction.PickRangeDate(initTime = initTime, setDate = setDate, dismiss = dismiss)
-            .applyAction()
+        initTime: Long,
+        setDate: (Long, Long) -> Unit,
+        dismiss: () -> Unit
+    ) = BottomSheetAction.PickRangeDate(
+        initTime = initTime,
+        setDate = setDate,
+    ).applyAction()
+
+    fun showAuthErrorBottomSheet(
+        errorMessage: String,
+        onCreateAccount: () -> Unit,
+        editCredentials: () -> Unit
+    ) = BottomSheetAction.AuthError(
+        errorMessage = errorMessage,
+        createNewAccount = onCreateAccount,
+        editCredentials = editCredentials
+    ).applyAction()
+
 
 }

@@ -15,4 +15,7 @@
     <string name="update">Update</string>
     <string name="connection_error">Connection Error</string>
     <string name="try_again">Try Again</string>
+    <string name="search_for_account">Search For Account</string>
+    <string name="transaction">Transaction</string>
+    <string name="account">Account</string>
 </resources>

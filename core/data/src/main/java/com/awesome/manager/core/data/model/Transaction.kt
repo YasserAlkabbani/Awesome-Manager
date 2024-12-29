@@ -3,7 +3,7 @@ package com.awesome.manager.core.data.model
 import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.common.asTimestamp
 import com.awesome.manager.core.common.currentTime
-import com.awesome.manager.core.common.toStringDateTime
+import com.awesome.manager.core.common.asStringDateTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
 import com.awesome.manager.core.model.AmTransaction
@@ -28,7 +28,7 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
 fun TransactionEntityWithData.asModel() = AmTransaction(
     id = transactionEntity.id,
     accountId = transactionEntity.accountId,
-    creatorUserId = transactionEntity.creatorUserId,
+    creatorUserID = transactionEntity.creatorUserId,
     transactionType = enumValueOf(transactionEntity.transactionType),
     title = transactionEntity.title,
     pending = transactionEntity.pending,
@@ -51,14 +51,14 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     title = title,
     subtitle = subtitle,
     amount = amount,
-    transactionAt = transactionAt.toStringDateTime()
+    transactionAt = transactionAt.asStringDateTime()
 )
 
 fun UpsertTransaction.asEntity() = TransactionEntity(
     id = id,
     creatorUserId = creatorUserId,
     accountId = accountId,
-    transactionType = transactionType.name,
+    transactionType = transactionType,
     title = title,
     subtitle = subtitle,
     amount = amount,

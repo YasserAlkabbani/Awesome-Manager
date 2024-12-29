@@ -34,7 +34,7 @@ data class UpsertAccount(
     val name: String,
     val imageUrl: String,
     val currencyId: String,
-    val defaultTransactionType: String
+    val defaultTransactionTypeID: String
 ){
     fun isValid() = name.isNotBlank() && currencyId.isNotBlank()
 }
