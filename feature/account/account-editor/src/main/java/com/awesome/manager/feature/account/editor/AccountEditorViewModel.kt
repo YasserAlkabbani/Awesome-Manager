@@ -57,6 +57,7 @@ class AccountEditorViewModel @Inject constructor(
     private fun UpsertAccount.upsertAccount() {
         viewModelScope.launch {
             accountRepository.upsertAccount(this@upsertAccount)
+            accountEditorState.navigateToAccountDetails(id)
         }
     }
 

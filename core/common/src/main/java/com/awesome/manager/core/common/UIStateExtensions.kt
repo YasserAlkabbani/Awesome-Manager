@@ -36,6 +36,20 @@ fun Long.asStringDateTime() =
 
 fun currentTime() = Clock.System.now().toEpochMilliseconds()
 
+fun String.asFormattedNumber() = filter { it.isDigit() || it == '.' }
+    .removePrefix("0")
+    .let {
+        val fullNumber = it.split(".")
+        val formattedNumber = fullNumber
+            .getOrNull(0)
+            .let { it.orEmpty().ifBlank { "0" } }
+            .take(16)
+        val formattedDecimalNumber = fullNumber
+            .getOrNull(1)
+            .let { it.orEmpty().ifBlank { "0" } }
+            .take(3)
+        "$formattedNumber.$formattedDecimalNumber"
+    }
 
 //fun Long.asData() = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(this)
 //fun String.asLongDate()= Instant.parse(this).toEpochMilliseconds()

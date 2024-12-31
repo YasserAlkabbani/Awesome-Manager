@@ -81,6 +81,7 @@ class TransactionEditorViewModel @Inject constructor(
     private fun UpsertTransaction.upsertTransaction() {
         viewModelScope.launch {
             transactionRepository.upsertTransaction(this@upsertTransaction)
+            transactionEditorState.navigateToTransactionDetails(id)
         }
     }
 

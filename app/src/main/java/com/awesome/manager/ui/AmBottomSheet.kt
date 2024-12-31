@@ -61,10 +61,10 @@ fun BottomSheetAction.AmBottomSheet(
                 Column(
                     modifier = Modifier.padding(6.dp),
                     content = {
-                        AmDynamicFab(
+                        Content(
                             mainActivityState = mainActivityState,
                             hideKeyboard = { localKeyboardController?.hide() },
-                            onDismiss = {
+                            dismiss = {
                                 scope
                                     .launch { sheetState.hide() }
                                     .invokeOnCompletion {
@@ -83,9 +83,9 @@ fun BottomSheetAction.AmBottomSheet(
 }
 
 @Composable
-private fun BottomSheetAction.AmDynamicFab(
+private fun BottomSheetAction.Content(
     mainActivityState: MainActivityState,
-    onDismiss: () -> Unit,
+    dismiss: () -> Unit,
     hideKeyboard: () -> Unit
 ): Unit =
     when (this) {
@@ -96,19 +96,29 @@ private fun BottomSheetAction.AmDynamicFab(
         is BottomSheetAction.PasswordRested -> BottomSheetPasswordRestored()
         is BottomSheetAction.Profile -> BottomSheetProfile()
         is BottomSheetAction.UnknownError -> BottomSheetUnknownError()
-        is BottomSheetAction.PickDate -> BottomSheetDatePicker()
+        is BottomSheetAction.PickDate -> Content(dismiss = dismiss)
         is BottomSheetAction.PickRangeDate -> BottomSheetDateRangePicker()
-        is BottomSheetAction.SearchForAccount -> AmDynamicFab(
+        is BottomSheetAction.SearchForAccount -> Content(
             mainActivityState = mainActivityState,
-            onDismiss = onDismiss,
+            dismiss = dismiss,
             hideKeyboard = hideKeyboard,
         )
     }
 
+
 @Composable
-private fun BottomSheetAction.SearchForAccount.AmDynamicFab(
+private fun BottomSheetAction.PickDate.Content(dismiss: () -> Unit) {
+    BottomSheetDatePicker(
+        initTime = initTime,
+        dismiss = dismiss,
+        setDate = setDate
+    )
+}
+
+@Composable
+private fun BottomSheetAction.SearchForAccount.Content(
     mainActivityState: MainActivityState,
-    onDismiss: () -> Unit,
+    dismiss: () -> Unit,
     hideKeyboard: () -> Unit
 ) {
     val searchKey: String = mainActivityState.searchKey.collectAsStateWithLifecycle().value
@@ -142,7 +152,7 @@ private fun BottomSheetAction.SearchForAccount.AmDynamicFab(
                             withDetails = false,
                             onClick = {
                                 onSelectAccount(account.id)
-                                onDismiss()
+                                dismiss()
                             },
                             onAddTransaction = null,
                             onEditTransaction = null,

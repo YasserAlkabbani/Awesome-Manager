@@ -32,40 +32,40 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetDatePicker(
-//    initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
+    initTime: Long, setDate: (Long) -> Unit, dismiss: () -> Unit
 ) {
-//    val state = rememberDatePickerState(initialDisplayedMonthMillis = initTime)
-//    Column {
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//        ) {
-//            IconButton(
-//                content = { AmIcon(amIconsType = AmIcons.Close) },
-//                onClick = dismiss
-//            )
-//            AmTextButton(
-//                text = "Confirm",
-//                enabled = state.selectedDateMillis != null,
-//                onClick = {
-//                    state.selectedDateMillis?.let {
-//                        setDate(it)
-//                        dismiss()
-//                    }
-//                }
-//            )
-//        }
-//        DatePicker(
-//            state = state,
-//            title = null,
-//            showModeToggle = false,
-//        )
-//    }
+    val state = rememberDatePickerState(initialDisplayedMonthMillis = initTime)
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            IconButton(
+                content = { AmIcon(amIconsType = AmIcons.Close) },
+                onClick = dismiss
+            )
+            AmTextButton(
+                text = "Confirm",
+                enabled = state.selectedDateMillis != null,
+                onClick = {
+                    state.selectedDateMillis?.let {
+                        setDate(it)
+                        dismiss()
+                    }
+                }
+            )
+        }
+        DatePicker(
+            state = state,
+            title = null,
+            showModeToggle = false,
+        )
+    }
 }
 
 
 @Preview
 @Composable
 fun BottomSheetDatePackerPreview() {
-    BottomSheetDatePicker()
+    BottomSheetDatePicker(System.currentTimeMillis(), {}, {})
 }

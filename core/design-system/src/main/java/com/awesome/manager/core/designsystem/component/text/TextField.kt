@@ -1,6 +1,5 @@
 package com.awesome.manager.core.designsystem.component.text
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,31 +53,25 @@ fun AmTextField(
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    formatText: String.() -> String = { this }
 ) {
 
-    val textField = remember(text) {
-        TextFieldValue(text, TextRange(text.length))
+    val textFieldValue: MutableState<TextFieldValue> = remember {
+        mutableStateOf(TextFieldValue(text, TextRange(text.length)))
     }
-//    val isFocus = remember { mutableStateOf(false) }
-//    val color = animateColorAsState(
-//        targetValue = if (isFocus.value) MaterialTheme.colorScheme.secondary
-//        else MaterialTheme.colorScheme.secondaryContainer,
-//        label = "COLOR"
-//    ).value
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-//            .onFocusChanged { isFocus.value = it.hasFocus }
-//            .background(
-//                color = MaterialTheme.colorScheme.surface,
-//                shape = MaterialTheme.shapes.small
-//            )
-        value = textField,
+        value = textFieldValue.value,
         enabled = enabled,
         placeholder = { AmText(text = hint) },
         label = label?.let { { AmText(text = label) } },
-        onValueChange = { onTextChange(it.text) },
+        onValueChange = {
+            val formattedText = it.text.formatText()
+            textFieldValue.value = it.copy(formattedText)
+            onTextChange(formattedText)
+        },
         leadingIcon = {
             icon?.let {
                 AmIcon(

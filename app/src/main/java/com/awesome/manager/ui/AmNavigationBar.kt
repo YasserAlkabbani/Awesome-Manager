@@ -18,7 +18,7 @@ fun NavigationAction.AmBottomNavigation(
         MainDestination.entries.forEach { destination ->
             val navigationDestination = destination.navigationDestination
             AmNavigationItem(
-                isSelected = navigationDestination == this,
+                isSelected = navigationDestination == this@AmBottomNavigation,
                 title = stringResource(destination.title),
                 selectedIcon = destination.selectedAmIconsType,
                 unSelectedIcon = destination.unSelectedAmIconsType,

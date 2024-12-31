@@ -33,5 +33,5 @@ data class UpsertTransaction(
     val transactionType: String,
     val transactionAt: Long,
 ) {
-    fun isValid() = true
+    fun isValidAccount() = accountId.isNotBlank()
 }

@@ -27,9 +27,9 @@ import com.awesome.manager.core.ui.actions.main.DynamicFabAction
 import kotlin.math.absoluteValue
 
 @Composable
-fun DynamicFabAction.AmDynamicFab(): Unit =
+fun DynamicFabAction.Content(): Unit =
     AnimatedContent(
-        targetState = this@AmDynamicFab,
+        targetState = this@Content,
         label = "DYNAMIC_BAR",
         transitionSpec = {
             val initDynamicFab: DynamicFabAction = initialState

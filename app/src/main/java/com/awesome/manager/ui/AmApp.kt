@@ -164,9 +164,9 @@ fun AmApp() {
                 }
 
                 is NavigationAction -> {
-                    val mainDestinationNavOption =
-                        when (mainAction.isMainDistinction()) {
-                            true -> navOptions {
+                    val destinationNavOption =
+                        when {
+                            mainAction.isMainDistinction() -> navOptions {
                                 popUpTo(NavigationAction.Home) {
                                     saveState = true
                                 }
@@ -174,30 +174,43 @@ fun AmApp() {
                                 restoreState = true
                             }
 
-                            false -> null
+                            mainAction is NavigationAction.AccountDetails -> navOptions {
+                                if (currentNavigationDestination is NavigationAction.AccountEditor) {
+                                    popUpTo(currentNavigationDestination) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+
+                            mainAction is NavigationAction.TransactionDetails -> navOptions {
+                                if (currentNavigationDestination is NavigationAction.TransactionEditor) {
+                                    popUpTo(currentNavigationDestination) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+
+                            else -> null
                         }
                     when (mainAction) {
                         NavigationAction.NavigateUp -> navHostController.navigateUp()
                         else -> navHostController.navigate(
                             route = mainAction,
-                            navOptions = mainDestinationNavOption
+                            navOptions = destinationNavOption
                         )
                     }
                 }
 
-                is ErrorAction -> {
-                    Timber.d("TEST_MAIN_ACTION ERROR ${mainAction.amUIError}")
-                    when (mainAction.amUIError) {
-                        is AmUIError.BadRequest -> Unit
-                        is AmUIError.OtherUIError -> Unit
-                        AmUIError.ConnectionUIError -> Unit
-                        AmUIError.NoDataError -> Unit
-                        AmUIError.NoError -> Unit
-                        AmUIError.PoorConnection -> Unit
-                        AmUIError.Unauthorized -> Unit
-                        AmUIError.UnknownUIError -> Unit
-                        AmUIError.NoPermissionError -> Unit
-                    }
+                is ErrorAction -> when (mainAction.amUIError) {
+                    is AmUIError.BadRequest -> Unit
+                    is AmUIError.OtherUIError -> Unit
+                    AmUIError.ConnectionUIError -> Unit
+                    AmUIError.NoDataError -> Unit
+                    AmUIError.NoError -> Unit
+                    AmUIError.PoorConnection -> Unit
+                    AmUIError.Unauthorized -> Unit
+                    AmUIError.UnknownUIError -> Unit
+                    AmUIError.NoPermissionError -> Unit
                 }
             }
         }
@@ -228,7 +241,7 @@ fun AppScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            floatingActionButton = { dynamicFabAction.AmDynamicFab() },
+            floatingActionButton = { dynamicFabAction.Content() },
             floatingActionButtonPosition = FabPosition.End,
             bottomBar = {
                 currentNavigation?.AmBottomNavigation(

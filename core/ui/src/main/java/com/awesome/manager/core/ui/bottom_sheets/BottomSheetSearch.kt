@@ -54,9 +54,7 @@ fun BottomSheetSearch(
         AmTextField(
             modifier = Modifier
                 .focusRequester(focusRequester)
-                .onGloballyPositioned {
-                    focusRequester.requestFocus()
-                },
+                .onGloballyPositioned { focusRequester.requestFocus() },
             text = searchKey,
             onTextChange = onUpdateSearchKey,
             label = searchLabel,

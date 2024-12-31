@@ -49,7 +49,7 @@ class TransactionEditorState(
     val amount: StateFlow<String> = TRANSACTION_AMOUNT.getString("")
 
     fun updateTransactionAt(transactionAt: Long) = TRANSACTION_AT.setLong(transactionAt)
-    val transactionAt: StateFlow<Long> = TRANSACTION_AT.getLong(0)
+    val transactionAt: StateFlow<Long> = TRANSACTION_AT.getLong(System.currentTimeMillis())
 
     fun updateTransactionType(transactionType: String) = TRANSACTION_TYPE.setString(transactionType)
     val selectedTransactionTypeID: StateFlow<String> =
@@ -58,15 +58,6 @@ class TransactionEditorState(
     fun updateAccount(accountID: String) = TRANSACTION_ACCOUNT_ID.setString(accountID)
     val accountID: StateFlow<String> = TRANSACTION_ACCOUNT_ID.getString("")
     val account: StateFlow<AmAccount?> = accountID.getAccountById()
-
-    fun searchForAccount() {
-        showSearchForAccount(
-            initSearch = "",
-            onSelectAccount = {
-
-            },
-        )
-    }
 
     val transactionEditorUI = transactionEditorData
         .filterSuccessData()
@@ -98,14 +89,12 @@ class TransactionEditorState(
         transactionEditorData.defaultTransactionType?.let { updateTransactionType(it.id) }
 
         when (transactionEditorData) {
-            is TransactionEditorData.EditTransaction -> {
-                transactionEditorData.transaction.apply {
-                    updateTitle(title)
-                    updateSubtitle(subtitle)
-                    updateAmount(amount.toString())
-                    updateTransactionAt(transactionAt)
-                    updateAccount(accountId)
-                }
+            is TransactionEditorData.EditTransaction -> transactionEditorData.transaction.apply {
+                updateTitle(title)
+                updateSubtitle(subtitle)
+                updateAmount(amount.toString())
+                updateTransactionAt(transactionAt)
+                updateAccount(accountId)
             }
 
             is TransactionEditorData.CreateTransaction -> Unit
@@ -113,25 +102,22 @@ class TransactionEditorState(
     }
 
     private fun UpsertTransaction.processUIState(transactionEditorData: TransactionEditorData) {
-        when (isValid()) {
-            false -> dynamicFabInvalidInput(::navigatePopBack)
-            true -> when (transactionEditorData) {
-                is TransactionEditorData.CreateTransaction -> when {
-                    transactionEditorData.accountID == null -> dynamicFabSearchForAccount(
-                        searchForAccount = {
-                            showSearchForAccount(
-                                initSearch = account.value?.name.orEmpty(),
-                                onSelectAccount = ::updateAccount
-                            )
-                        },
-                        navigatePopBack = ::navigatePopBack
+        when (isValidAccount()) {
+            false -> dynamicFabSearchForAccount(
+                searchForAccount = {
+                    showSearchForAccount(
+                        initSearch = account.value?.name.orEmpty(),
+                        onSelectAccount = ::updateAccount
                     )
+                },
+                navigatePopBack = ::navigatePopBack
+            )
 
-                    else -> dynamicFabCreateTransaction(
-                        createTransaction = { upsertTransaction() },
-                        navigatePopBack = ::navigatePopBack
-                    )
-                }
+            true -> when (transactionEditorData) {
+                is TransactionEditorData.CreateTransaction -> dynamicFabCreateTransaction(
+                    createTransaction = { upsertTransaction() },
+                    navigatePopBack = ::navigatePopBack
+                )
 
                 is TransactionEditorData.EditTransaction -> dynamicFabUpdateTransaction(
                     updateTransaction = { upsertTransaction() },

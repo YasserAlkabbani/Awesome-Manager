@@ -23,11 +23,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.common.asDate
-import com.awesome.manager.core.common.asTimestamp
+import com.awesome.manager.core.common.asFormattedNumber
 import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
@@ -124,7 +122,10 @@ fun TransactionEditorScreen(
                     }
 
                     AmTextField(
-                        hint = "Title", icon = AmIcons.Title, label = "Transaction Title",
+                        modifier = Modifier,
+                        hint = "Title",
+                        icon = AmIcons.Title,
+                        label = "Transaction Title",
                         onTextChange = transactionEditorState::updateTitle,
                         keyboardActions = KeyboardActions(),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -133,33 +134,19 @@ fun TransactionEditorScreen(
                     AmTextField(
                         hint = "5000.0", icon = AmIcons.Money, label = "Amount",
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next, keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
                         ),
-                        onTextChange = { value ->
-                            val formattedValue = value
-                                .filter { it.isDigit() || it == '.' }
-                                .let {
-                                    if (value.count { it == '.' } < 2) it else value.substringBeforeLast(
-                                        "."
-                                    )
-                                }
-                                .let {
-                                    val splitNumber = it.split('.')
-                                    val newBefore = splitNumber.first().ifBlank { "0" }.take(20)
-                                    val newAfter =
-                                        splitNumber.getOrNull(1)?.take(3)?.let { ".".plus(it) }
-                                            .orEmpty()
-                                    "$newBefore$newAfter"
-                                }
-                            transactionEditorState.updateAmount(formattedValue)
-                        },
-                        text = amount
+                        onTextChange = transactionEditorState::updateAmount,
+                        text = amount,
+                        formatText = { asFormattedNumber() }
                     )
                     AmTextField(
-                        hint = "Subtitle", label = "Transaction Subtitle",
-                        icon = AmIcons.SubTitle, singleLine = false,
+                        hint = "Description",
+                        label = "Transaction Description",
+                        icon = AmIcons.SubTitle,
+                        singleLine = false,
                         onTextChange = transactionEditorState::updateSubtitle,
-                        text = subtitle
+                        text = subtitle,
                     )
 
                     AmFilledTonalIconWithTextButton(
