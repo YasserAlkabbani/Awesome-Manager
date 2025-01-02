@@ -3,7 +3,6 @@ package com.awesome.manager.feature.transaction.transactions
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -86,7 +85,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                     content = {
                         items(
                             count = transactionsLazyPaging.itemCount,
-                            key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
+                            key = transactionsLazyPaging.itemKey { transaction -> transaction.transactionID },
                             contentType = { LAZY_ITEM_TRANSACTION },
                             itemContent = { index ->
                                 transactionsLazyPaging[index]?.let { transaction ->
@@ -102,7 +101,8 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                         currency = transaction.currency.currencyCode,
                                         onClick = {
                                             transactionsState.navigateToTransactionDetails(
-                                                transaction.id
+                                                accountID = transaction.accountID,
+                                                transactionID = transaction.transactionID
                                             )
                                         }
                                     )

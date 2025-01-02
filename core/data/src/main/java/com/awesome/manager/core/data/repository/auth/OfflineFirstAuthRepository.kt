@@ -1,11 +1,9 @@
 package com.awesome.manager.core.data.repository.auth
 
-import com.awesome.manager.core.data.extention.amRequest
+import com.awesome.manager.core.data.extention.requestUIState
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
-import com.awesome.manager.core.database.AmDatabase
 import com.awesome.manager.core.database.dao.UserDao
-import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.model.AmUser
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
 import com.awesome.manager.core.network.model.request.LoginRequest
@@ -23,7 +21,7 @@ class OfflineFirstAuthRepository @Inject constructor(
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String) =
-        amRequest {
+        requestUIState {
             val authNetwork = authNetworkDataSource.login(
                 LoginRequest(email = email, password = password)
             )
@@ -32,14 +30,14 @@ class OfflineFirstAuthRepository @Inject constructor(
         }
 
     override suspend fun signUp(email: String, password: String) =
-        amRequest {
+        requestUIState {
             val authUserNetwork = authNetworkDataSource.signUp(
                 SignupRequest(email = email, password = password)
             )
 //            response.identities.isEmpty()
         }
 
-    override suspend fun logout() = amRequest {
+    override suspend fun logout() = requestUIState {
         authNetworkDataSource.logout()
     }
 

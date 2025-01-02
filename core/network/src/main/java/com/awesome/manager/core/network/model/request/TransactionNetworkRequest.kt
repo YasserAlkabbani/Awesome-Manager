@@ -6,15 +6,22 @@ import kotlinx.serialization.Serializable
 
 @Resource("rest/v1/transactions")
 data object Transaction {
+
     @Resource("")
     class Get(
-        @SerialName("parent") val parent: Transaction = Transaction,
         @SerialName("updated_at") val updatedAt: String,
-        @SerialName("select") val select: String = "*"
+        @SerialName("parent") val parent: Transaction = Transaction,
+        @SerialName("select") val select: String = "*",
     )
 
     @Resource("")
-    class Upsert(
+    class Insert(
+        @SerialName("parent") val parent: Transaction = Transaction,
+    )
+
+    @Resource("")
+    class Update(
+        @SerialName("id") val transactionID: String,
         @SerialName("parent") val parent: Transaction = Transaction,
     )
 

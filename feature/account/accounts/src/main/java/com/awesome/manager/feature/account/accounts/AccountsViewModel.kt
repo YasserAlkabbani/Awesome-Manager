@@ -19,7 +19,7 @@ class AccountsViewModel @Inject constructor(
     val accountsState: AccountsState = AccountsState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
-        pagingAccounts = accountRepository.returnAccounts(),
+        pagingAccounts = accountRepository.getAccounts(),
         refreshAccounts = ::refreshAccounts
     )
 

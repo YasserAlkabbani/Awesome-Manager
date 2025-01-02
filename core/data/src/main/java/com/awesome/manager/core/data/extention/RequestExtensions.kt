@@ -12,35 +12,37 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
-inline fun <T> Flow<T>.asAmResult(
-    crossinline taskToDo: suspend (T) -> Unit,
-    crossinline doOnSuccess: suspend () -> Unit,
-): Flow<AmUIState<T>> =
-    map<T, AmUIState<T>> {
-        Timber.d("REFRESH_TRANSACTION TO_DO")
-        taskToDo(it)
-        Timber.d("REFRESH_TRANSACTION TASK_TO_DO")
-        doOnSuccess()
-        Timber.d("REFRESH_TRANSACTION DO_ON_SUCCESS")
-        AmUIState.Success(data = it)
-    }
-        .onStart {
-            Timber.d("REFRESH_TRANSACTION ON_START")
-            emit(AmUIState.Loading())
-        }
-        .catch { throwable ->
-            Timber.d("REFRESH_TRANSACTION ON_ERROR " + throwable.message)
-            emit(throwable.asAmError())
-        }
-        .flowOn(Dispatchers.Default)
-
-inline fun <T> amRequest(crossinline requestData: suspend () -> T?) = flow<AmUIState<T>> {
-    val data: T = requestData()!!
-    emit(AmUIState.Success(data = data))
+inline fun <T, R> Flow<T>.asUIState(
+    crossinline taskToDo: suspend (T) -> R
+): Flow<AmUIState<R>> = map<T, AmUIState<R>> {
+    Timber.d("TEST_AM FLOW_TO_UI_STATE BEFORE_TASK")
+    val taskResult = taskToDo(it)
+    Timber.d("TEST_AM FLOW_TO_UI_STATE AFTER_TASK")
+    AmUIState.Success(data = taskResult)
 }
-    .onStart { emit(AmUIState.Loading()) }
+    .onStart {
+        Timber.d("TEST_AM FLOW_TO_UI_STATE START")
+        emit(AmUIState.Loading())
+    }
     .catch { throwable ->
-        Timber.d("TEST_AUTH CATCH_ERROR ${throwable.message}")
+        Timber.d("TEST_AM FLOW_TO_UI_STATE ERROR $throwable")
+        emit(throwable.asAmError())
+    }
+    .flowOn(Dispatchers.Default)
+
+inline fun <T> requestUIState(
+    crossinline requestData: suspend () -> T
+): Flow<AmUIState<T>> = flow<AmUIState<T>> {
+    Timber.d("TEST_AM REQUEST_UI_STATE BEFORE_TASK")
+    emit(AmUIState.Success(data = requestData()))
+    Timber.d("TEST_AM REQUEST_UI_STATE AFTER_TASK")
+}
+    .onStart {
+        Timber.d("TEST_AM REQUEST_UI_STATE START")
+        emit(AmUIState.Loading())
+    }
+    .catch { throwable ->
+        Timber.d("TEST_AM REQUEST_UI_STATE ERROR $throwable")
         emit(throwable.asAmError())
     }
     .flowOn(Dispatchers.Default)

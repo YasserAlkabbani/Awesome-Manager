@@ -1,21 +1,16 @@
 package com.awesome.manager.feature.account.details
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -102,7 +97,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                             items(
                                 count = transactionsLazyPaging.itemCount,
                                 contentType = { LAZY_ITEM_TRANSACTION },
-                                key = transactionsLazyPaging.itemKey { transaction -> transaction.id },
+                                key = transactionsLazyPaging.itemKey { transaction -> transaction.transactionID },
                                 itemContent = { index ->
                                     transactionsLazyPaging[index]?.let { transaction ->
                                         TransactionCard(
@@ -117,7 +112,8 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                             currency = transaction.currency.currencySymbol,
                                             onClick = {
                                                 accountDetailsState.navigateToTransactionDetails(
-                                                    transaction.id
+                                                    accountID = transaction.accountID,
+                                                    transactionID = transaction.transactionID
                                                 )
                                             }
                                         )

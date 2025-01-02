@@ -54,9 +54,9 @@ interface TransactionDao {
         "SELECT transactions.* ," +
                 "(transactions.creator_user_id == users.user_id) AS update_permission " +
                 "FROM transactions ,users " +
-                "WHERE transaction_id=:transactionId"
+                "WHERE transaction_id=:transactionID"
     )
-    fun returnTransactionById(transactionId: String): Flow<TransactionEntityWithData>
+    fun getTransactionByID(transactionID: String): Flow<TransactionEntityWithData>
 
     @Query("SELECT * FROM transactions WHERE pending=1")
     fun returnPendingTransaction(): Flow<TransactionEntity?>
@@ -65,7 +65,7 @@ interface TransactionDao {
     suspend fun returnLastUpdatedTransaction(): TransactionEntity?
 
     @Query("SELECT COUNT(*) FROM transactions WHERE account_id=:accountId")
-    suspend fun returnTransactionsCount(accountId: String): Int
+    suspend fun getTransactionsCount(accountId: String): Int
 
     @Query("DELETE FROM transactions")
     suspend fun deleteTransactions()

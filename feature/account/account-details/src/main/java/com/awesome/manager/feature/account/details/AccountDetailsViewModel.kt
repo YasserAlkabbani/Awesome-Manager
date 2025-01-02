@@ -26,7 +26,7 @@ class AccountDetailsViewModel @Inject constructor(
     private val accountID: String = accountDetailsArg.accountId
 
     private val accountUIState = accountRepository
-        .returnAccountById(accountID = accountID)
+        .getAccountByID(accountID = accountID)
         .filterNotNull()
         .asUIState(viewModelScope)
 
@@ -35,7 +35,7 @@ class AccountDetailsViewModel @Inject constructor(
         getString = { savedStateHandle.getStateFlow(this, it) },
         refreshTransactions = ::refreshTransactions,
         account = accountUIState,
-        transactions = transactionRepository.returnTransactionsByAccountID(accountID, ""),
+        transactions = transactionRepository.getTransactionsByAccountID(accountID, ""),
     )
 
     private fun refreshTransactions() {

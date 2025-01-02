@@ -86,10 +86,10 @@ interface DynamicFabState {
     ///////// TRANSACTION
 
     fun dynamicFabTransactionDetails(
-        navigateToTransaction: () -> Unit,
+        navigateToEditTransaction: () -> Unit,
         hasEditTransactionPermission: Boolean
     ) = if (hasEditTransactionPermission) dynamicFabExtraButton(
-        dynamicFabExtraButton = DynamicFabExtraButton.Edit(onClick = navigateToTransaction)
+        dynamicFabExtraButton = DynamicFabExtraButton.Edit(onClick = navigateToEditTransaction)
     ) else Unit
 
     fun dynamicFabSearchForAccount(
@@ -121,6 +121,9 @@ interface DynamicFabState {
             dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
         )
     }
+
+
+    ///////// ERROR
 
     fun dynamicFabConnectionError(tryAgain: () -> Unit) = dynamicFabMessage(
         dynamicFabText = DynamicFabText.ConnectionError,

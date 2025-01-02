@@ -15,9 +15,6 @@ import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,7 +37,7 @@ class AccountEditorViewModel @Inject constructor(
                 .map { user -> AccountEditorData.create(user.id) }
 
             else -> accountRepository
-                .returnAccountById(accountID = accountID)
+                .getAccountByID(accountID = accountID)
                 .filterNotNull()
                 .map { account -> AccountEditorData.create(account) }
         }.asUIState(viewModelScope)

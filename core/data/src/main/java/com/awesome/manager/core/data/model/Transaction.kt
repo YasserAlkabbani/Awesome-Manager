@@ -22,16 +22,18 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     createdAt = createdAt.asTimestamp(),
     updatedAt = updatedAt.asTimestamp(),
     transactionAt = transactionAt.asTimestamp(),
-    pending = false
+    pending = false,
+    alreadyOnNetwork = true
 )
 
 fun TransactionEntityWithData.asModel() = AmTransaction(
-    id = transactionEntity.id,
-    accountId = transactionEntity.accountId,
+    transactionID = transactionEntity.id,
+    accountID = transactionEntity.accountId,
     creatorUserID = transactionEntity.creatorUserId,
     transactionType = enumValueOf(transactionEntity.transactionType),
     title = transactionEntity.title,
     pending = transactionEntity.pending,
+    alreadyOnNetwork = transactionEntity.alreadyOnNetwork,
     subtitle = transactionEntity.subtitle,
     amount = transactionEntity.amount,
     createdAt = transactionEntity.createdAt,
@@ -55,7 +57,7 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
 )
 
 fun UpsertTransaction.asEntity() = TransactionEntity(
-    id = id,
+    id = transactionID,
     creatorUserId = creatorUserId,
     accountId = accountId,
     transactionType = transactionType,
@@ -66,4 +68,5 @@ fun UpsertTransaction.asEntity() = TransactionEntity(
     updatedAt = currentTime(),
     transactionAt = transactionAt,
     pending = true,
+    alreadyOnNetwork = alreadyOnNetwork
 )

@@ -179,6 +179,7 @@ fun AmApp() {
                                     popUpTo(currentNavigationDestination) {
                                         inclusive = true
                                     }
+                                    launchSingleTop = true
                                 }
                             }
 
@@ -187,6 +188,7 @@ fun AmApp() {
                                     popUpTo(currentNavigationDestination) {
                                         inclusive = true
                                     }
+                                    launchSingleTop = true
                                 }
                             }
 

@@ -17,6 +17,7 @@ data class AccountEntity(
     @ColumnInfo("created_at") val createdAt: Long,
     @ColumnInfo("updated_at") val updatedAt: Long,
     @ColumnInfo("pending") val pending: Boolean,
+    @ColumnInfo("already_on_network") val alreadyOnNetwork: Boolean,
 )
 
 

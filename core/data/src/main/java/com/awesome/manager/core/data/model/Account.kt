@@ -21,6 +21,7 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     pending = false,
     createdAt = createdAt.asTimestamp(),
     updatedAt = updatedAt.asTimestamp(),
+    alreadyOnNetwork = true
 )
 
 fun AccountEntityWithData.asModel() = AmAccount(
@@ -34,6 +35,7 @@ fun AccountEntityWithData.asModel() = AmAccount(
         currency = currencyEntity.asModel(),
     ),
     pending = accountEntity.pending,
+    alreadyOnNetwork = accountEntity.alreadyOnNetwork,
     createdAt = accountEntity.createdAt,
     updatedAt = accountEntity.updatedAt,
     updatePermission = updatePermission
@@ -56,6 +58,7 @@ fun UpsertAccount.asEntity() = AccountEntity(
     currencyId = currencyId,
     defaultTransactionType = defaultTransactionTypeID,
     pending = true,
+    alreadyOnNetwork = alreadyOnNetwork,
     createdAt = currentTime(),
     updatedAt = currentTime(),
 )

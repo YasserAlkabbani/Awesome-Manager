@@ -3,8 +3,8 @@ package com.awesome.manager.core.data.repository.accounts
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.data.extention.amInsert
-import com.awesome.manager.core.data.extention.amRequest
-import com.awesome.manager.core.data.extention.asAmResult
+import com.awesome.manager.core.data.extention.requestUIState
+import com.awesome.manager.core.data.extention.asUIState
 import com.awesome.manager.core.common.asDateTimeString
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
@@ -16,9 +16,9 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.UpsertAccount
 import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -28,34 +28,41 @@ class OfflineFirstAccountRepository @Inject constructor(
 ) : AccountRepository {
 
     override suspend fun upsertAccount(upsertAccount: UpsertAccount) = amInsert {
-        val accountEntity: AccountEntity = upsertAccount.asEntity()
-        accountDao.upsertAccount(accountEntity)
+        upsertAccount.asEntity().upsert()
     }
 
-    override fun returnAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
-        { accountDao.returnAccounts(searchKey) }.asPagingDataFlow { asModel() }
+    override fun getAccounts(searchKey: String?): Flow<PagingData<AmAccount>> =
+        { accountDao.getAccounts(searchKey) }.asPagingDataFlow { asModel() }
 
-    override fun returnAccountById(accountID: String): Flow<AmAccount?> =
-        accountDao.returnAccountById(accountID).map { it?.asModel() }
+    override fun getAccountByID(accountID: String): Flow<AmAccount> =
+        accountDao.getAccountByID(accountID).map { it.asModel() }
 
-    override fun refreshAccounts(): Flow<AmUIState<Unit>> = amRequest {
-        val lastUpdateAccountTime = (accountDao.returnLastUpdatedAccount()?.updatedAt ?: 0) + 1
+    override fun refreshAccounts(): Flow<AmUIState<List<AmAccount>>> = requestUIState {
+        val lastUpdateAccountTime = (accountDao.getLastUpdatedAccount()?.updatedAt ?: 0) + 1
         val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTimeString()
         val accountsNetwork = accountNetworkDataSource
-            .returnUpdatedAccount(lastUpdatedAccountDateTime)
-        val accountsEntity = accountsNetwork.map { it.asEntity() }
-        accountDao.upsertAccount(accountsEntity)
+            .getUpdatedAccount(lastUpdatedAccountDateTime)
+        accountsNetwork.map { it.asEntity().upsert() }
     }
 
-    override suspend fun syncAccount() {
-        accountDao.returnPendingAccount().filterNotNull().distinctUntilChanged()
-            .map { it.asNetwork() }
-            .asAmResult(
-                taskToDo = accountNetworkDataSource::upsertAccount,
-                doOnSuccess = ::refreshAccounts
-            ).collect()
-    }
+    override fun syncPendingAccounts(): Flow<AmUIState<List<AmAccount>>> =
+        accountDao.getPendingAccounts()
+            .filterNotNull()
+            .distinctUntilChanged()
+            .asUIState { pendingAccountEntity ->
+                val pendingAccountNetworkRequest = pendingAccountEntity.asNetwork()
+                val accountNetworkResponse = when (pendingAccountEntity.alreadyOnNetwork) {
+                    true -> accountNetworkDataSource.updateAccount(pendingAccountNetworkRequest)
+                    false -> accountNetworkDataSource.insertAccount(pendingAccountNetworkRequest)
+                }
+                accountNetworkResponse.map { it.asEntity().upsert() }
+            }
 
-    override suspend fun deleteAccounts() = accountDao.deleteAccounts()
+    override suspend fun deleteAllAccounts() = accountDao.deleteAccounts()
+
+    private suspend fun AccountEntity.upsert(): AmAccount {
+        accountDao.upsertAccount(this)
+        return accountDao.getAccountByID(id).first().asModel()
+    }
 
 }

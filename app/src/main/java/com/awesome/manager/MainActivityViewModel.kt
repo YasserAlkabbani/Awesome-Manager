@@ -10,6 +10,7 @@ import com.awesome.manager.core.data.repository.transaction.TransactionRepositor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -29,7 +30,7 @@ class MainActivityViewModel @Inject constructor(
     val mainActivityState = MainActivityState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
-        getAccountsSearchPagingData = { flatMapLatest { accountRepository.returnAccounts(it) } },
+        getAccountsSearchPagingData = { flatMapLatest { accountRepository.getAccounts(it) } },
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),
@@ -46,7 +47,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun clearData() {
         viewModelScope.launch {
-            accountRepository.deleteAccounts()
+            accountRepository.deleteAllAccounts()
             transactionRepository.deleteTransactions()
         }
     }
@@ -54,19 +55,23 @@ class MainActivityViewModel @Inject constructor(
     private fun refreshData() {
         viewModelScope.launch {
             launch {
-                Timber.d("TEST_AM I")
+                Timber.d("TEST_AM REFRESHING CURRENCY")
                 currencyRepository.refreshCurrency().collect()
-                Timber.d("TEST_AM II")
+                Timber.d("TEST_AM REFRESHING ACCOUNT")
                 accountRepository.refreshAccounts().collect()
-                Timber.d("TEST_AM III")
+                Timber.d("TEST_AM REFRESHING TRANSACTIONS")
                 transactionRepository.refreshTransactions().collect()
-                Timber.d("TEST_AM VI")
+                Timber.d("TEST_AM REFRESHING DONE")
             }
             launch {
-                accountRepository.syncAccount()
+                accountRepository.syncPendingAccounts().collectLatest {
+                    Timber.d("TEST_AM SYNC_ACCOUNTS $it")
+                }
             }
             launch {
-                transactionRepository.synTransactions()
+                transactionRepository.synTransactions().collectLatest {
+                    Timber.d("TEST_AM SYNC_TRANSACTIONS $it")
+                }
             }
         }
     }

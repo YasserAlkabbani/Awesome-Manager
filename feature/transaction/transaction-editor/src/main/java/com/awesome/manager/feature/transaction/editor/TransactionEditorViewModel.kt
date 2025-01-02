@@ -13,12 +13,11 @@ import com.awesome.manager.core.ui.actions.asStateFlow
 import com.awesome.manager.core.ui.actions.asUIState
 import com.awesome.manager.core.ui.actions.main.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,16 +30,16 @@ class TransactionEditorViewModel @Inject constructor(
 
     private val transactionEditorArg: NavigationAction.TransactionEditor =
         savedStateHandle.toRoute()
-    private val transactionID: String? = transactionEditorArg.transactionId
-    private val accountID: String? = transactionEditorArg.accountId
+    private val transactionID: String? = transactionEditorArg.transactionID
+    private val accountID: String? = transactionEditorArg.accountID
 
     private val transactionEditorData = when (transactionID) {
         null -> authRepository.currentUser()
             .map { currentUser ->
                 val transactionType: AmTransactionType? = when (accountID) {
                     null -> null
-                    else -> accountRepository.returnAccountById(accountID)
-                        .first()?.defaultTransactionType
+                    else -> accountRepository.getAccountByID(accountID)
+                        .first().defaultTransactionType
                 }
                 TransactionEditorData.CreateTransaction(
                     creatorUserID = currentUser.id,
@@ -49,11 +48,11 @@ class TransactionEditorViewModel @Inject constructor(
                 )
             }
 
-        else -> transactionRepository.returnTransactionById(transactionID)
+        else -> transactionRepository.getTransactionById(transactionID)
             .map { transaction ->
                 TransactionEditorData.EditTransaction(
                     creatorUserID = transaction.creatorUserID,
-                    transactionID = transaction.id,
+                    transactionID = transaction.transactionID,
                     accountID = transaction.creatorUserID,
                     defaultTransactionType = transaction.transactionType,
                     transaction = transaction,
@@ -68,11 +67,12 @@ class TransactionEditorViewModel @Inject constructor(
             setLong = { savedStateHandle[this] = it },
             getLong = { savedStateHandle.getStateFlow(this, it) },
             upsertTransaction = { upsertTransaction() },
-            accountsSearchResults = { accountRepository.returnAccounts(this) },
+            accountsSearchResults = { accountRepository.getAccounts(this) },
             transactionEditorData = transactionEditorData,
             transactionTypes = AmTransactionType.getTypes(),
             getAccountById = {
-                flatMapLatest { accountRepository.returnAccountById(it) }
+                filter { it.isNotBlank() }
+                    .flatMapLatest { accountRepository.getAccountByID(it) }
                     .asStateFlow(viewModelScope, null)
             },
         )
@@ -81,7 +81,10 @@ class TransactionEditorViewModel @Inject constructor(
     private fun UpsertTransaction.upsertTransaction() {
         viewModelScope.launch {
             transactionRepository.upsertTransaction(this@upsertTransaction)
-            transactionEditorState.navigateToTransactionDetails(id)
+            transactionEditorState.navigateToTransactionDetails(
+                accountID = accountId,
+                transactionID = transactionID
+            )
         }
     }
 

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,7 +36,7 @@ fun TransactionDetailsRoute(
     val transactionDetailsState: TransactionDetailsState =
         transactionDetailsViewModel.transactionDetailsState
 
-    transactionDetailsState.transactionDetailsData.collectAsStateWithLifecycle().value
+    transactionDetailsState.transactionDetailsUI.collectAsStateWithLifecycle(null)
 
     val mainAction = transactionDetailsState.mainAction.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = mainAction) {
@@ -51,27 +53,28 @@ fun TransactionDetailsScreen(
     transactionDetailsState: TransactionDetailsState,
 ) {
 
-    val transactionDetailsData =
-        transactionDetailsState.transactionDetailsData.collectAsState().value
+    val transactionState =
+        transactionDetailsState.transaction.collectAsState().value
+    val accountState =
+        transactionDetailsState.account.collectAsState().value
 
-    AnimatedContent(
-        modifier = Modifier.fillMaxWidth(),
-        targetState = transactionDetailsData,
-        label = "TRANSACTION_DETAILS",
-        contentAlignment = Alignment.TopCenter
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ) {
-        when (it) {
-            is AmUIState.Success -> {
-                val transaction = it.data.transaction
-                val account = it.data.account
-                val balanceDetails = account.balanceDetails
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AmPadding.MEDIUM.value),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
-                ) {
+        AnimatedContent(
+            modifier = Modifier.fillMaxWidth(),
+            targetState = accountState,
+            label = "ACCOUNT_DETAILS",
+            contentAlignment = Alignment.TopCenter
+        ) {
+            when (it) {
+                is AmUIState.Error -> Unit
+                is AmUIState.Loading -> Unit
+                is AmUIState.Success -> {
+                    val account = it.data
+                    val balanceDetails = account.balanceDetails
                     AccountCard(
                         modifier = Modifier.fillMaxWidth(),
                         title = account.name,
@@ -90,49 +93,71 @@ fun TransactionDetailsScreen(
                         isPositiveIncome = balanceDetails.isPositiveIncome,
                         isPositiveDebtor = balanceDetails.isPositiveDebtor
                     )
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(AmPadding.X_SMALL.value),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AmTextWithLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = stringResource(R.string.transaction_subject),
-                            text = transaction.title,
-                            positive = transaction.transactionType.positive
-                        )
-                        AmTextWithLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = stringResource(R.string.transaction_description),
-                            text = transaction.subtitle,
-                            positive = transaction.transactionType.positive
-                        )
-                        AmTextWithLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = stringResource(R.string.amount),
-                            text = (transaction.amount).toString(),
-                            positive = transaction.transactionType.positive
-                        )
-                        AmTextWithLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = stringResource(R.string.date),
-                            text = transaction.transactionAtDate,
-                            positive = transaction.transactionType.positive
-                        )
-                        AmTextWithLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = stringResource(R.string.payment_type),
-                            text = transaction.transactionType.getString(),
-                            positive = transaction.transactionType.positive
-                        )
-
-                    }
                 }
             }
+        }
 
-            is AmUIState.Error -> Unit
-            is AmUIState.Loading -> Unit
+        AnimatedContent(
+            modifier = Modifier.fillMaxWidth(),
+            targetState = transactionState,
+            label = "TRANSACTION_DETAILS",
+            contentAlignment = Alignment.TopCenter
+        ) {
+            when (it) {
+                is AmUIState.Success -> {
+                    val transaction = it.data
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AmPadding.MEDIUM.value),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
+                    ) {
+
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(AmPadding.X_SMALL.value),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AmTextWithLabel(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = stringResource(R.string.transaction_subject),
+                                text = transaction.title,
+                                positive = transaction.transactionType.positive
+                            )
+                            AmTextWithLabel(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = stringResource(R.string.transaction_description),
+                                text = transaction.subtitle,
+                                positive = transaction.transactionType.positive
+                            )
+                            AmTextWithLabel(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = stringResource(R.string.amount),
+                                text = (transaction.amount).toString(),
+                                positive = transaction.transactionType.positive
+                            )
+                            AmTextWithLabel(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = stringResource(R.string.date),
+                                text = transaction.transactionAtDate,
+                                positive = transaction.transactionType.positive
+                            )
+                            AmTextWithLabel(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = stringResource(R.string.payment_type),
+                                text = transaction.transactionType.getString(),
+                                positive = transaction.transactionType.positive
+                            )
+
+                        }
+                    }
+                }
+
+                is AmUIState.Error -> Unit
+                is AmUIState.Loading -> Unit
+            }
         }
     }
 

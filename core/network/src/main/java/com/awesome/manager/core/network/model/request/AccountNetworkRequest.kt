@@ -10,13 +10,19 @@ data object Account {
 
     @Resource("")
     class Get(
-        @SerialName("parent") val parent: Account = Account,
         @SerialName("updated_at") val updatedAt: String,
-        @SerialName("select") val select: String = "*"
+        @SerialName("parent") val parent: Account = Account,
+        @SerialName("select") val select: String = "*",
     )
 
     @Resource("")
-    class Upsert(
+    class Insert(
+        @SerialName("parent") val parent: Account = Account
+    )
+
+    @Resource("")
+    class Update(
+        @SerialName("id") val accountID: String,
         @SerialName("parent") val parent: Account = Account,
     )
 
@@ -29,5 +35,5 @@ data class AccountNetworkRequest(
     @SerialName("currency_id") val currencyId: String,
     @SerialName("default_transaction_type") val defaultTransactionType: String,
     @SerialName("name") val name: String,
-    @SerialName("image_url") val imageUrl: String
+    @SerialName("image_url") val imageUrl: String,
 )

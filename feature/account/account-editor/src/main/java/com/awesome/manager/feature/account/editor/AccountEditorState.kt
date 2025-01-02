@@ -60,7 +60,8 @@ class AccountEditorState(
                     name = name,
                     imageUrl = imageUrl,
                     currencyId = currencyID,
-                    defaultTransactionTypeID = transactionType
+                    defaultTransactionTypeID = transactionType,
+                    alreadyOnNetwork = accountEditorData.alreadyOnNetwork()
                 ).processUIState(accountEditorData)
             }
         }
@@ -103,6 +104,7 @@ sealed interface AccountEditorData {
 
     val accountID: String
     val creatorUserID: String
+    fun alreadyOnNetwork() = this is EditAccount && account.alreadyOnNetwork
 
     data class CreateAccount(
         override val accountID: String = UUID.randomUUID().toString(),

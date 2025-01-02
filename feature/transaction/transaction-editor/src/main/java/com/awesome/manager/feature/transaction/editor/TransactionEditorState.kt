@@ -71,7 +71,7 @@ class TransactionEditorState(
                 val transactionType: String = it[4] as String
                 val accountID: String = it[5] as String
                 UpsertTransaction(
-                    id = transactionEditorData.transactionID,
+                    transactionID = transactionEditorData.transactionID,
                     accountId = accountID,
                     creatorUserId = transactionEditorData.creatorUserID,
                     title = title,
@@ -79,6 +79,7 @@ class TransactionEditorState(
                     amount = amount.toDoubleOrNull() ?: 0.0,
                     transactionType = transactionType,
                     transactionAt = transactionAt,
+                    alreadyOnNetwork = transactionEditorData.alreadyOnNetwork()
                 ).processUIState(transactionEditorData)
             }
         }
@@ -94,7 +95,7 @@ class TransactionEditorState(
                 updateSubtitle(subtitle)
                 updateAmount(amount.toString())
                 updateTransactionAt(transactionAt)
-                updateAccount(accountId)
+                updateAccount(accountID)
             }
 
             is TransactionEditorData.CreateTransaction -> Unit
@@ -135,6 +136,8 @@ sealed interface TransactionEditorData {
     val creatorUserID: String
     val accountID: String?
     val defaultTransactionType: AmTransactionType?
+
+    fun alreadyOnNetwork(): Boolean = this is EditTransaction && transaction.alreadyOnNetwork
 
     data class CreateTransaction(
         override val transactionID: String = UUID.randomUUID().toString(),

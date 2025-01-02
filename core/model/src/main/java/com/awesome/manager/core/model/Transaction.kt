@@ -4,14 +4,15 @@ import java.text.NumberFormat
 import java.util.Locale
 
 data class AmTransaction(
-    val id: String,
-    val accountId: String,
+    val transactionID: String,
+    val accountID: String,
     val creatorUserID: String,
     val transactionType: AmTransactionType,
     val title: String,
     val subtitle: String,
     val amount: Double,
     val pending: Boolean,
+    val alreadyOnNetwork: Boolean,
     val accountName: String,
     val currency: AmCurrency,
     val updatePermission: Boolean,
@@ -24,7 +25,7 @@ data class AmTransaction(
 }
 
 data class UpsertTransaction(
-    val id: String,
+    val transactionID: String,
     val accountId: String,
     val creatorUserId: String,
     val title: String,
@@ -32,6 +33,7 @@ data class UpsertTransaction(
     val amount: Double,
     val transactionType: String,
     val transactionAt: Long,
+    val alreadyOnNetwork: Boolean,
 ) {
     fun isValidAccount() = accountId.isNotBlank()
 }

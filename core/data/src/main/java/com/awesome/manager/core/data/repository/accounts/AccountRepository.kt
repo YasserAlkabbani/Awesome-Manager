@@ -10,14 +10,14 @@ interface AccountRepository {
 
     suspend fun upsertAccount(upsertAccount: UpsertAccount)
 
-    fun returnAccounts(searchKey: String? = null): Flow<PagingData<AmAccount>>
+    fun getAccounts(searchKey: String? = null): Flow<PagingData<AmAccount>>
 
-    fun returnAccountById(accountID: String): Flow<AmAccount?>
+    fun getAccountByID(accountID: String): Flow<AmAccount>
 
-    fun refreshAccounts(): Flow<AmUIState<Unit>>
+    fun refreshAccounts(): Flow<AmUIState<List<AmAccount>>>
 
-    suspend fun syncAccount()
+    fun syncPendingAccounts(): Flow<AmUIState<List<AmAccount>>>
 
-    suspend fun deleteAccounts()
+    suspend fun deleteAllAccounts()
 
 }

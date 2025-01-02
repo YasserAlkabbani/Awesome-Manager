@@ -31,7 +31,7 @@ interface AccountDao {
                 "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
                 "GROUP BY accounts.name "
     )
-    fun returnAccounts(searchKey: String?): PagingSource<Int, AccountEntityWithData>
+    fun getAccounts(searchKey: String?): PagingSource<Int, AccountEntityWithData>
 
     @Transaction
     @Query(
@@ -46,14 +46,14 @@ interface AccountDao {
                 "WHERE accounts.account_id=:accountId " +
                 "GROUP BY accounts.name "
     )
-    fun returnAccountById(accountId: String): Flow<AccountEntityWithData?>
+    fun getAccountByID(accountId: String): Flow<AccountEntityWithData>
 
 
     @Query("SELECT * FROM accounts WHERE pending=1")
-    fun returnPendingAccount(): Flow<AccountEntity?>
+    fun getPendingAccounts(): Flow<AccountEntity?>
 
     @Query("SELECT * FROM accounts WHERE pending=0 ORDER BY updated_at DESC LIMIT 1")
-    suspend fun returnLastUpdatedAccount(): AccountEntity?
+    suspend fun getLastUpdatedAccount(): AccountEntity?
 
     @Query("DELETE FROM accounts")
     suspend fun deleteAccounts()

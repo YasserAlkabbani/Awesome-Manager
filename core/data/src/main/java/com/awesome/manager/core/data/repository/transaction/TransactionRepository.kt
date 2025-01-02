@@ -11,24 +11,24 @@ interface TransactionRepository {
 
     suspend fun upsertTransaction(upsertTransaction: UpsertTransaction)
 
-    fun returnTransactions(
+    fun getTransactions(
         searchKey: String? = "",
         transactionType: AmTransactionType? = null,
         fromDate: Long? = null,
         toDate: Long? = null,
     ): Flow<PagingData<AmTransaction>>
 
-    fun returnTransactionsByAccountID(
+    fun getTransactionsByAccountID(
         accountId: String, searchKey: String,
     ): Flow<PagingData<AmTransaction>>
 
-    fun returnTransactionById(transactionId: String): Flow<AmTransaction>
+    fun getTransactionById(transactionId: String): Flow<AmTransaction>
 
     fun refreshTransactions(): Flow<AmUIState<Unit>>
 
-    suspend fun synTransactions()
+    fun synTransactions(): Flow<AmUIState<List<AmTransaction>>>
 
-    suspend fun returnTransactionCount(accountId: String): Int
+    suspend fun getTransactionCount(accountId: String): Int
 
     suspend fun deleteTransactions()
 

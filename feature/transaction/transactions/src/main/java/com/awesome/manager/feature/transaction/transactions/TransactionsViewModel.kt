@@ -21,7 +21,7 @@ class TransactionsViewModel @Inject constructor(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
         refreshTransactions = ::refreshTransactions,
-        pagingTransactions = transactionRepository.returnTransactions()
+        pagingTransactions = transactionRepository.getTransactions()
     )
 
     private fun refreshTransactions() {

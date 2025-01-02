@@ -68,16 +68,16 @@ sealed interface NavigationAction : MainAction {
     data class AccountDetails(val accountId: String) : NavigationAction
 
     @Serializable
-    data class TransactionDetails(val transactionId: String) : NavigationAction
+    data class TransactionDetails(val accountID: String, val transactionID: String) :
+        NavigationAction
 
 
     @Serializable
     data class AccountEditor(val accountId: String?) : NavigationAction
 
     @Serializable
-    data class TransactionEditor(
-        val accountId: String?, val transactionId: String?
-    ) : NavigationAction
+    data class TransactionEditor(val accountID: String?, val transactionID: String?) :
+        NavigationAction
 
 }
 

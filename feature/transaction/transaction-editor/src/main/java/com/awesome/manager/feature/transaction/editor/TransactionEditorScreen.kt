@@ -97,7 +97,7 @@ fun TransactionEditorScreen(
             is AmUIState.Success -> {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 6.dp)
+                        .fillMaxWidth()
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
