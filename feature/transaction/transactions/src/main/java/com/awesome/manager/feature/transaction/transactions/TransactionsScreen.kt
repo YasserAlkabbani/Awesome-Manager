@@ -94,7 +94,7 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                         account = transaction.accountName,
                                         title = transaction.title,
                                         amount = transaction.formattedAmount,
-                                        pending = transaction.pending,
+                                        isPending = transaction.pending,
                                         date = transaction.transactionAtDate,
                                         transactionType = transaction.transactionType.getString(),
                                         isPay = transaction.transactionType.positive,

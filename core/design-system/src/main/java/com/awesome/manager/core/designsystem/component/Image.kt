@@ -45,7 +45,7 @@ fun AmImage(modifier: Modifier, imageUrl: String) {
     ) {
         Image(
             modifier = Modifier
-                .padding(AmPadding.X_SMALL.value)
+                .padding(AmPadding.XX_SMALL.value)
                 .fillMaxSize()
                 .clip(CircleShape),
             painter = painter,

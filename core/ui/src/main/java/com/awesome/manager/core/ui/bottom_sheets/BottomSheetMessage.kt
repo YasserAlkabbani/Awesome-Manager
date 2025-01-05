@@ -57,6 +57,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
+                isPositive = button.positive,
                 onClick = button.onClick,
                 amIconsType = null
             )
@@ -66,6 +67,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
+                isPositive = button.positive,
                 onClick = button.onClick,
                 amIconsType = null
             )
@@ -75,6 +77,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
+                isPositive = button.positive,
                 onClick = button.onClick,
                 amIconsType = null
             )

@@ -6,7 +6,7 @@ import com.awesome.manager.core.model.BalanceDetails
 import kotlinx.coroutines.flow.StateFlow
 
 
-class HomeActions(
+class HomeState(
     override val setString: String.(value: String) -> Unit,
     override val getString: String.(defaultValue: String) -> StateFlow<String>,
     val balanceDetails: StateFlow<AmUIState<List<BalanceDetails>>>,

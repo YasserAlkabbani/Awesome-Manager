@@ -9,24 +9,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.awesome.manager.core.designsystem.component.cards.AmItemCard
+import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmTextWithIcon
+import com.awesome.manager.core.ui.R
 
 @Composable
 fun TransactionCard(
     modifier: Modifier,
     account: String,
-    title: String, amount: String, pending: Boolean,
-    date: String, transactionType: String, isPay: Boolean, currency: String,
+    title: String,
+    amount: String,
+    isPending: Boolean,
+    date: String,
+    transactionType: String,
+    isPay: Boolean,
+    currency: String,
     onClick: () -> Unit
 ) {
 
-    AmItemCard(
-        modifier = modifier,
+    AmSurface(
+        modifier = modifier.fillMaxWidth(),
         content = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -47,7 +54,8 @@ fun TransactionCard(
             }
             AmText(
                 modifier = Modifier.fillMaxWidth(),
-                text = title, style = MaterialTheme.typography.bodyMedium
+                text = title.ifBlank { stringResource(R.string.no_title) },
+                style = MaterialTheme.typography.bodyMedium
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -55,18 +63,20 @@ fun TransactionCard(
             ) {
                 AmTextWithIcon(
                     modifier = Modifier,
-                    text = transactionType, textStyle = MaterialTheme.typography.bodyMedium,
+                    text = transactionType,
+                    textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Category,
                 )
                 AmTextWithIcon(
                     modifier = Modifier,
-                    text = date, textStyle = MaterialTheme.typography.bodyMedium,
+                    text = date,
+                    textStyle = MaterialTheme.typography.bodyMedium,
                     amIconsType = AmIcons.Date,
                 )
             }
         },
-        positive = isPay,
-        loading = pending,
+        isPositive = isPay,
+        isLoading = isPending,
         onClick = onClick
     )
 }
@@ -80,7 +90,7 @@ fun TransactionCardPreview() {
         account = "ACCOUNT",
         title = "TRANSACTION TITLE",
         amount = "5000.0",
-        pending = false,
+        isPending = false,
         date = "15.10.2023",
         transactionType = "Salary",
         isPay = true,

@@ -32,6 +32,7 @@ import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetCustomError
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetPasswordRestored
 import com.awesome.manager.core.ui.bottom_sheets.auth.BottomSheetUnknownError
 import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.card.BalanceDetails
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -154,17 +155,19 @@ private fun BottomSheetAction.SearchForAccount.Content(
                                 onSelectAccount(account.id)
                                 dismiss()
                             },
-                            onAddTransaction = null,
-                            onEditTransaction = null,
-                            income = balanceDetails.formattedIncome,
-                            expenses = balanceDetails.formattedExpenses,
-                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                            debtor = balanceDetails.formattedDebtor,
-                            creditor = balanceDetails.formattedCreditor,
-                            netDebtorAbs = balanceDetails.formattedNetDebtor,
+                            incomeExpenses = BalanceDetails.IncomeExpenses(
+                                income = balanceDetails.formattedIncome,
+                                expenses = balanceDetails.formattedExpenses,
+                                netIncomeAbs = balanceDetails.formattedNetIncome,
+                                isPositiveIncome = balanceDetails.isPositiveIncome,
+                            ),
+                            creditorDebtor = BalanceDetails.CreditorDebtor(
+                                debtor = balanceDetails.formattedDebtor,
+                                creditor = balanceDetails.formattedCreditor,
+                                netDebtorAbs = balanceDetails.formattedNetDebtor,
+                                isPositiveDebtor = balanceDetails.isPositiveDebtor
+                            ),
                             currencySymbol = balanceDetails.currency.currencySymbol,
-                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                            isPositiveDebtor = balanceDetails.isPositiveDebtor
                         )
                     }
                 }

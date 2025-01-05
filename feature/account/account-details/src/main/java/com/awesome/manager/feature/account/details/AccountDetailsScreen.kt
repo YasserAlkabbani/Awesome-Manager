@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,7 @@ import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.card.BalanceDetails
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
@@ -66,11 +66,9 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
         when (it) {
             is AmUIState.Success -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(AmPadding.MEDIUM.value),
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
+                    verticalArrangement = Arrangement.spacedBy(AmPadding.Details.value),
                 ) {
                     val account = it.data
                     val balanceDetails = account.balanceDetails
@@ -78,17 +76,20 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                         modifier = Modifier,
                         title = account.name,
                         imageUrl = account.imageUrl, loading = account.pending,
-                        withDetails = true, onClick = null,
-                        onAddTransaction = null, onEditTransaction = null,
-                        income = balanceDetails.formattedIncome,
-                        expenses = balanceDetails.formattedExpenses,
-                        netIncomeAbs = balanceDetails.formattedNetIncome,
-                        debtor = balanceDetails.formattedDebtor,
-                        creditor = balanceDetails.formattedCreditor,
-                        netDebtorAbs = balanceDetails.formattedNetDebtor,
+                        withDetails = true,
+                        creditorDebtor = BalanceDetails.CreditorDebtor(
+                            debtor = balanceDetails.formattedDebtor,
+                            creditor = balanceDetails.formattedCreditor,
+                            netDebtorAbs = balanceDetails.formattedNetDebtor,
+                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                        ),
+                        incomeExpenses = BalanceDetails.IncomeExpenses(
+                            income = balanceDetails.formattedIncome,
+                            expenses = balanceDetails.formattedExpenses,
+                            netIncomeAbs = balanceDetails.formattedNetIncome,
+                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                        ),
                         currencySymbol = balanceDetails.currency.currencySymbol,
-                        isPositiveIncome = balanceDetails.isPositiveIncome,
-                        isPositiveDebtor = balanceDetails.isPositiveDebtor,
                     )
                     AmLazyColumn(
                         isRefreshing = refreshingTransactions,
@@ -105,7 +106,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                             account = transaction.accountName,
                                             title = transaction.title,
                                             amount = transaction.formattedAmount,
-                                            pending = transaction.pending,
+                                            isPending = transaction.pending,
                                             date = transaction.transactionAtDate,
                                             transactionType = transaction.transactionType.getString(),
                                             isPay = transaction.transactionType.positive,
@@ -124,7 +125,6 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                     )
                 }
             }
-
             is AmUIState.Error -> Unit
             is AmUIState.Loading -> Unit
         }

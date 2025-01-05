@@ -1,15 +1,7 @@
 package com.awesome.manager.core.designsystem.component.dynamic_bar
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.AmSurface
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -21,6 +13,7 @@ fun AmDynamicFabExtraButton(
     AmIconButton(
         modifier = Modifier,
         amIconsType = dynamicFabExtraButton.amIconsType,
+        isPositive = dynamicFabExtraButton.isPositave,
         onClick = dynamicFabExtraButton.onClick,
     )
 }

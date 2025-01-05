@@ -103,7 +103,7 @@ fun AuthScreen(
                             .fillMaxWidth()
                             .padding(
                                 vertical = AmPadding.XX_LARGE.value,
-                                horizontal = AmPadding.X_SMALL.value
+                                horizontal = AmPadding.XX_SMALL.value
                             )
                     ) {
                         Column(Modifier.fillMaxWidth()) {

@@ -19,7 +19,7 @@ class TransactionDetailsState(
     val transactionDetailsUI = transaction.filterSuccessData().processUIState()
 
 
-    fun Flow<AmTransaction>.processUIState() = onEach { transaction ->
+    private fun Flow<AmTransaction>.processUIState() = onEach { transaction ->
         dynamicFabTransactionDetails(
             navigateToEditTransaction = {
                 navigateToEditTransaction(

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.text.AmText
 
 @Composable
@@ -39,7 +40,7 @@ fun AmSwitch(
     }
     AmCard(
         modifier = modifier.fillMaxWidth(),
-        loading = false, positive = checked,
+        isLoading = false, isPositive = checked,
         onClick = { onCheck(!checked) }
     ) {
         Row(

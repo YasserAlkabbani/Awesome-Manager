@@ -32,6 +32,7 @@ fun AmFilterChip(
     val icon: @Composable () -> Unit = {
         AmIconButton(
             modifier = Modifier.size(20.dp), amIconsType = AmIcons.Close,
+            isPositive = null,
             onClick = onRemove
         )
     }

@@ -35,6 +35,7 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
+import com.awesome.manager.core.ui.card.BalanceDetails
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -106,18 +107,22 @@ fun TransactionEditorScreen(
                         AccountCard(
                             modifier = Modifier,
                             title = account.name, imageUrl = account.imageUrl,
-                            loading = account.pending, withDetails = true,
-                            onClick = {},
-                            onAddTransaction = null, onEditTransaction = null,
-                            income = balanceDetails.formattedIncome,
-                            expenses = balanceDetails.formattedExpenses,
-                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                            debtor = balanceDetails.formattedDebtor,
-                            creditor = balanceDetails.formattedCreditor,
-                            netDebtorAbs = balanceDetails.formattedNetDebtor,
+                            loading = account.pending,
+                            withDetails = true,
+                            creditorDebtor = BalanceDetails.CreditorDebtor(
+                                debtor = balanceDetails.formattedDebtor,
+                                creditor = balanceDetails.formattedCreditor,
+                                netDebtorAbs = balanceDetails.formattedNetDebtor,
+                                isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                            ),
+                            incomeExpenses = BalanceDetails.IncomeExpenses(
+                                income = balanceDetails.formattedIncome,
+                                expenses = balanceDetails.formattedExpenses,
+                                netIncomeAbs = balanceDetails.formattedNetIncome,
+                                isPositiveIncome = balanceDetails.isPositiveIncome,
+                            ),
                             currencySymbol = balanceDetails.currency.currencySymbol,
-                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                            onClick = {}
                         )
                     }
 
@@ -150,6 +155,7 @@ fun TransactionEditorScreen(
                     )
 
                     AmFilledTonalIconWithTextButton(
+                        modifier = Modifier.fillMaxWidth(),
                         text = formattedTransactionAt,
                         amIconsType = AmIcons.Date,
                         positive = null,

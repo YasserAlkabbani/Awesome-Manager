@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.AmCard
+import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
@@ -27,7 +27,7 @@ fun MenuItem(
 
     AmCard(
         modifier = Modifier.fillMaxWidth(),
-        positive = null, loading = loading, onClick = onClick
+        isPositive = null, isLoading = loading, onClick = onClick
     ) {
         Row {
             imageUrl?.let { AmImage(modifier = Modifier.size(AmSize.MEDIUM.value), imageUrl = it) }

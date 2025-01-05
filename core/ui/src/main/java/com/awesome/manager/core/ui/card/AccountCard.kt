@@ -15,7 +15,8 @@ import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
-import com.awesome.manager.core.designsystem.component.cards.AmItemCard
+import com.awesome.manager.core.designsystem.component.cards.AmCard
+import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
@@ -23,22 +24,20 @@ import com.awesome.manager.core.designsystem.icon.AmIcons
 @Composable
 fun AccountCard(
     modifier: Modifier,
-    title: String, imageUrl: String,
-    loading: Boolean, withDetails: Boolean,
-
-    creditor: String, debtor: String, netDebtorAbs: String, isPositiveDebtor: Boolean,
-    income: String, expenses: String, netIncomeAbs: String, isPositiveIncome: Boolean,
+    title: String,
+    imageUrl: String,
+    loading: Boolean,
+    withDetails: Boolean,
+    creditorDebtor: BalanceDetails.CreditorDebtor,
+    incomeExpenses: BalanceDetails.IncomeExpenses,
     currencySymbol: String,
-
-    onClick: (() -> Unit)?,
-    onAddTransaction: (() -> Unit)?,
-    onEditTransaction: (() -> Unit)?,
+    onClick: () -> Unit
 ) {
-    AmItemCard (
-        modifier = modifier,
-        positive = isPositiveDebtor,
-        loading = loading,
-        onClick = onClick?:{},
+    AmSurface(
+        modifier = modifier.fillMaxWidth(),
+        isPositive = creditorDebtor.isPositiveDebtor,
+        isLoading = loading,
+        onClick = onClick,
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -52,36 +51,58 @@ fun AccountCard(
                 ) {
                     AmText(text = title, style = MaterialTheme.typography.titleMedium)
                     AmText(
-                        text = "$netDebtorAbs $currencySymbol",
+                        text = "${creditorDebtor.balance} $currencySymbol",
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
-                onAddTransaction?.let {
-                    AmIconButton(
-                        modifier = Modifier,
-                        amIconsType = AmIcons.TransactionAdd,
-                        onClick = it,
-                    )
-                }
-                onEditTransaction?.let {
-                    AmIconButton(
-                        modifier = Modifier,
-                        amIconsType = AmIcons.Edit,
-                        onClick = it
+            }
+            if (withDetails) {
+                AmBalanceDetailsCard(
+                    creditorDebtor = creditorDebtor,
+                    incomeExpenses = incomeExpenses,
+                )
+            }
+
+        }
+    )
+}
+@Composable
+fun AccountCard(
+    modifier: Modifier,
+    title: String,
+    imageUrl: String,
+    loading: Boolean,
+    withDetails: Boolean,
+    creditorDebtor: BalanceDetails.CreditorDebtor,
+    incomeExpenses: BalanceDetails.IncomeExpenses,
+    currencySymbol: String,
+) {
+    AmSurface(
+        modifier = modifier.fillMaxWidth(),
+        isPositive = creditorDebtor.isPositiveDebtor,
+        isLoading = loading,
+        content = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AmImage(modifier = Modifier.size(AmSize.LARGE.value), imageUrl = imageUrl)
+                AmSpacerLargeWidth()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    AmText(text = title, style = MaterialTheme.typography.titleMedium)
+                    AmText(
+                        text = "${creditorDebtor.balance} $currencySymbol",
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
-
             if (withDetails) {
                 AmBalanceDetailsCard(
-                    creditor = creditor,
-                    debtor = debtor,
-                    netDebtorAbs = netDebtorAbs,
-                    isPositiveDebtor = isPositiveDebtor,
-                    income = income,
-                    expenses = expenses,
-                    netIncomeAbs = netIncomeAbs,
-                    isPositiveIncome = isPositiveIncome,
+                    creditorDebtor = creditorDebtor,
+                    incomeExpenses = incomeExpenses,
                 )
             }
 
@@ -96,10 +117,19 @@ fun AccountCardPreview() {
         modifier = Modifier.width(400.dp),
         title = "TITLE", imageUrl = "",
         loading = true, withDetails = true,
-        onClick = {}, onAddTransaction = {}, onEditTransaction = {},
-        creditor = "100.0", debtor = "600.0",
-        income = "500.0", expenses = "300.0", currencySymbol = "$",
-        netDebtorAbs = "3000.0", netIncomeAbs = "5000.0",
-        isPositiveDebtor = true, isPositiveIncome = false,
+        creditorDebtor = BalanceDetails.CreditorDebtor(
+            creditor = "100.0",
+            debtor = "600.0",
+            netDebtorAbs = "3000.0",
+            isPositiveDebtor = true,
+        ),
+        incomeExpenses = BalanceDetails.IncomeExpenses(
+            income = "500.0",
+            expenses = "300.0",
+            netIncomeAbs = "5000.0",
+            isPositiveIncome = false,
+        ),
+        currencySymbol = "$",
+        onClick = {},
     )
 }

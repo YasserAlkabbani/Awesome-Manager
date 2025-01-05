@@ -11,10 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.ui.actions.main.MainAction
-import com.awesome.manager.core.designsystem.component.AmSurface
+import com.awesome.manager.core.designsystem.component.surface.AmSurface
 
 @Composable
 fun IntroRoute(sendMainAction: (MainAction) -> Unit) {
@@ -37,7 +38,7 @@ fun IntroScreen() {
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 amIconsType = AmIconsType.DrawableResourceAmIconsType(
-                    com.awesome.manager.core.designsystem.R.drawable.awesome_manager_icon
+                    R.drawable.awesome_manager_icon
                 )
             )
         }

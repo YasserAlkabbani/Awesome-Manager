@@ -1,25 +1,23 @@
 package com.awesome.manager.core.designsystem.component.dynamic_bar
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.R
-import com.awesome.manager.core.designsystem.component.AmCard
+import com.awesome.manager.core.designsystem.component.cards.AmCard
+import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 
 @Composable
 fun AmDynamicText(
     dynamicFabText: DynamicFabText
 ) {
-    AmCard(
+    AmSurface(
         padding = AmPadding.LARGE,
-        positive = dynamicFabText.isPositive
+        isPositive = dynamicFabText.isPositive
     ) {
         AmText(
             modifier = Modifier,

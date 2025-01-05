@@ -17,7 +17,7 @@ fun AmText(
     textAlign: TextAlign? = null
 ) {
     Text(
-        modifier = modifier.padding(horizontal = AmPadding.LARGE.value),
+        modifier = modifier.padding(horizontal = AmPadding.MEDIUM.value),
         text = text,
         maxLines = maxLines,
         style = style,

@@ -2,8 +2,8 @@
 <resources>
     <string name="amount">Amount</string>
     <string name="payment_type">Payment Type</string>
-    <string name="transaction_subject">Transaction Subject</string>
-    <string name="transaction_description">Transaction Description</string>
     <string name="edit_transaction">Edit Transaction</string>
     <string name="date">Date</string>
+    <string name="no_description">no description</string>
+    <string name="no_title">no title</string>
 </resources>

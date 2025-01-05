@@ -14,19 +14,11 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmDynamicFab(dynamicFab:DynamicFab) {
-//    val positiveColor=MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.secondaryContainer
-//    val negativeColor=MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.secondaryContainer
-//    val color= remember(dynamicFab.isPositive) {
-//        when(dynamicFab.isPositive){
-//            true -> positiveColor
-//            false -> negativeColor
-//        }
-//    }
     FloatingActionButton(
         modifier = Modifier,
         onClick = dynamicFab.onClick,
         content = { AmIcon(amIconsType = dynamicFab.amIconsType) },
-        elevation = FloatingActionButtonDefaults.elevation(0.dp),
+//        elevation = FloatingActionButtonDefaults.elevation(0.dp),
         shape = MaterialTheme.shapes.extraLarge,
     )
 }

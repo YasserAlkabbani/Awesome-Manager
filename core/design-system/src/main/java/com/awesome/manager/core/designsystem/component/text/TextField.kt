@@ -220,7 +220,8 @@ fun AmPasswordTextField(
                     AmIconButton(
                         modifier = Modifier.size(AmSize.SMALL.value),
                         onClick = { passwordHidden = !passwordHidden },
-                        amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility
+                        amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility,
+                        isPositive = null
                     )
                 },
                 colors = TextFieldDefaults.colors(

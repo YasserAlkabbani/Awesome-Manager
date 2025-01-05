@@ -82,10 +82,7 @@ fun DynamicFabAction.Content(): Unit =
 
                 DynamicFabAction.Loading -> AmDynamicBarLoading()
 
-
-                is DynamicFabAction.Fab -> AmDynamicFab(
-                    dynamicFabAction.dynamicFab
-                )
+                is DynamicFabAction.Fab -> AmDynamicFab(dynamicFabAction.dynamicFab)
 
                 is DynamicFabAction.Button -> AmFabButton(dynamicFabAction.dynamicFabButton)
 

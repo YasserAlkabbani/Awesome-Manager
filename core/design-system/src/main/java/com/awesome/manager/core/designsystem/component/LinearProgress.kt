@@ -1,9 +1,5 @@
 package com.awesome.manager.core.designsystem.component
 
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -15,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun AmLinearProgress(
     modifier: Modifier = Modifier,
-    positive: Boolean? = null
+    isPositive: Boolean? = null
 ) {
 
     val primary = MaterialTheme.colorScheme.primary
@@ -23,8 +19,8 @@ fun AmLinearProgress(
     val error = MaterialTheme.colorScheme.error
     val errorContainer = MaterialTheme.colorScheme.errorContainer
 
-    val (color, trackColor) = remember(positive) {
-        when (positive) {
+    val (color, trackColor) = remember(isPositive) {
+        when (isPositive) {
             true -> primary to primaryContainer
             false -> error to errorContainer
             null -> null

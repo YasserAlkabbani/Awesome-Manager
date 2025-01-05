@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,11 +23,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.ui.actions.main.MainAction
-import com.awesome.manager.core.designsystem.component.AmCard
-import com.awesome.manager.core.designsystem.component.AmSurface
+import com.awesome.manager.core.designsystem.component.cards.AmCard
+import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
+import com.awesome.manager.core.ui.card.BalanceDetails
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -48,15 +48,13 @@ fun HomeRoute(
 
 
 @Composable
-fun HomeScreen(homeState: HomeActions) {
+fun HomeScreen(homeState: HomeState) {
 
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is AmUIState.Success -> LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(AmPadding.SMALL.value),
             contentPadding = PaddingValues(
-                start = AmPadding.SMALL.value,
-                end = AmPadding.SMALL.value,
                 bottom = AmPadding.XX_LARGE.value
             ),
             content = {
@@ -66,14 +64,18 @@ fun HomeScreen(homeState: HomeActions) {
                     key = { it.currency.id },
                     itemContent = { balanceDetails ->
                         HomeCard(
-                            creditor = balanceDetails.formattedCreditor,
-                            debtor = balanceDetails.formattedDebtor,
-                            netDebtorAbs = balanceDetails.formattedNetDebtor,
-                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            income = balanceDetails.formattedIncome,
-                            expenses = balanceDetails.formattedExpenses,
-                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                            incomeExpenses = BalanceDetails.IncomeExpenses(
+                                income = balanceDetails.formattedIncome,
+                                expenses = balanceDetails.formattedExpenses,
+                                netIncomeAbs = balanceDetails.formattedNetIncome,
+                                isPositiveIncome = balanceDetails.isPositiveIncome,
+                            ),
+                            creditorDebtor = BalanceDetails.CreditorDebtor(
+                                creditor = balanceDetails.formattedCreditor,
+                                debtor = balanceDetails.formattedDebtor,
+                                netDebtorAbs = balanceDetails.formattedNetDebtor,
+                                isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                            ),
                             netCash = balanceDetails.formattedNetCash,
                             isPositiveCash = balanceDetails.isPositiveCash,
                             currencyCode = balanceDetails.currency.currencyCode,
@@ -108,23 +110,26 @@ fun HomeScreen(homeState: HomeActions) {
 
 @Composable
 fun HomeCard(
-    creditor: String, debtor: String, netDebtorAbs: String, isPositiveDebtor: Boolean,
-    income: String, expenses: String, netIncomeAbs: String, isPositiveIncome: Boolean,
-    netCash: String, isPositiveCash: Boolean, currencyCode: String, currencySymbol: String,
+    creditorDebtor: BalanceDetails.CreditorDebtor,
+    incomeExpenses: BalanceDetails.IncomeExpenses,
+    netCash: String,
+    isPositiveCash: Boolean,
+    currencyCode: String,
+    currencySymbol: String,
 ) {
-    AmCard(
+    AmSurface(
         modifier = Modifier.fillMaxWidth(),
-        positive = isPositiveCash,
-        padding = AmPadding.ZERO
+        isPositive = isPositiveCash,
+        padding = AmPadding.MEDIUM
     ) {
         AmSurface(
             modifier = Modifier.fillMaxWidth(),
-            positive = isPositiveCash,
+            isPositive = isPositiveCash,
             padding = AmPadding.MEDIUM
         ) {
             Row(
                 modifier = Modifier
-                    .padding(AmPadding.MEDIUM.value)
+                    .padding(AmPadding.SMALL.value)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -142,14 +147,8 @@ fun HomeCard(
             }
         }
         AmBalanceDetailsCard(
-            creditor = creditor,
-            debtor = debtor,
-            netDebtorAbs = netDebtorAbs,
-            isPositiveDebtor = isPositiveDebtor,
-            income = income,
-            expenses = expenses,
-            netIncomeAbs = netIncomeAbs,
-            isPositiveIncome = isPositiveIncome,
+            creditorDebtor = creditorDebtor,
+            incomeExpenses = incomeExpenses,
         )
 
     }
@@ -158,10 +157,12 @@ fun HomeCard(
 @Preview(device = PIXEL_4_XL)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeActions(
-        {},
-        {MutableStateFlow("")},
-        balanceDetails = MutableStateFlow(AmUIState.Success(listOf())))
+    HomeScreen(
+        HomeState(
+            {},
+            { MutableStateFlow("") },
+            balanceDetails = MutableStateFlow(AmUIState.Success(listOf()))
+        )
     )
 }
 
