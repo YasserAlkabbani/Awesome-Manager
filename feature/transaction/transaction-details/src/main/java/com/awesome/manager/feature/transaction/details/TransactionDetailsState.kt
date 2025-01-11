@@ -21,12 +21,13 @@ class TransactionDetailsState(
 
     private fun Flow<AmTransaction>.processUIState() = onEach { transaction ->
         dynamicFabTransactionDetails(
+            hasEditTransactionPermission = transaction.updatePermission,
             navigateToEditTransaction = {
                 navigateToEditTransaction(
                     accountId = transaction.accountID, transactionId = transaction.transactionID
                 )
             },
-            hasEditTransactionPermission = transaction.updatePermission
+            popUp = ::navigatePopBack
         )
     }
 

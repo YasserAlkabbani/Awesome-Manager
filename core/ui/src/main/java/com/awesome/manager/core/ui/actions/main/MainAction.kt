@@ -83,45 +83,52 @@ sealed interface NavigationAction : MainAction {
 
 sealed interface DynamicFabAction : MainAction {
 
-    val dynamicFabExtraButton: DynamicFabExtraButton?
+    val dynamicFabExtraButton1: DynamicFabExtraButton?
+    val dynamicFabExtraButton2: DynamicFabExtraButton?
     val index: Int
 
 
     data object None : DynamicFabAction {
-        override val dynamicFabExtraButton: DynamicFabExtraButton? = null
+        override val dynamicFabExtraButton1: DynamicFabExtraButton? = null
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null
         override val index: Int = 1000
     }
 
     data object Loading : DynamicFabAction {
-        override val dynamicFabExtraButton: DynamicFabExtraButton? = null
+        override val dynamicFabExtraButton1: DynamicFabExtraButton? = null
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null
         override val index: Int = 2000
     }
 
     data class Fab(
-        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton1: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null,
         val dynamicFab: DynamicFab,
     ) : DynamicFabAction {
         override val index: Int = 3000 + dynamicFab.index
     }
 
     data class Message(
-        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton1: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null,
         val dynamicFabText: DynamicFabText,
     ) : DynamicFabAction {
         override val index: Int = 4000 + dynamicFabText.index
     }
 
     data class Button(
-        override val dynamicFabExtraButton: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton1: DynamicFabExtraButton? = null,
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null,
         val dynamicFabButton: DynamicFabButton
     ) : DynamicFabAction {
         override val index: Int = 5000 + dynamicFabButton.index
     }
 
     data class ExtraButton(
-        override val dynamicFabExtraButton: DynamicFabExtraButton,
+        override val dynamicFabExtraButton1: DynamicFabExtraButton,
+        override val dynamicFabExtraButton2: DynamicFabExtraButton? = null,
     ) : DynamicFabAction {
-        override val index: Int = 6000 + dynamicFabExtraButton.index
+        override val index: Int = 6000 + dynamicFabExtraButton1.index
     }
 
 }

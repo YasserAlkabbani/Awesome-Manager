@@ -48,7 +48,6 @@ fun AmApp() {
     val loginState = mainActivityState.isLogin.collectAsState().value
     val mainAction = mainActivityState.mainAction.collectAsState().value
 
-
     val currentBackStack: NavBackStackEntry? =
         navHostController.currentBackStackEntryAsState().value
     val currentNavigationDestination =

@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
 fun AmFabButton(dynamicFabButton: DynamicFabButton) {
@@ -14,31 +15,66 @@ fun AmFabButton(dynamicFabButton: DynamicFabButton) {
         modifier = Modifier,
         text = stringResource(dynamicFabButton.text),
         isPositive = dynamicFabButton.isPositive,
-        amIconsType = AmIcons.ArrowForward,
+        amIconsType = dynamicFabButton.amIconsType,
         onClick = dynamicFabButton.onClick
     )
 }
 
 
-sealed class DynamicFabButton(val isPositive: Boolean, @StringRes val text: Int, val index: Int) {
+sealed class DynamicFabButton(
+    val isPositive: Boolean,
+    @StringRes val text: Int,
+    val amIconsType: AmIconsType.ImageVictorAmIconsType,
+    val index: Int
+) {
     abstract val onClick: () -> Unit
 
     data class Login(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.start_accounting, index = 0)
+        DynamicFabButton(
+            isPositive = true,
+            text = R.string.start_accounting,
+            amIconsType = AmIcons.ArrowForward,
+            index = 0
+        )
 
     data class SearchForAccount(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.search_for_account, index = 1)
+        DynamicFabButton(
+            isPositive = true,
+            text = R.string.search_for_account,
+            amIconsType = AmIcons.Search,
+            index = 1
+        )
 
     data class Create(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.create, index = 2)
+        DynamicFabButton(
+            isPositive = true,
+            text = R.string.create,
+            amIconsType = AmIcons.Save,
+            index = 2
+        )
 
     data class Edit(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.edit, index = 3)
+        DynamicFabButton(
+            isPositive = true,
+            text = R.string.edit,
+            amIconsType = AmIcons.Edit,
+            index = 3
+        )
 
     data class Update(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = true, text = R.string.update, index = 4)
+        DynamicFabButton(
+            isPositive = true,
+            text = R.string.update,
+            amIconsType = AmIcons.Save,
+            index = 4
+        )
 
     data class TryAgain(override val onClick: () -> Unit) :
-        DynamicFabButton(isPositive = false, text = R.string.try_again, index = 5)
+        DynamicFabButton(
+            isPositive = false,
+            text = R.string.try_again,
+            amIconsType = AmIcons.Retry,
+            index = 5
+        )
 
 }

@@ -58,17 +58,19 @@ interface DynamicFabState {
     ///////// ACCOUNT
 
     fun dynamicFabAccountDetails(
+        hasEditPermission: Boolean,
         navigateToCreateTransaction: () -> Unit,
         navigateToEditAccount: () -> Unit,
-        hasEditPermission: Boolean
+        popUp: () -> Unit,
     ) = dynamicFab(
         dynamicFab = DynamicFab.AddTransaction(
             onClick = navigateToCreateTransaction
         ),
-        dynamicFabExtraButton = when (hasEditPermission) {
+        dynamicFabExtraButton1 = when (hasEditPermission) {
             true -> DynamicFabExtraButton.Edit(onClick = navigateToEditAccount)
             false -> null
-        }
+        },
+        dynamicFabExtraButton2 = DynamicFabExtraButton.Back(popUp)
     )
 
     fun dynamicFabCreateAccount(createAccount: () -> Unit, navigatePopBack: () -> Unit) =
@@ -86,41 +88,43 @@ interface DynamicFabState {
     ///////// TRANSACTION
 
     fun dynamicFabTransactionDetails(
+        hasEditTransactionPermission: Boolean,
         navigateToEditTransaction: () -> Unit,
-        hasEditTransactionPermission: Boolean
-    ) = if (hasEditTransactionPermission) dynamicFabExtraButton(
-        dynamicFabExtraButton = DynamicFabExtraButton.Edit(onClick = navigateToEditTransaction)
-    ) else Unit
+        popUp: () -> Unit,
+    ) = dynamicFabExtraButton(
+        dynamicFabExtraButton1 = when (hasEditTransactionPermission) {
+            true -> DynamicFabExtraButton.Edit(onClick = navigateToEditTransaction)
+            false -> DynamicFabExtraButton.Back(popUp)
+        },
+        dynamicFabExtraButton2 = when (hasEditTransactionPermission) {
+            true -> DynamicFabExtraButton.Back(popUp)
+            false -> null
+        }
+    )
 
     fun dynamicFabSearchForAccount(
         searchForAccount: () -> Unit,
         navigatePopBack: () -> Unit
-    ) {
-        dynamicFabButton(
-            dynamicFabButton = DynamicFabButton.SearchForAccount(searchForAccount),
-            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
-        )
-    }
+    ) = dynamicFabButton(
+        dynamicFabButton = DynamicFabButton.SearchForAccount(searchForAccount),
+        dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
+    )
 
     fun dynamicFabCreateTransaction(
         createTransaction: () -> Unit,
         navigatePopBack: () -> Unit
-    ) {
-        dynamicFabButton(
-            dynamicFabButton = DynamicFabButton.Create(createTransaction),
-            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
-        )
-    }
+    ) = dynamicFabButton(
+        dynamicFabButton = DynamicFabButton.Create(createTransaction),
+        dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
+    )
 
     fun dynamicFabUpdateTransaction(
         updateTransaction: () -> Unit,
         navigatePopBack: () -> Unit
-    ) {
-        dynamicFabButton(
-            dynamicFabButton = DynamicFabButton.Update(updateTransaction),
-            dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack),
-        )
-    }
+    ) = dynamicFabButton(
+        dynamicFabButton = DynamicFabButton.Update(updateTransaction),
+        dynamicFabExtraButton = DynamicFabExtraButton.Cancel(navigatePopBack),
+    )
 
 
     ///////// ERROR
@@ -134,18 +138,21 @@ interface DynamicFabState {
         dynamicFabText = DynamicFabText.InvalidLoginCredential
     )
 
-    fun dynamicFabInvalidInput(navigatePopBack: () -> Unit) = DynamicFabAction.Message(
+    fun dynamicFabInvalidInput(navigatePopBack: () -> Unit) = dynamicFabMessage(
         dynamicFabText = DynamicFabText.InvalidInput,
         dynamicFabExtraButton = DynamicFabExtraButton.Back(navigatePopBack)
-    ).applyAction()
+    )
 
+    ///////// DYNAMIC FAB
 
     private fun dynamicFab(
         dynamicFab: DynamicFab,
-        dynamicFabExtraButton: DynamicFabExtraButton? = null,
+        dynamicFabExtraButton1: DynamicFabExtraButton? = null,
+        dynamicFabExtraButton2: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Fab(
         dynamicFab = dynamicFab,
-        dynamicFabExtraButton = dynamicFabExtraButton
+        dynamicFabExtraButton1 = dynamicFabExtraButton1,
+        dynamicFabExtraButton2 = dynamicFabExtraButton2
     ).applyAction()
 
     private fun dynamicFabButton(
@@ -153,7 +160,7 @@ interface DynamicFabState {
         dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Button(
         dynamicFabButton = dynamicFabButton,
-        dynamicFabExtraButton = dynamicFabExtraButton
+        dynamicFabExtraButton1 = dynamicFabExtraButton
     ).applyAction()
 
     private fun dynamicFabMessage(
@@ -161,13 +168,15 @@ interface DynamicFabState {
         dynamicFabExtraButton: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.Message(
         dynamicFabText = dynamicFabText,
-        dynamicFabExtraButton = dynamicFabExtraButton
+        dynamicFabExtraButton1 = dynamicFabExtraButton
     ).applyAction()
 
     private fun dynamicFabExtraButton(
-        dynamicFabExtraButton: DynamicFabExtraButton
+        dynamicFabExtraButton1: DynamicFabExtraButton,
+        dynamicFabExtraButton2: DynamicFabExtraButton? = null,
     ) = DynamicFabAction.ExtraButton(
-        dynamicFabExtraButton = dynamicFabExtraButton
+        dynamicFabExtraButton1 = dynamicFabExtraButton1,
+        dynamicFabExtraButton2 = dynamicFabExtraButton2
     ).applyAction()
 
 

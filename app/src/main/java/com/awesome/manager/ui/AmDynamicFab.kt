@@ -72,7 +72,11 @@ fun DynamicFabAction.Content(): Unit =
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            dynamicFabAction.dynamicFabExtraButton?.let { dynamicFabExtraButton ->
+            dynamicFabAction.dynamicFabExtraButton2?.let { dynamicFabExtraButton ->
+                AmDynamicFabExtraButton(dynamicFabExtraButton)
+                AmSpacerLargeWidth()
+            }
+            dynamicFabAction.dynamicFabExtraButton1?.let { dynamicFabExtraButton ->
                 AmDynamicFabExtraButton(dynamicFabExtraButton)
                 AmSpacerLargeWidth()
             }

@@ -24,9 +24,10 @@ class AccountDetailsState(
 
     private fun Flow<AmAccount>.processUIState() = onEach { account ->
         dynamicFabAccountDetails(
+            hasEditPermission = account.updatePermission,
             navigateToCreateTransaction = { navigateToCreateTransaction(account.id) },
             navigateToEditAccount = { navigateToEditAccount(account.id) },
-            hasEditPermission = account.updatePermission
+            popUp = ::navigatePopBack
         )
     }
 

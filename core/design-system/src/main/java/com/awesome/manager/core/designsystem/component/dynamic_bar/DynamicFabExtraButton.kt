@@ -13,32 +13,47 @@ fun AmDynamicFabExtraButton(
     AmIconButton(
         modifier = Modifier,
         amIconsType = dynamicFabExtraButton.amIconsType,
-        isPositive = dynamicFabExtraButton.isPositave,
+        isPositive = dynamicFabExtraButton.isPositive,
         onClick = dynamicFabExtraButton.onClick,
     )
 }
 
 
 sealed class DynamicFabExtraButton(
-    val isPositave: Boolean,
+    val isPositive: Boolean,
     val amIconsType: AmIconsType.ImageVictorAmIconsType,
     val index: Int
 ) {
     abstract val onClick: () -> Unit
 
-    data class Back(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.ArrowBack, index = 1)
+    data class Back(override val onClick: () -> Unit) : DynamicFabExtraButton(
+        isPositive = false,
+        amIconsType = AmIcons.ArrowBack,
+        index = 1
+    )
 
-    data class Cancel(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.Close, index = 2)
+    data class Cancel(override val onClick: () -> Unit) : DynamicFabExtraButton(
+        isPositive = false,
+        amIconsType = AmIcons.Close,
+        index = 2
+    )
 
-    data class Edit(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.Edit, index = 3)
+    data class Edit(override val onClick: () -> Unit) : DynamicFabExtraButton(
+        isPositive = true,
+        amIconsType = AmIcons.Edit,
+        index = 3
+    )
 
-    data class More(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = true, amIconsType = AmIcons.More, index = 4)
+    data class More(override val onClick: () -> Unit) : DynamicFabExtraButton(
+        isPositive = true,
+        amIconsType = AmIcons.More,
+        index = 4
+    )
 
-    data class TryAgain(override val onClick: () -> Unit) :
-        DynamicFabExtraButton(isPositave = false, amIconsType = AmIcons.Retry, index = 5)
+    data class TryAgain(override val onClick: () -> Unit) : DynamicFabExtraButton(
+        isPositive = false,
+        amIconsType = AmIcons.Retry,
+        index = 5
+    )
 
 }

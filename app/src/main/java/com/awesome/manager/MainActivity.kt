@@ -31,8 +31,6 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-//        WindowInsets
-
         setContent {
             AwesomeManagerTheme {
                 AmApp()
