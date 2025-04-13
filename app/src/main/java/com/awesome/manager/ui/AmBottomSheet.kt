@@ -19,7 +19,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.MainActivityState
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.ui.actions.main.BottomSheetAction
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDatePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetDateRangePicker
 import com.awesome.manager.core.ui.bottom_sheets.BottomSheetProfile
@@ -37,6 +36,7 @@ import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetAction.AmBottomSheet(
@@ -122,57 +122,57 @@ private fun BottomSheetAction.SearchForAccount.Content(
     dismiss: () -> Unit,
     hideKeyboard: () -> Unit
 ) {
-    val searchKey: String = mainActivityState.searchKey.collectAsStateWithLifecycle().value
-    val accountsLazyPagingItems: LazyPagingItems<AmAccount> =
-        mainActivityState.accountsSearchPagingData.collectAsLazyPagingItems()
-    BottomSheetSearch(
-        searchHint = "Search Key",
-        searchLabel = "Search for an account",
-        searchKey = searchKey,
-        onUpdateSearchKey = {
-            Timber.d("TEST_SEARCH CHANGE_SEARCH_KEY $it")
-            mainActivityState.updateSearchKey(it)
-        },
-        onSearchDone = hideKeyboard,
-        searchTypes = listOf(SearchType.ACCOUNT),
-        selectedSearchType = SearchType.ACCOUNT,
-        onUpdateSearchType = {},
-        items = {
-            items(
-                count = accountsLazyPagingItems.itemCount,
-                contentType = { LAZY_ITEM_ACCOUNT },
-                key = accountsLazyPagingItems.itemKey { account -> account.id },
-                itemContent = { index ->
-                    accountsLazyPagingItems[index]?.let { account ->
-                        val balanceDetails = account.balanceDetails
-                        AccountCard(
-                            modifier = Modifier.animateItem(),
-                            title = account.name,
-                            imageUrl = account.imageUrl,
-                            loading = account.pending,
-                            withDetails = false,
-                            onClick = {
-                                onSelectAccount(account.id)
-                                dismiss()
-                            },
-                            incomeExpenses = BalanceDetails.IncomeExpenses(
-                                income = balanceDetails.formattedIncome,
-                                expenses = balanceDetails.formattedExpenses,
-                                netIncomeAbs = balanceDetails.formattedNetIncome,
-                                isPositiveIncome = balanceDetails.isPositiveIncome,
-                            ),
-                            creditorDebtor = BalanceDetails.CreditorDebtor(
-                                debtor = balanceDetails.formattedDebtor,
-                                creditor = balanceDetails.formattedCreditor,
-                                netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                isPositiveDebtor = balanceDetails.isPositiveDebtor
-                            ),
-                            currencySymbol = balanceDetails.currency.currencySymbol,
-                        )
-                    }
-                }
-            )
-        }
-    )
+//    val searchKey: String = mainActivityState.searchKey.collectAsStateWithLifecycle().value
+//    val accountsLazyPagingItems: LazyPagingItems<AmAccount> =
+//        mainActivityState.accountsSearchPagingData.collectAsLazyPagingItems()
+//    BottomSheetSearch(
+//        searchHint = "Search Key",
+//        searchLabel = "Search for an account",
+//        searchKey = searchKey,
+//        onUpdateSearchKey = {
+//            Timber.d("TEST_SEARCH CHANGE_SEARCH_KEY $it")
+//            mainActivityState.updateSearchKey(it)
+//        },
+//        onSearchDone = hideKeyboard,
+//        searchTypes = listOf(SearchType.ACCOUNT),
+//        selectedSearchType = SearchType.ACCOUNT,
+//        onUpdateSearchType = {},
+//        items = {
+//            items(
+//                count = accountsLazyPagingItems.itemCount,
+//                contentType = { LAZY_ITEM_ACCOUNT },
+//                key = accountsLazyPagingItems.itemKey { account -> account.id },
+//                itemContent = { index ->
+//                    accountsLazyPagingItems[index]?.let { account ->
+//                        val balanceDetails = account.balanceDetails
+//                        AccountCard(
+//                            modifier = Modifier.animateItem(),
+//                            title = account.name,
+//                            imageUrl = account.imageUrl,
+//                            loading = account.pending,
+//                            withDetails = false,
+//                            onClick = {
+//                                onSelectAccount(account.id)
+//                                dismiss()
+//                            },
+//                            incomeExpenses = BalanceDetails.IncomeExpenses(
+//                                income = balanceDetails.formattedIncome,
+//                                expenses = balanceDetails.formattedExpenses,
+//                                netIncomeAbs = balanceDetails.formattedNetIncome,
+//                                isPositiveIncome = balanceDetails.isPositiveIncome,
+//                            ),
+//                            creditorDebtor = BalanceDetails.CreditorDebtor(
+//                                debtor = balanceDetails.formattedDebtor,
+//                                creditor = balanceDetails.formattedCreditor,
+//                                netDebtorAbs = balanceDetails.formattedNetDebtor,
+//                                isPositiveDebtor = balanceDetails.isPositiveDebtor
+//                            ),
+//                            currencySymbol = balanceDetails.currency.currencySymbol,
+//                        )
+//                    }
+//                }
+//            )
+//        }
+//    )
 
-}
+}*/

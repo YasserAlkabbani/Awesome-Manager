@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.ui.actions.main.MainAction
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
@@ -33,22 +30,22 @@ import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun HomeRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun HomeScreen(
+//    sendMainAction: (MainAction) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val homeState = homeViewModel.homeState
-
-    val mainAction = homeState.mainAction.collectAsState().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, homeState::doneMainAction)
-    }
-    HomeScreen(homeState)
+//    val homeState = homeViewModel.homeState
+//
+//    val mainAction = homeState.mainAction.collectAsState().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, homeState::doneMainAction)
+//    }
+//    HomeScreen(homeState)
 }
 
 
 @Composable
-fun HomeScreen(homeState: HomeState) {
+internal fun HomeScreen(homeState: HomeState) {
 
     when (val currencyWithBalance = homeState.balanceDetails.collectAsState().value) {
         is AmUIState.Success -> LazyColumn(
@@ -99,7 +96,7 @@ fun HomeScreen(homeState: HomeState) {
                 )
                 AmFilledTonalButton(
                     text = stringResource(R.string.create_an_account),
-                    onClick = homeState::navigateToCreateAccount,
+                    onClick = {},
                 )
             }
         }

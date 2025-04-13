@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,7 +15,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
@@ -28,8 +25,7 @@ import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
 
 @Composable
-fun AccountDetailsRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun AccountDetailsScreen(
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel(),
 ) {
 
@@ -37,10 +33,10 @@ fun AccountDetailsRoute(
 
     accountDetailsState.accountDetailsUI.collectAsStateWithLifecycle(null)
 
-    val mainAction = accountDetailsState.mainAction.collectAsState().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, accountDetailsState::doneMainAction)
-    }
+//    val mainAction = accountDetailsState.mainAction.collectAsState().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, accountDetailsState::doneMainAction)
+//    }
 
 
 
@@ -48,12 +44,12 @@ fun AccountDetailsRoute(
 }
 
 @Composable
-fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
+internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
     val accountState: AmUIState<AmAccount> =
         accountDetailsState.account.collectAsStateWithLifecycle().value
-    val refreshingTransactions: Boolean =
-        accountDetailsState.refreshing.collectAsStateWithLifecycle().value
+//    val refreshingTransactions: Boolean =
+//        accountDetailsState.refreshing.collectAsStateWithLifecycle().value
     val transactionsLazyPaging: LazyPagingItems<AmTransaction> =
         accountDetailsState.transactions.collectAsLazyPagingItems()
 
@@ -92,7 +88,7 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                         currencySymbol = balanceDetails.currency.currencySymbol,
                     )
                     AmLazyColumn(
-                        isRefreshing = refreshingTransactions,
+                        isRefreshing = false,
                         onRefresh = accountDetailsState.refreshTransactions,
                         content = {
                             items(
@@ -112,10 +108,10 @@ fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                                             isPay = transaction.transactionType.positive,
                                             currency = transaction.currency.currencySymbol,
                                             onClick = {
-                                                accountDetailsState.navigateToTransactionDetails(
-                                                    accountID = transaction.accountID,
-                                                    transactionID = transaction.transactionID
-                                                )
+//                                                accountDetailsState.navigateToTransactionDetails(
+//                                                    accountID = transaction.accountID,
+//                                                    transactionID = transaction.transactionID
+//                                                )
                                             }
                                         )
                                     }

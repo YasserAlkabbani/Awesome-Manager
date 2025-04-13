@@ -1,17 +1,20 @@
 package com.awesome.manager.feature.auth
 
-import com.awesome.manager.core.ui.actions.main.ActionsManager
+import com.awesome.manager.core.common.AmUIError
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 
 private const val EMAIL: String = "EMAIL"
 private const val PASSWORD: String = "PASSWORD"
 
 class AuthScreenState(
-    override val setString: String.(value: String) -> Unit,
-    override val getString: String.(defaultValue: String) -> StateFlow<String>,
+    val setString: String.(value: String) -> Unit,
+    val getString: String.(defaultValue: String) -> StateFlow<String>,
     val login: (String, String) -> Unit,
-) : ActionsManager() {
+) {
 
     val email: StateFlow<String> = EMAIL.getString("")
     fun onUpdateEmail(email: String) = EMAIL.setString(email)
@@ -19,21 +22,32 @@ class AuthScreenState(
     val password: StateFlow<String> = PASSWORD.getString("")
     fun onUpdatePassword(password: String) = PASSWORD.setString(password)
 
+    private val _authError: MutableStateFlow<AuthError> = MutableStateFlow(AuthError.NON)
+    val authError: StateFlow<AuthError> = _authError.asStateFlow()
 
-    val authUI = combine(email, password) { email, password ->
-        processUIState(email = email, password = password)
-    }
+    private val _amUIError: MutableStateFlow<AmUIError> = MutableStateFlow(AmUIError.NoError)
+    val amUIError: StateFlow<AmUIError> = _amUIError.asStateFlow()
+    fun setUIError(amUIError: AmUIError) = _amUIError.update { amUIError }
+    fun doneUIError() =_amUIError.update { AmUIError.NoError }
 
-    private fun processUIState(email: String, password: String) {
-        val validEmail = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        val validPassword = password.length > 5
+    private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
+    fun setLoading(isLoading: Boolean) = _loading.update { isLoading }
+
+    fun syncAuthUIState() = combine(email, password) { email, password ->
+        val isValidEmail = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val isValidPassword = password.length > 5
         when {
-            email.isBlank() && password.isBlank() -> dynamicFabWelcome()
-            !validEmail -> dynamicFabInvalidEmail()
-            !validPassword -> dynamicFabInvalidPassword()
-            else -> dynamicFabLogin { login(email, password) }
+            email.isBlank() && password.isBlank() -> _authError.update { AuthError.EMAIL_PASSWORD }
+            !isValidEmail -> _authError.update { AuthError.EMAIL }
+            !isValidPassword -> _authError.update { AuthError.PASSWORD }
+            else -> _authError.update { AuthError.NON }
         }
     }
 
+}
+
+enum class AuthError {
+    NON, EMAIL, PASSWORD, EMAIL_PASSWORD
 }
 

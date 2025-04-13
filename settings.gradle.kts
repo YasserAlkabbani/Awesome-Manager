@@ -15,7 +15,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "AwesomeManager"
-include (":app")
+include(":app")
 
 include(":feature:menu")
 include(":feature:auth")

@@ -30,11 +30,11 @@ class AccountsViewModel @Inject constructor(
     private fun refreshAccounts() {
         viewModelScope.launch {
             accountRepository.refreshAccounts().collectLatest {
-                when (it) {
-                    is AmUIState.Error -> accountsState.endRefreshing()
-                    is AmUIState.Loading -> accountsState.startRefreshing()
-                    is AmUIState.Success -> accountsState.endRefreshing()
-                }
+//                when (it) {
+//                    is AmUIState.Error -> accountsState.endRefreshing()
+//                    is AmUIState.Loading -> accountsState.startRefreshing()
+//                    is AmUIState.Success -> accountsState.endRefreshing()
+//                }
             }
         }
     }

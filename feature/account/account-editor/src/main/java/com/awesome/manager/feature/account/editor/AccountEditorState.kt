@@ -2,15 +2,12 @@ package com.awesome.manager.feature.account.editor
 
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.ui.actions.main.ActionsManager
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertAccount
-import com.awesome.manager.core.ui.actions.filterSuccessData
+import com.awesome.manager.core.ui.filterSuccessData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import java.util.UUID
 
@@ -20,13 +17,13 @@ private const val ACCOUNT_CURRENCY: String = "ACCOUNT_CURRENCY"
 private const val ACCOUNT_TRANSACTION_TYPE: String = "ACCOUNT_TRANSACTION_TYPE"
 
 class AccountEditorState(
-    override val setString: String.(value: String) -> Unit,
-    override val getString: String.(defaultValue: String) -> StateFlow<String>,
+    val setString: String.(value: String) -> Unit,
+    val getString: String.(defaultValue: String) -> StateFlow<String>,
     val transactionTypes: List<AmTransactionType>,
     val currencies: StateFlow<AmUIState<List<AmCurrency>>>,
     val accountEditorData: StateFlow<AmUIState<AccountEditorData>>,
     private val upsertAccount: UpsertAccount.() -> Unit,
-) : ActionsManager() {
+) {
 
 
     fun updateAccountName(name: String) = ACCOUNT_NAME.setString(name)
@@ -47,24 +44,24 @@ class AccountEditorState(
     val accountEditorUI = accountEditorData
         .filterSuccessData()
         .setInitData()
-        .flatMapLatest { accountEditorData ->
-            combine(
-                accountName,
-                accountImageUrl,
-                selectedCurrency,
-                selectedTransactionTypeID
-            ) { name, imageUrl, currencyID, transactionType ->
-                UpsertAccount(
-                    id = accountEditorData.accountID,
-                    creatorUserId = accountEditorData.creatorUserID,
-                    name = name,
-                    imageUrl = imageUrl,
-                    currencyId = currencyID,
-                    defaultTransactionTypeID = transactionType,
-                    alreadyOnNetwork = accountEditorData.alreadyOnNetwork()
-                ).processUIState(accountEditorData)
-            }
-        }
+//        .flatMapLatest { accountEditorData ->
+//            combine(
+//                accountName,
+//                accountImageUrl,
+//                selectedCurrency,
+//                selectedTransactionTypeID
+//            ) { name, imageUrl, currencyID, transactionType ->
+//                UpsertAccount(
+//                    id = accountEditorData.accountID,
+//                    creatorUserId = accountEditorData.creatorUserID,
+//                    name = name,
+//                    imageUrl = imageUrl,
+//                    currencyId = currencyID,
+//                    defaultTransactionTypeID = transactionType,
+//                    alreadyOnNetwork = accountEditorData.alreadyOnNetwork()
+//                ).processUIState(accountEditorData)
+//            }
+//        }
 
 
     private fun Flow<AccountEditorData>.setInitData() = onEach { accountEditorData ->
@@ -80,22 +77,22 @@ class AccountEditorState(
         }
     }
 
-    private fun UpsertAccount.processUIState(accountEditorData: AccountEditorData) {
-        when (isValid()) {
-            false -> dynamicFabInvalidInput(::navigatePopBack)
-            true -> when (accountEditorData) {
-                is AccountEditorData.CreateAccount -> dynamicFabCreateAccount(
-                    createAccount = { upsertAccount() },
-                    navigatePopBack = ::navigatePopBack
-                )
-
-                is AccountEditorData.EditAccount -> dynamicFabUpdateAccount(
-                    updateAccount = { upsertAccount() },
-                    navigatePopBack = ::navigatePopBack
-                )
-            }
-        }
-    }
+//    private fun UpsertAccount.processUIState(accountEditorData: AccountEditorData) {
+//        when (isValid()) {
+//            false -> dynamicFabInvalidInput(::navigatePopBack)
+//            true -> when (accountEditorData) {
+//                is AccountEditorData.CreateAccount -> dynamicFabCreateAccount(
+//                    createAccount = { upsertAccount() },
+//                    navigatePopBack = ::navigatePopBack
+//                )
+//
+//                is AccountEditorData.EditAccount -> dynamicFabUpdateAccount(
+//                    updateAccount = { upsertAccount() },
+//                    navigatePopBack = ::navigatePopBack
+//                )
+//            }
+//        }
+//    }
 
 
 }

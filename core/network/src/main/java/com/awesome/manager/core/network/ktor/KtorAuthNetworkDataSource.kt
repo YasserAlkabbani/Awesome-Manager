@@ -26,9 +26,9 @@ class KtorAuthNetworkDataSource @Inject constructor(
 
     private suspend fun AuthNetwork.loadToken(): AuthNetwork = apply {
         authPreferencesDataStore.updateToken(accessToken,refreshToken)
-        httpClient.plugin(Auth).bearer {
-            loadTokens { BearerTokens(accessToken, refreshToken) }
-        }
+//        httpClient.plugin(Auth).bearer {
+//            loadTokens { BearerTokens(accessToken, refreshToken) }
+//        }
     }
 
     override suspend fun login(loginRequest: LoginRequest): AuthNetwork =

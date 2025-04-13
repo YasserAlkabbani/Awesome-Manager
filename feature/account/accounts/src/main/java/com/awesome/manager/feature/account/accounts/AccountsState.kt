@@ -1,7 +1,6 @@
 package com.awesome.manager.feature.account.accounts
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.ui.actions.main.ActionsManager
 import com.awesome.manager.core.model.AmAccount
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +11,10 @@ import kotlinx.coroutines.flow.update
 
 
 class AccountsState(
-    override val setString: String.(value: String) -> Unit,
-    override val getString: String.(defaultValue: String) -> StateFlow<String>,
+    val setString: String.(value: String) -> Unit,
+    val getString: String.(defaultValue: String) -> StateFlow<String>,
     val pagingAccounts: Flow<PagingData<AmAccount>>,
     val refreshAccounts: () -> Unit,
-) : ActionsManager() {
+) {
 
 }

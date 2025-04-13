@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,7 +20,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -30,8 +28,7 @@ import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 
 @Composable
-fun AccountEditorRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun AccountEditorScreen(
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
 ) {
 
@@ -39,17 +36,17 @@ fun AccountEditorRoute(
 
     accountEditorState.accountEditorUI.collectAsStateWithLifecycle(null)
 
-    val mainAction = accountEditorState.mainAction.collectAsState().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, accountEditorState::doneMainAction)
-    }
+//    val mainAction = accountEditorState.mainAction.collectAsState().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, accountEditorState::doneMainAction)
+//    }
 
     AccountEditorScreen(accountEditorState)
 
 }
 
 @Composable
-fun AccountEditorScreen(accountEditorState: AccountEditorState) {
+internal fun AccountEditorScreen(accountEditorState: AccountEditorState) {
 
     val context = LocalContext.current
     val accountData = accountEditorState.accountEditorData.collectAsState().value

@@ -30,7 +30,6 @@ class MainActivityViewModel @Inject constructor(
     val mainActivityState = MainActivityState(
         setString = { savedStateHandle[this] = it },
         getString = { savedStateHandle.getStateFlow(this, it) },
-        getAccountsSearchPagingData = { flatMapLatest { accountRepository.getAccounts(it) } },
         isLogin = authRepository.isLogin()
             .onEach { if (it) refreshData() else clearData() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null),

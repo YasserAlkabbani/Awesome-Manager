@@ -2,12 +2,11 @@ package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmUIState
-import com.awesome.manager.core.ui.actions.main.ActionsManager
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.ui.actions.filterSuccessData
+import com.awesome.manager.core.ui.filterSuccessData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -25,8 +24,8 @@ private const val TRANSACTION_TYPE = "TRANSACTION_TYPE"
 private const val SEARCH_KEY: String = "SEARCH_KEY"
 
 class TransactionEditorState(
-    override val setString: String.(value: String) -> Unit,
-    override val getString: String.(defaultValue: String) -> StateFlow<String>,
+    val setString: String.(value: String) -> Unit,
+    val getString: String.(defaultValue: String) -> StateFlow<String>,
     val setLong: String.(value: Long) -> Unit,
     val getLong: String.(defaultValue: Long) -> StateFlow<Long>,
     val transactionTypes: List<AmTransactionType>,
@@ -34,7 +33,7 @@ class TransactionEditorState(
     val accountsSearchResults: String.() -> Flow<PagingData<AmAccount>>,
     private val getAccountById: StateFlow<String>.() -> StateFlow<AmAccount?>,
     private val upsertTransaction: UpsertTransaction.() -> Unit,
-) : ActionsManager() {
+){
 
     fun updateSearchKey(searchKey: String) = SEARCH_KEY.setString(searchKey)
     val searchKey: StateFlow<String> = SEARCH_KEY.getString("")
@@ -103,32 +102,31 @@ class TransactionEditorState(
     }
 
     private fun UpsertTransaction.processUIState(transactionEditorData: TransactionEditorData) {
-        when (isValidAccount()) {
-            false -> dynamicFabSearchForAccount(
-                searchForAccount = {
-                    showSearchForAccount(
-                        initSearch = account.value?.name.orEmpty(),
-                        onSelectAccount = ::updateAccount
-                    )
-                },
-                navigatePopBack = ::navigatePopBack
-            )
-
-            true -> when (transactionEditorData) {
-                is TransactionEditorData.CreateTransaction -> dynamicFabCreateTransaction(
-                    createTransaction = { upsertTransaction() },
-                    navigatePopBack = ::navigatePopBack
-                )
-
-                is TransactionEditorData.EditTransaction -> dynamicFabUpdateTransaction(
-                    updateTransaction = { upsertTransaction() },
-                    navigatePopBack = ::navigatePopBack
-                )
-            }
+//        when (isValidAccount()) {
+//            false -> dynamicFabSearchForAccount(
+//                searchForAccount = {
+//                    showSearchForAccount(
+//                        initSearch = account.value?.name.orEmpty(),
+//                        onSelectAccount = ::updateAccount
+//                    )
+//                },
+//                navigatePopBack = ::navigatePopBack
+//            )
+//
+//            true -> when (transactionEditorData) {
+//                is TransactionEditorData.CreateTransaction -> dynamicFabCreateTransaction(
+//                    createTransaction = { upsertTransaction() },
+//                    navigatePopBack = ::navigatePopBack
+//                )
+//
+//                is TransactionEditorData.EditTransaction -> dynamicFabUpdateTransaction(
+//                    updateTransaction = { upsertTransaction() },
+//                    navigatePopBack = ::navigatePopBack
+//                )
+//            }
         }
     }
 
-}
 
 sealed interface TransactionEditorData {
 

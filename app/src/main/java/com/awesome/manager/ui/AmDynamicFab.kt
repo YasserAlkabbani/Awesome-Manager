@@ -23,9 +23,9 @@ import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFab
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicFabExtraButton
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmDynamicText
 import com.awesome.manager.core.designsystem.component.dynamic_bar.AmFabButton
-import com.awesome.manager.core.ui.actions.main.DynamicFabAction
 import kotlin.math.absoluteValue
 
+/*
 @Composable
 fun DynamicFabAction.Content(): Unit =
     AnimatedContent(
@@ -95,4 +95,4 @@ fun DynamicFabAction.Content(): Unit =
                 is DynamicFabAction.ExtraButton -> Unit
             }
         }
-    }
+    }*/

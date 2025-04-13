@@ -1,79 +1,124 @@
 package com.awesome.manager.navigation
 
+import androidx.compose.material.navigation.BottomSheetNavigator
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.ui.actions.main.MainAction
-import com.awesome.manager.core.ui.actions.main.NavigationAction
-import com.awesome.manager.feature.account.accounts.AccountsRoute
-import com.awesome.manager.feature.account.details.AccountDetailsRoute
-import com.awesome.manager.feature.account.editor.AccountEditorRoute
-import com.awesome.manager.feature.auth.AuthRoute
+import com.awesome.manager.feature.account.accounts.accountsScreen
+import com.awesome.manager.feature.account.details.accountDetailsScreen
+import com.awesome.manager.feature.account.editor.accountEditorScreen
 import com.awesome.manager.feature.home.HomeRoute
-import com.awesome.manager.feature.intro.IntroRoute
-import com.awesome.manager.feature.transaction.details.TransactionDetailsRoute
-import com.awesome.manager.feature.transaction.editor.TransactionEditorRoute
-import com.awesome.manager.feature.transaction.transactions.TransactionsRoute
+import com.awesome.manager.feature.home.homeScreen
+import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
+import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
+import com.awesome.manager.feature.transaction.transactions.transactionsScreen
+import kotlin.reflect.KClass
 
 
 @Composable
 fun AmNavHost(
     modifier: Modifier,
     navHostController: NavHostController,
-    startDistinction: NavigationAction = NavigationAction.Intro,
-    sendMainAction: (MainAction) -> Unit
+    bottomSheetNavigator: BottomSheetNavigator,
 ) {
-    NavHost(
-        modifier = modifier,
-        navController = navHostController,
-        startDestination = startDistinction,
-    ) {
-        composable<NavigationAction.Intro> {
-            IntroRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.Auth> {
-            AuthRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.Home> {
-            HomeRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.Accounts> {
-            AccountsRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.Transactions> {
-            TransactionsRoute(sendMainAction = sendMainAction)
-        }
+    ModalBottomSheetLayout(bottomSheetNavigator) {
+        NavHost(
+            modifier = modifier,
+            navController = navHostController,
+            startDestination = HomeRoute,
+        ) {
 
-        composable<NavigationAction.AccountDetails> {
-            AccountDetailsRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.TransactionDetails> {
-            TransactionDetailsRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.AccountEditor> {
-            AccountEditorRoute(sendMainAction = sendMainAction)
-        }
-        composable<NavigationAction.TransactionEditor> {
-            TransactionEditorRoute(sendMainAction = sendMainAction)
+            homeScreen()
+
+            accountsScreen()
+            accountDetailsScreen()
+            accountEditorScreen()
+
+
+            transactionsScreen()
+            transactionDetailsScreen()
+            transactionEditorScreen()
+
+
+            bottomSheet<BottomSheetNavigation.ConnectionError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.UnauthorizedError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.PoorConnectionError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.UnknownError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.NoDataError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.NoPermissionError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.BadRequestError> {
+
+            }
+            bottomSheet<BottomSheetNavigation.OtherUIError> {
+
+            }
+
         }
     }
 
 }
 
-fun NavBackStackEntry.asNavigationDestination(): NavigationAction =
-    when (destination.route?.substringBefore("/")) {
-        NavigationAction.Intro::class.qualifiedName -> toRoute<NavigationAction.Intro>()
-        NavigationAction.Auth::class.qualifiedName -> toRoute<NavigationAction.Auth>()
-        NavigationAction.Home::class.qualifiedName -> toRoute<NavigationAction.Home>()
-        NavigationAction.Accounts::class.qualifiedName -> toRoute<NavigationAction.Accounts>()
-        NavigationAction.Transactions::class.qualifiedName -> toRoute<NavigationAction.Transactions>()
-        NavigationAction.AccountDetails::class.qualifiedName -> toRoute<NavigationAction.AccountDetails>()
-        NavigationAction.TransactionDetails::class.qualifiedName -> toRoute<NavigationAction.TransactionDetails>()
-        NavigationAction.AccountEditor::class.qualifiedName -> toRoute<NavigationAction.AccountEditor>()
-        NavigationAction.TransactionEditor::class.qualifiedName -> toRoute<NavigationAction.TransactionEditor>()
-        else -> throw ClassNotFoundException("NAVIGATION DESTINATION NOT FOUND")
-    }
+//mainAction is NavigationAction.AccountDetails -> navOptions {
+//    if (currentNavigationDestination is NavigationAction.AccountEditor) {
+//        popUpTo(currentNavigationDestination) {
+//            inclusive = true
+//        }
+//        launchSingleTop = true
+//    }
+//}
+//
+//mainAction is NavigationAction.TransactionDetails -> navOptions {
+//    if (currentNavigationDestination is NavigationAction.TransactionEditor) {
+//        popUpTo(currentNavigationDestination) {
+//            inclusive = true
+//        }
+//        launchSingleTop = true
+//    }
+//}
+
+//fun NavDestination.isRouteFrom(route: KClass<*>) = hasRoute(route = route)
+//
+//fun NavBackStackEntry.asNavigationDestination(): AmDestinations? =
+//    when (destination.route?.substringBefore("/")) {
+//        MainDestinations.Home::class.qualifiedName -> toRoute<MainDestinations.Home>()
+//        MainDestinations.Accounts::class.qualifiedName -> toRoute<AmDestinations.Accounts>()
+//        MainDestinations.Transactions::class.qualifiedName -> toRoute<AmDestinations.Transactions>()
+//        AmDestinations.AccountDetails::class.qualifiedName -> toRoute<AmDestinations.AccountDetails>()
+//        AmDestinations.TransactionDetails::class.qualifiedName -> toRoute<AmDestinations.TransactionDetails>()
+//        AmDestinations.AccountEditor::class.qualifiedName -> toRoute<AmDestinations.AccountEditor>()
+//        AmDestinations.TransactionEditor::class.qualifiedName -> toRoute<AmDestinations.TransactionEditor>()
+//        else -> null
+//    }
+//
+//fun NavBackStackEntry.asBottomSheetNavigation(): BottomSheetNavigation? =
+//    when (destination.route?.substringBefore("/")) {
+//        BottomSheetNavigation.ConnectionError::class.qualifiedName -> toRoute<BottomSheetNavigation.ConnectionError>()
+//        BottomSheetNavigation.UnauthorizedError::class.qualifiedName -> toRoute<BottomSheetNavigation.UnauthorizedError>()
+//        BottomSheetNavigation.PoorConnectionError::class.qualifiedName -> toRoute<BottomSheetNavigation.PoorConnectionError>()
+//        BottomSheetNavigation.UnknownError::class.qualifiedName -> toRoute<BottomSheetNavigation.UnknownError>()
+//        BottomSheetNavigation.NoDataError::class.qualifiedName -> toRoute<BottomSheetNavigation.NoDataError>()
+//        BottomSheetNavigation.NoPermissionError::class.qualifiedName -> toRoute<BottomSheetNavigation.NoPermissionError>()
+//        BottomSheetNavigation.BadRequestError::class.qualifiedName -> toRoute<BottomSheetNavigation.BadRequestError>()
+//        BottomSheetNavigation.OtherUIError::class.qualifiedName -> toRoute<BottomSheetNavigation.OtherUIError>()
+//        else -> null
+//    }

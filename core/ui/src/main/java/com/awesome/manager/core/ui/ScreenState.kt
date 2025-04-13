@@ -1,4 +1,4 @@
-package com.awesome.manager.core.ui.actions
+package com.awesome.manager.core.ui
 
 import com.awesome.manager.core.common.AmUIState
 import kotlinx.coroutines.CoroutineScope

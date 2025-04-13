@@ -35,7 +35,7 @@ fun AmNavigationBar(
         exit = slideOutVertically() + shrinkVertically() + fadeOut()
     ) {
         NavigationBar(
-            modifier = modifier.height(AmSize.XXX_LARGE.value),
+            modifier = modifier.height(AmSize.BOTTOM_NAVIGATION_HEIGHT.value),
             content = content,
         )
     }

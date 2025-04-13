@@ -27,11 +27,11 @@ class TransactionsViewModel @Inject constructor(
     private fun refreshTransactions() {
         viewModelScope.launch {
             transactionRepository.refreshTransactions().collectLatest {
-                when (it) {
-                    is AmUIState.Error -> transactionsState.endRefreshing()
-                    is AmUIState.Loading -> transactionsState.startRefreshing()
-                    is AmUIState.Success -> transactionsState.endRefreshing()
-                }
+//                when (it) {
+//                    is AmUIState.Error -> transactionsState.endRefreshing()
+//                    is AmUIState.Loading -> transactionsState.startRefreshing()
+//                    is AmUIState.Success -> transactionsState.endRefreshing()
+//                }
             }
         }
     }

@@ -3,7 +3,7 @@ package com.awesome.manager.feature.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.ui.actions.asUIState
+import com.awesome.manager.core.ui.asUIState
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

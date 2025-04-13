@@ -25,20 +25,22 @@ class AuthViewModel @Inject constructor(
         login = ::login,
     )
 
+    init {
+        viewModelScope.launch {
+            launch {
+                authScreenState.syncAuthUIState().collectLatest{}
+            }
+        }
+    }
+
 
     private fun login(email: String, password: String) {
         viewModelScope.launch {
             authRepository.login(email = email, password = password).collectLatest {
+                authScreenState.setLoading(it is AmUIState.Loading)
                 when (it) {
-                    is AmUIState.Error -> when (it.amUIError) {
-                        AmUIError.ConnectionUIError -> authScreenState.dynamicFabConnectionError {
-                            login(email, password)
-                        }
-                        is AmUIError.BadRequest ->authScreenState.dynamicFabCertificationError()
-                        else -> authScreenState.addError(it.amUIError)
-                    }
-
-                    is AmUIState.Loading -> authScreenState.dynamicFabLoading()
+                    is AmUIState.Error -> authScreenState.setUIError(it.amUIError)
+                    is AmUIState.Loading -> Unit
                     is AmUIState.Success -> Unit
                 }
             }

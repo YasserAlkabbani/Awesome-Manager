@@ -4,25 +4,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.component.AmNavigationBar
 import com.awesome.manager.core.designsystem.component.AmNavigationItem
-import com.awesome.manager.core.ui.actions.main.NavigationAction
 import com.awesome.manager.navigation.MainDestination
-import com.awesome.manager.navigation.isMainDistinction
 
 @Composable
-fun NavigationAction.AmBottomNavigation(
-    updateNavigation: (NavigationAction) -> Unit
+fun AmBottomNavigation(
+    currentMainDestination: MainDestination?,
+    navigateTo: (MainDestination) -> Unit,
 ) {
     AmNavigationBar(
-        visible = isMainDistinction()
+        visible = currentMainDestination != null
     ) {
-        MainDestination.entries.forEach { destination ->
-            val navigationDestination = destination.navigationDestination
+        MainDestination.entries.forEach { mainDestination ->
             AmNavigationItem(
-                isSelected = navigationDestination == this@AmBottomNavigation,
-                title = stringResource(destination.title),
-                selectedIcon = destination.selectedAmIconsType,
-                unSelectedIcon = destination.unSelectedAmIconsType,
-                onSelect = { updateNavigation(navigationDestination) }
+                isSelected = mainDestination == currentMainDestination,
+                title = stringResource(mainDestination.title),
+                selectedIcon = mainDestination.selectedAmIconsType,
+                unSelectedIcon = mainDestination.unSelectedAmIconsType,
+                onSelect = { navigateTo(mainDestination) }
             )
         }
     }

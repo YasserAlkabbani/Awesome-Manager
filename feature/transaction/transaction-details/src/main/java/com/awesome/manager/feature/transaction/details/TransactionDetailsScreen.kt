@@ -4,13 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,17 +15,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.cards.AmCard
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.BalanceDetails
 
 @Composable
-fun TransactionDetailsRoute(
-    sendMainAction: (MainAction) -> Unit,
+fun TransactionDetailsScreen(
     transactionDetailsViewModel: TransactionDetailsViewModel = hiltViewModel(),
 ) {
     val transactionDetailsState: TransactionDetailsState =
@@ -37,10 +29,10 @@ fun TransactionDetailsRoute(
 
     transactionDetailsState.transactionDetailsUI.collectAsStateWithLifecycle(null)
 
-    val mainAction = transactionDetailsState.mainAction.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, transactionDetailsState::doneMainAction)
-    }
+//    val mainAction = transactionDetailsState.mainAction.collectAsStateWithLifecycle().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, transactionDetailsState::doneMainAction)
+//    }
 
 
 
@@ -80,7 +72,7 @@ fun TransactionDetailsScreen(
                         title = account.name,
                         imageUrl = account.imageUrl,
                         loading = account.pending, withDetails = true,
-                        onClick = { transactionDetailsState.navigateToAccountDetails(account.id) },
+                        onClick = {  },
                         incomeExpenses = BalanceDetails.IncomeExpenses(
                             income = balanceDetails.formattedIncome,
                             expenses = balanceDetails.formattedExpenses,

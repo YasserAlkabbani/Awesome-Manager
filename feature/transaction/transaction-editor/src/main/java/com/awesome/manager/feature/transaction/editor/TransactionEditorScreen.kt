@@ -5,13 +5,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.common.asFormattedNumber
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -39,8 +36,8 @@ import com.awesome.manager.core.ui.card.BalanceDetails
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionEditorRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun TransactionEditorScreen(
+//    sendMainAction: (MainAction) -> Unit,
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
 
@@ -48,10 +45,10 @@ fun TransactionEditorRoute(
     val transactionEditorState: TransactionEditorState =
         transactionEditorViewModel.transactionEditorState
 
-    val mainAction = transactionEditorState.mainAction.collectAsState().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, transactionEditorState::doneMainAction)
-    }
+//    val mainAction = transactionEditorState.mainAction.collectAsState().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, transactionEditorState::doneMainAction)
+//    }
 
     transactionEditorState.transactionEditorUI.collectAsStateWithLifecycle(null)
 
@@ -59,7 +56,7 @@ fun TransactionEditorRoute(
 }
 
 @Composable
-fun TransactionEditorScreen(
+internal fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
 ) {
     val context = LocalContext.current
@@ -160,10 +157,10 @@ fun TransactionEditorScreen(
                         amIconsType = AmIcons.Date,
                         positive = null,
                         onClick = {
-                            transactionEditorState.showPickDateBottomSheet(
-                                initTime = transactionAt,
-                                setDate = transactionEditorState::updateTransactionAt
-                            )
+//                            transactionEditorState.showPickDateBottomSheet(
+//                                initTime = transactionAt,
+//                                setDate = transactionEditorState::updateTransactionAt
+//                            )
                         }
                     )
 

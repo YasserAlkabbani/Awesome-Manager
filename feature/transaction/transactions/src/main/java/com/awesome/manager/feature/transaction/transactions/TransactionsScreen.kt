@@ -17,7 +17,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.text.getString
@@ -27,25 +26,24 @@ import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
 
 
 @Composable
-fun TransactionsRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun TransactionsScreen(
     transactionsViewModel: TransactionsViewModel = hiltViewModel(),
 ) {
 
     val transactionsState = transactionsViewModel.transactionsState
 
-    val mainAction = transactionsState.mainAction.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, transactionsState::doneMainAction)
-    }
+//    val mainAction = transactionsState.mainAction.collectAsStateWithLifecycle().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, transactionsState::doneMainAction)
+//    }
 
-    TransactionScreen(transactionsState)
+    TransactionsScreen(transactionsState)
 }
 
 @Composable
-fun TransactionScreen(transactionsState: TransactionsState) {
+internal fun TransactionsScreen(transactionsState: TransactionsState) {
 
-    val isLoading = transactionsState.refreshing.collectAsStateWithLifecycle().value
+//    val isLoading = transactionsState.refreshing.collectAsStateWithLifecycle().value
     val transactionsLazyPaging = transactionsState.pagingTransactions.collectAsLazyPagingItems()
 
     val isEmptyList = remember(transactionsLazyPaging.itemCount) {
@@ -73,14 +71,14 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                     )
                     AmFilledTonalButton(
                         text = stringResource(R.string.create_a_transaction),
-                        onClick = { transactionsState.navigateToCreateTransaction(null) },
+                        onClick = {/* transactionsState.navigateToCreateTransaction(null) */},
                     )
                 }
             }
 
             false -> {
                 AmLazyColumn(
-                    isRefreshing = isLoading,
+                    isRefreshing = false,
                     onRefresh = transactionsState.refreshTransactions,
                     content = {
                         items(
@@ -100,10 +98,10 @@ fun TransactionScreen(transactionsState: TransactionsState) {
                                         isPay = transaction.transactionType.positive,
                                         currency = transaction.currency.currencyCode,
                                         onClick = {
-                                            transactionsState.navigateToTransactionDetails(
-                                                accountID = transaction.accountID,
-                                                transactionID = transaction.transactionID
-                                            )
+//                                            transactionsState.navigateToTransactionDetails(
+//                                                accountID = transaction.accountID,
+//                                                transactionID = transaction.transactionID
+//                                            )
                                         }
                                     )
                                 }

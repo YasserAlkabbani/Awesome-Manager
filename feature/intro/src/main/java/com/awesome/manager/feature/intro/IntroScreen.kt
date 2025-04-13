@@ -14,11 +14,10 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.R
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 
 @Composable
-fun IntroRoute(sendMainAction: (MainAction) -> Unit) {
+fun IntroRoute() {
     IntroScreen()
 }
 

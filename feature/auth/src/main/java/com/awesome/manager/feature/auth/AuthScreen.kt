@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
@@ -34,24 +34,23 @@ import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun AuthRoute(
-    sendMainAction: (MainAction) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
+    showError: (AmUIError) -> Unit
 ) {
     val authScreenState = authViewModel.authScreenState
+    val amUIError = authScreenState.amUIError.collectAsState().value
 
-    authScreenState.authUI.collectAsStateWithLifecycle(null)
-
-    val mainAction = authScreenState.mainAction.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, authScreenState::doneMainAction)
+    LaunchedEffect(amUIError) {
+        if (amUIError !is AmUIError.NoError) {
+            authScreenState.doneUIError()
+            showError(amUIError)
+        }
     }
-
 
     AuthScreen(authScreenState)
 }
@@ -60,6 +59,9 @@ fun AuthRoute(
 fun AuthScreen(
     authScreenState: AuthScreenState
 ) {
+
+    val authError: AuthError = authScreenState.authError.collectAsState().value
+    val loading = authScreenState.loading.collectAsState().value
 
     val email: String = authScreenState.email.collectAsState().value
     val password: String = authScreenState.password.collectAsState().value
@@ -98,44 +100,44 @@ fun AuthScreen(
             AmSpacerLargeHeight()
             AmSpacerLargeHeight()
             Column(Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                vertical = AmPadding.XX_LARGE.value,
-                                horizontal = AmPadding.XX_SMALL.value
-                            )
-                    ) {
-                        Column(Modifier.fillMaxWidth()) {
-                            AmTextField(
-                                modifier = Modifier,
-                                label = stringResource(R.string.email),
-                                icon = AmIcons.Email,
-                                hint = "Example@Example.com",
-                                onTextChange = authScreenState::onUpdateEmail,
-                                text = email,
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    imeAction = ImeAction.Next,
-                                    keyboardType = KeyboardType.Email
-                                ),
-                                enabled = true
-                            )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = AmPadding.XX_LARGE.value,
+                            horizontal = AmPadding.XX_SMALL.value
+                        )
+                ) {
+                    Column(Modifier.fillMaxWidth()) {
+                        AmTextField(
+                            modifier = Modifier,
+                            label = stringResource(R.string.email),
+                            icon = AmIcons.Email,
+                            hint = "Example@Example.com",
+                            onTextChange = authScreenState::onUpdateEmail,
+                            text = email,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Next,
+                                keyboardType = KeyboardType.Email
+                            ),
+                            enabled = true,
+                        )
 
-                            AmSpacerSmallHeight()
+                        AmSpacerSmallHeight()
 
-                            AmPasswordTextField(
-                                modifier = Modifier,
-                                label = stringResource(R.string.password),
-                                icon = AmIcons.Password,
-                                hint = "Your top secret password",
-                                onTextChange = authScreenState::onUpdatePassword,
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    imeAction = ImeAction.Done,
-                                    keyboardType = KeyboardType.Password
-                                ),
-                                enabled = true,
-                            )
-                        }
+                        AmPasswordTextField(
+                            modifier = Modifier,
+                            label = stringResource(R.string.password),
+                            icon = AmIcons.Password,
+                            hint = "Your top secret password",
+                            onTextChange = authScreenState::onUpdatePassword,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done,
+                                keyboardType = KeyboardType.Password
+                            ),
+                            enabled = true,
+                        )
+                    }
                 }
             }
         }
@@ -149,12 +151,12 @@ fun AuthScreen(
 )
 @Composable
 fun AuthScreenPreview() {
-    val a={MutableStateFlow("")}
+    val a = { MutableStateFlow("") }
     AuthScreen(
         AuthScreenState(
             {},
-            {MutableStateFlow("")},
-            {_,_->},
-           )
+            { MutableStateFlow("") },
+            { _, _ -> },
+        )
     )
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -40,6 +41,7 @@ import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
+import java.lang.Error
 
 @Composable
 fun AmTextField(
@@ -51,6 +53,7 @@ fun AmTextField(
     hint: String,
     singleLine: Boolean = true,
     enabled: Boolean = true,
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     formatText: String.() -> String = { this }
@@ -59,6 +62,7 @@ fun AmTextField(
     val textFieldValue: MutableState<TextFieldValue> = remember {
         mutableStateOf(TextFieldValue(text, TextRange(text.length)))
     }
+
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
@@ -86,6 +90,7 @@ fun AmTextField(
         maxLines = 3,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        isError = isError,
 //        colors = TextFieldDefaults.colors(
 //            unfocusedIndicatorColor = Color.Transparent,
 //            disabledIndicatorColor = Color.Transparent,
@@ -249,7 +254,8 @@ fun AmTextFieldPreview() {
         icon = AmIcons.Email,
         label = "LABEL",
         onTextChange = {},
-        text = ""
+        text = "",
+        isError = false
     )
 }
 

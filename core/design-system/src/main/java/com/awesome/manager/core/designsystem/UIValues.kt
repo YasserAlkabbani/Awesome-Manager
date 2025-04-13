@@ -12,6 +12,7 @@ enum class AmSize(val value: Dp) {
     LARGE(50.dp),
     XX_LARGE(64.dp),
     XXX_LARGE(82.dp) ,
+    BOTTOM_NAVIGATION_HEIGHT(90.dp) ,
     XXXX_LARGE(120.dp),
     LOADING_INDICATOR_HEIGHT(10.dp)
 }

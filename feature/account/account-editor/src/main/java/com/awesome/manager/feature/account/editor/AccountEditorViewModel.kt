@@ -10,8 +10,7 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertAccount
-import com.awesome.manager.core.ui.actions.asUIState
-import com.awesome.manager.core.ui.actions.main.NavigationAction
+import com.awesome.manager.core.ui.asUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -27,8 +26,8 @@ class AccountEditorViewModel @Inject constructor(
     currencyRepository: CurrencyRepository,
 ) : ViewModel() {
 
-    private val accountEditorArg: NavigationAction.AccountEditor = savedStateHandle.toRoute()
-    private val accountID = accountEditorArg.accountId
+    private val accountEditorArg: AccountEditorRoute = savedStateHandle.toRoute()
+    private val accountID = accountEditorArg.accountID
 
     private val accountEditorData: StateFlow<AmUIState<AccountEditorData>> =
         when (accountID) {
@@ -54,7 +53,7 @@ class AccountEditorViewModel @Inject constructor(
     private fun UpsertAccount.upsertAccount() {
         viewModelScope.launch {
             accountRepository.upsertAccount(this@upsertAccount)
-            accountEditorState.navigateToAccountDetails(id)
+//            accountEditorState.navigateToAccountDetails(id)
         }
     }
 

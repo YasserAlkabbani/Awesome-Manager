@@ -20,7 +20,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.ui.actions.main.MainAction
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.model.AmAccount
@@ -32,32 +31,31 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun AccountsRoute(
-    sendMainAction: (MainAction) -> Unit,
+internal fun AccountsScreen(
     accountsViewModel: AccountsViewModel = hiltViewModel(),
 ) {
 
     val accountsState = accountsViewModel.accountsState
 
-    val mainAction = accountsState.mainAction.collectAsStateWithLifecycle().value
-    LaunchedEffect(key1 = mainAction) {
-        mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
-    }
+//    val mainAction = accountsState.mainAction.collectAsStateWithLifecycle().value
+//    LaunchedEffect(key1 = mainAction) {
+//        mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
+//    }
 
     AccountsScreen(accountsState)
 }
 
 
 @Composable
-fun AccountsScreen(
+internal fun AccountsScreen(
     accountsState: AccountsState,
 ) {
     val accountsLazyPaging =
         accountsState.pagingAccounts.collectAsLazyPagingItems()
     val isEmptyList =
         remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
-    val isRefreshing =
-        accountsState.refreshing.collectAsStateWithLifecycle().value
+//    val isRefreshing =
+//        accountsState.refreshing.collectAsStateWithLifecycle().value
 
     AnimatedContent(
         modifier = Modifier.fillMaxWidth(),
@@ -81,14 +79,14 @@ fun AccountsScreen(
                     )
                     AmFilledTonalButton(
                         text = stringResource(R.string.create_an_account),
-                        onClick = accountsState::navigateToCreateAccount,
+                        onClick = {},
                     )
                 }
             }
 
             false -> {
                 AmLazyColumn(
-                    isRefreshing = isRefreshing,
+                    isRefreshing = false,
                     onRefresh = accountsState.refreshAccounts,
                     content = {
                         items(
@@ -105,9 +103,9 @@ fun AccountsScreen(
                                         loading = account.pending,
                                         withDetails = false,
                                         onClick = {
-                                            accountsState.navigateToAccountDetails(
-                                                account.id
-                                            )
+//                                            accountsState.navigateToAccountDetails(
+//                                                account.id
+//                                            )
                                         },
                                         creditorDebtor = BalanceDetails.CreditorDebtor(
                                             debtor = balanceDetails.formattedDebtor,

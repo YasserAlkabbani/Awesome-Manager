@@ -9,9 +9,8 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.ui.actions.asStateFlow
-import com.awesome.manager.core.ui.actions.asUIState
-import com.awesome.manager.core.ui.actions.main.NavigationAction
+import com.awesome.manager.core.ui.asStateFlow
+import com.awesome.manager.core.ui.asUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -28,10 +27,10 @@ class TransactionEditorViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
-    private val transactionEditorArg: NavigationAction.TransactionEditor =
+    private val transactionEditorRouteArg: TransactionEditorRoute =
         savedStateHandle.toRoute()
-    private val transactionID: String? = transactionEditorArg.transactionID
-    private val accountID: String? = transactionEditorArg.accountID
+    private val transactionID: String? = transactionEditorRouteArg.transactionID
+    private val accountID: String? = transactionEditorRouteArg.accountID
 
     private val transactionEditorData = when (transactionID) {
         null -> authRepository.currentUser()
@@ -80,11 +79,11 @@ class TransactionEditorViewModel @Inject constructor(
 
     private fun UpsertTransaction.upsertTransaction() {
         viewModelScope.launch {
-            transactionRepository.upsertTransaction(this@upsertTransaction)
-            transactionEditorState.navigateToTransactionDetails(
-                accountID = accountId,
-                transactionID = transactionID
-            )
+//            transactionRepository.upsertTransaction(this@upsertTransaction)
+//            transactionEditorState.navigateToTransactionDetails(
+//                accountID = accountId,
+//                transactionID = transactionID
+//            )
         }
     }
 
