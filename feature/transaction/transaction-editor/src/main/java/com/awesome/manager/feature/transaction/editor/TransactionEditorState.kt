@@ -1,12 +1,12 @@
 package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.ui.filterSuccessData
+import com.awesome.manager.core.common.filterSuccessData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,7 +29,7 @@ class TransactionEditorState(
     val setLong: String.(value: Long) -> Unit,
     val getLong: String.(defaultValue: Long) -> StateFlow<Long>,
     val transactionTypes: List<AmTransactionType>,
-    val transactionEditorData: StateFlow<AmUIState<TransactionEditorData>>,
+    val transactionEditorData: StateFlow<AmState<TransactionEditorData>>,
     val accountsSearchResults: String.() -> Flow<PagingData<AmAccount>>,
     private val getAccountById: StateFlow<String>.() -> StateFlow<AmAccount?>,
     private val upsertTransaction: UpsertTransaction.() -> Unit,

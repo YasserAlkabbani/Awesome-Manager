@@ -1,9 +1,9 @@
 package com.awesome.manager.feature.transaction.details
 
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.ui.filterSuccessData
+import com.awesome.manager.core.common.filterSuccessData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.onEach
 class TransactionDetailsState(
     val setString: String.(value: String) -> Unit,
     val getString: String.(defaultValue: String) -> StateFlow<String>,
-    val transaction: StateFlow<AmUIState<AmTransaction>>,
-    val account: StateFlow<AmUIState<AmAccount>>
+    val transaction: StateFlow<AmState<AmTransaction>>,
+    val account: StateFlow<AmState<AmAccount>>
 ) {
 
     val transactionDetailsUI = transaction.filterSuccessData().processUIState()

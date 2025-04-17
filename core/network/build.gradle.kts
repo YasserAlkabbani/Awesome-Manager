@@ -8,9 +8,9 @@ plugins {
     id("awesomemanager.android.ktor")
 }
 
-val networkFile = rootProject.file("local.properties")
-val networkProperties = Properties()
-networkProperties.load(FileInputStream(networkFile))
+val propertiesFile = rootProject.file("gradle.properties")
+val localProperties = Properties()
+localProperties.load(FileInputStream(propertiesFile))
 //val localProperties = gradleLocalProperties(rootDir)
 
 android {
@@ -19,12 +19,12 @@ android {
 
     buildTypes {
         release {
-            buildConfigField("String", "BASE_URL", "\"${networkProperties["base_url"]}\"")
-            buildConfigField("String", "API_KEY", "\"${networkProperties["api_key"]}\"")
+            buildConfigField("String", "BASE_URL", "\"${localProperties["base_url"]}\"")
+            buildConfigField("String", "API_KEY", "\"${localProperties["api_key"]}\"")
         }
         debug {
-            buildConfigField("String", "BASE_URL", "\"${networkProperties["base_url"]}\"")
-            buildConfigField("String", "API_KEY", "\"${networkProperties["api_key"]}\"")
+            buildConfigField("String", "BASE_URL", "\"${localProperties["base_url"]}\"")
+            buildConfigField("String", "API_KEY", "\"${localProperties["api_key"]}\"")
         }
     }
 

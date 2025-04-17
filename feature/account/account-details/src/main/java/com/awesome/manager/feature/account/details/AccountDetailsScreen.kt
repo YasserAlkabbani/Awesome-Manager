@@ -13,13 +13,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
-import com.awesome.manager.core.ui.card.BalanceDetails
+import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
@@ -46,7 +46,7 @@ internal fun AccountDetailsScreen(
 @Composable
 internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
-    val accountState: AmUIState<AmAccount> =
+    val accountState: AmState<AmAccount> =
         accountDetailsState.account.collectAsStateWithLifecycle().value
 //    val refreshingTransactions: Boolean =
 //        accountDetailsState.refreshing.collectAsStateWithLifecycle().value
@@ -60,7 +60,7 @@ internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
         label = "ACCOUNT_DETAILS"
     ) {
         when (it) {
-            is AmUIState.Success -> {
+            is AmState.Success -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,13 +73,13 @@ internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                         title = account.name,
                         imageUrl = account.imageUrl, loading = account.pending,
                         withDetails = true,
-                        creditorDebtor = BalanceDetails.CreditorDebtor(
+                        creditorDebtor = CardBalanceDetails.CreditorDebtor(
                             debtor = balanceDetails.formattedDebtor,
                             creditor = balanceDetails.formattedCreditor,
                             netDebtorAbs = balanceDetails.formattedNetDebtor,
                             isPositiveDebtor = balanceDetails.isPositiveDebtor,
                         ),
-                        incomeExpenses = BalanceDetails.IncomeExpenses(
+                        incomeExpenses = CardBalanceDetails.IncomeExpenses(
                             income = balanceDetails.formattedIncome,
                             expenses = balanceDetails.formattedExpenses,
                             netIncomeAbs = balanceDetails.formattedNetIncome,
@@ -121,8 +121,8 @@ internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                     )
                 }
             }
-            is AmUIState.Error -> Unit
-            is AmUIState.Loading -> Unit
+            is AmState.Error -> Unit
+            is AmState.Loading -> Unit
         }
     }
 

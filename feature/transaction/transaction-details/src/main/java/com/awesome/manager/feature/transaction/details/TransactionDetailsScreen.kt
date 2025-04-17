@@ -13,12 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
-import com.awesome.manager.core.ui.card.BalanceDetails
+import com.awesome.manager.core.ui.card.CardBalanceDetails
 
 @Composable
 fun TransactionDetailsScreen(
@@ -62,9 +62,9 @@ fun TransactionDetailsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
             when (it) {
-                is AmUIState.Error -> Unit
-                is AmUIState.Loading -> Unit
-                is AmUIState.Success -> {
+                is AmState.Error -> Unit
+                is AmState.Loading -> Unit
+                is AmState.Success -> {
                     val account = it.data
                     val balanceDetails = account.balanceDetails
                     AccountCard(
@@ -73,13 +73,13 @@ fun TransactionDetailsScreen(
                         imageUrl = account.imageUrl,
                         loading = account.pending, withDetails = true,
                         onClick = {  },
-                        incomeExpenses = BalanceDetails.IncomeExpenses(
+                        incomeExpenses = CardBalanceDetails.IncomeExpenses(
                             income = balanceDetails.formattedIncome,
                             expenses = balanceDetails.formattedExpenses,
                             netIncomeAbs = balanceDetails.formattedNetIncome,
                             isPositiveIncome = balanceDetails.isPositiveIncome,
                         ),
-                        creditorDebtor = BalanceDetails.CreditorDebtor(
+                        creditorDebtor = CardBalanceDetails.CreditorDebtor(
                             debtor = balanceDetails.formattedDebtor,
                             creditor = balanceDetails.formattedCreditor,
                             netDebtorAbs = balanceDetails.formattedNetDebtor,
@@ -98,7 +98,7 @@ fun TransactionDetailsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
             when (it) {
-                is AmUIState.Success -> {
+                is AmState.Success -> {
                     val transaction = it.data
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -136,8 +136,8 @@ fun TransactionDetailsScreen(
                         )
                     }
                 }
-                is AmUIState.Error -> Unit
-                is AmUIState.Loading -> Unit
+                is AmState.Error -> Unit
+                is AmState.Loading -> Unit
             }
         }
     }

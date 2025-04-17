@@ -1,11 +1,11 @@
 package com.awesome.manager.feature.account.editor
 
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertAccount
-import com.awesome.manager.core.ui.filterSuccessData
+import com.awesome.manager.core.common.filterSuccessData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
@@ -20,8 +20,8 @@ class AccountEditorState(
     val setString: String.(value: String) -> Unit,
     val getString: String.(defaultValue: String) -> StateFlow<String>,
     val transactionTypes: List<AmTransactionType>,
-    val currencies: StateFlow<AmUIState<List<AmCurrency>>>,
-    val accountEditorData: StateFlow<AmUIState<AccountEditorData>>,
+    val currencies: StateFlow<AmState<List<AmCurrency>>>,
+    val accountEditorData: StateFlow<AmState<AccountEditorData>>,
     private val upsertAccount: UpsertAccount.() -> Unit,
 ) {
 

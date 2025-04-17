@@ -15,11 +15,13 @@ import androidx.navigation.toRoute
 import com.awesome.manager.feature.account.accounts.accountsScreen
 import com.awesome.manager.feature.account.details.accountDetailsScreen
 import com.awesome.manager.feature.account.editor.accountEditorScreen
+import com.awesome.manager.feature.account.editor.navigateToAccountCreator
 import com.awesome.manager.feature.home.HomeRoute
 import com.awesome.manager.feature.home.homeScreen
 import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
 import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.transactionsScreen
+import timber.log.Timber
 import kotlin.reflect.KClass
 
 
@@ -36,7 +38,12 @@ fun AmNavHost(
             startDestination = HomeRoute,
         ) {
 
-            homeScreen()
+            homeScreen(
+                navigateToCreateAccount = {
+                    Timber.d("TEST_AM NAVIGATE_TO_CREATE_ACCOUNT")
+                    navHostController.navigateToAccountCreator(null)
+                }
+            )
 
             accountsScreen()
             accountDetailsScreen()

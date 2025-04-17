@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.common.asFormattedNumber
 import com.awesome.manager.core.designsystem.component.text.AmTextField
@@ -32,7 +32,7 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
-import com.awesome.manager.core.ui.card.BalanceDetails
+import com.awesome.manager.core.ui.card.CardBalanceDetails
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -61,7 +61,7 @@ internal fun TransactionEditorScreen(
 ) {
     val context = LocalContext.current
 
-    val transactionEditorData: AmUIState<TransactionEditorData> =
+    val transactionEditorData: AmState<TransactionEditorData> =
         transactionEditorState.transactionEditorData.collectAsState().value
     val selectedAccount: AmAccount? =
         transactionEditorState.account.collectAsStateWithLifecycle().value
@@ -90,9 +90,9 @@ internal fun TransactionEditorScreen(
         label = "TRANSACTION_EDITOR"
     ) {
         when (it) {
-            is AmUIState.Error -> Unit
-            is AmUIState.Loading -> Unit
-            is AmUIState.Success -> {
+            is AmState.Error -> Unit
+            is AmState.Loading -> Unit
+            is AmState.Success -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,13 +106,13 @@ internal fun TransactionEditorScreen(
                             title = account.name, imageUrl = account.imageUrl,
                             loading = account.pending,
                             withDetails = true,
-                            creditorDebtor = BalanceDetails.CreditorDebtor(
+                            creditorDebtor = CardBalanceDetails.CreditorDebtor(
                                 debtor = balanceDetails.formattedDebtor,
                                 creditor = balanceDetails.formattedCreditor,
                                 netDebtorAbs = balanceDetails.formattedNetDebtor,
                                 isPositiveDebtor = balanceDetails.isPositiveDebtor,
                             ),
-                            incomeExpenses = BalanceDetails.IncomeExpenses(
+                            incomeExpenses = CardBalanceDetails.IncomeExpenses(
                                 income = balanceDetails.formattedIncome,
                                 expenses = balanceDetails.formattedExpenses,
                                 netIncomeAbs = balanceDetails.formattedNetIncome,

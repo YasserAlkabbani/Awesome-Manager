@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.accounts
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.UpsertAccount
 import kotlinx.coroutines.flow.Flow
@@ -14,9 +14,9 @@ interface AccountRepository {
 
     fun getAccountByID(accountID: String): Flow<AmAccount>
 
-    fun refreshAccounts(): Flow<AmUIState<List<AmAccount>>>
+    fun refreshAccounts(): Flow<AmState<List<AmAccount>>>
 
-    fun syncPendingAccounts(): Flow<AmUIState<List<AmAccount>>>
+    fun syncPendingAccounts(): Flow<AmState<List<AmAccount>>>
 
     suspend fun deleteAllAccounts()
 

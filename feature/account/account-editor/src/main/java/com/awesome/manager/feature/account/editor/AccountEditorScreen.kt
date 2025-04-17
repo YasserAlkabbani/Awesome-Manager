@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmImage
@@ -59,7 +59,7 @@ internal fun AccountEditorScreen(accountEditorState: AccountEditorState) {
         accountEditorState.selectedTransactionTypeID.collectAsStateWithLifecycle().value
 
     val currencyChipData = remember(currencies) {
-        (currencies as? AmUIState.Success)?.data.orEmpty().map {
+        (currencies as? AmState.Success)?.data.orEmpty().map {
             ChipData(id = it.id, title = it.currencyName)
         }
     }
@@ -77,9 +77,9 @@ internal fun AccountEditorScreen(accountEditorState: AccountEditorState) {
         label = "ACCOUNTS_EDITORS"
     ) {
         when (it) {
-            is AmUIState.Error -> Unit
-            is AmUIState.Loading -> Unit
-            is AmUIState.Success -> {
+            is AmState.Error -> Unit
+            is AmState.Loading -> Unit
+            is AmState.Success -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

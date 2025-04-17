@@ -9,8 +9,8 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.ui.asStateFlow
-import com.awesome.manager.core.ui.asUIState
+import com.awesome.manager.core.common.asStateFlow
+import com.awesome.manager.core.common.asAmState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -57,7 +57,7 @@ class TransactionEditorViewModel @Inject constructor(
                     transaction = transaction,
                 )
             }
-    }.asUIState(scope = viewModelScope)
+    }.asAmState(scope = viewModelScope)
 
     val transactionEditorState: TransactionEditorState =
         TransactionEditorState(

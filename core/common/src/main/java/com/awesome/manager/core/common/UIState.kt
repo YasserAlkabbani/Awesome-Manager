@@ -12,10 +12,10 @@ sealed interface AmUIError {
     data class OtherUIError(val errorMessage: String) : AmUIError
 }
 
-sealed interface AmUIState<out T> {
-    data class Success<T>(val data: T) : AmUIState<T>
-    data class Error(val amUIError: AmUIError) : AmUIState<Nothing>
-    data class Loading(val progress: Int = 0) : AmUIState<Nothing>
+sealed interface AmState<out T> {
+    data class Success<T>(val data: T) : AmState<T>
+    data class Error(val amUIError: AmUIError) : AmState<Nothing>
+    data class Loading(val progress: Int = 0) : AmState<Nothing>
 
     fun isSuccess() = this is Success
     fun isError() = this is Error

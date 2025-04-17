@@ -3,7 +3,6 @@ package com.awesome.manager.feature.account.accounts
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.common.AmUIState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

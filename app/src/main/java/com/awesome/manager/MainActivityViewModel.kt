@@ -3,19 +3,23 @@ package com.awesome.manager
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.AmState.Loading
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
+import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmCurrency
+import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.AmUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,16 +31,44 @@ class MainActivityViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val mainActivityState = MainActivityState(
-        setString = { savedStateHandle[this] = it },
-        getString = { savedStateHandle.getStateFlow(this, it) },
-        isLogin = authRepository.isLogin()
-            .onEach { if (it) refreshData() else clearData() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, null),
-        currentUser = authRepository.currentUser()
-            .stateIn(viewModelScope, SharingStarted.Eagerly, null),
-        logout = ::logout
-    )
+    private val _isLogin: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLogin: StateFlow<Boolean> = _isLogin.asStateFlow()
+
+    private val _currentUser: MutableStateFlow<AmUser?> = MutableStateFlow(null)
+    val currentUser: StateFlow<AmUser?> = _currentUser
+
+    init {
+        syncData()
+    }
+
+    private fun syncData() {
+        syncLoginState()
+        syncCurrentUser()
+        syncPendingAccounts()
+        syncPendingTransactions()
+    }
+
+
+    private fun syncLoginState() = viewModelScope.launch {
+        authRepository.isLogin().collect { isLogin ->
+            _isLogin.update { isLogin }
+        }
+    }
+
+    private fun syncCurrentUser() = viewModelScope.launch {
+        authRepository.currentUser().collect { currentUser ->
+            _currentUser.update { currentUser }
+        }
+    }
+
+    private fun syncPendingAccounts() = viewModelScope.launch {
+
+    }
+
+    private fun syncPendingTransactions() = viewModelScope.launch {
+
+    }
+
 
     private fun logout() {
         viewModelScope.launch {
@@ -48,30 +80,6 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch {
             accountRepository.deleteAllAccounts()
             transactionRepository.deleteTransactions()
-        }
-    }
-
-    private fun refreshData() {
-        viewModelScope.launch {
-            launch {
-                Timber.d("TEST_AM REFRESHING CURRENCY")
-                currencyRepository.refreshCurrency().collect()
-                Timber.d("TEST_AM REFRESHING ACCOUNT")
-                accountRepository.refreshAccounts().collect()
-                Timber.d("TEST_AM REFRESHING TRANSACTIONS")
-                transactionRepository.refreshTransactions().collect()
-                Timber.d("TEST_AM REFRESHING DONE")
-            }
-            launch {
-                accountRepository.syncPendingAccounts().collectLatest {
-                    Timber.d("TEST_AM SYNC_ACCOUNTS $it")
-                }
-            }
-            launch {
-                transactionRepository.synTransactions().collectLatest {
-                    Timber.d("TEST_AM SYNC_TRANSACTIONS $it")
-                }
-            }
         }
     }
 

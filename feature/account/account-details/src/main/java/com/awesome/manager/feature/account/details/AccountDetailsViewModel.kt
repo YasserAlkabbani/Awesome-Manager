@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.ui.asUIState
+import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ class AccountDetailsViewModel @Inject constructor(
     private val accountUIState = accountRepository
         .getAccountByID(accountID = accountID)
         .filterNotNull()
-        .asUIState(viewModelScope)
+        .asAmState(viewModelScope)
 
     val accountDetailsState: AccountDetailsState = AccountDetailsState(
         setString = { savedStateHandle[this] = it },

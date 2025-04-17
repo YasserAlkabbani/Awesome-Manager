@@ -16,8 +16,8 @@ fun NavController.navigateToHome(navOptions: NavOptions) {
     )
 }
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(navigateToCreateAccount:()->Unit) {
     composable<HomeRoute> {
-        HomeScreen()
+        HomeScreenRoute(navigateToCreateAccount)
     }
 }

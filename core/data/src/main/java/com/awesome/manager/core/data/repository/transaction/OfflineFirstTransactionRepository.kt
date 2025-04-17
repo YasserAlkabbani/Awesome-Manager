@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.transaction
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.extention.amInsert
 import com.awesome.manager.core.data.extention.requestUIState
 import com.awesome.manager.core.data.extention.asUIState
@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -67,10 +66,10 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
         val transactionsNetwork =
             transactionNetworkDataSource.returnUpdatedTransactions(lastUpdatedTransactionDateTime)
-        transactionsNetwork.forEach { it.asEntity().upsert() }
+        transactionsNetwork.map { it.asEntity().upsert() }
     }
 
-    override fun synTransactions(): Flow<AmUIState<List<AmTransaction>>> =
+    override fun synTransactions(): Flow<AmState<List<AmTransaction>>> =
         transactionDao.returnPendingTransaction()
             .filterNotNull()
             .distinctUntilChanged()

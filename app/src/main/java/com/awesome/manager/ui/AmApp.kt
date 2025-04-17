@@ -11,10 +11,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -39,18 +39,13 @@ fun AmApp() {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mainActivityViewModel: MainActivityViewModel = viewModel()
-    val mainActivityState = mainActivityViewModel.mainActivityState
 
-    val currentUser = mainActivityState.currentUser.collectAsState().value
-    val loginState = mainActivityState.isLogin.collectAsState().value
 
     val currentBackStack: NavBackStackEntry? =
         navHostController.currentBackStackEntryAsState().value
-    val currentDestination =
-        remember(currentBackStack) { currentBackStack?.destination }
-    val currentMainDestination: MainDestination? = remember(currentDestination) {
+    val currentMainDestination: MainDestination? = remember(currentBackStack?.destination) {
         MainDestination.entries.firstOrNull {
-            currentDestination?.hasRoute(it.route) == true
+            currentBackStack?.destination?.hasRoute(it.route) == true
         }
     }
 

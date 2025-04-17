@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -24,7 +22,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.ui.card.AccountCard
-import com.awesome.manager.core.ui.card.BalanceDetails
+import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,13 +105,13 @@ internal fun AccountsScreen(
 //                                                account.id
 //                                            )
                                         },
-                                        creditorDebtor = BalanceDetails.CreditorDebtor(
+                                        creditorDebtor = CardBalanceDetails.CreditorDebtor(
                                             debtor = balanceDetails.formattedDebtor,
                                             creditor = balanceDetails.formattedCreditor,
                                             netDebtorAbs = balanceDetails.formattedNetDebtor,
                                             isPositiveDebtor = balanceDetails.isPositiveDebtor
                                         ),
-                                        incomeExpenses = BalanceDetails.IncomeExpenses(
+                                        incomeExpenses = CardBalanceDetails.IncomeExpenses(
                                             income = balanceDetails.formattedIncome,
                                             expenses = balanceDetails.formattedExpenses,
                                             netIncomeAbs = balanceDetails.formattedNetIncome,

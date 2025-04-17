@@ -1,10 +1,10 @@
 package com.awesome.manager.core.data.extention
 
 import com.awesome.manager.core.common.AmUIError
-import com.awesome.manager.core.common.AmUIState
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.network.NetworkError
 
-fun Throwable.asAmError(): AmUIState.Error = AmUIState.Error(
+fun Throwable.asAmError(): AmState.Error = AmState.Error(
     when (this) {
         is NetworkError -> when (this) {
             is NetworkError.ConnectionError, is NetworkError.ConvertDataError,

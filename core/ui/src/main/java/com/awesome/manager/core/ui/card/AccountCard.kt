@@ -12,13 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmSize
-import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
-import com.awesome.manager.core.designsystem.icon.AmIcons
 
 
 @Composable
@@ -28,8 +25,8 @@ fun AccountCard(
     imageUrl: String,
     loading: Boolean,
     withDetails: Boolean,
-    creditorDebtor: BalanceDetails.CreditorDebtor,
-    incomeExpenses: BalanceDetails.IncomeExpenses,
+    creditorDebtor: CardBalanceDetails.CreditorDebtor,
+    incomeExpenses: CardBalanceDetails.IncomeExpenses,
     currencySymbol: String,
     onClick: () -> Unit
 ) {
@@ -73,8 +70,8 @@ fun AccountCard(
     imageUrl: String,
     loading: Boolean,
     withDetails: Boolean,
-    creditorDebtor: BalanceDetails.CreditorDebtor,
-    incomeExpenses: BalanceDetails.IncomeExpenses,
+    creditorDebtor: CardBalanceDetails.CreditorDebtor,
+    incomeExpenses: CardBalanceDetails.IncomeExpenses,
     currencySymbol: String,
 ) {
     AmSurface(
@@ -117,13 +114,13 @@ fun AccountCardPreview() {
         modifier = Modifier.width(400.dp),
         title = "TITLE", imageUrl = "",
         loading = true, withDetails = true,
-        creditorDebtor = BalanceDetails.CreditorDebtor(
+        creditorDebtor = CardBalanceDetails.CreditorDebtor(
             creditor = "100.0",
             debtor = "600.0",
             netDebtorAbs = "3000.0",
             isPositiveDebtor = true,
         ),
-        incomeExpenses = BalanceDetails.IncomeExpenses(
+        incomeExpenses = CardBalanceDetails.IncomeExpenses(
             income = "500.0",
             expenses = "300.0",
             netIncomeAbs = "5000.0",

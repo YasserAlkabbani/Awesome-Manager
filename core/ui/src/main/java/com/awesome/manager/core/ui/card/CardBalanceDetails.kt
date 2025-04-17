@@ -3,24 +3,20 @@ package com.awesome.manager.core.ui.card
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmTextWithIcon
 import com.awesome.manager.core.ui.R
 
-sealed interface BalanceDetails {
+sealed interface CardBalanceDetails {
 
     val positiveValue: String
     val negativeValue: String
@@ -38,7 +34,7 @@ sealed interface BalanceDetails {
         val debtor: String,
         val netDebtorAbs: String,
         val isPositiveDebtor: Boolean
-    ) : BalanceDetails {
+    ) : CardBalanceDetails {
 
 
         override val positiveValue: String = creditor
@@ -59,7 +55,7 @@ sealed interface BalanceDetails {
         val expenses:String,
         val netIncomeAbs:String,
         val isPositiveIncome:Boolean,
-    ) : BalanceDetails {
+    ) : CardBalanceDetails {
 
         override val positiveValue: String = income
         override val negativeValue: String = expenses
@@ -77,22 +73,22 @@ sealed interface BalanceDetails {
 
 @Composable
 fun AmBalanceDetailsCard(
-    creditorDebtor: BalanceDetails.CreditorDebtor,
-    incomeExpenses: BalanceDetails.IncomeExpenses,
+    creditorDebtor: CardBalanceDetails.CreditorDebtor,
+    incomeExpenses: CardBalanceDetails.IncomeExpenses,
 ) {
     Row {
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            balanceDetails = creditorDebtor
+            cardBalanceDetails = creditorDebtor
         )
         AmSpacerMediumWidth()
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            balanceDetails = incomeExpenses,
+            cardBalanceDetails = incomeExpenses,
         )
     }
 }
@@ -100,11 +96,11 @@ fun AmBalanceDetailsCard(
 @Composable
 private fun BalanceDetailsRow(
     modifier: Modifier,
-    balanceDetails: BalanceDetails
+    cardBalanceDetails: CardBalanceDetails
 ) {
     Column(modifier = modifier) {
         AmText(
-            text = "${balanceDetails.positiveLabel()}/${balanceDetails.negativeLabel()}",
+            text = "${cardBalanceDetails.positiveLabel()}/${cardBalanceDetails.negativeLabel()}",
             style = MaterialTheme.typography.titleMedium
         )
         AmSurface(
@@ -113,7 +109,7 @@ private fun BalanceDetailsRow(
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = balanceDetails.positiveValue,
+                text = cardBalanceDetails.positiveValue,
                 amIconsType = AmIcons.Input,
             )
         }
@@ -124,18 +120,18 @@ private fun BalanceDetailsRow(
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = balanceDetails.negativeValue,
+                text = cardBalanceDetails.negativeValue,
                 amIconsType = AmIcons.Output,
             )
         }
         AmSpacerSmallHeight()
         AmSurface(
             modifier=Modifier.fillMaxWidth(),
-            isPositive = balanceDetails.isPositiveBalance
+            isPositive = cardBalanceDetails.isPositiveBalance
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
-                text = balanceDetails.balance,
+                text = cardBalanceDetails.balance,
                 amIconsType = AmIcons.Balance,
             )
         }
@@ -147,13 +143,13 @@ private fun BalanceDetailsRow(
 @Composable
 fun AmBalanceDetailsCardPreview() {
     AmBalanceDetailsCard(
-        creditorDebtor = BalanceDetails.CreditorDebtor(
+        creditorDebtor = CardBalanceDetails.CreditorDebtor(
             creditor = "1000.0",
             debtor = "200.0",
             netDebtorAbs = "500.0",
             isPositiveDebtor = true
         ),
-        incomeExpenses = BalanceDetails.IncomeExpenses(
+        incomeExpenses = CardBalanceDetails.IncomeExpenses(
             income = "200",
             expenses = "3400.0",
             netIncomeAbs = "100",

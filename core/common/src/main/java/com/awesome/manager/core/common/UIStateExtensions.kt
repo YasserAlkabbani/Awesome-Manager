@@ -1,55 +1,50 @@
 package com.awesome.manager.core.common
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
+fun <T> MutableStateFlow<AmState<T>>.setData(data: () -> T) =
+    update { AmState.Success(data()) }
 
-fun Long.asDate() =
-    Instant.fromEpochMilliseconds(this)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .run { "$date" }
-
-fun Long.asShortDate() =
-    Instant.fromEpochMilliseconds(this)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .run {
-            val (year, date, time) = date.toString().split("-")
-            "$date.$time.${year.substringAfter("20")}"
-        }
-
-fun Pair<Long, Long>.asDateRange(): String {
-    val (from, to) = this
-    return "${from.asShortDate()} - ${to.asShortDate()}"
-}
-
-fun Long.asDateTimeString() =
-    Instant.fromEpochMilliseconds(this)
-        .toLocalDateTime(TimeZone.UTC).toString()
-
-fun String?.asTimestamp() =
-    Instant.parse(this.orEmpty()).toEpochMilliseconds()
-
-fun Long.asStringDateTime() =
-    Instant.fromEpochMilliseconds(this).toString()
-
-fun currentTime() = Clock.System.now().toEpochMilliseconds()
-
-fun String.asFormattedNumber() = filter { it.isDigit() || it == '.' }
-    .removePrefix("0")
-    .let {
-        val fullNumber = it.split(".")
-        val formattedNumber = fullNumber
-            .getOrNull(0)
-            .let { it.orEmpty().ifBlank { "0" } }
-            .take(16)
-        val formattedDecimalNumber = fullNumber
-            .getOrNull(1)
-            .let { it.orEmpty().ifBlank { "0" } }
-            .take(3)
-        "$formattedNumber.$formattedDecimalNumber"
+fun <T> MutableStateFlow<AmState<T>>.updateData(newData: (T) -> T) =
+    update {
+        if (it is AmState.Success) it.copy(newData(it.data))
+        else it
     }
 
-//fun Long.asData() = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(this)
-//fun String.asLongDate()= Instant.parse(this).toEpochMilliseconds()
+//fun <T> Flow<AmUIState<T>>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
+//    flowOn(Dispatchers.Default)
+//        .stateIn(
+//            scope = scope,
+//            started = SharingStarted.WhileSubscribed(10000),
+//            initialValue = AmUIState.Loading()
+//        )
+
+fun <T> Flow<T>.asAmState(scope: CoroutineScope): StateFlow<AmState<T>> =
+    map { it -> AmState.Success(it) }
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(60000),
+            initialValue = AmState.Loading()
+        )
+
+fun <T> StateFlow<AmState<T>>.filterSuccessData() =
+    filterIsInstance<AmState.Success<T>>()
+        .map { it.data }
+
+fun <T> Flow<T?>.asStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?> =
+    stateIn(
+        scope = scope,
+        initialValue = initValue,
+        started = SharingStarted.WhileSubscribed(60000)
+    )
