@@ -18,8 +18,10 @@ enum class AmTransactionType(val positive: Boolean) {
 }
 
 data class BalanceDetails(
-    private val income: Double, private val expenses: Double,
-    private val debtor: Double, private val creditor: Double,
+    private val income: Double,
+    private val expenses: Double,
+    private val debtor: Double,
+    private val creditor: Double,
     val currency: AmCurrency,
 ) {
 

@@ -4,4 +4,7 @@
     <string name="update_account">Update</string>
     <string name="invalidate_input">Invalidate Input</string>
     <string name="default_transaction_type">Default Transaction Type</string>
+    <string name="validated_input">Validated Input</string>
+    <string name="invalid_input">Invalid Input</string>
+    <string name="create">Create</string>
 </resources>

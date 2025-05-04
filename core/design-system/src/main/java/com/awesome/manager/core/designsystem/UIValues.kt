@@ -11,7 +11,7 @@ enum class AmSize(val value: Dp) {
     MEDIUM(40.dp),
     LARGE(50.dp),
     XX_LARGE(64.dp),
-    XXX_LARGE(82.dp) ,
+    LARGE_IMAGE_SIZE(82.dp) ,
     BOTTOM_NAVIGATION_HEIGHT(90.dp) ,
     XXXX_LARGE(120.dp),
     LOADING_INDICATOR_HEIGHT(10.dp)
@@ -27,9 +27,13 @@ enum class AmPadding(val value: Dp) {
     XX_SMALL(2.dp),
     CARD_SURFACE_INDICATOR(3.dp),
     SMALL(4.dp),
+    COULMN_ITEMS_PADDING(12.dp),
+    TOP_PADDING(16.dp),
+    LARGE_IMAGE_PADDING(16.dp),
+    HORIZONTAL_PADDING(8.dp),
     MEDIUM(6.dp),
     LARGE(8.dp),
     Details(24.dp),
     XX_LARGE(16.dp),
-    BUTTON(10.dp),
+    BUTTON(12.dp),
 }

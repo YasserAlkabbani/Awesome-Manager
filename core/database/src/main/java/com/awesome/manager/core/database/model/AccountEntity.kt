@@ -9,7 +9,7 @@ import androidx.room.Relation
 @Entity(tableName = "accounts")
 data class AccountEntity(
     @ColumnInfo("account_id") @PrimaryKey val id: String,
-    @ColumnInfo("creator_user_id") val creatorUserId: String,
+    @ColumnInfo("creator_user_id") val creatorUserID: String,
     @ColumnInfo("currency_id") val currencyId: String,
     @ColumnInfo("default_transaction_type") val defaultTransactionType: String,
     @ColumnInfo("name") val name: String,

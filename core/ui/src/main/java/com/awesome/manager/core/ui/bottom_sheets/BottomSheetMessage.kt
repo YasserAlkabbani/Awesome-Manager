@@ -37,7 +37,7 @@ fun AmBottomSheetMessage(
         ) {
             AmText(
                 modifier = Modifier.wrapContentWidth(), text = title,
-                style = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 maxLines = 2
             )
@@ -45,7 +45,7 @@ fun AmBottomSheetMessage(
         Spacer(modifier = Modifier.height(AmPadding.MEDIUM.value))
         AmText(
             modifier = Modifier.fillMaxWidth(),
-            text = subtitle, style = MaterialTheme.typography.bodyLarge,
+            text = subtitle, textStyle = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center, maxLines = 5
         )
         Spacer(modifier = Modifier.height(AmPadding.XX_LARGE.value))
@@ -57,7 +57,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                isPositive = button.positive,
+                isError = button.positive == true,
                 onClick = button.onClick,
                 amIconsType = null
             )
@@ -67,7 +67,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                isPositive = button.positive,
+                isError = button.positive == true,
                 onClick = button.onClick,
                 amIconsType = null
             )
@@ -77,7 +77,7 @@ fun AmBottomSheetMessage(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = button.text,
-                isPositive = button.positive,
+                isError = button.positive == true,
                 onClick = button.onClick,
                 amIconsType = null
             )

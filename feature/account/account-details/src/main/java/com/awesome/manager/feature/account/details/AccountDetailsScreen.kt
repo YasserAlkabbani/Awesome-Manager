@@ -16,7 +16,7 @@ import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.text.getString
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.CardBalanceDetails
@@ -46,7 +46,7 @@ internal fun AccountDetailsScreen(
 @Composable
 internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
 
-    val accountState: AmState<AmAccount> =
+    val accountState: AmState<AmAccountWithBalance> =
         accountDetailsState.account.collectAsStateWithLifecycle().value
 //    val refreshingTransactions: Boolean =
 //        accountDetailsState.refreshing.collectAsStateWithLifecycle().value
@@ -66,8 +66,8 @@ internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AmPadding.Details.value),
                 ) {
-                    val account = it.data
-                    val balanceDetails = account.balanceDetails
+                    val account = it.data.account
+                    val balanceDetails = it.data.balanceDetails
                     AccountCard(
                         modifier = Modifier,
                         title = account.name,

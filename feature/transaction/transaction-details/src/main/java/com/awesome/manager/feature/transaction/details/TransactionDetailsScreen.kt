@@ -65,8 +65,8 @@ fun TransactionDetailsScreen(
                 is AmState.Error -> Unit
                 is AmState.Loading -> Unit
                 is AmState.Success -> {
-                    val account = it.data
-                    val balanceDetails = account.balanceDetails
+                    val account = it.data.account
+                    val balanceDetails = it.data.balanceDetails
                     AccountCard(
                         modifier = Modifier.fillMaxWidth(),
                         title = account.name,

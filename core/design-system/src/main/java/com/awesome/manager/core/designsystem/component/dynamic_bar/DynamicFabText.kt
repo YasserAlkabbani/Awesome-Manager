@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.R
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 
@@ -22,7 +21,7 @@ fun AmDynamicText(
         AmText(
             modifier = Modifier,
             text = stringResource(dynamicFabText.text),
-            style = MaterialTheme.typography.titleMedium,
+            textStyle = MaterialTheme.typography.titleMedium,
         )
     }
 }

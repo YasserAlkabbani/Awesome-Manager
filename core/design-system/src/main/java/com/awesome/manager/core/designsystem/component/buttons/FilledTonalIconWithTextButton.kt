@@ -36,7 +36,7 @@ fun AmFilledTonalIconWithTextButton(
         ) {
             AmIcon(modifier = Modifier, amIconsType = amIconsType)
             AmSpacerMediumWidth()
-            AmText(text = text, style = MaterialTheme.typography.titleMedium)
+            AmText(text = text, textStyle = MaterialTheme.typography.titleMedium)
         }
     }
 

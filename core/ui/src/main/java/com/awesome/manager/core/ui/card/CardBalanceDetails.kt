@@ -101,7 +101,7 @@ private fun BalanceDetailsRow(
     Column(modifier = modifier) {
         AmText(
             text = "${cardBalanceDetails.positiveLabel()}/${cardBalanceDetails.negativeLabel()}",
-            style = MaterialTheme.typography.titleMedium
+            textStyle = MaterialTheme.typography.titleMedium
         )
         AmSurface(
             modifier=Modifier.fillMaxWidth(),

@@ -3,15 +3,10 @@ package com.awesome.manager
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.common.AmState
-import com.awesome.manager.core.common.AmState.Loading
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.AmCurrency
-import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

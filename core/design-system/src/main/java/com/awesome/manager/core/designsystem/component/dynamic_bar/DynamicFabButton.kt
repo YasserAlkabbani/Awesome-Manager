@@ -14,7 +14,7 @@ fun AmFabButton(dynamicFabButton: DynamicFabButton) {
     AmButton(
         modifier = Modifier,
         text = stringResource(dynamicFabButton.text),
-        isPositive = dynamicFabButton.isPositive,
+        isError = dynamicFabButton.isPositive,
         amIconsType = dynamicFabButton.amIconsType,
         onClick = dynamicFabButton.onClick
     )

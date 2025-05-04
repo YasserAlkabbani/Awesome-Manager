@@ -28,7 +28,7 @@ import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
@@ -63,7 +63,7 @@ internal fun TransactionEditorScreen(
 
     val transactionEditorData: AmState<TransactionEditorData> =
         transactionEditorState.transactionEditorData.collectAsState().value
-    val selectedAccount: AmAccount? =
+    val selectedAccount: AmAccountWithBalance? =
         transactionEditorState.account.collectAsStateWithLifecycle().value
 
     val title: String = transactionEditorState.title.collectAsStateWithLifecycle().value
@@ -99,8 +99,9 @@ internal fun TransactionEditorScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    selectedAccount?.let { account ->
-                        val balanceDetails = account.balanceDetails
+                    selectedAccount?.let { accountWithBalance ->
+                        val account=accountWithBalance.account
+                        val balanceDetails = accountWithBalance.balanceDetails
                         AccountCard(
                             modifier = Modifier,
                             title = account.name, imageUrl = account.imageUrl,

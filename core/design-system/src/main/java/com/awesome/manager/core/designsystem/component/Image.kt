@@ -23,7 +23,7 @@ import coil.request.ImageRequest
 import com.awesome.manager.core.designsystem.AmPadding
 
 @Composable
-fun AmImage(modifier: Modifier, imageUrl: String) {
+fun AmImage(modifier: Modifier, imageUrl: String?) {
 
     val placeHolderPainter = rememberVectorPainter(image = Icons.Default.Downloading)
     val errorPainter = rememberVectorPainter(image = Icons.Default.ErrorOutline)

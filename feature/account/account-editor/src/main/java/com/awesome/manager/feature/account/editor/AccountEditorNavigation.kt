@@ -28,6 +28,6 @@ fun NavController.navigateToAccountCreator(navOptions: NavOptions?) {
 
 fun NavGraphBuilder.accountEditorScreen() {
     composable<AccountEditorRoute> {
-        AccountEditorScreen()
+        AccountEditorRoute()
     }
 }

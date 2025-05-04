@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 
 @Composable
@@ -25,12 +24,12 @@ fun AmTextWithLabel(
                 AmText(
                     modifier = Modifier.fillMaxWidth(),
                     text = label.orEmpty(),
-                    style = MaterialTheme.typography.titleMedium
+                    textStyle = MaterialTheme.typography.titleMedium
                 )
                 AmText(
                     modifier = Modifier.fillMaxWidth(),
                     text = text.orEmpty(), maxLines = maxLines,
-                    style = MaterialTheme.typography.bodyMedium
+                    textStyle = MaterialTheme.typography.bodyMedium
                 )
             }
         }

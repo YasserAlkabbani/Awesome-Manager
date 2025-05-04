@@ -1,7 +1,6 @@
 package com.awesome.manager.feature.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,7 @@ import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
@@ -47,7 +46,7 @@ internal fun HomeScreenRoute(
         homeViewModel.balanceDetails.collectAsStateWithLifecycle().value
     val currencies: AmState<List<AmCurrency>> =
         homeViewModel.currencies.collectAsStateWithLifecycle().value
-    val accounts: AmState<List<AmAccount>> =
+    val accounts: AmState<List<AmAccountWithBalance>> =
         homeViewModel.accounts.collectAsStateWithLifecycle().value
     val transactions: AmState<List<AmTransaction>> =
         homeViewModel.transactions.collectAsStateWithLifecycle().value
@@ -66,7 +65,7 @@ internal fun HomeScreenRoute(
 internal fun HomeScreen(
     balanceDetailsState: AmState<List<BalanceDetails>>,
     currencies: AmState<List<AmCurrency>>,
-    accounts: AmState<List<AmAccount>>,
+    accounts: AmState<List<AmAccountWithBalance>>,
     transactions: AmState<List<AmTransaction>>,
     navigateToCreateAccount: () -> Unit
 ) {
@@ -148,7 +147,7 @@ fun LoadingDataState(amState: AmState<Any>) {
         when (amState) {
             is AmState.Error -> AmButton(
                 text = "Retry",
-                isPositive = false,
+                isError = false,
                 amIconsType = AmIcons.Retry,
                 onClick = {}
             )
@@ -193,11 +192,11 @@ fun HomeCard(
             ) {
                 AmText(
                     text = "Cash (${currencyCode})",
-                    style = MaterialTheme.typography.titleLarge
+                    textStyle = MaterialTheme.typography.titleLarge
                 )
                 AmText(
                     text = "$netCash $currencySymbol",
-                    style = MaterialTheme.typography.titleLarge
+                    textStyle = MaterialTheme.typography.titleLarge
                 )
 
 

@@ -44,18 +44,18 @@ fun TransactionCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    text = account, style = MaterialTheme.typography.titleMedium,
+                    text = account, textStyle = MaterialTheme.typography.titleMedium,
                 )
                 AmText(
                     modifier = Modifier.wrapContentWidth(),
                     text = "$amount $currency",
-                    style = MaterialTheme.typography.titleMedium,
+                    textStyle = MaterialTheme.typography.titleMedium,
                 )
             }
             AmText(
                 modifier = Modifier.fillMaxWidth(),
                 text = title.ifBlank { stringResource(R.string.no_title) },
-                style = MaterialTheme.typography.bodyMedium
+                textStyle = MaterialTheme.typography.bodyMedium
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

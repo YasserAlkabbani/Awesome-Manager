@@ -39,9 +39,9 @@ fun MenuItem(
             }
             AmSpacerSmallWidth()
             Column {
-                AmText(text = title.asText(), style = MaterialTheme.typography.titleLarge)
+                AmText(text = title.asText(), textStyle = MaterialTheme.typography.titleLarge)
                 AmSpacerSmallWidth()
-                AmText(text = subTitle.asText(), style = MaterialTheme.typography.labelMedium)
+                AmText(text = subTitle.asText(), textStyle = MaterialTheme.typography.labelMedium)
             }
         }
     }

@@ -9,7 +9,7 @@ import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.BalanceDetails
@@ -37,8 +37,8 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow(Loading())
     val currencies: StateFlow<AmState<List<AmCurrency>>> = _currencies.asStateFlow()
 
-    private val _accounts: MutableStateFlow<AmState<List<AmAccount>>> = MutableStateFlow(Loading())
-    val accounts: StateFlow<AmState<List<AmAccount>>> = _accounts.asStateFlow()
+    private val _accounts: MutableStateFlow<AmState<List<AmAccountWithBalance>>> = MutableStateFlow(Loading())
+    val accounts: StateFlow<AmState<List<AmAccountWithBalance>>> = _accounts.asStateFlow()
 
     private val _transactions: MutableStateFlow<AmState<List<AmTransaction>>> =
         MutableStateFlow(Loading())

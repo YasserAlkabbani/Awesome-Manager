@@ -1,15 +1,13 @@
 package com.awesome.manager.core.designsystem.component.buttons
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
-import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -19,28 +17,31 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmButton(
     modifier: Modifier = Modifier,
     text: String,
-    isPositive: Boolean?,
+    isError: Boolean,
     onClick: () -> Unit,
     amIconsType: AmIconsType.ImageVictorAmIconsType?
 ) {
-    AmCard(
+    Button(
         modifier = modifier,
-        padding = AmPadding.BUTTON,
-        isPositive = isPositive,
-        onClick = onClick,
         content = {
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AmText(
-                    text = text.uppercase(),
-                    style = MaterialTheme.typography.titleSmall
+            amIconsType?.let {
+                AmIcon(
+                    modifier = Modifier,
+                    amIconsType = amIconsType,
                 )
-                AmSpacerLargeWidth()
-                amIconsType?.let { AmIcon(amIconsType = amIconsType) }
             }
-        }
+            AmText(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = text
+            )
+        },
+        colors = when (isError) {
+            false -> ButtonDefaults.buttonColors()
+            true -> ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        },
+        onClick = onClick
     )
 }
 
@@ -49,7 +50,7 @@ fun AmButton(
 fun AmButtonPreview() {
     AmButton(
         text = "CLICK ME !!",
-        isPositive = true,
+        isError = false,
         onClick = {},
         amIconsType = AmIcons.Save
     )

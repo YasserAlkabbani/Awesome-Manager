@@ -46,10 +46,10 @@ fun AccountCard(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    AmText(text = title, style = MaterialTheme.typography.titleMedium)
+                    AmText(text = title, textStyle = MaterialTheme.typography.titleMedium)
                     AmText(
                         text = "${creditorDebtor.balance} $currencySymbol",
-                        style = MaterialTheme.typography.titleMedium
+                        textStyle = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -89,10 +89,10 @@ fun AccountCard(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    AmText(text = title, style = MaterialTheme.typography.titleMedium)
+                    AmText(text = title, textStyle = MaterialTheme.typography.titleMedium)
                     AmText(
                         text = "${creditorDebtor.balance} $currencySymbol",
-                        style = MaterialTheme.typography.titleMedium
+                        textStyle = MaterialTheme.typography.titleMedium
                     )
                 }
             }

@@ -90,7 +90,7 @@ fun AuthScreen(
                     AmText(
                         modifier = Modifier,
                         text = stringResource(R.string.awesome_manager),
-                        style = MaterialTheme.typography.titleLarge,
+                        textStyle = MaterialTheme.typography.titleLarge,
                     )
                 }
             }

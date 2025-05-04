@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.chips.AmChip
 import com.awesome.manager.core.designsystem.component.text.AmText
 
@@ -26,19 +27,17 @@ fun AmChipsContainer(
 ) {
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         AmText(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = AmPadding.HORIZONTAL_PADDING.value),
             text = title,
-            style = MaterialTheme.typography.titleLarge
+            textStyle = MaterialTheme.typography.titleLarge
         )
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp)
+            contentPadding = PaddingValues(horizontal = AmPadding.HORIZONTAL_PADDING.value)
         ) {
             items(
                 items = chipDataList,

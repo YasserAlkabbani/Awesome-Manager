@@ -38,7 +38,7 @@ class TransactionEditorViewModel @Inject constructor(
                 val transactionType: AmTransactionType? = when (accountID) {
                     null -> null
                     else -> accountRepository.getAccountByID(accountID)
-                        .first().defaultTransactionType
+                        .first().account.defaultTransactionType
                 }
                 TransactionEditorData.CreateTransaction(
                     creatorUserID = currentUser.id,

@@ -48,8 +48,8 @@ fun AmSwitch(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
-                AmText(text = title, style = MaterialTheme.typography.titleMedium)
-                AmText(text = subtitle, style = MaterialTheme.typography.bodyMedium)
+                AmText(text = title, textStyle = MaterialTheme.typography.titleMedium)
+                AmText(text = subtitle, textStyle = MaterialTheme.typography.bodyMedium)
             }
             Switch(
                 modifier = modifier,

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,6 +26,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
+import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.feature.account.accounts.navigateToAccounts
 import com.awesome.manager.feature.home.navigateToHome
 import com.awesome.manager.feature.transaction.transactions.navigateToTransactions
@@ -66,7 +72,15 @@ fun AppScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            floatingActionButtonPosition = FabPosition.End,
+//            floatingActionButtonPosition = FabPosition.End,
+//            floatingActionButton = {
+//                ExtendedFloatingActionButton(
+//                    icon = { AmIcon(amIconsType = AmIcons.AccountAdd) },
+//                    text = { AmText(text="ADD") },
+//                    onClick = {},
+//
+//                )
+//            },
             bottomBar = {
                 AmBottomNavigation(
                     currentMainDestination = currentMainDestination,

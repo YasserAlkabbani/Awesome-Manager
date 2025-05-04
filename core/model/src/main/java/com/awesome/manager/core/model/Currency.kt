@@ -9,17 +9,17 @@ data class AmCurrency(
     val currencySymbol: String,
     val createdAt: Long,
     val updatedAt: Long
-){
-    companion object{
-        fun createDemo()=AmCurrency(
-            id="CURRENCY",
-            countryName="USA",
-            imageUrl="",
-            currencyCode="USD",
-            currencyName="DOLLAR",
-            currencySymbol="$",
-            createdAt=System.currentTimeMillis(),
-            updatedAt=System.currentTimeMillis(),
+) {
+    companion object {
+        fun createDemo() = AmCurrency(
+            id = "CURRENCY",
+            countryName = "USA",
+            imageUrl = "",
+            currencyCode = "USD",
+            currencyName = "DOLLAR",
+            currencySymbol = "$",
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis(),
         )
     }
 }

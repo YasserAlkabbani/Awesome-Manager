@@ -30,6 +30,9 @@ fun CurrencyEntity.asModel() = AmCurrency(
 )
 
 fun CurrencyEntityWithData.asModel() = BalanceDetails(
-    currency = currencyEntity.asModel(),
-    income = income, expenses = expenses, debtor = debtor, creditor = creditor,
+    income = income,
+    expenses = expenses,
+    debtor = debtor,
+    creditor = creditor,
+    currency = currencyEntity.asModel()
 )

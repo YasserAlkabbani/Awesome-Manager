@@ -13,7 +13,6 @@ fun AmDynamicFabExtraButton(
     AmIconButton(
         modifier = Modifier,
         amIconsType = dynamicFabExtraButton.amIconsType,
-        isPositive = dynamicFabExtraButton.isPositive,
         onClick = dynamicFabExtraButton.onClick,
     )
 }

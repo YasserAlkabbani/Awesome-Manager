@@ -20,7 +20,7 @@ import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -90,10 +90,11 @@ internal fun AccountsScreen(
                         items(
                             count = accountsLazyPaging.itemCount,
                             contentType = { LAZY_ITEM_ACCOUNT },
-                            key = accountsLazyPaging.itemKey { it.id },
+                            key = accountsLazyPaging.itemKey { it.account.accountID },
                             itemContent = { index ->
-                                accountsLazyPaging[index]?.let { account ->
-                                    val balanceDetails = account.balanceDetails
+                                accountsLazyPaging[index]?.let { accountWithBalance ->
+                                    val balanceDetails = accountWithBalance.balanceDetails
+                                    val account = accountWithBalance.account
                                     AccountCard(
                                         modifier = Modifier.animateItem(),
                                         title = account.name,
@@ -117,7 +118,7 @@ internal fun AccountsScreen(
                                             netIncomeAbs = balanceDetails.formattedNetIncome,
                                             isPositiveIncome = balanceDetails.isPositiveIncome,
                                         ),
-                                        currencySymbol = balanceDetails.currency.currencySymbol,
+                                        currencySymbol = account.currency.currencySymbol,
                                     )
                                 }
                             }
@@ -134,7 +135,7 @@ internal fun AccountsScreen(
 fun AccountsScreenPreview() {
     val accountsList = buildList {
         repeat(20) {
-            add(AmAccount.createDemo(it))
+            add(AmAccountWithBalance.createDemo(it))
         }
     }
     val accountState = AccountsState(

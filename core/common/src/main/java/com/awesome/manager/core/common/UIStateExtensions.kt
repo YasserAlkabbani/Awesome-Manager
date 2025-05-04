@@ -3,23 +3,21 @@ package com.awesome.manager.core.common
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 
-fun <T> MutableStateFlow<AmState<T>>.setData(data: () -> T) =
-    update { AmState.Success(data()) }
-
-fun <T> MutableStateFlow<AmState<T>>.updateData(newData: (T) -> T) =
-    update {
-        if (it is AmState.Success) it.copy(newData(it.data))
-        else it
-    }
+//fun <T> MutableStateFlow<AmState<T>>.setData(data: () -> T) =
+//    update { AmState.Success(data()) }
+//
+//fun <T> MutableStateFlow<AmState<T>>.updateData(newData: (T) -> T) =
+//    update {
+//        if (it is AmState.Success) it.copy(newData(it.data))
+//        else it
+//    }
 
 //fun <T> Flow<AmUIState<T>>.asUIState(scope: CoroutineScope): StateFlow<AmUIState<T>> =
 //    flowOn(Dispatchers.Default)
@@ -38,9 +36,10 @@ fun <T> Flow<T>.asAmState(scope: CoroutineScope): StateFlow<AmState<T>> =
             initialValue = AmState.Loading()
         )
 
-fun <T> StateFlow<AmState<T>>.filterSuccessData() =
+fun <T> StateFlow<AmState<T>>.filterSuccess() =
     filterIsInstance<AmState.Success<T>>()
         .map { it.data }
+
 
 fun <T> Flow<T?>.asStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?> =
     stateIn(
@@ -48,3 +47,8 @@ fun <T> Flow<T?>.asStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?
         initialValue = initValue,
         started = SharingStarted.WhileSubscribed(60000)
     )
+
+fun <T> AmState<T>.dataOrNull() = when (this) {
+    is AmState.Success -> data
+    else -> null
+}

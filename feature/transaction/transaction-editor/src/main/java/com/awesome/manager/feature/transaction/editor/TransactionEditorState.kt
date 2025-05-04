@@ -2,11 +2,11 @@ package com.awesome.manager.feature.transaction.editor
 
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmState
-import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.common.filterSuccessData
+import com.awesome.manager.core.common.filterSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,8 +30,8 @@ class TransactionEditorState(
     val getLong: String.(defaultValue: Long) -> StateFlow<Long>,
     val transactionTypes: List<AmTransactionType>,
     val transactionEditorData: StateFlow<AmState<TransactionEditorData>>,
-    val accountsSearchResults: String.() -> Flow<PagingData<AmAccount>>,
-    private val getAccountById: StateFlow<String>.() -> StateFlow<AmAccount?>,
+    val accountsSearchResults: String.() -> Flow<PagingData<AmAccountWithBalance>>,
+    private val getAccountById: StateFlow<String>.() -> StateFlow<AmAccountWithBalance?>,
     private val upsertTransaction: UpsertTransaction.() -> Unit,
 ){
 
@@ -56,10 +56,10 @@ class TransactionEditorState(
 
     fun updateAccount(accountID: String) = TRANSACTION_ACCOUNT_ID.setString(accountID)
     val accountID: StateFlow<String> = TRANSACTION_ACCOUNT_ID.getString("")
-    val account: StateFlow<AmAccount?> = accountID.getAccountById()
+    val account: StateFlow<AmAccountWithBalance?> = accountID.getAccountById()
 
     val transactionEditorUI = transactionEditorData
-        .filterSuccessData()
+        .filterSuccess()
         .setInitData()
         .flatMapLatest { transactionEditorData ->
             combine(title, subtitle, amount, transactionAt, selectedTransactionTypeID, accountID) {

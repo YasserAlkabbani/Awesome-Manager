@@ -22,7 +22,7 @@ fun AmFilledTonalButton(
         content = {
             AmText(
                 modifier = Modifier.padding(horizontal = AmPadding.SMALL.value),
-                style = MaterialTheme.typography.titleMedium,
+                textStyle = MaterialTheme.typography.titleMedium,
                 text = text,
             )
         }

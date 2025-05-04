@@ -4,7 +4,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,7 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.KeyboardActionHandler
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -34,6 +38,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmIcon
@@ -41,7 +46,50 @@ import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import java.lang.Error
+
+@Composable
+fun AmTextField(
+    modifier: Modifier = Modifier,
+    textFieldState: TextFieldState,
+    icon: AmIconsType.ImageVictorAmIconsType? = null,
+    label: String? = null,
+    hint: String,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    onKeyboardAction: () -> Unit = {},
+    formatText: String.() -> String = { this }
+) {
+    OutlinedTextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 42.dp),
+        state = textFieldState,
+        enabled = enabled,
+        placeholder = { AmText(text = hint) },
+        label = label?.let { { AmText(text = label) } },
+        leadingIcon = {
+            icon?.let {
+                AmIcon(
+                    modifier = Modifier.height(IntrinsicSize.Max),
+                    amIconsType = icon
+                )
+            }
+        },
+        textStyle = MaterialTheme.typography.titleMedium,
+        shape = MaterialTheme.shapes.large,
+        lineLimits = lineLimits,
+        keyboardOptions = keyboardOptions,
+        onKeyboardAction = KeyboardActionHandler({
+            it()
+            onKeyboardAction()
+        }),
+//        keyboardActions = keyboardActions,
+        isError = isError,
+        contentPadding = PaddingValues(0.dp)
+    )
+}
 
 @Composable
 fun AmTextField(
@@ -195,7 +243,7 @@ fun AmPasswordTextField(
                     AmText(
                         modifier = Modifier.wrapContentHeight(),
                         text = label,
-                        style = MaterialTheme.typography.titleMedium
+                        textStyle = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -226,7 +274,6 @@ fun AmPasswordTextField(
                         modifier = Modifier.size(AmSize.SMALL.value),
                         onClick = { passwordHidden = !passwordHidden },
                         amIconsType = if (passwordHidden) AmIcons.VisibilityOff else AmIcons.Visibility,
-                        isPositive = null
                     )
                 },
                 colors = TextFieldDefaults.colors(

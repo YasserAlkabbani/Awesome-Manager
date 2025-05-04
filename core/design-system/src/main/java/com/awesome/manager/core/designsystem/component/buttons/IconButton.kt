@@ -15,25 +15,18 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmIconButton(
     modifier: Modifier = Modifier,
     amIconsType: AmIconsType.ImageVictorAmIconsType,
-    isPositive: Boolean?,
     onClick: () -> Unit
 ) {
-    AmCard(
+    IconButton(
         modifier = modifier,
-        padding = AmPadding.ZERO,
-        shape = MaterialTheme.shapes.large,
-        isPositive = isPositive
-    ) {
-        IconButton(
-            modifier = Modifier,
-            onClick = onClick,
-        ) {
+        onClick = onClick,
+        content = {
             AmIcon(
                 modifier = Modifier,
-                amIconsType = amIconsType
+                amIconsType = amIconsType,
             )
         }
-    }
+    )
 }
 
 @Preview
@@ -42,7 +35,6 @@ fun AmIconButtonPreview() {
     AmIconButton(
         modifier = Modifier,
         amIconsType = AmIcons.ArrowBack,
-        isPositive = true,
         onClick = {}
     )
 }
