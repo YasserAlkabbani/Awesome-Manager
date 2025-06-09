@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.text.AmText
@@ -17,40 +18,43 @@ import com.awesome.manager.core.designsystem.icon.AmIconsType
 fun AmButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = true,
     isError: Boolean,
     onClick: () -> Unit,
     amIconsType: AmIconsType.ImageVictorAmIconsType?
 ) {
     Button(
         modifier = modifier,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors().run {
+            when (isError) {
+                true -> copy(containerColor = MaterialTheme.colorScheme.error)
+                false -> this
+            }
+        },
         content = {
+            AmText(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = text
+            )
             amIconsType?.let {
                 AmIcon(
                     modifier = Modifier,
                     amIconsType = amIconsType,
                 )
             }
-            AmText(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = text
-            )
-        },
-        colors = when (isError) {
-            false -> ButtonDefaults.buttonColors()
-            true -> ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
-            )
         },
         onClick = onClick
     )
 }
 
-@Preview
+@Preview(device = PIXEL_4_XL)
 @Composable
 fun AmButtonPreview() {
     AmButton(
         text = "CLICK ME !!",
-        isError = false,
+        enabled = false,
+        isError = true,
         onClick = {},
         amIconsType = AmIcons.Save
     )

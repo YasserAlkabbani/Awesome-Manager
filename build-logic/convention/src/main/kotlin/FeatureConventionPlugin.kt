@@ -29,6 +29,7 @@ class FeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("lifecycle.viewmodel.compose").get())
 
                 add("implementation", libs.findLibrary("navigation.compose").get())
+                add("implementation", libs.findLibrary("compose.material.navigation").get())
 
                 add("implementation", libs.findLibrary("paging.compose").get())
 

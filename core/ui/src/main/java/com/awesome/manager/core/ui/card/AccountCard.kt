@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmImage
-import com.awesome.manager.core.designsystem.component.AmSpacerLargeWidth
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 
@@ -40,7 +39,6 @@ fun AccountCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmImage(modifier = Modifier.size(AmSize.LARGE.value), imageUrl = imageUrl)
-                AmSpacerLargeWidth()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,7 +81,6 @@ fun AccountCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AmImage(modifier = Modifier.size(AmSize.LARGE.value), imageUrl = imageUrl)
-                AmSpacerLargeWidth()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

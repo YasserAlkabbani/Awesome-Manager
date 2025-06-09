@@ -6,44 +6,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.awesome.manager.core.designsystem.AmPadding
 
 @Composable
-fun AmSpacerXSmallWidth() {
-    Spacer(modifier = Modifier.width(2.dp))
+fun AmSpacerHeight(amSpacer: AmPadding){
+    Spacer(modifier = Modifier.height(amSpacer.value))
 }
-
 @Composable
-fun AmSpacerSmallWidth() {
-    Spacer(modifier = Modifier.width(4.dp))
-}
-
-@Composable
-fun AmSpacerMediumWidth() {
-    Spacer(modifier = Modifier.width(8.dp))
-}
-
-@Composable
-fun AmSpacerLargeWidth() {
-    Spacer(modifier = Modifier.width(16.dp))
-}
-
-
-@Composable
-fun AmSpacerXSmallHeight() {
-    Spacer(modifier = Modifier.height(2.dp))
-}
-
-@Composable
-fun AmSpacerSmallHeight() {
-    Spacer(modifier = Modifier.height(4.dp))
-}
-
-@Composable
-fun AmSpacerMediumHeight() {
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun AmSpacerLargeHeight() {
-    Spacer(modifier = Modifier.height(16.dp))
+fun AmSpacerWidth(amSpacer:AmPadding){
+    Spacer(modifier = Modifier.width(amSpacer.value))
 }

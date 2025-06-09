@@ -1,5 +1,5 @@
 package com.awesome.manager.core.designsystem.component.text
 
-import androidx.compose.foundation.text.input.TextFieldState
-
-fun TextFieldState.isValidAccountName() = text.isNotEmpty()
+fun String.isValidAccountName() = isNotEmpty()
+fun String.isValidEmail() = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+fun String.isValidPassword() = length > 5

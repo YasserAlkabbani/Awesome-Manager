@@ -9,7 +9,7 @@ import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
-import com.awesome.manager.core.common.asStateFlow
+import com.awesome.manager.core.common.asNullableStateFlow
 import com.awesome.manager.core.common.asAmState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
@@ -72,7 +72,7 @@ class TransactionEditorViewModel @Inject constructor(
             getAccountById = {
                 filter { it.isNotBlank() }
                     .flatMapLatest { accountRepository.getAccountByID(it) }
-                    .asStateFlow(viewModelScope, null)
+                    .asNullableStateFlow(viewModelScope, null)
             },
         )
 

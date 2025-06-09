@@ -19,9 +19,11 @@ import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -55,6 +57,11 @@ class AccountEditorViewModel @Inject constructor(
 
     fun setTransactionTypeID(transactionType: String) = ssh.set(TRANSACTION_TYPE, transactionType)
     val transactionTypeID: StateFlow<String> = ssh.getStateFlow(TRANSACTION_TYPE, "")
+
+    private val _popup: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val popup: StateFlow<Boolean> = _popup
+    fun requestPopup()=_popup.update { true }
+    fun donePopup()=_popup.update { false }
 
     init {
         setInitData()
@@ -126,6 +133,7 @@ class AccountEditorViewModel @Inject constructor(
                         updatedAt = updatedAt,
                     )
                     accountRepository.upsertAccount(amAccountWithBalance)
+                    requestPopup()
                 }
             }
         }

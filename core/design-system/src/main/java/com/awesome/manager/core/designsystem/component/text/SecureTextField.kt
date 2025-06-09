@@ -5,33 +5,34 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
+import androidx.compose.material3.SecureTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.buttons.AmIconButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 
 @Composable
-fun AmTextField(
+fun AmSecureTextField(
     modifier: Modifier = Modifier,
     textFieldState: TextFieldState,
     icon: AmIconsType.ImageVictorAmIconsType? = null,
     placeHolder: String,
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: () -> Unit = {},
@@ -39,6 +40,7 @@ fun AmTextField(
 ) {
 
     val focusRequested: MutableState<Boolean> = remember { mutableStateOf(false) }
+    var passwordHidden: MutableState<Boolean> = remember { mutableStateOf(true) }
     val validateInput: Boolean = remember(textFieldState.text, isValidateInput) {
         when {
             isValidateInput -> true
@@ -46,7 +48,7 @@ fun AmTextField(
             else -> false
         }
     }
-    TextField(
+    SecureTextField(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = AmSize.TEXT_FIELD_MINIMUM_HEIGHT.value)
@@ -62,34 +64,44 @@ fun AmTextField(
                 )
             }
         },
+        trailingIcon = {
+            AmIconButton(
+                modifier = Modifier.size(AmSize.SMALL.value),
+                onClick = { passwordHidden.value = !passwordHidden.value },
+                amIconsType = when (passwordHidden.value) {
+                    true -> AmIcons.VisibilityOff
+                    false -> AmIcons.Visibility
+                },
+            )
+        },
         textStyle = MaterialTheme.typography.titleMedium,
         shape = MaterialTheme.shapes.large,
-        lineLimits = lineLimits,
         keyboardOptions = keyboardOptions,
         onKeyboardAction = KeyboardActionHandler({
             it()
             onKeyboardAction()
         }),
         isError = !validateInput,
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(0.dp),
+        textObfuscationMode = when (passwordHidden.value) {
+            true -> TextObfuscationMode.Visible
+            false -> TextObfuscationMode.Hidden
+        }
     )
+
 }
 
-@Preview(
-    device = Devices.PIXEL_9,
-    showBackground = true
-)
+@Preview
 @Composable
-fun TextFieldPreview() {
-    AmTextField(
-        modifier= Modifier,
-        textFieldState= TextFieldState(),
-        icon= AmIcons.Search,
-        placeHolder="PLACE HOLDER",
-        lineLimits=TextFieldLineLimits.SingleLine,
-        enabled=false,
-        keyboardOptions= KeyboardOptions.Default,
-        onKeyboardAction={},
-        isValidateInput=true,
+fun SecureTextFieldPreview() {
+    AmSecureTextField(
+        modifier = Modifier,
+        textFieldState = TextFieldState(),
+        icon = AmIcons.Search,
+        placeHolder = "PLACE HOLDER",
+        enabled = false,
+        keyboardOptions = KeyboardOptions.Default,
+        onKeyboardAction = {},
+        isValidateInput = true,
     )
 }

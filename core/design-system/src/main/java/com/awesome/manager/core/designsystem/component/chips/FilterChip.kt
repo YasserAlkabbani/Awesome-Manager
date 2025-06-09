@@ -31,7 +31,8 @@ fun AmFilterChip(
     val shape = if (selected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
     val icon: @Composable () -> Unit = {
         AmIconButton(
-            modifier = Modifier.size(20.dp), amIconsType = AmIcons.Close,
+            modifier = Modifier.size(20.dp),
+            amIconsType = AmIcons.Close,
             onClick = onRemove
         )
     }

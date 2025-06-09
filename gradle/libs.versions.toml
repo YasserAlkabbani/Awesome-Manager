@@ -6,28 +6,28 @@ androidCore = "1.16.0"
 activity = "1.10.1"
 coroutines = "1.10.1"
 timber = "5.0.1"
-composeBom = "2025.04.01"
-lifecycle = "2.8.7"
+composeBom = "2025.05.01"
+lifecycle = "2.9.0"
 room = "2.7.1"
 paging = "3.3.6"
-navigation = "2.8.9"
+navigation = "2.9.0"
 hiltExtend = "1.2.0"
 hiltDagger = "2.56"
 ktor = "3.0.3"
 androidGradlePlugin = "8.6.1"
 serialization = "1.8.0"
-datastore = "1.1.5"
+datastore = "1.1.7"
 kotlinxDateTime = "0.6.2"
 coil = "2.7.0"
 work = "2.10.1"
 chucker = "4.0.0"
-material = "1.8.0"
+material = "1.8.2"
 
 androidApplicationPlugin = "8.6.1"
 androidLibraryPlugin = "8.6.1"
 kotlinAndroidPlugin = "2.1.10"
 devtoolsKspPlugin = "2.1.10-1.0.31"
-daggerHiltPlugin = "2.54"
+daggerHiltPlugin = "2.56"
 
 
 
@@ -48,10 +48,10 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-bom = { group = "androidx.compose", name = "compose-bom-alpha", version.ref = "composeBom" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.require = "1.4.0-alpha13" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 #compose-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
 compose-material-navigation = { group = "androidx.compose.material", name = "material-navigation", version.ref = "material" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }

@@ -4,17 +4,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class AmSize(val value: Dp) {
-    XXXX_SMALL(2.dp),
+    TEXT_FIELD_MINIMUM_HEIGHT(42.dp),
     XX_SMALL(12.dp),
     X_SMALL(20.dp),
     SMALL(30.dp),
     MEDIUM(40.dp),
     LARGE(50.dp),
-    XX_LARGE(64.dp),
-    LARGE_IMAGE_SIZE(82.dp) ,
-    BOTTOM_NAVIGATION_HEIGHT(90.dp) ,
-    XXXX_LARGE(120.dp),
-    LOADING_INDICATOR_HEIGHT(10.dp)
+    LARGE_IMAGE_SIZE(82.dp),
+    BOTTOM_NAVIGATION_HEIGHT(90.dp),
+    FLOATING_TOOLBAR_LOADING_HEIGHT(12.dp),
+    FLOATING_TOOLBAR_LOADING_WIDTH(120.dp)
 }
 
 enum class AmLazyColumnPadding(val value: Dp) {
@@ -23,17 +22,21 @@ enum class AmLazyColumnPadding(val value: Dp) {
 }
 
 enum class AmPadding(val value: Dp) {
-    ZERO(0.dp),
     XX_SMALL(2.dp),
     CARD_SURFACE_INDICATOR(3.dp),
     SMALL(4.dp),
     COULMN_ITEMS_PADDING(12.dp),
-    TOP_PADDING(16.dp),
     LARGE_IMAGE_PADDING(16.dp),
     HORIZONTAL_PADDING(8.dp),
     MEDIUM(6.dp),
     LARGE(8.dp),
     Details(24.dp),
     XX_LARGE(16.dp),
+    AM_LOGO_SIZE(100.dp),
+    AUTH_SCREEN(16.dp),
+    AUTH_TEXT_FAILED(16.dp),
     BUTTON(12.dp),
+    UNDER_LOGO(80.dp),
+    BETWEEN_TEXT_FILED(8.dp),
+    HORIZONTAL_FLOATING_TOOLBAR(16.dp)
 }

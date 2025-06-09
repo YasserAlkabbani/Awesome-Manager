@@ -5,24 +5,19 @@ import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.toRoute
 import com.awesome.manager.feature.account.accounts.accountsScreen
 import com.awesome.manager.feature.account.details.accountDetailsScreen
 import com.awesome.manager.feature.account.editor.accountEditorScreen
 import com.awesome.manager.feature.account.editor.navigateToAccountCreator
-import com.awesome.manager.feature.home.HomeRoute
+import com.awesome.manager.feature.auth.AuthRoute
+import com.awesome.manager.feature.auth.authScreen
 import com.awesome.manager.feature.home.homeScreen
 import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
 import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.transactionsScreen
 import timber.log.Timber
-import kotlin.reflect.KClass
 
 
 @Composable
@@ -31,29 +26,38 @@ fun AmNavHost(
     navHostController: NavHostController,
     bottomSheetNavigator: BottomSheetNavigator,
 ) {
-    ModalBottomSheetLayout(bottomSheetNavigator) {
+    ModalBottomSheetLayout(
+        modifier = Modifier,
+        bottomSheetNavigator = bottomSheetNavigator,
+        sheetGesturesEnabled = false,
+    ) {
         NavHost(
             modifier = modifier,
             navController = navHostController,
-            startDestination = HomeRoute,
+            startDestination = AuthRoute,
         ) {
 
             homeScreen(
                 navigateToCreateAccount = {
-                    Timber.d("TEST_AM NAVIGATE_TO_CREATE_ACCOUNT")
                     navHostController.navigateToAccountCreator(null)
                 }
             )
 
-            accountsScreen()
+            accountsScreen(
+                navigateToCreateAccount = {
+                    navHostController.navigateToAccountCreator(null)
+                }
+            )
             accountDetailsScreen()
-            accountEditorScreen()
+            accountEditorScreen(navHostController::popBackStack)
 
 
             transactionsScreen()
             transactionDetailsScreen()
             transactionEditorScreen()
 
+
+            authScreen()
 
             bottomSheet<BottomSheetNavigation.ConnectionError> {
 

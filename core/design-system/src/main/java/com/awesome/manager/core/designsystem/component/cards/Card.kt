@@ -1,5 +1,6 @@
 package com.awesome.manager.core.designsystem.component.cards
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.component.AmLoadingIndicator
+import com.awesome.manager.core.designsystem.component.AmLinearProgressIndicator
 import com.awesome.manager.core.designsystem.component.text.AmText
 
 @Composable
@@ -46,10 +47,6 @@ fun AmCard(
             .width(IntrinsicSize.Max)
             .clip(shape)
     ) {
-        AmLoadingIndicator(
-            isLoading = isLoading,
-            isPositive = isPositive
-        )
         Card(
             modifier = Modifier.padding(bottom = AmPadding.CARD_SURFACE_INDICATOR.value),
             colors = CardDefaults.cardColors(containerColor = cardColors),
@@ -59,6 +56,9 @@ fun AmCard(
                     modifier = Modifier.padding(padding.value),
                     content = {
                         content()
+                        AnimatedVisibility(isLoading) {
+                            AmLinearProgressIndicator()
+                        }
                     }
                 )
             },
@@ -92,10 +92,6 @@ fun AmCard(
             .width(IntrinsicSize.Max)
             .clip(shape),
     ) {
-        AmLoadingIndicator(
-            isLoading = isLoading,
-            isPositive = isPositive
-        )
         Card(
             modifier = Modifier
                 .padding(bottom = AmPadding.CARD_SURFACE_INDICATOR.value)
@@ -109,6 +105,9 @@ fun AmCard(
                     verticalArrangement = Arrangement.Bottom,
                     content = {
                         content()
+                        AnimatedVisibility(isLoading) {
+                            AmLinearProgressIndicator()
+                        }
                     }
                 )
             }

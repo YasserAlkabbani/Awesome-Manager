@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -83,7 +81,6 @@ fun AmBalanceDetailsCard(
                 .weight(1f),
             cardBalanceDetails = creditorDebtor
         )
-        AmSpacerMediumWidth()
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,7 +110,6 @@ private fun BalanceDetailsRow(
                 amIconsType = AmIcons.Input,
             )
         }
-        AmSpacerSmallHeight()
         AmSurface(
             modifier=Modifier.fillMaxWidth(),
             isPositive = false
@@ -124,7 +120,6 @@ private fun BalanceDetailsRow(
                 amIconsType = AmIcons.Output,
             )
         }
-        AmSpacerSmallHeight()
         AmSurface(
             modifier=Modifier.fillMaxWidth(),
             isPositive = cardBalanceDetails.isPositiveBalance

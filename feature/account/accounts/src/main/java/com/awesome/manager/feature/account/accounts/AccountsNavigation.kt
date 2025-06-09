@@ -17,8 +17,8 @@ fun NavController.navigateToAccounts(navOptions: NavOptions?) {
     )
 }
 
-fun NavGraphBuilder.accountsScreen() {
+fun NavGraphBuilder.accountsScreen(navigateToCreateAccount: ()->Unit) {
     composable<AccountsRoute> {
-        AccountsScreen()
+        AccountsScreen(navigateToCreateAccount=navigateToCreateAccount)
     }
 }

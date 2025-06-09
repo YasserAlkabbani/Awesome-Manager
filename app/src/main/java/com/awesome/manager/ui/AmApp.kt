@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,15 +24,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.awesome.manager.MainActivityViewModel
-import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.text.AmText
-import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.feature.account.accounts.navigateToAccounts
+import com.awesome.manager.feature.auth.AuthRoute
+import com.awesome.manager.feature.auth.navigateToAuth
+import com.awesome.manager.feature.home.HomeRoute
 import com.awesome.manager.feature.home.navigateToHome
 import com.awesome.manager.feature.transaction.transactions.navigateToTransactions
 import com.awesome.manager.navigation.AmNavHost
 import com.awesome.manager.navigation.MainDestination
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +52,21 @@ fun AmApp() {
             currentBackStack?.destination?.hasRoute(it.route) == true
         }
     }
+
+    val isLoginStateValue = mainActivityViewModel.isLogin.collectAsStateWithLifecycle().value
+    LaunchedEffect(isLoginStateValue, currentBackStack) {
+        currentBackStack?.let { currentBackStack ->
+            val inAuthScreen = currentBackStack.destination.hasRoute(AuthRoute::class) == true
+            val inHomeScreen = currentBackStack.destination.hasRoute(HomeRoute::class) == true
+            Timber.d("TEST_AUTH $isLoginStateValue $inAuthScreen $inHomeScreen ${currentBackStack.destination}")
+            navHostController.navigateByAuthState(
+                isLogin = isLoginStateValue,
+                inAuthScreen = inAuthScreen,
+                inHomeScreen = inHomeScreen,
+            )
+        }
+    }
+
 
     AppScreen(
         navHostController = navHostController,
@@ -102,6 +115,39 @@ fun AppScreen(
 }
 
 
+private fun NavHostController.navigateByAuthState(
+    isLogin: Boolean,
+    inAuthScreen: Boolean,
+    inHomeScreen: Boolean
+) = when (isLogin) {
+    true -> when (inAuthScreen) {
+        true -> {
+            val navOptions = navOptions {
+                popUpTo(AuthRoute) { inclusive = true }
+                launchSingleTop = true
+            }
+            navigateToHome(navOptions)
+        }
+
+        false -> Unit
+    }
+
+    false -> when (inAuthScreen) {
+        true -> Unit
+        false -> when (inHomeScreen) {
+            true -> {
+                val navOptions = navOptions {
+                    popUpTo(HomeRoute) { inclusive = true }
+                    launchSingleTop = true
+                }
+                navigateToAuth(navOptions)
+            }
+
+            false -> navigateUp()
+        }
+    }
+}
+
 private fun NavHostController.navigateToMainDestination(mainDestination: MainDestination) {
     val navOptions = navOptions {
         popUpTo(id = graph.findStartDestination().id) {
@@ -116,8 +162,5 @@ private fun NavHostController.navigateToMainDestination(mainDestination: MainDes
         MainDestination.Transactions -> navigateToTransactions(navOptions)
     }
 }
-
-
-
 
 

@@ -12,7 +12,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.AmSpacerMediumWidth
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.icon.AmIconsType
@@ -33,7 +32,6 @@ fun AmTextWithIcon(
             modifier = Modifier.size(AmSize.X_SMALL.value),
             amIconsType = amIconsType
         )
-        AmSpacerMediumWidth()
         AmText(text = text, textStyle = textStyle)
     }
 }

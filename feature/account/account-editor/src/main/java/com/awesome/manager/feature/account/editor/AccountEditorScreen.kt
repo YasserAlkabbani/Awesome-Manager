@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +22,8 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
 import com.awesome.manager.core.designsystem.component.AmImage
-import com.awesome.manager.core.designsystem.component.FTBButtonData
+import com.awesome.manager.core.designsystem.component.FloatingToolBarState
+import com.awesome.manager.core.designsystem.component.FloatingToolbarContent
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.component.text.isValidAccountName
 import com.awesome.manager.core.designsystem.icon.AmIcons
@@ -34,6 +36,7 @@ import com.awesome.manager.core.ui.ChipData
 @Composable
 internal fun AccountEditorRoute(
     accountEditorViewModel: AccountEditorViewModel = hiltViewModel(),
+    popup: () -> Unit
 ) {
 
     val accountNameTextFieldState = accountEditorViewModel.accountNameTextFieldState
@@ -50,6 +53,13 @@ internal fun AccountEditorRoute(
     val setCurrencyID = accountEditorViewModel::setCurrencyID
     val setTransactionTypeID = accountEditorViewModel::setTransactionTypeID
 
+    val popupStateValue = accountEditorViewModel.popup.collectAsStateWithLifecycle().value
+    LaunchedEffect(popupStateValue) {
+        if (popupStateValue) {
+            accountEditorViewModel.donePopup()
+            popup()
+        }
+    }
 
     AccountEditorScreen(
         accountNameTextFieldState = accountNameTextFieldState,
@@ -60,6 +70,8 @@ internal fun AccountEditorRoute(
         setCurrencyID = setCurrencyID,
         selectedTransactionTypeID = selectedTransactionTypeID,
         setTransactionTypeID = setTransactionTypeID,
+        saveAccount = accountEditorViewModel::saveAccount,
+        requestPopup = accountEditorViewModel::requestPopup
     )
 
 }
@@ -73,7 +85,9 @@ internal fun AccountEditorScreen(
     selectedCurrencyID: String?,
     setCurrencyID: (String) -> Unit,
     selectedTransactionTypeID: String?,
-    setTransactionTypeID: (String) -> Unit
+    setTransactionTypeID: (String) -> Unit,
+    saveAccount: () -> Unit,
+    requestPopup: () -> Unit
 ) {
     val context = LocalContext.current
     val currencyChipData = remember(currencies) {
@@ -85,28 +99,21 @@ internal fun AccountEditorScreen(
             ChipData(id = it.id, title = title)
         }
     }
-    val isValidAccountName: Boolean =remember(accountNameTextFieldState.text) {
-        accountNameTextFieldState.isValidAccountName()
+    val isValidInput: Boolean = remember(accountNameTextFieldState.text) {
+        accountNameTextFieldState.text.toString().isValidAccountName()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        AMHorizontalFloatingToolbar(
-            text = when (isValidAccountName) {
-                true -> stringResource(R.string.validated_input)
-                else -> stringResource(R.string.invalid_input)
-            },
-            mainButton = FTBButtonData(
-                text = "",
-                amIconsType = AmIcons.ArrowBack,
-                onClick = {}
-            ),
-            validationButton = FTBButtonData(
-                text = stringResource(R.string.create),
-                amIconsType = AmIcons.Save,
-                onClick = {}
-            ),
-            isError = !isValidAccountName,
-        )
+//        AMHorizontalFloatingToolbar(
+//            FloatingToolBarState.InitState(
+//                negativeButton = FloatingToolbarContent(
+//                    text = "",
+//                    amIconsType = AmIcons.ArrowBack,
+//                    onClick = requestPopup
+//                ),
+//                initMessage = "Set The Account Name"
+//            )
+//        )
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -125,10 +132,9 @@ internal fun AccountEditorScreen(
                     .padding(horizontal = AmPadding.HORIZONTAL_PADDING.value)
                     .fillMaxWidth(),
                 textFieldState = accountNameTextFieldState,
-                label = "Account Name",
                 icon = AmIcons.Title,
-                hint = "New Account",
-                isError = !isValidAccountName
+                placeHolder = "Account Name",
+                isValidateInput = true
             )
             AmChipsContainer(
                 title = "Currency",

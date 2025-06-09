@@ -28,6 +28,7 @@ class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("lifecycle.runtime.compose").get())
 
                 add("implementation", libs.findLibrary("navigation.compose").get())
+                add("implementation", libs.findLibrary("compose.material.navigation").get())
 
                 add("implementation", libs.findLibrary("hilt.navigation.compose").get())
 

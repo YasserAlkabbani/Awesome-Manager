@@ -13,4 +13,11 @@
     <string name="invalid_email">Invalid Email</string>
     <string name="invalid_password">Invalid Password</string>
     <string name="awesome_manager">Awesome Manager</string>
+    <string name="welcome_back">Welcome Back !!</string>
+    <string name="confirm">Confirm</string>
+    <string name="invalid_email_or_password">Invalid Email or Password</string>
+    <string name="invalid_certification">Invalid Certification</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="logged_in_successfully">Logged In Successfully</string>
+    <string name="retry">Retry</string>
 </resources>

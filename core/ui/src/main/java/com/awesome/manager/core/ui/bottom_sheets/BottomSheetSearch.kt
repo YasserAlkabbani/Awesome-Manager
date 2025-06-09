@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -55,20 +56,15 @@ fun BottomSheetSearch(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .onGloballyPositioned { focusRequester.requestFocus() },
-            text = searchKey,
-            onTextChange = onUpdateSearchKey,
-            label = searchLabel,
-            hint = searchHint,
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchDone()
-                },
-            ),
+            textFieldState = TextFieldState(),
+            placeHolder = searchLabel,
+            onKeyboardAction = onSearchDone,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search,
             ),
-            icon = AmIcons.Search
+            icon = AmIcons.Search,
+            isValidateInput = true
         )
         AmChipsContainer(
             title = "Filter For ..",

@@ -11,7 +11,6 @@ import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmImage
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallWidth
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIconsType
 import com.awesome.manager.core.designsystem.text.AmTextManager
@@ -37,10 +36,8 @@ fun MenuItem(
                     amIconsType = it
                 )
             }
-            AmSpacerSmallWidth()
             Column {
                 AmText(text = title.asText(), textStyle = MaterialTheme.typography.titleLarge)
-                AmSpacerSmallWidth()
                 AmText(text = subTitle.asText(), textStyle = MaterialTheme.typography.labelMedium)
             }
         }

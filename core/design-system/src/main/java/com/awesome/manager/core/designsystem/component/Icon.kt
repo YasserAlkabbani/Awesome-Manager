@@ -15,7 +15,8 @@ fun AmIcon(
     amIconsType: AmIconsType.ImageVictorAmIconsType
 ) {
     Icon(
-        modifier = modifier, imageVector = amIconsType.imageVector,
+        modifier = modifier,
+        imageVector = amIconsType.imageVector,
         contentDescription = null
     )
 }
@@ -25,7 +26,8 @@ fun AmIcon(
     amIconsType: AmIconsType.DrawableResourceAmIconsType
 ) {
     Icon(
-        modifier = modifier, painter = painterResource(id = amIconsType.id),
+        modifier = modifier,
+        painter = painterResource(id = amIconsType.id),
         contentDescription = null
     )
 }

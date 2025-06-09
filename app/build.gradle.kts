@@ -40,6 +40,5 @@ android {
 dependencies {
 
     implementation(libs.datastore.preferences.core)
-    implementation(libs.compose.material.navigation)
 
 }

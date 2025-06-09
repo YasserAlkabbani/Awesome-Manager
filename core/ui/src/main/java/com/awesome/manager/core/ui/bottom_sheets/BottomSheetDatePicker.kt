@@ -45,8 +45,10 @@ fun BottomSheetDatePicker(
                 onClick = dismiss
             )
             AmTextButton(
+                modifier = Modifier,
                 text = "Confirm",
                 enabled = state.selectedDateMillis != null,
+                amIconsType = null,
                 onClick = {
                     state.selectedDateMillis?.let {
                         setDate(it)

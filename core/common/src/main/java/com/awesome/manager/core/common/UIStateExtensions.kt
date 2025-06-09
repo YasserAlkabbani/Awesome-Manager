@@ -41,7 +41,14 @@ fun <T> StateFlow<AmState<T>>.filterSuccess() =
         .map { it.data }
 
 
-fun <T> Flow<T?>.asStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?> =
+fun <T> Flow<T?>.asNullableStateFlow(scope: CoroutineScope, initValue: T?): StateFlow<T?> =
+    stateIn(
+        scope = scope,
+        initialValue = initValue,
+        started = SharingStarted.WhileSubscribed(60000)
+    )
+
+fun <T> Flow<T>.asStateFlow(scope: CoroutineScope, initValue: T): StateFlow<T> =
     stateIn(
         scope = scope,
         initialValue = initValue,

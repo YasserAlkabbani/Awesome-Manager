@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 internal fun AccountsScreen(
     accountsViewModel: AccountsViewModel = hiltViewModel(),
+    navigateToCreateAccount:()->Unit
 ) {
 
     val accountsState = accountsViewModel.accountsState
@@ -40,13 +41,17 @@ internal fun AccountsScreen(
 //        mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
 //    }
 
-    AccountsScreen(accountsState)
+    AccountsScreen(
+        accountsState,
+        navigateToCreateAccount
+    )
 }
 
 
 @Composable
 internal fun AccountsScreen(
     accountsState: AccountsState,
+    navigateToCreateAccount: () -> Unit
 ) {
     val accountsLazyPaging =
         accountsState.pagingAccounts.collectAsLazyPagingItems()
@@ -77,7 +82,7 @@ internal fun AccountsScreen(
                     )
                     AmFilledTonalButton(
                         text = stringResource(R.string.create_an_account),
-                        onClick = {},
+                        onClick = navigateToCreateAccount,
                     )
                 }
             }
@@ -144,5 +149,5 @@ fun AccountsScreenPreview() {
         refreshAccounts = {},
         pagingAccounts = flowOf(PagingData.from(accountsList))
     )
-    AccountsScreen(accountState)
+    AccountsScreen(accountState,{})
 }

@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.component.AmLinearProgress
+import com.awesome.manager.core.designsystem.component.AmLinearProgressIndicator
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
@@ -147,6 +147,7 @@ fun LoadingDataState(amState: AmState<Any>) {
         when (amState) {
             is AmState.Error -> AmButton(
                 text = "Retry",
+                enabled = false,
                 isError = false,
                 amIconsType = AmIcons.Retry,
                 onClick = {}
@@ -154,7 +155,7 @@ fun LoadingDataState(amState: AmState<Any>) {
 
             is AmState.Loading -> Row {
                 AmText(text = "Loading")
-                AmLinearProgress(
+                AmLinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth()
                 )
             }

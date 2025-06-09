@@ -26,8 +26,8 @@ fun NavController.navigateToAccountCreator(navOptions: NavOptions?) {
     )
 }
 
-fun NavGraphBuilder.accountEditorScreen() {
+fun NavGraphBuilder.accountEditorScreen(popup:()->Unit) {
     composable<AccountEditorRoute> {
-        AccountEditorRoute()
+        AccountEditorRoute(popup=popup)
     }
 }

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,7 +27,6 @@ import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.common.asFormattedNumber
 import com.awesome.manager.core.designsystem.component.text.AmTextField
-import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalIconWithTextButton
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToString
 import com.awesome.manager.core.model.AmAccountWithBalance
@@ -100,7 +101,7 @@ internal fun TransactionEditorScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     selectedAccount?.let { accountWithBalance ->
-                        val account=accountWithBalance.account
+                        val account = accountWithBalance.account
                         val balanceDetails = accountWithBalance.balanceDetails
                         AccountCard(
                             modifier = Modifier,
@@ -126,44 +127,41 @@ internal fun TransactionEditorScreen(
 
                     AmTextField(
                         modifier = Modifier,
-                        hint = "Title",
+                        placeHolder = "Title",
                         icon = AmIcons.Title,
-                        label = "Transaction Title",
-                        onTextChange = transactionEditorState::updateTitle,
-                        keyboardActions = KeyboardActions(),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                        text = title
+                        textFieldState = TextFieldState(),
+                        isValidateInput = true
                     )
                     AmTextField(
-                        hint = "5000.0", icon = AmIcons.Money, label = "Amount",
+                        icon = AmIcons.Money,
+                        placeHolder = "Amount",
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
                         ),
-                        onTextChange = transactionEditorState::updateAmount,
-                        text = amount,
-                        formatText = { asFormattedNumber() }
+                        textFieldState = TextFieldState(),
+                        isValidateInput = true
                     )
                     AmTextField(
-                        hint = "Description",
-                        label = "Transaction Description",
+                        placeHolder = "Transaction Description",
                         icon = AmIcons.SubTitle,
-                        singleLine = false,
-                        onTextChange = transactionEditorState::updateSubtitle,
-                        text = subtitle,
+                        lineLimits = TextFieldLineLimits.Default,
+                        textFieldState = TextFieldState(),
+                        isValidateInput = true
                     )
 
-                    AmFilledTonalIconWithTextButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = formattedTransactionAt,
-                        amIconsType = AmIcons.Date,
-                        positive = null,
-                        onClick = {
+//                    AmFilledTonalIconWithTextButton(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        text = formattedTransactionAt,
+//                        amIconsType = AmIcons.Date,
+//                        positive = null,
+//                        onClick = {
 //                            transactionEditorState.showPickDateBottomSheet(
 //                                initTime = transactionAt,
 //                                setDate = transactionEditorState::updateTransactionAt
 //                            )
-                        }
-                    )
+//                        }
+//                    )
 
                     AmChipsContainer(
                         title = stringResource(R.string.transaction_type),

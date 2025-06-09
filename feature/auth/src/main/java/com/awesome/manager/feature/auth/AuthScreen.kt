@@ -1,6 +1,7 @@
 package com.awesome.manager.feature.auth
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,16 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,57 +23,56 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.awesome.manager.core.common.AmUIError
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
 import com.awesome.manager.core.designsystem.component.AmIcon
-import com.awesome.manager.core.designsystem.component.AmSpacerLargeHeight
-import com.awesome.manager.core.designsystem.component.AmSpacerSmallHeight
+import com.awesome.manager.core.designsystem.component.AmSpacerHeight
+import com.awesome.manager.core.designsystem.component.FloatingToolBarState
+import com.awesome.manager.core.designsystem.component.FloatingToolbarContent
+import com.awesome.manager.core.designsystem.component.text.AmSecureTextField
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.component.text.AmPasswordTextField
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun AuthRoute(
     authViewModel: AuthViewModel = hiltViewModel(),
-    showError: (AmUIError) -> Unit
 ) {
-    val authScreenState = authViewModel.authScreenState
-    val amUIError = authScreenState.amUIError.collectAsState().value
 
-    LaunchedEffect(amUIError) {
-        if (amUIError !is AmUIError.NoError) {
-            authScreenState.doneUIError()
-            showError(amUIError)
-        }
-    }
+    val emailTextFieldState: TextFieldState = authViewModel.emailTextFieldState
+    val passwordTextFieldState: TextFieldState = authViewModel.passwordTextFieldState
 
-    AuthScreen(authScreenState)
+    val authState: AuthState = authViewModel.authState.collectAsStateWithLifecycle().value
+
+    AuthScreen(
+        emailTextFieldState = emailTextFieldState,
+        passwordTextFieldState = passwordTextFieldState,
+        authState = authState,
+        login = authViewModel::login
+    )
 }
 
 @Composable
 fun AuthScreen(
-    authScreenState: AuthScreenState
+    emailTextFieldState: TextFieldState,
+    passwordTextFieldState: TextFieldState,
+    authState: AuthState,
+    login: () -> Unit
 ) {
+    val floatingToolBarState: FloatingToolBarState = rememberFloatingToolbarButton(
+        authState = authState,
+        login = login
+    )
 
-    val authError: AuthError = authScreenState.authError.collectAsState().value
-    val loading = authScreenState.loading.collectAsState().value
-
-    val email: String = authScreenState.email.collectAsState().value
-    val password: String = authScreenState.password.collectAsState().value
-    var passwordHidden by remember { mutableStateOf(true) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(AmPadding.XX_LARGE.value)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AmPadding.AUTH_SCREEN.value)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Surface(contentColor = MaterialTheme.colorScheme.secondary) {
                 Column(
@@ -84,7 +80,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AmIcon(
-                        modifier = Modifier.size(AmPadding.XX_LARGE.value * 7),
+                        modifier = Modifier.size(AmPadding.AM_LOGO_SIZE.value),
                         amIconsType = AmIcons.AwesomeManagerIcon,
                     )
                     AmText(
@@ -94,69 +90,123 @@ fun AuthScreen(
                     )
                 }
             }
-            AmSpacerLargeHeight()
-            AmSpacerLargeHeight()
-            AmSpacerLargeHeight()
-            AmSpacerLargeHeight()
-            AmSpacerLargeHeight()
-            Column(Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = AmPadding.XX_LARGE.value,
-                            horizontal = AmPadding.XX_SMALL.value
-                        )
-                ) {
-                    Column(Modifier.fillMaxWidth()) {
-                        AmTextField(
-                            modifier = Modifier,
-                            label = stringResource(R.string.email),
-                            icon = AmIcons.Email,
-                            hint = "Example@Example.com",
-                            onTextChange = authScreenState::onUpdateEmail,
-                            text = email,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next,
-                                keyboardType = KeyboardType.Email
-                            ),
-                            enabled = true,
-                        )
 
-                        AmSpacerSmallHeight()
+            AmSpacerHeight(AmPadding.UNDER_LOGO)
 
-                        AmPasswordTextField(
-                            modifier = Modifier,
-                            label = stringResource(R.string.password),
-                            icon = AmIcons.Password,
-                            hint = "Your top secret password",
-                            onTextChange = authScreenState::onUpdatePassword,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Done,
-                                keyboardType = KeyboardType.Password
-                            ),
-                            enabled = true,
-                        )
-                    }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = AmPadding.AUTH_TEXT_FAILED.value)
+            ) {
+                Column(Modifier.fillMaxWidth()) {
+                    AmTextField(
+                        modifier = Modifier,
+                        textFieldState = emailTextFieldState,
+                        placeHolder = stringResource(R.string.email),
+                        icon = AmIcons.Email,
+                        enabled = authState !is AuthState.Loading,
+                        isValidateInput = (authState as? AuthState.ErrorInvalidInput)?.invalidEmail != true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Email
+                        ),
+                    )
+
+                    AmSpacerHeight(AmPadding.BETWEEN_TEXT_FILED)
+
+                    AmSecureTextField(
+                        modifier = Modifier,
+                        textFieldState = passwordTextFieldState,
+                        placeHolder = stringResource(R.string.password),
+                        icon = AmIcons.Password,
+                        enabled = authState !is AuthState.Loading,
+                        isValidateInput = (authState as? AuthState.ErrorInvalidInput)?.invalidPassword != true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Password
+                        ),
+                    )
                 }
             }
         }
+        AMHorizontalFloatingToolbar(floatingToolBarState)
     }
 
+}
+
+@Composable
+fun rememberFloatingToolbarButton(
+    authState: AuthState,
+    login: () -> Unit,
+): FloatingToolBarState = remember(authState) {
+    when (authState) {
+        AuthState.Loading -> FloatingToolBarState.Loading
+        AuthState.InitState -> FloatingToolBarState.Content(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.welcome_back
+            ),
+        )
+
+        is AuthState.ValidatedInput -> FloatingToolBarState.Content(
+
+            content = FloatingToolbarContent.Button(
+                textRes = R.string.confirm,
+                amIconsType = AmIcons.ArrowForward,
+                onClick = login
+            ),
+        )
+
+        is AuthState.ErrorInvalidInput -> FloatingToolBarState.Error(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.invalid_email_or_password
+            ),
+        )
+
+        AuthState.ErrorRequestCertification -> FloatingToolBarState.Error(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.invalid_certification
+            )
+        )
+
+        AuthState.ErrorRequestConnection -> FloatingToolBarState.Error(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.connection_error
+            ),
+            trailing = FloatingToolbarContent.IconButton(
+                amIconsType = AmIcons.Retry,
+                onClick = login
+            )
+        )
+
+        AuthState.ErrorRequestUnknown -> FloatingToolBarState.Error(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.unknown_error
+            ),
+            trailing = FloatingToolbarContent.IconButton(
+                amIconsType = AmIcons.Retry,
+                onClick = login
+            )
+        )
+
+        AuthState.LoggedInSuccessfully -> FloatingToolBarState.Content(
+            content = FloatingToolbarContent.Text(
+                textRes = R.string.logged_in_successfully
+            )
+        )
+    }
 
 }
 
 @Preview(
-    device = Devices.PIXEL_7, showBackground = true
+    device = Devices.PIXEL_9,
+    showBackground = true
 )
 @Composable
 fun AuthScreenPreview() {
-    val a = { MutableStateFlow("") }
     AuthScreen(
-        AuthScreenState(
-            {},
-            { MutableStateFlow("") },
-            { _, _ -> },
-        )
+        emailTextFieldState = TextFieldState(""),
+        passwordTextFieldState = TextFieldState(""),
+        authState = AuthState.InitState,
+        login = {}
     )
 }
