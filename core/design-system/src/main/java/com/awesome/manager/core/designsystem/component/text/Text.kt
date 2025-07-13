@@ -13,11 +13,12 @@ import com.awesome.manager.core.designsystem.AmPadding
 fun AmText(
     modifier: Modifier = Modifier,
     text: String, maxLines: Int = 1,
+    amTextPadding: AmPadding = AmPadding.MEDIUM,
     textStyle: TextStyle = LocalTextStyle.current,
     textAlign: TextAlign? = null
 ) {
     Text(
-        modifier = modifier.padding(horizontal = AmPadding.MEDIUM.value),
+        modifier = modifier.padding(horizontal = amTextPadding.value),
         text = text,
         maxLines = maxLines,
         style = textStyle,

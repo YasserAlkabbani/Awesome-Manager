@@ -1,22 +1,21 @@
 package com.awesome.manager.core.designsystem.text
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.awesome.manager.core.designsystem.R
 
-fun Context.enumToString(const: Enum<*>): String =
-    when (const.name) {
-        "INCOME" -> getString(R.string.income)
-        "EXPENSES" -> getString(R.string.expenses)
-        "DEBTOR" -> getString(R.string.debtor)
-        "CREDITOR" -> getString(R.string.creditor)
-        "ACCOUNT" -> getString(R.string.account)
-        "TRANSACTION" -> getString(R.string.transaction)
-        else -> const.name
+fun Enum<*>.enumToRes(): Int? =
+    when (name) {
+        "INCOME" -> R.string.income
+        "EXPENSES" -> R.string.expenses
+        "DEBTOR" -> R.string.debtor
+        "CREDITOR" -> R.string.creditor
+        "ACCOUNT" -> R.string.account
+        "TRANSACTION" -> R.string.transaction
+        else -> null
     }
 
 @Composable
 fun Enum<*>.getString() =
-    LocalContext.current.enumToString(this)
+    this.enumToRes()?.let { stringResource(it) }?:name

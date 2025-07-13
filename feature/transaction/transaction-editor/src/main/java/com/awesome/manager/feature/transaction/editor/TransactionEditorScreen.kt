@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -25,10 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.asDate
-import com.awesome.manager.core.common.asFormattedNumber
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.enumToString
+import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
@@ -79,8 +77,7 @@ internal fun TransactionEditorScreen(
 
     val transactionTypeChipData = remember {
         transactionEditorState.transactionTypes.map {
-            val transactionTypeTitle = context.enumToString(it)
-            ChipData(id = it.id, title = transactionTypeTitle)
+            ChipData(id = it.id, titleRes = it.enumToRes(), title = it.name)
         }
     }
 
@@ -167,7 +164,7 @@ internal fun TransactionEditorScreen(
                         title = stringResource(R.string.transaction_type),
                         chipDataList = transactionTypeChipData,
                         onSelect = { transactionEditorState.updateTransactionType(it.id) },
-                        selectedItem = selectedTransactionTypeID,
+                        selectedItemID = selectedTransactionTypeID,
                         content = null
                     )
                 }

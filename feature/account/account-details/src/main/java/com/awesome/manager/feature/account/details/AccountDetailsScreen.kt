@@ -15,6 +15,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
+import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmTransaction

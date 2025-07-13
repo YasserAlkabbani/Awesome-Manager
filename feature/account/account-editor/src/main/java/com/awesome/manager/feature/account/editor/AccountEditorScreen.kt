@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,15 +22,15 @@ import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.FloatingToolBarState
-import com.awesome.manager.core.designsystem.component.FloatingToolbarContent
+import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent
 import com.awesome.manager.core.designsystem.component.text.AmTextField
-import com.awesome.manager.core.designsystem.component.text.isValidAccountName
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.enumToString
+import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
+import timber.log.Timber
 
 @Composable
 internal fun AccountEditorRoute(
@@ -45,13 +44,18 @@ internal fun AccountEditorRoute(
     val currencies =
         accountEditorViewModel.currencies.collectAsStateWithLifecycle().value.dataOrNull()
 
-    val accountImageUrl = accountEditorViewModel.accountImageURL.collectAsStateWithLifecycle().value
-    val selectedCurrencyID = accountEditorViewModel.currencyID.collectAsStateWithLifecycle().value
+    val accountEditorState =
+        accountEditorViewModel.accountEditorState.collectAsStateWithLifecycle().value
+
+    val accountImageUrl =
+        accountEditorViewModel.imageURL.collectAsStateWithLifecycle().value
+
+    val selectedCurrencyID =
+        accountEditorViewModel.currencyID.collectAsStateWithLifecycle().value
+
     val selectedTransactionTypeID =
         accountEditorViewModel.transactionTypeID.collectAsStateWithLifecycle().value
 
-    val setCurrencyID = accountEditorViewModel::setCurrencyID
-    val setTransactionTypeID = accountEditorViewModel::setTransactionTypeID
 
     val popupStateValue = accountEditorViewModel.popup.collectAsStateWithLifecycle().value
     LaunchedEffect(popupStateValue) {
@@ -63,13 +67,14 @@ internal fun AccountEditorRoute(
 
     AccountEditorScreen(
         accountNameTextFieldState = accountNameTextFieldState,
+        accountEditorState = accountEditorState,
         currencies = currencies,
         transactionTypes = transactionTypes,
         accountImageUrl = accountImageUrl,
         selectedCurrencyID = selectedCurrencyID,
-        setCurrencyID = setCurrencyID,
+        setCurrencyID = accountEditorViewModel::setCurrencyID,
         selectedTransactionTypeID = selectedTransactionTypeID,
-        setTransactionTypeID = setTransactionTypeID,
+        setTransactionTypeID = accountEditorViewModel::setTransactionTypeID,
         saveAccount = accountEditorViewModel::saveAccount,
         requestPopup = accountEditorViewModel::requestPopup
     )
@@ -79,6 +84,7 @@ internal fun AccountEditorRoute(
 @Composable
 internal fun AccountEditorScreen(
     accountNameTextFieldState: TextFieldState,
+    accountEditorState: AccountEditorState,
     currencies: List<AmCurrency>?,
     transactionTypes: List<AmTransactionType>,
     accountImageUrl: String?,
@@ -89,35 +95,35 @@ internal fun AccountEditorScreen(
     saveAccount: () -> Unit,
     requestPopup: () -> Unit
 ) {
-    val context = LocalContext.current
+
     val currencyChipData = remember(currencies) {
-        currencies.orEmpty().map { ChipData(id = it.id, title = it.currencyName) }
+        currencies.orEmpty().map {
+            Timber.d("TEST_CURRENCY $it")
+            ChipData(
+                id = it.id,
+                title = it.currencyName
+            )
+        }
     }
     val transactionTypeChipData = remember {
         transactionTypes.map {
-            val title = context.enumToString(it)
-            ChipData(id = it.id, title = title)
+            ChipData(
+                id = it.id,
+                titleRes = it.enumToRes(),
+                title = it.name
+            )
         }
     }
-    val isValidInput: Boolean = remember(accountNameTextFieldState.text) {
-        accountNameTextFieldState.text.toString().isValidAccountName()
-    }
+
+    val floatingToolBarState = rememberAccountEditorFloatingToolbar(
+        accountEditorState = accountEditorState,
+        popup = requestPopup,
+        saveAccount = saveAccount
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
-//        AMHorizontalFloatingToolbar(
-//            FloatingToolBarState.InitState(
-//                negativeButton = FloatingToolbarContent(
-//                    text = "",
-//                    amIconsType = AmIcons.ArrowBack,
-//                    onClick = requestPopup
-//                ),
-//                initMessage = "Set The Account Name"
-//            )
-//        )
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            //            .padding(top = AmPadding.TOP_PADDING.value)
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AmPadding.COULMN_ITEMS_PADDING.value),
         ) {
@@ -137,22 +143,65 @@ internal fun AccountEditorScreen(
                 isValidateInput = true
             )
             AmChipsContainer(
-                title = "Currency",
+                title = stringResource(R.string.currency),
                 chipDataList = currencyChipData,
-                selectedItem = selectedCurrencyID,
+                selectedItemID = selectedCurrencyID,
                 onSelect = { setCurrencyID(it.id) },
                 content = null
             )
             AmChipsContainer(
                 title = stringResource(R.string.default_transaction_type),
                 chipDataList = transactionTypeChipData,
-                selectedItem = selectedTransactionTypeID,
+                selectedItemID = selectedTransactionTypeID,
                 onSelect = { setTransactionTypeID(it.id) },
                 content = null
             )
         }
 
-
+        AMHorizontalFloatingToolbar(floatingToolBarState)
     }
 
 }
+
+@Composable
+fun rememberAccountEditorFloatingToolbar(
+    accountEditorState: AccountEditorState,
+    popup: () -> Unit,
+    saveAccount: () -> Unit,
+): FloatingToolBarState =
+    remember(accountEditorState) {
+        when (accountEditorState) {
+            is AccountEditorState.Init -> FloatingToolBarState.Content(
+                backButton = FloatingToolbarComponent.IconButton(
+                    amIconsType = AmIcons.ArrowBack,
+                    onClick = popup
+                ),
+                textMessage = R.string.whats_the_account_name
+            )
+            is AccountEditorState.InvalidateInput -> FloatingToolBarState.Error(
+                errorMessage = R.string.invalid_account_name,
+                backButton = FloatingToolbarComponent.IconButton(
+                    amIconsType = AmIcons.ArrowBack,
+                    onClick = popup
+                )
+            )
+
+            is AccountEditorState.ValidateInput -> FloatingToolBarState.Action(
+                backButton = FloatingToolbarComponent.IconButton(
+                    amIconsType = AmIcons.ArrowBack,
+                    onClick = popup
+                ),
+                actionButton = FloatingToolbarComponent.ActionButton(
+                    textRes = when (accountEditorState.editorState) {
+                        EditorState.CREATE -> R.string.create_account
+                        EditorState.EDIT -> R.string.update_account
+                    },
+                    amIconsType = when (accountEditorState.editorState) {
+                        EditorState.CREATE -> AmIcons.ArrowForward
+                        EditorState.EDIT -> AmIcons.ArrowForward
+                    },
+                    onClick = saveAccount
+                )
+            )
+        }
+    }

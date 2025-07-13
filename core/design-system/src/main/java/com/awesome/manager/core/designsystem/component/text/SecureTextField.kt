@@ -85,8 +85,8 @@ fun AmSecureTextField(
         contentPadding = PaddingValues(0.dp),
         textObfuscationMode = when (passwordHidden.value) {
             true -> TextObfuscationMode.Visible
-            false -> TextObfuscationMode.Hidden
-        }
+            false -> TextObfuscationMode.RevealLastTyped
+        },
     )
 
 }

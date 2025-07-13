@@ -29,7 +29,7 @@ import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolb
 import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmSpacerHeight
 import com.awesome.manager.core.designsystem.component.FloatingToolBarState
-import com.awesome.manager.core.designsystem.component.FloatingToolbarContent
+import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent
 import com.awesome.manager.core.designsystem.component.text.AmSecureTextField
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
@@ -60,7 +60,7 @@ fun AuthScreen(
     authState: AuthState,
     login: () -> Unit
 ) {
-    val floatingToolBarState: FloatingToolBarState = rememberFloatingToolbarButton(
+    val floatingToolBarState: FloatingToolBarState = rememberAuthFloatingToolbarButton(
         authState = authState,
         login = login
     )
@@ -135,63 +135,51 @@ fun AuthScreen(
 }
 
 @Composable
-fun rememberFloatingToolbarButton(
+fun rememberAuthFloatingToolbarButton(
     authState: AuthState,
     login: () -> Unit,
 ): FloatingToolBarState = remember(authState) {
     when (authState) {
         AuthState.Loading -> FloatingToolBarState.Loading
         AuthState.InitState -> FloatingToolBarState.Content(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.welcome_back
-            ),
+            textMessage = R.string.welcome_back,
         )
 
         is AuthState.ValidatedInput -> FloatingToolBarState.Content(
-
-            content = FloatingToolbarContent.Button(
+            textMessage = R.string.confirm,
+            actionButton = FloatingToolbarComponent.ActionButton(
                 textRes = R.string.confirm,
                 amIconsType = AmIcons.ArrowForward,
                 onClick = login
-            ),
-        )
-
-        is AuthState.ErrorInvalidInput -> FloatingToolBarState.Error(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.invalid_email_or_password
-            ),
-        )
-
-        AuthState.ErrorRequestCertification -> FloatingToolBarState.Error(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.invalid_certification
             )
         )
 
+        is AuthState.ErrorInvalidInput -> FloatingToolBarState.Error(
+            errorMessage = R.string.invalid_email_or_password,
+        )
+
+        AuthState.ErrorRequestCertification -> FloatingToolBarState.Error(
+            errorMessage = R.string.invalid_certification
+        )
+
         AuthState.ErrorRequestConnection -> FloatingToolBarState.Error(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.connection_error
-            ),
-            trailing = FloatingToolbarContent.IconButton(
+            errorMessage = R.string.connection_error,
+            retryButton = FloatingToolbarComponent.IconButton(
                 amIconsType = AmIcons.Retry,
                 onClick = login
             )
         )
 
         AuthState.ErrorRequestUnknown -> FloatingToolBarState.Error(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.unknown_error
-            ),
-            trailing = FloatingToolbarContent.IconButton(
+            errorMessage = R.string.unknown_error,
+            retryButton = FloatingToolbarComponent.IconButton(
                 amIconsType = AmIcons.Retry,
                 onClick = login
             )
         )
 
         AuthState.LoggedInSuccessfully -> FloatingToolBarState.Content(
-            content = FloatingToolbarContent.Text(
-                textRes = R.string.logged_in_successfully
-            )
+            textMessage = R.string.logged_in_successfully
         )
     }
 

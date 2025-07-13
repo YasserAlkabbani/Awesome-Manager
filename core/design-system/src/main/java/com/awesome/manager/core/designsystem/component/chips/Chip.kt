@@ -1,41 +1,63 @@
 package com.awesome.manager.core.designsystem.component.chips
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.component.AmIcon
+import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
 
+enum class AmChipPosation{
+    FIRST,MID,LAST,
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AmChip(
     modifier: Modifier = Modifier,
-    selected: Boolean,
-    label: String,
+    isSelected: Boolean,
+    title: String,
+    amChipPosition: AmChipPosation,
     onClick: () -> Unit,
 ) {
-    val shape = if (selected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
-    FilterChip(
-        modifier = modifier,
-        selected = selected,
-        label = { Text(text = label) },
-        shape = shape,
-        onClick = onClick,
-    )
+    ToggleButton(
+        checked = isSelected,
+        onCheckedChange = { onClick() },
+        shapes =
+            when (amChipPosition) {
+                AmChipPosation.FIRST -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                AmChipPosation.MID -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                AmChipPosation.LAST -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+            },
+        modifier = Modifier.semantics { role = Role.RadioButton },
+    ) {
+        AmIcon(
+            amIconsType = when(isSelected){
+                true -> AmIcons.Selected
+                false -> AmIcons.NotSelected
+            },
+        )
+        Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+        AmText(text = title)
+    }
 }
 
 @Preview
 @Composable
 fun AmChipSelectedPreview() {
     AmChip(
-        selected = true,
-        label = "TEST",
+        isSelected = true,
+        title = "TEST",
+        amChipPosition = AmChipPosation.MID,
         onClick = {}
     )
 }
@@ -44,8 +66,9 @@ fun AmChipSelectedPreview() {
 @Composable
 fun AmChipUnSelectedPreview() {
     AmChip(
-        selected = false,
-        label = "TEST",
+        isSelected = false,
+        title = "TEST",
+        amChipPosition = AmChipPosation.MID,
         onClick = {}
     )
 }

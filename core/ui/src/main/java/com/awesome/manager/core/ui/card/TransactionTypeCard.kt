@@ -6,34 +6,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.component.chips.AmChip
 
 
-@Composable
-fun TransactionType(
-    modifier: Modifier = Modifier,
-    type: String,
-    selected: Boolean
-) {
-    AmChip(
-        modifier = modifier,
-        onClick = {},
-        label = type,
-        selected = selected
-    )
-}
-
-@Preview
-@Composable
-fun TransactionTypeSelectedPreview() {
-    TransactionType(
-        type = "TRANSACTION TYPE",
-        selected = false
-    )
-}
-
-@Preview
-@Composable
-fun TransactionTypeUnSelectedPreview() {
-    TransactionType(
-        type = "TRANSACTION TYPE",
-        selected = true
-    )
-}
+//@Composable
+//fun TransactionType(
+//    modifier: Modifier = Modifier,
+//    type: String,
+//    selected: Boolean
+//) {
+//    AmChip(
+//        modifier = modifier,
+//        onClick = {},
+//        title = type,
+//        isSelected = selected
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun TransactionTypeSelectedPreview() {
+//    TransactionType(
+//        type = "TRANSACTION TYPE",
+//        selected = false
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun TransactionTypeUnSelectedPreview() {
+//    TransactionType(
+//        type = "TRANSACTION TYPE",
+//        selected = true
+//    )
+//}

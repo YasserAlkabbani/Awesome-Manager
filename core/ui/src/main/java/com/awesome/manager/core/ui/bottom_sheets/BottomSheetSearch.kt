@@ -2,7 +2,6 @@ package com.awesome.manager.core.ui.bottom_sheets
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
@@ -11,12 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.enumToString
+import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -45,9 +43,8 @@ fun BottomSheetSearch(
     onSearchDone: () -> Unit,
     items: LazyListScope.() -> Unit
 ) {
-    val context = LocalContext.current
     val searchTypeChipData = remember {
-        searchTypes.map { ChipData(it.id, context.enumToString(it)) }
+        searchTypes.map { ChipData(id = it.id, titleRes = it.enumToRes(), title = it.name) }
     }
     val focusRequester: FocusRequester = FocusRequester()
 
@@ -69,7 +66,7 @@ fun BottomSheetSearch(
         AmChipsContainer(
             title = "Filter For ..",
             chipDataList = searchTypeChipData,
-            selectedItem = selectedSearchType.id,
+            selectedItemID = selectedSearchType.id,
             onSelect = { SearchType.getSearchType(it.id)?.let { onUpdateSearchType(it) } },
             content = null
         )

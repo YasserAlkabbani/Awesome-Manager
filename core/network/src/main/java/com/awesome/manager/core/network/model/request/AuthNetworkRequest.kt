@@ -42,3 +42,9 @@ data class SignupRequest(
     @SerialName("email") val email: String,
     @SerialName("password") val password: String
 )
+
+@Serializable
+data class RefreshTokenBody(
+    @SerialName("refresh_token") val refreshToken: String
+)
+

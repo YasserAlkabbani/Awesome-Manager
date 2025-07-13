@@ -148,7 +148,6 @@ fun LoadingDataState(amState: AmState<Any>) {
             is AmState.Error -> AmButton(
                 text = "Retry",
                 enabled = false,
-                isError = false,
                 amIconsType = AmIcons.Retry,
                 onClick = {}
             )

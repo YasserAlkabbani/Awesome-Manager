@@ -22,6 +22,7 @@ enum class AmLazyColumnPadding(val value: Dp) {
 }
 
 enum class AmPadding(val value: Dp) {
+    ZERO(0.dp),
     XX_SMALL(2.dp),
     CARD_SURFACE_INDICATOR(3.dp),
     SMALL(4.dp),

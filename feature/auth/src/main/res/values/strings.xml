@@ -20,4 +20,6 @@
     <string name="unknown_error">Unknown Error</string>
     <string name="logged_in_successfully">Logged In Successfully</string>
     <string name="retry">Retry</string>
+    <string name="loading">Loading</string>
+    <string name="validated_input">Validated Input</string>
 </resources>

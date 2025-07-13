@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.DomainAdd
 import androidx.compose.material.icons.filled.Done
@@ -45,8 +46,10 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Title
+import androidx.compose.material.icons.filled.Upgrade
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.AccountTree
@@ -83,6 +86,7 @@ object AmIcons {
     val ArrowForward = AmIconsType.ImageVictorAmIconsType(Icons.AutoMirrored.Filled.ArrowForwardIos)
     val Edit = AmIconsType.ImageVictorAmIconsType(Icons.Default.Edit)
     val Save = AmIconsType.ImageVictorAmIconsType(Icons.Default.Save)
+    val update = AmIconsType.ImageVictorAmIconsType(Icons.Default.Upgrade)
     val Close = AmIconsType.ImageVictorAmIconsType(Icons.Default.Close)
     val More = AmIconsType.ImageVictorAmIconsType(Icons.Default.MoreHoriz)
 
@@ -93,7 +97,8 @@ object AmIcons {
     val SubTitle = AmIconsType.ImageVictorAmIconsType(Icons.Default.Subtitles)
     val Money = AmIconsType.ImageVictorAmIconsType(Icons.Default.Money)
 
-    val Done = AmIconsType.ImageVictorAmIconsType(Icons.Default.Done)
+    val Selected = AmIconsType.ImageVictorAmIconsType(Icons.Default.SelectAll)
+    val NotSelected = AmIconsType.ImageVictorAmIconsType(Icons.Default.Deselect)
 
     val Search = AmIconsType.ImageVictorAmIconsType(Icons.Default.Search)
 

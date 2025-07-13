@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
@@ -15,19 +16,26 @@ import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.common.dataOrNull
 import com.awesome.manager.core.common.filterSuccess
+import com.awesome.manager.core.designsystem.component.asFlow
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+private const val ACCOUNT_NAME: String = "ACCOUNT_NAME"
 private const val IMAGE_URL: String = "IMAGE_URL"
 private const val CURRENCY_ID: String = "CURRENCY_ID"
 private const val TRANSACTION_TYPE: String = "TRANSACTION_TYPE"
@@ -36,106 +44,146 @@ private const val TRANSACTION_TYPE: String = "TRANSACTION_TYPE"
 class AccountEditorViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
-    private val ssh: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     currencyRepository: CurrencyRepository,
 ) : ViewModel() {
 
-    private val accountEditorArg: AccountEditorRoute = ssh.toRoute()
-    private val accountID = accountEditorArg.accountID
+    private fun String.setState(value: String): Unit = savedStateHandle.set(this, value)
+    private fun String.getState(): StateFlow<String?> = savedStateHandle.getStateFlow(this, null)
 
-    val accountNameTextFieldState: TextFieldState = TextFieldState()
+    private val accountID: String? = savedStateHandle.toRoute<AccountEditorRoute>().accountID
+    private suspend fun getAccount() = when (accountID) {
+        null -> null
+        else -> accountRepository.getAccountByID(accountID = accountID).first().account
+    }
 
-    val transactionTypes: List<AmTransactionType> = AmTransactionType.getTypes()
-    val currencies: StateFlow<AmState<List<AmCurrency>>> = currencyRepository.returnCurrencies()
-        .asAmState(viewModelScope)
+    private val _accountEditorState: MutableStateFlow<AccountEditorState> =
+        MutableStateFlow(AccountEditorState.Init(accountID))
+    val accountEditorState: StateFlow<AccountEditorState> = _accountEditorState
 
-    fun setAccountImageURL(imageURL: String) = ssh.set(IMAGE_URL, imageURL)
-    val accountImageURL: StateFlow<String> = ssh.getStateFlow(IMAGE_URL, "")
 
-    fun setCurrencyID(currencyID: String) = ssh.set(CURRENCY_ID, currencyID)
-    val currencyID: StateFlow<String> = ssh.getStateFlow(CURRENCY_ID, "")
+    val accountNameTextFieldState: TextFieldState = savedStateHandle.saveable(
+        key = ACCOUNT_NAME,
+        saver = TextFieldState.Saver,
+        init = { TextFieldState() },
+    )
 
-    fun setTransactionTypeID(transactionType: String) = ssh.set(TRANSACTION_TYPE, transactionType)
-    val transactionTypeID: StateFlow<String> = ssh.getStateFlow(TRANSACTION_TYPE, "")
+    val imageURL: StateFlow<String?> = IMAGE_URL.getState()
+    fun setImageURL(imageURL: String) = IMAGE_URL.setState(imageURL)
+
+    val currencyID: StateFlow<String?> = CURRENCY_ID.getState()
+    fun setCurrencyID(currencyID: String) = CURRENCY_ID.setState(currencyID)
+
+    val transactionTypeID: StateFlow<String?> = TRANSACTION_TYPE.getState()
+    fun setTransactionTypeID(transactionType: String) = TRANSACTION_TYPE.setState(transactionType)
 
     private val _popup: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val popup: StateFlow<Boolean> = _popup
-    fun requestPopup()=_popup.update { true }
-    fun donePopup()=_popup.update { false }
+    fun requestPopup() = _popup.update { true }
+    fun donePopup() = _popup.update { false }
+
+    val transactionTypes: List<AmTransactionType> = AmTransactionType.getTypes()
+    val currencies: StateFlow<AmState<List<AmCurrency>>> = currencyRepository
+        .returnCurrencies()
+        .asAmState(viewModelScope)
 
     init {
-        setInitData()
+        syncAccountEditorState()
     }
 
-    fun setInitData() = viewModelScope.launch {
+    fun syncAccountEditorState() = viewModelScope.launch {
 
-        val account = when (accountID) {
-            null -> null
-            else -> accountRepository.getAccountByID(accountID = accountID).first().account
+        when (val account = getAccount()) {
+            null -> {
+                accountNameTextFieldState.setTextAndPlaceCursorAtEnd("")
+                setTransactionTypeID(transactionTypes.first().id)
+                setCurrencyID(currencies.filterSuccess().first().first().id)
+                setImageURL(images.random())
+            }
+
+            else -> {
+                accountNameTextFieldState.setTextAndPlaceCursorAtEnd(account.name)
+                setTransactionTypeID(account.defaultTransactionType.id)
+                setCurrencyID(account.currency.id)
+                setImageURL(account.imageUrl)
+            }
         }
 
-        val accountName: String = account?.name.orEmpty()
-        val defaultTransactionType: AmTransactionType = account?.defaultTransactionType
-            ?: transactionTypes.first()
-        val currency: AmCurrency = account?.currency
-            ?: currencies.filterSuccess().filter { it.isNotEmpty() }.first().first()
-        val imageUrl: String = account?.imageUrl ?: images.random()
+        combine(
+            accountNameTextFieldState.asFlow(),
+            imageURL,
+            currencyID.flatMapLatest { id ->
+                currencies.filterSuccess().map { it.firstOrNull { it.id == id } }
+            },
+            transactionTypeID.map { id -> transactionTypes.firstOrNull { it.id == id } }
+        ) { accountName, imageURL, currency, transactionType ->
 
-        accountNameTextFieldState.setTextAndPlaceCursorAtEnd(accountName)
-        setTransactionTypeID(defaultTransactionType.id)
-        setCurrencyID(currency.id)
-        setAccountImageURL(imageUrl)
+            val validAccountName: Boolean = !accountName.isBlank()
+            val validImageUrl: Boolean = !imageURL.isNullOrBlank()
+            val validCurrency: Boolean = currency != null
+            val validTransactionType: Boolean = transactionType != null
 
+            when {
+                accountName.isBlank() -> AccountEditorState.Init(
+                    editorState = accountEditorState.value.editorState
+                )
+
+                validAccountName && validCurrency && validTransactionType && validImageUrl ->
+                    AccountEditorState.ValidateInput(
+                        accountName = accountName,
+                        imageURL = imageURL,
+                        transactionType = transactionType,
+                        currency = currency,
+                        editorState = accountEditorState.value.editorState,
+                    )
+
+                else -> AccountEditorState.InvalidateInput(
+                    inValidAccountName = !validAccountName,
+                    invalidImageURL = !validImageUrl,
+                    inValidTransactionType = !validTransactionType,
+                    invalidCurrency = !validCurrency,
+                    editorState = accountEditorState.value.editorState
+                )
+            }
+
+        }
+            .flowOn(Dispatchers.Default)
+            .collect { newAccountEditeState -> _accountEditorState.update { newAccountEditeState } }
     }
 
     fun saveAccount() {
         viewModelScope.launch(Dispatchers.Default) {
 
             val currentUser = authRepository.currentUser().first()
-            val account = when (accountID) {
-                null -> null
-                else -> accountRepository.getAccountByID(accountID = accountID).first().account
-            }
+            val account = getAccount()
 
             val accountID = account?.accountID ?: UUID.randomUUID().toString()
             val creatorUserID = account?.creatorUserID ?: currentUser.id
 
-            val accountName = accountNameTextFieldState.text.toString()
-            val imageURL: String? = accountImageURL.value
-            val currency = currencies.value.dataOrNull()?.firstOrNull { currency ->
-                currency.id == currencyID.value
-            }
-            val transactionType = transactionTypes.firstOrNull { transactionType ->
-                transactionType.id == transactionTypeID.value
-            }
-
             val alreadyOnNetwork = account?.alreadyOnNetwork == true
             val updatePermission = account?.updatePermission != false
+
             val updatedAt = currentTime()
             val createdAt = account?.createdAt ?: updatedAt
 
-            when {
-                imageURL == null -> Unit
-                transactionType == null -> Unit
-                currency == null -> Unit
-                else -> {
-                    val amAccountWithBalance = AmAccount(
-                        accountID = accountID,
-                        creatorUserID = creatorUserID,
-                        name = accountName,
-                        imageUrl = imageURL,
-                        defaultTransactionType = transactionType,
-                        pending = true,
-                        alreadyOnNetwork = alreadyOnNetwork,
-                        updatePermission = updatePermission,
-                        currency = currency,
-                        createdAt = createdAt,
-                        updatedAt = updatedAt,
-                    )
-                    accountRepository.upsertAccount(amAccountWithBalance)
-                    requestPopup()
-                }
+            (accountEditorState.value as? AccountEditorState.ValidateInput)?.let { validateInput ->
+                val amAccountWithBalance = AmAccount(
+                    accountID = accountID,
+                    creatorUserID = creatorUserID,
+                    name = validateInput.accountName,
+                    imageUrl = validateInput.imageURL,
+                    defaultTransactionType = validateInput.transactionType,
+                    pending = true,
+                    alreadyOnNetwork = alreadyOnNetwork,
+                    updatePermission = updatePermission,
+                    currency = validateInput.currency,
+                    createdAt = createdAt,
+                    updatedAt = updatedAt,
+                )
+                accountRepository.upsertAccount(amAccountWithBalance)
+                requestPopup()
             }
+
         }
     }
 

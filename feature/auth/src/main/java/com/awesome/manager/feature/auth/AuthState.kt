@@ -4,7 +4,10 @@ sealed interface AuthState {
 
     data object InitState : AuthState
 
-    data object ValidatedInput : AuthState
+    data class ValidatedInput(
+        val email: String,
+        val password: String
+    ) : AuthState
 
     data object Loading : AuthState
 

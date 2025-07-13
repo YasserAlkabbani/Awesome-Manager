@@ -14,6 +14,7 @@ enum class MainDestination(
     @StringRes val title: Int,
     val selectedAmIconsType: AmIconsType.ImageVictorAmIconsType,
     val unSelectedAmIconsType: AmIconsType.ImageVictorAmIconsType,
+    val addIcon: AmIconsType.ImageVictorAmIconsType,
     val route: KClass<*>
 ) {
     @Serializable
@@ -21,6 +22,7 @@ enum class MainDestination(
         title = com.awesome.manager.feature.home.R.string.home,
         selectedAmIconsType = AmIcons.HomeSelected,
         unSelectedAmIconsType = AmIcons.HomeUnSelected,
+        addIcon = AmIcons.HomeAdd,
         route = HomeRoute::class
     ),
 
@@ -29,6 +31,7 @@ enum class MainDestination(
         title = com.awesome.manager.feature.account.accounts.R.string.accounts,
         selectedAmIconsType = AmIcons.AccountsSelected,
         unSelectedAmIconsType = AmIcons.AccountsUnSelected,
+        addIcon = AmIcons.AccountAdd,
         route = AccountsRoute::class
     ),
 
@@ -37,7 +40,13 @@ enum class MainDestination(
         title = com.awesome.manager.feature.account.details.R.string.transactions,
         selectedAmIconsType = AmIcons.TransactionsSelected,
         unSelectedAmIconsType = AmIcons.TransactionsUnSelected,
+        addIcon = AmIcons.TransactionAdd,
         route = TransactionRoute::class
-    )
+    );
+
+    fun getIcon(isSelected: Boolean) = when (isSelected) {
+        true -> selectedAmIconsType
+        false -> unSelectedAmIconsType
+    }
 
 }

@@ -6,6 +6,7 @@ import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.ErrorResponse
 import com.awesome.manager.core.network.NetworkError
 import com.awesome.manager.core.network.model.request.Authorization
+import com.awesome.manager.core.network.model.request.RefreshTokenBody
 import com.awesome.manager.core.network.model.response.AuthNetwork
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -52,9 +53,6 @@ import kotlinx.serialization.json.Json
 import java.net.UnknownHostException
 import javax.inject.Singleton
 
-
-@Serializable
-private data class RefreshTokenBody(@SerialName("refresh_token") val refreshToken: String)
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -136,7 +134,6 @@ object NetworkModule {
 
         install(Auth) {
             bearer {
-
                 loadTokens {
                     val authToken =
                         authPreferencesDataStore.returnAccessToken().firstOrNull().orEmpty()
@@ -145,12 +142,13 @@ object NetworkModule {
                     BearerTokens(authToken, refreshToken)
                 }
                 refreshTokens {
-                    val authNetwork = client.post(
-                        Authorization.RefreshToken()
-                    ) {
-                        setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
-                        markAsRefreshTokenRequest()
-                    }.body<AuthNetwork>()
+                    val authNetwork =
+                        client
+                            .post(Authorization.RefreshToken()) {
+                                setBody(RefreshTokenBody(oldTokens?.refreshToken.orEmpty()))
+                                markAsRefreshTokenRequest()
+                            }
+                            .body<AuthNetwork>()
                     authNetwork.run {
                         authPreferencesDataStore.updateToken(
                             accessToken = accessToken, refreshToken = refreshToken,
@@ -162,7 +160,6 @@ object NetworkModule {
                 sendWithoutRequest { request ->
                     request.url.host == BuildConfig.BASE_URL
                 }
-
             }
         }
 
