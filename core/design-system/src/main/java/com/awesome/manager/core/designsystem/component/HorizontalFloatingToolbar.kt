@@ -123,8 +123,7 @@ sealed interface FloatingToolBarState {
     ) : FloatingToolBarState {
 
         override val leading: FloatingToolbarComponent.IconButton? = backButton
-        override val content: FloatingToolbarComponent.Text =
-            FloatingToolbarComponent.Text(errorMessage)
+        override val content: FloatingToolbarComponent.Text = FloatingToolbarComponent.Text(errorMessage)
         override val trailing: FloatingToolbarComponent.IconButton? = retryButton
 
         override val isExpended = trailing != null || leading != null

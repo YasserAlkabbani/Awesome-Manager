@@ -146,7 +146,7 @@ fun rememberAuthFloatingToolbarButton(
         )
 
         is AuthState.ValidatedInput -> FloatingToolBarState.Content(
-            textMessage = R.string.confirm,
+            textMessage = R.string.validated,
             actionButton = FloatingToolbarComponent.ActionButton(
                 textRes = R.string.confirm,
                 amIconsType = AmIcons.ArrowForward,

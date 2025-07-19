@@ -1,6 +1,5 @@
 package com.awesome.manager.feature.account.accounts
 
-import android.accounts.Account
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -17,8 +16,16 @@ fun NavController.navigateToAccounts(navOptions: NavOptions?) {
     )
 }
 
-fun NavGraphBuilder.accountsScreen(navigateToCreateAccount: ()->Unit) {
+fun NavGraphBuilder.accountsScreen(
+    navigateToCreateAccount: () -> Unit,
+    navigateToCreateTransaction: (String) -> Unit,
+    navigateToAccount: (String) -> Unit,
+) {
     composable<AccountsRoute> {
-        AccountsScreen(navigateToCreateAccount=navigateToCreateAccount)
+        AccountsRoute(
+            navigateToCreateAccount = navigateToCreateAccount,
+            navigateToCreateTransaction = navigateToCreateTransaction,
+            navigateToAccount = navigateToAccount,
+        )
     }
 }

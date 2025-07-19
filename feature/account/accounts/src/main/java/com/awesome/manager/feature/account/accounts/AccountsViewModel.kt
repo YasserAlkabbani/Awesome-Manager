@@ -3,9 +3,17 @@ package com.awesome.manager.feature.account.accounts
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
+import com.awesome.manager.core.model.AmAccountWithBalance
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,25 +23,29 @@ class AccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val accountsState: AccountsState = AccountsState(
-        setString = { savedStateHandle[this] = it },
-        getString = { savedStateHandle.getStateFlow(this, it) },
-        pagingAccounts = accountRepository.getAccounts(),
-        refreshAccounts = ::refreshAccounts
-    )
+    val pagingAccounts: Flow<PagingData<AmAccountWithBalance>> = accountRepository.getAccounts()
+
+    private val _accountsState: MutableStateFlow<AccountsState> =
+        MutableStateFlow(AccountsState.IDLE)
+    val accountsState: StateFlow<AccountsState> = _accountsState.asStateFlow()
+
+    private val _accountNavigation: MutableStateFlow<AccountsNavigation?> = MutableStateFlow(null)
+    val accountNavigation: StateFlow<AccountsNavigation?> = _accountNavigation
+    fun navigateTo(navigation: AccountsNavigation) = _accountNavigation.update { navigation }
+    fun doneNavigation() = _accountNavigation.update { null }
 
     init {
         refreshAccounts()
     }
 
-    private fun refreshAccounts() {
+    fun refreshAccounts() {
         viewModelScope.launch {
             accountRepository.refreshAccounts().collectLatest {
-//                when (it) {
-//                    is AmUIState.Error -> accountsState.endRefreshing()
-//                    is AmUIState.Loading -> accountsState.startRefreshing()
-//                    is AmUIState.Success -> accountsState.endRefreshing()
-//                }
+                when (it) {
+                    is AmState.Error -> _accountsState.update { AccountsState.ERROR }
+                    is AmState.Loading -> _accountsState.update { AccountsState.LOADING }
+                    is AmState.Success -> _accountsState.update { AccountsState.IDLE }
+                }
             }
         }
     }

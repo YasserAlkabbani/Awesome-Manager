@@ -21,12 +21,12 @@ fun AmFilledIconButton(
 ) {
     FilledIconButton(
         modifier = modifier,
-//        colors = IconButtonDefaults.filledIconButtonColors().run {
-//            when (isError) {
-//                true -> copy(containerColor = MaterialTheme.colorScheme.error)
-//                false -> this
-//            }
-//        },
+        colors = when (isError) {
+            true -> IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+            false -> IconButtonDefaults.filledIconButtonColors()
+        },
         content = {
             AmIcon(
                 modifier = Modifier,

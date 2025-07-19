@@ -18,6 +18,7 @@ import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 
 @Composable
@@ -67,12 +68,11 @@ fun TransactionDetailsScreen(
                 is AmState.Success -> {
                     val account = it.data.account
                     val balanceDetails = it.data.balanceDetails
-                    AccountCard(
+                    AccountCardWithDetails(
                         modifier = Modifier.fillMaxWidth(),
                         title = account.name,
                         imageUrl = account.imageUrl,
-                        loading = account.pending, withDetails = true,
-                        onClick = {  },
+                        loading = account.pending,
                         incomeExpenses = CardBalanceDetails.IncomeExpenses(
                             income = balanceDetails.formattedIncome,
                             expenses = balanceDetails.formattedExpenses,

@@ -1,5 +1,6 @@
 package com.awesome.manager.core.ui.lazy_column
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +11,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.awesome.manager.core.designsystem.AmLazyColumnPadding
 
 
@@ -35,6 +37,7 @@ fun AmLazyColumn(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
             content = content
         )
     }

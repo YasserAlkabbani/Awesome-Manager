@@ -31,6 +31,7 @@ import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
+import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -100,11 +101,10 @@ internal fun TransactionEditorScreen(
                     selectedAccount?.let { accountWithBalance ->
                         val account = accountWithBalance.account
                         val balanceDetails = accountWithBalance.balanceDetails
-                        AccountCard(
+                        AccountCardWithDetails(
                             modifier = Modifier,
                             title = account.name, imageUrl = account.imageUrl,
                             loading = account.pending,
-                            withDetails = true,
                             creditorDebtor = CardBalanceDetails.CreditorDebtor(
                                 debtor = balanceDetails.formattedDebtor,
                                 creditor = balanceDetails.formattedCreditor,
@@ -118,7 +118,6 @@ internal fun TransactionEditorScreen(
                                 isPositiveIncome = balanceDetails.isPositiveIncome,
                             ),
                             currencySymbol = balanceDetails.currency.currencySymbol,
-                            onClick = {}
                         )
                     }
 

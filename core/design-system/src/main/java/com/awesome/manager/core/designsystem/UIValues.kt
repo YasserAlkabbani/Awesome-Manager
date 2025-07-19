@@ -13,7 +13,8 @@ enum class AmSize(val value: Dp) {
     LARGE_IMAGE_SIZE(82.dp),
     BOTTOM_NAVIGATION_HEIGHT(90.dp),
     FLOATING_TOOLBAR_LOADING_HEIGHT(12.dp),
-    FLOATING_TOOLBAR_LOADING_WIDTH(120.dp)
+    FLOATING_TOOLBAR_LOADING_WIDTH(120.dp),
+    CARD_LOADING_SIZE(24.dp)
 }
 
 enum class AmLazyColumnPadding(val value: Dp) {

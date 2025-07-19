@@ -1,6 +1,7 @@
 package com.awesome.manager.feature.auth
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,11 +17,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val EMAIL_TEXT: String = "EMAIL_TEXT"
@@ -46,43 +52,36 @@ class AuthViewModel @Inject constructor(
         init = { TextFieldState() }
     )
 
-    init {
-        syncAuthState()
-    }
+    val authStateSyncing = combine(
+        emailTextFieldState.asFlow(),
+        passwordTextFieldState.asFlow()
+    ) { email, password ->
 
-    private fun syncAuthState() {
+        val isValidEmail = email.isValidEmail()
+        val isValidPassword = password.isValidPassword()
 
-        viewModelScope.launch {
-            combine(
-                emailTextFieldState.asFlow(),
-                passwordTextFieldState.asFlow()
-            ) { email, password ->
+        when {
+            email.isBlank() || password.isBlank() -> AuthState.InitState
+            isValidEmail && isValidPassword -> AuthState.ValidatedInput(
+                email = email,
+                password = password
+            )
 
-                val isValidEmail = email.isValidEmail()
-                val isValidPassword = password.isValidPassword()
-
-                when {
-                    email.isBlank() || password.isBlank() -> AuthState.InitState
-                    isValidEmail && isValidPassword -> AuthState.ValidatedInput(
-                        email = email,
-                        password = password
-                    )
-
-                    else -> AuthState.ErrorInvalidInput(
-                        invalidEmail = !isValidEmail,
-                        invalidPassword = !isValidPassword
-                    )
-                }
-
-            }
-                .collect { authState -> _authState.update { authState } }
+            else -> AuthState.ErrorInvalidInput(
+                invalidEmail = !isValidEmail,
+                invalidPassword = !isValidPassword
+            )
         }
 
-    }
+    }.onEach { authState -> _authState.update { authState } }
 
+    init {
+        viewModelScope.launch { authStateSyncing.collect() }
+    }
 
     fun login() {
         viewModelScope.launch {
+            authStateSyncing.first()
             suspend fun AmState<Unit>.asAuthState() = withContext(Dispatchers.Default) {
                 val newAuthState = when (this@asAuthState) {
                     is AmState.Loading -> AuthState.Loading

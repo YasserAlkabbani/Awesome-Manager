@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -210,7 +211,7 @@ fun HomeCard(
     }
 }
 
-@Preview(device = PIXEL_4_XL)
+@Preview(device = PIXEL_9_PRO_XL, showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(

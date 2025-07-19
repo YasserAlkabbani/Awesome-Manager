@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmIcon
@@ -48,7 +49,7 @@ fun AmTextButton(
     )
 }
 
-@Preview(device = PIXEL_4_XL, showBackground = true)
+@Preview(device = PIXEL_9_PRO_XL, showBackground = true)
 @Composable
 fun AmTextButtonPreview() {
     AmTextButton(

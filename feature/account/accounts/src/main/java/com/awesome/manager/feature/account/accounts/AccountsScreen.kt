@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -25,25 +27,49 @@ import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-internal fun AccountsScreen(
+internal fun AccountsRoute(
     accountsViewModel: AccountsViewModel = hiltViewModel(),
-    navigateToCreateAccount:()->Unit
+    navigateToCreateAccount: () -> Unit,
+    navigateToCreateTransaction: (String) -> Unit,
+    navigateToAccount: (String) -> Unit,
 ) {
 
-    val accountsState = accountsViewModel.accountsState
+    val accountsState =
+        accountsViewModel.accountsState.collectAsStateWithLifecycle().value
+    val accountNavigation =
+        accountsViewModel.accountNavigation.collectAsStateWithLifecycle().value
 
-//    val mainAction = accountsState.mainAction.collectAsStateWithLifecycle().value
-//    LaunchedEffect(key1 = mainAction) {
-//        mainAction?.sendMainAction(sendMainAction, accountsState::doneMainAction)
-//    }
+    LaunchedEffect(accountNavigation) {
+        accountNavigation?.let {
+            accountsViewModel.doneNavigation()
+            when (accountNavigation) {
+                AccountsNavigation.CreateAccount -> navigateToCreateAccount()
+                is AccountsNavigation.CreateTransaction -> navigateToCreateTransaction(
+                    accountNavigation.accountID
+                )
+
+                is AccountsNavigation.Account -> navigateToAccount(accountNavigation.accountID)
+            }
+        }
+    }
 
     AccountsScreen(
-        accountsState,
-        navigateToCreateAccount
+        accountsState = accountsState,
+        pagingAccounts = accountsViewModel.pagingAccounts,
+        refreshAccounts = accountsViewModel::refreshAccounts,
+        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsNavigation.CreateAccount) },
+        navigateToCreateTransaction = {
+            accountsViewModel.navigateTo(
+                AccountsNavigation.CreateTransaction(
+                    it
+                )
+            )
+        },
+        navigateToAccount = { accountsViewModel.navigateTo(AccountsNavigation.Account(it)) }
     )
 }
 
@@ -51,14 +77,14 @@ internal fun AccountsScreen(
 @Composable
 internal fun AccountsScreen(
     accountsState: AccountsState,
-    navigateToCreateAccount: () -> Unit
+    pagingAccounts: Flow<PagingData<AmAccountWithBalance>>,
+    refreshAccounts: () -> Unit,
+    navigateToCreateAccount: () -> Unit,
+    navigateToCreateTransaction: (String) -> Unit,
+    navigateToAccount: (String) -> Unit,
 ) {
-    val accountsLazyPaging =
-        accountsState.pagingAccounts.collectAsLazyPagingItems()
-    val isEmptyList =
-        remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
-//    val isRefreshing =
-//        accountsState.refreshing.collectAsStateWithLifecycle().value
+    val accountsLazyPaging = pagingAccounts.collectAsLazyPagingItems()
+    val isEmptyList = remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
 
     AnimatedContent(
         modifier = Modifier.fillMaxWidth(),
@@ -89,8 +115,8 @@ internal fun AccountsScreen(
 
             false -> {
                 AmLazyColumn(
-                    isRefreshing = false,
-                    onRefresh = accountsState.refreshAccounts,
+                    isRefreshing = accountsState == AccountsState.LOADING,
+                    onRefresh = refreshAccounts,
                     content = {
                         items(
                             count = accountsLazyPaging.itemCount,
@@ -104,25 +130,10 @@ internal fun AccountsScreen(
                                         modifier = Modifier.animateItem(),
                                         title = account.name,
                                         imageUrl = account.imageUrl,
-                                        loading = account.pending,
-                                        withDetails = false,
-                                        onClick = {
-//                                            accountsState.navigateToAccountDetails(
-//                                                account.id
-//                                            )
-                                        },
-                                        creditorDebtor = CardBalanceDetails.CreditorDebtor(
-                                            debtor = balanceDetails.formattedDebtor,
-                                            creditor = balanceDetails.formattedCreditor,
-                                            netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                            isPositiveDebtor = balanceDetails.isPositiveDebtor
-                                        ),
-                                        incomeExpenses = CardBalanceDetails.IncomeExpenses(
-                                            income = balanceDetails.formattedIncome,
-                                            expenses = balanceDetails.formattedExpenses,
-                                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                                        ),
+                                        loading = true,
+                                        onClick = { navigateToAccount(account.accountID) },
+                                        balance = balanceDetails.formattedNetDebtor,
+                                        isPositiveDebtor = balanceDetails.isPositiveDebtor,
                                         currencySymbol = account.currency.currencySymbol,
                                     )
                                 }
@@ -143,11 +154,12 @@ fun AccountsScreenPreview() {
             add(AmAccountWithBalance.createDemo(it))
         }
     }
-    val accountState = AccountsState(
-        {},
-        { MutableStateFlow("") },
+    AccountsScreen(
+        accountsState = AccountsState.IDLE,
+        pagingAccounts = flowOf(),
         refreshAccounts = {},
-        pagingAccounts = flowOf(PagingData.from(accountsList))
+        navigateToCreateAccount = { },
+        navigateToCreateTransaction = { },
+        navigateToAccount = { },
     )
-    AccountsScreen(accountState,{})
 }

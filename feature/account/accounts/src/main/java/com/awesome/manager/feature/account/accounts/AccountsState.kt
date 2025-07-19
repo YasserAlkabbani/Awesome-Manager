@@ -6,11 +6,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 
-class AccountsState(
-    val setString: String.(value: String) -> Unit,
-    val getString: String.(defaultValue: String) -> StateFlow<String>,
-    val pagingAccounts: Flow<PagingData<AmAccountWithBalance>>,
-    val refreshAccounts: () -> Unit,
-) {
+enum class AccountsState{
+    IDLE,
+    LOADING,
+    ERROR
+}
 
+sealed interface AccountsNavigation{
+    data object CreateAccount:AccountsNavigation
+    data class Account(val accountID: String):AccountsNavigation
+    data class CreateTransaction(val accountID: String):AccountsNavigation
 }

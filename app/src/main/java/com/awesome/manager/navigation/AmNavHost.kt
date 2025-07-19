@@ -7,17 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.awesome.manager.feature.account.accounts.accountsScreen
 import com.awesome.manager.feature.account.details.accountDetailsScreen
+import com.awesome.manager.feature.account.details.navigateToAccountDetails
 import com.awesome.manager.feature.account.editor.accountEditorScreen
 import com.awesome.manager.feature.account.editor.navigateToAccountCreator
 import com.awesome.manager.feature.auth.AuthRoute
 import com.awesome.manager.feature.auth.authScreen
 import com.awesome.manager.feature.home.homeScreen
 import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
+import com.awesome.manager.feature.transaction.editor.navigateToTransactionCreator
 import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.transactionsScreen
-import timber.log.Timber
 
 
 @Composable
@@ -46,6 +48,12 @@ fun AmNavHost(
             accountsScreen(
                 navigateToCreateAccount = {
                     navHostController.navigateToAccountCreator(null)
+                },
+                navigateToAccount = { accountID ->
+                    navHostController.navigateToAccountDetails(accountID = accountID, navOptions = navOptions {  })
+                },
+                navigateToCreateTransaction = { accountID ->
+                    navHostController.navigateToTransactionCreator(accountID = accountID)
                 }
             )
             accountDetailsScreen()

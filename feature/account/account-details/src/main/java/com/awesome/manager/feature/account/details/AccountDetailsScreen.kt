@@ -20,6 +20,7 @@ import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCard
+import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -69,11 +70,10 @@ internal fun AccountDetailsScreen(accountDetailsState: AccountDetailsState) {
                 ) {
                     val account = it.data.account
                     val balanceDetails = it.data.balanceDetails
-                    AccountCard(
+                    AccountCardWithDetails(
                         modifier = Modifier,
                         title = account.name,
                         imageUrl = account.imageUrl, loading = account.pending,
-                        withDetails = true,
                         creditorDebtor = CardBalanceDetails.CreditorDebtor(
                             debtor = balanceDetails.formattedDebtor,
                             creditor = balanceDetails.formattedCreditor,
