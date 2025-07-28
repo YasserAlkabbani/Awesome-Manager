@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun AmLinearProgressIndicator(
     modifier: Modifier = Modifier
 ) {
-    LinearProgressIndicator(
+    LinearWavyProgressIndicator(
         modifier = modifier,
     )
 }

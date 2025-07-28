@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices.PIXEL_4_XL
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,8 +42,6 @@ internal fun HomeScreenRoute(
     navigateToCreateAccount: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val balanceState: AmState<List<BalanceDetails>> =
-        homeViewModel.balanceDetails.collectAsStateWithLifecycle().value
     val currencies: AmState<List<AmCurrency>> =
         homeViewModel.currencies.collectAsStateWithLifecycle().value
     val accounts: AmState<List<AmAccountWithBalance>> =
@@ -53,7 +50,7 @@ internal fun HomeScreenRoute(
         homeViewModel.transactions.collectAsStateWithLifecycle().value
 
     HomeScreen(
-        balanceDetailsState = balanceState,
+//        balanceDetailsState = balanceState,
         currencies = currencies,
         accounts = accounts,
         transactions = transactions,
@@ -64,7 +61,7 @@ internal fun HomeScreenRoute(
 
 @Composable
 internal fun HomeScreen(
-    balanceDetailsState: AmState<List<BalanceDetails>>,
+//    balanceDetailsState: AmState<List<BalanceDetails>>,
     currencies: AmState<List<AmCurrency>>,
     accounts: AmState<List<AmAccountWithBalance>>,
     transactions: AmState<List<AmTransaction>>,
@@ -78,7 +75,7 @@ internal fun HomeScreen(
         LoadingDataState(accounts)
         LoadingDataState(transactions)
 
-        AnimatedContent(
+        /*AnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = balanceDetailsState,
             contentAlignment = Alignment.TopCenter
@@ -137,7 +134,7 @@ internal fun HomeScreen(
 
                 is AmState.Loading -> {}
             }
-        }
+        }*/
     }
 
 }
@@ -177,12 +174,12 @@ fun HomeCard(
     AmSurface(
         modifier = Modifier.fillMaxWidth(),
         isPositive = isPositiveCash,
-        padding = AmPadding.MEDIUM
+        padding = AmPadding.CARD_PADDING_MEDIUM
     ) {
         AmSurface(
             modifier = Modifier.fillMaxWidth(),
             isPositive = isPositiveCash,
-            padding = AmPadding.MEDIUM
+            padding = AmPadding.CARD_PADDING_MEDIUM
         ) {
             Row(
                 modifier = Modifier
@@ -215,13 +212,13 @@ fun HomeCard(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(
-        balanceDetailsState = AmState.Success(
-            listOf(
-                BalanceDetails.createDemo(),
-                BalanceDetails.createDemo(),
-                BalanceDetails.createDemo()
-            )
-        ),
+//        balanceDetailsState = AmState.Success(
+//            listOf(
+//                BalanceDetails.createDemo(),
+//                BalanceDetails.createDemo(),
+//                BalanceDetails.createDemo()
+//            )
+//        ),
         currencies = AmState.Loading(),
         accounts = AmState.Error(amUIError = AmUIError.NoDataError),
         transactions = AmState.Success(listOf()),

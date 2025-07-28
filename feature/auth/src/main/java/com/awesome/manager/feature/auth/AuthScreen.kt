@@ -34,6 +34,7 @@ import com.awesome.manager.core.designsystem.component.text.AmSecureTextField
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.asAmText
 
 @Composable
 fun AuthRoute(
@@ -142,28 +143,28 @@ fun rememberAuthFloatingToolbarButton(
     when (authState) {
         AuthState.Loading -> FloatingToolBarState.Loading
         AuthState.InitState -> FloatingToolBarState.Content(
-            textMessage = R.string.welcome_back,
+            textMessage = R.string.welcome_back.asAmText(),
         )
 
         is AuthState.ValidatedInput -> FloatingToolBarState.Content(
-            textMessage = R.string.validated,
+            textMessage = R.string.validated.asAmText(),
             actionButton = FloatingToolbarComponent.ActionButton(
-                textRes = R.string.confirm,
+                text = R.string.confirm.asAmText(),
                 amIconsType = AmIcons.ArrowForward,
                 onClick = login
             )
         )
 
         is AuthState.ErrorInvalidInput -> FloatingToolBarState.Error(
-            errorMessage = R.string.invalid_email_or_password,
+            errorMessage = R.string.invalid_email_or_password.asAmText(),
         )
 
         AuthState.ErrorRequestCertification -> FloatingToolBarState.Error(
-            errorMessage = R.string.invalid_certification
+            errorMessage = R.string.invalid_certification.asAmText()
         )
 
         AuthState.ErrorRequestConnection -> FloatingToolBarState.Error(
-            errorMessage = R.string.connection_error,
+            errorMessage = R.string.connection_error.asAmText(),
             retryButton = FloatingToolbarComponent.IconButton(
                 amIconsType = AmIcons.Retry,
                 onClick = login
@@ -171,7 +172,7 @@ fun rememberAuthFloatingToolbarButton(
         )
 
         AuthState.ErrorRequestUnknown -> FloatingToolBarState.Error(
-            errorMessage = R.string.unknown_error,
+            errorMessage = R.string.unknown_error.asAmText(),
             retryButton = FloatingToolbarComponent.IconButton(
                 amIconsType = AmIcons.Retry,
                 onClick = login
@@ -179,7 +180,7 @@ fun rememberAuthFloatingToolbarButton(
         )
 
         AuthState.LoggedInSuccessfully -> FloatingToolBarState.Content(
-            textMessage = R.string.logged_in_successfully
+            textMessage = R.string.logged_in_successfully.asAmText()
         )
     }
 

@@ -25,6 +25,7 @@ import com.awesome.manager.core.designsystem.component.FloatingToolBarState
 import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
+import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
@@ -40,9 +41,7 @@ internal fun AccountEditorRoute(
 
     val accountNameTextFieldState = accountEditorViewModel.accountNameTextFieldState
     val transactionTypes = accountEditorViewModel.transactionTypes
-
-    val currencies =
-        accountEditorViewModel.currencies.collectAsStateWithLifecycle().value.dataOrNull()
+    val currencies = accountEditorViewModel.currencies
 
     val accountEditorState =
         accountEditorViewModel.accountEditorState.collectAsStateWithLifecycle().value
@@ -72,7 +71,7 @@ internal fun AccountEditorRoute(
         transactionTypes = transactionTypes,
         accountImageUrl = accountImageUrl,
         selectedCurrencyID = selectedCurrencyID,
-        setCurrencyID = accountEditorViewModel::setCurrencyID,
+        setCurrencyID = accountEditorViewModel::setCurrencyCode,
         selectedTransactionTypeID = selectedTransactionTypeID,
         setTransactionTypeID = accountEditorViewModel::setTransactionTypeID,
         saveAccount = accountEditorViewModel::saveAccount,
@@ -176,32 +175,34 @@ fun rememberAccountEditorFloatingToolbar(
                     amIconsType = AmIcons.ArrowBack,
                     onClick = popup
                 ),
-                textMessage = R.string.whats_the_account_name
+                textMessage = R.string.whats_the_account_name.asAmText()
             )
+
             is AccountEditorState.InvalidateInput -> FloatingToolBarState.Error(
-                errorMessage = R.string.invalid_account_name,
+                errorMessage = R.string.invalid_account_name.asAmText(),
                 backButton = FloatingToolbarComponent.IconButton(
                     amIconsType = AmIcons.ArrowBack,
                     onClick = popup
                 )
             )
 
-            is AccountEditorState.ValidateInput -> FloatingToolBarState.Action(
+            is AccountEditorState.ValidateInput -> FloatingToolBarState.Content(
+                textMessage = null,
                 backButton = FloatingToolbarComponent.IconButton(
                     amIconsType = AmIcons.ArrowBack,
                     onClick = popup
                 ),
                 actionButton = FloatingToolbarComponent.ActionButton(
-                    textRes = when (accountEditorState.editorState) {
+                    text = when (accountEditorState.editorState) {
                         EditorState.CREATE -> R.string.create_account
                         EditorState.EDIT -> R.string.update_account
-                    },
+                    }.asAmText(),
                     amIconsType = when (accountEditorState.editorState) {
                         EditorState.CREATE -> AmIcons.ArrowForward
                         EditorState.EDIT -> AmIcons.ArrowForward
                     },
-                    onClick = saveAccount
-                )
+                    onClick = saveAccount,
+                ),
             )
         }
     }

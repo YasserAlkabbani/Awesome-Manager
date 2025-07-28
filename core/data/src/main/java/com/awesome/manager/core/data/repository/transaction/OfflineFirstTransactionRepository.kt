@@ -40,7 +40,7 @@ class OfflineFirstTransactionRepository @Inject constructor(
     ): Flow<PagingData<AmTransaction>> = {
         transactionDao.returnTransactions(
             searchKey = searchKey,
-            transactionType = transactionType?.name,
+            transactionTypeID = transactionType?.name,
             fromDate = fromDate,
             toDate = toDate
         )

@@ -7,7 +7,6 @@ import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.AmState.Loading
 import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
-import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.model.AmCurrency
@@ -23,15 +22,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val currencyRepository: CurrencyRepository,
     private val accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val balanceDetails: StateFlow<AmState<List<BalanceDetails>>> = currencyRepository
-        .returnBalanceDetails()
-        .asAmState(viewModelScope)
+//    val balanceDetails: StateFlow<AmState<List<BalanceDetails>>> = currencyRepository
+//        .returnBalanceDetails()
+//        .asAmState(viewModelScope)
 
     private val _currencies: MutableStateFlow<AmState<List<AmCurrency>>> =
         MutableStateFlow(Loading())
@@ -49,15 +47,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun refreshData() {
-        refreshCurrencies()
         refreshAccounts()
         refreshTransactions()
-    }
-
-    private fun refreshCurrencies() = viewModelScope.launch {
-        currencyRepository.refreshCurrencies().collect { currencies ->
-            _currencies.update { currencies }
-        }
     }
 
     private fun refreshAccounts() = viewModelScope.launch {

@@ -21,10 +21,10 @@ interface AccountDao {
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='EXPENSES' THEN transactions.amount ELSE 0 END ),0) AS expenses," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='DEBTOR' THEN transactions.amount ELSE 0 END ),0) AS debtor," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor, " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id=='EXPENSES' THEN transactions.amount ELSE 0 END ),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id=='DEBTOR' THEN transactions.amount ELSE 0 END ),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor, " +
                 "(accounts.creator_user_id == users.user_id) AS update_permission " +
                 "FROM accounts,users " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
@@ -36,10 +36,10 @@ interface AccountDao {
     @Transaction
     @Query(
         "SELECT accounts.* ," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type='INCOME' THEN transactions.amount ELSE 0 END),0) AS income," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
-                "IFNULL(SUM( CASE WHEN transactions.transaction_type='CREDITOR' THEN transactions.amount ELSE 0 END),0) AS creditor, " +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id='INCOME' THEN transactions.amount ELSE 0 END),0) AS income," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
+                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id='CREDITOR' THEN transactions.amount ELSE 0 END),0) AS creditor, " +
                 "(accounts.creator_user_id == users.user_id) AS update_permission " +
                 "FROM accounts,users " +
                 "LEFT JOIN transactions ON accounts.account_id=transactions.account_id " +
@@ -59,3 +59,17 @@ interface AccountDao {
     suspend fun deleteAccounts()
 
 }
+
+//@Transaction
+//@Query(
+//    "SELECT currencies.* ," +
+//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
+//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
+//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
+//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor " +
+//            "FROM currencies " +
+//            "JOIN accounts on currencies.currency_id=accounts.currency_id " +
+//            "LEFT JOIN transactions on accounts.account_id=transactions.account_id " +
+//            "GROUP BY currencies.currency_id"
+//)
+//fun returnCurrenciesBalance(): Flow<List<CurrencyEntityWithData>>

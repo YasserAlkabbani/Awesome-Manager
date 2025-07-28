@@ -6,7 +6,9 @@ import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.common.asStringDateTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
+import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.UpsertTransaction
 import com.awesome.manager.core.network.model.request.TransactionNetworkRequest
 import com.awesome.manager.core.network.model.response.TransactionNetworkResponse
@@ -15,7 +17,7 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     id = id,
     creatorUserId = creatorUserId,
     accountId = accountId,
-    transactionType = transactionType,
+    transactionTypeID = transactionType,
     title = title,
     subtitle = subtitle,
     amount = amount,
@@ -30,7 +32,7 @@ fun TransactionEntityWithData.asModel() = AmTransaction(
     transactionID = transactionEntity.id,
     accountID = transactionEntity.accountId,
     creatorUserID = transactionEntity.creatorUserId,
-    transactionType = enumValueOf(transactionEntity.transactionType),
+    transactionType = AmTransactionType.returnTransactionType(transactionEntity.transactionTypeID),
     title = transactionEntity.title,
     pending = transactionEntity.pending,
     alreadyOnNetwork = transactionEntity.alreadyOnNetwork,
@@ -39,8 +41,8 @@ fun TransactionEntityWithData.asModel() = AmTransaction(
     createdAt = transactionEntity.createdAt,
     updatedAt = transactionEntity.updatedAt,
     transactionAt = transactionEntity.transactionAt,
-    accountName = accountEntityWithBasic.accountEntity.name,
-    currency = accountEntityWithBasic.currencyEntity.asModel(),
+    accountName = accountEntity.name,
+    currency = AmCurrency.returnCurrency(accountEntity.currencyID),
     updatePermission = updatePermission,
     transactionAtDate = transactionEntity.transactionAt.asDate()
 )
@@ -49,7 +51,7 @@ fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     id = id,
     creatorUserId = creatorUserId,
     accountId = accountId,
-    transactionType = transactionType,
+    transactionType = transactionTypeID,
     title = title,
     subtitle = subtitle,
     amount = amount,
@@ -60,7 +62,7 @@ fun UpsertTransaction.asEntity() = TransactionEntity(
     id = transactionID,
     creatorUserId = creatorUserId,
     accountId = accountId,
-    transactionType = transactionType,
+    transactionTypeID = transactionType,
     title = title,
     subtitle = subtitle,
     amount = amount,

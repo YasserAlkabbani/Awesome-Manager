@@ -132,9 +132,8 @@ internal fun AccountsScreen(
                                         imageUrl = account.imageUrl,
                                         loading = true,
                                         onClick = { navigateToAccount(account.accountID) },
-                                        balance = balanceDetails.formattedNetDebtor,
-                                        isPositiveDebtor = balanceDetails.isPositiveDebtor,
                                         currencySymbol = account.currency.currencySymbol,
+                                        lastTransactionAt = "12-11-2025 15:08"
                                     )
                                 }
                             }

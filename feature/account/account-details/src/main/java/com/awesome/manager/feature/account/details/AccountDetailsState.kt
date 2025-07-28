@@ -1,33 +1,31 @@
 package com.awesome.manager.feature.account.details
 
-import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmAccountWithBalance
-import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.common.filterSuccess
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
-class AccountDetailsState(
-    val setString: String.(value: String) -> Unit,
-    val getString: String.(defaultValue: String) -> StateFlow<String>,
-    val refreshTransactions: () -> Unit,
-    val account: StateFlow<AmState<AmAccountWithBalance>>,
-    val transactions: Flow<PagingData<AmTransaction>>,
-) {
+internal sealed interface AccountDetailsState {
 
-    val accountDetailsUI = account
-        .filterSuccess()
-//        .processUIState()
+    data object Loading : AccountDetailsState
 
-//    private fun Flow<AmAccount>.processUIState() = onEach { account ->
-//        dynamicFabAccountDetails(
-//            hasEditPermission = account.updatePermission,
-//            navigateToCreateTransaction = { navigateToCreateTransaction(account.id) },
-//            navigateToEditAccount = { navigateToEditAccount(account.id) },
-//            popUp = ::navigatePopBack
-//        )
-//    }
+    data object Error : AccountDetailsState
 
+    data class Success(
+        val amAccountWithBalance: AmAccountWithBalance
+    ) : AccountDetailsState
 
+}
+
+internal sealed interface AccountTransactionsState {
+
+    data object Loading : AccountTransactionsState
+
+    data object Error : AccountTransactionsState
+
+    data object Success : AccountTransactionsState
+
+}
+
+internal sealed interface AccountDetailsNavigation  {
+    data class CreateTransaction(val accountID: String) : AccountDetailsNavigation
+    data class EditAccount(val accountID: String) : AccountDetailsNavigation
+    data object Popup : AccountDetailsNavigation
 }

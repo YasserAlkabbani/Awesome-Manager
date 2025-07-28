@@ -1,25 +1,43 @@
 package com.awesome.manager.core.model
 
+import java.util.Currency
+import java.util.Locale
+
 data class AmCurrency(
-    val id: String,
     val countryName: String,
     val imageUrl: String,
     val currencyCode: String,
     val currencyName: String,
     val currencySymbol: String,
-    val createdAt: Long,
-    val updatedAt: Long
 ) {
+    val id: String = currencyCode
+
     companion object {
-        fun createDemo() = AmCurrency(
-            id = "CURRENCY",
-            countryName = "USA",
-            imageUrl = "",
-            currencyCode = "USD",
-            currencyName = "DOLLAR",
-            currencySymbol = "$",
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
-        )
+        private val supportedLocals by lazy {
+            Locale.getAvailableLocales().filter { locale ->
+                when (locale.country) {
+                    "us", "eu", "tr", "sy" -> true
+                    else -> false
+                }
+            }.filterNotNull()
+        }
+        private val currencies by lazy {
+            supportedLocals.mapNotNull { locale ->
+                Currency.getInstance(locale)?.let { currency ->
+                    AmCurrency(
+                        countryName = locale.displayName,
+                        imageUrl = "https://flagicons.lipis.dev/flags/4x3/${locale.country}.svg",
+                        currencyCode = currency.currencyCode,
+                        currencyName = currency.displayName,
+                        currencySymbol = currency.symbol,
+                    )
+                }
+            }
+        }
+
+        fun returnCurrencies() = currencies
+
+        fun returnCurrency(currencyID: String) = currencies.first { it.id == currencyID }
+
     }
 }

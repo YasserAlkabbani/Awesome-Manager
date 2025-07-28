@@ -25,8 +25,8 @@ fun NavController.navigateToTransactionEditor(
 }
 
 fun NavController.navigateToTransactionCreator(
-    accountID: String?=null,
-    navOptions: NavOptions?=null
+    accountID: String? = null,
+    navOptions: NavOptions? = null
 ) {
     navigate(
         route = TransactionEditorRoute(

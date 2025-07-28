@@ -1,11 +1,14 @@
 package com.awesome.manager.core.ui.card
 
+import android.icu.util.Currency
+import android.icu.util.CurrencyAmount
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,34 +21,8 @@ import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.cards.AmCard
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.designsystem.getColors
 
-
-@Composable
-fun AccountCard(
-    modifier: Modifier,
-    title: String,
-    imageUrl: String,
-    currencySymbol: String,
-    balance: String,
-    isPositiveDebtor: Boolean,
-    loading: Boolean,
-    onClick: () -> Unit
-) {
-    AmCard(
-        modifier = modifier.fillMaxWidth(),
-        isPositive = isPositiveDebtor,
-        isLoading = loading,
-        onClick = onClick,
-        content = {
-            AccountBasic(
-                title = title,
-                imageUrl = imageUrl,
-                balance = balance,
-                currencySymbol = currencySymbol,
-            )
-        }
-    )
-}
 
 @Composable
 fun AccountCardWithDetails(
@@ -56,21 +33,46 @@ fun AccountCardWithDetails(
     creditorDebtor: CardBalanceDetails.CreditorDebtor,
     incomeExpenses: CardBalanceDetails.IncomeExpenses,
     currencySymbol: String,
+    lastTransactionAt: String
 ) {
-    AmCard(
+    AmSurface(
         modifier = modifier.fillMaxWidth(),
-        isPositive = creditorDebtor.isPositiveDebtor,
         isLoading = loading,
         content = {
             AccountBasic(
                 title = title,
                 imageUrl = imageUrl,
-                balance = creditorDebtor.balance,
                 currencySymbol = currencySymbol,
+                lastTransactionAt = lastTransactionAt
             )
             AmBalanceDetailsCard(
                 creditorDebtor = creditorDebtor,
                 incomeExpenses = incomeExpenses,
+            )
+        }
+    )
+}
+
+@Composable
+fun AccountCard(
+    modifier: Modifier,
+    title: String,
+    imageUrl: String,
+    currencySymbol: String,
+    lastTransactionAt: String,
+    loading: Boolean,
+    onClick: () -> Unit
+) {
+    AmSurface(
+        modifier = modifier.fillMaxWidth(),
+        isLoading = loading,
+        onClick = onClick,
+        content = {
+            AccountBasic(
+                title = title,
+                imageUrl = imageUrl,
+                currencySymbol = currencySymbol,
+                lastTransactionAt = lastTransactionAt,
             )
         }
     )
@@ -81,8 +83,8 @@ fun AccountCardWithDetails(
 fun AccountBasic(
     title: String,
     imageUrl: String,
-    balance: String,
     currencySymbol: String,
+    lastTransactionAt: String
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -93,11 +95,21 @@ fun AccountBasic(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            AmText(text = title, textStyle = MaterialTheme.typography.titleMedium)
-            AmText(
-                text = "$balance $currencySymbol",
-                textStyle = MaterialTheme.typography.titleMedium
-            )
+            AmText(text = title, textStyle = MaterialTheme.typography.titleLarge)
+            Row {
+                AmText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = "Currency: $currencySymbol",
+                    textStyle = MaterialTheme.typography.bodyMedium
+                )
+                AmText(
+                    modifier = Modifier,
+                    text = "Last Transaction: At $lastTransactionAt",
+                    textStyle = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
@@ -111,12 +123,12 @@ fun AccountCardPreview() {
         title = "Account Name",
         imageUrl = "",
         loading = true,
-        balance = "1000,00",
-        isPositiveDebtor = true,
-        currencySymbol = "$",
+        currencySymbol = "S",
+        lastTransactionAt = "$",
         onClick = {},
     )
 }
+
 @Preview
 @Composable
 fun AccountCardWithDetailsPreview() {
@@ -138,5 +150,6 @@ fun AccountCardWithDetailsPreview() {
             isPositiveIncome = false,
         ),
         currencySymbol = "$",
+        lastTransactionAt = "12-11-2025 15:08"
     )
 }

@@ -13,7 +13,7 @@ import com.awesome.manager.core.designsystem.AmPadding
 fun AmText(
     modifier: Modifier = Modifier,
     text: String, maxLines: Int = 1,
-    amTextPadding: AmPadding = AmPadding.MEDIUM,
+    amTextPadding: AmPadding = AmPadding.CARD_PADDING_MEDIUM,
     textStyle: TextStyle = LocalTextStyle.current,
     textAlign: TextAlign? = null
 ) {

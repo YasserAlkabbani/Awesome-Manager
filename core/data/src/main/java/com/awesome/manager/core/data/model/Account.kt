@@ -5,6 +5,7 @@ import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.database.model.AccountEntityWithData
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmAccountWithBalance
+import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.network.model.request.AccountNetworkRequest
 import com.awesome.manager.core.network.model.response.AccountNetworkResponse
@@ -15,20 +16,20 @@ fun AccountEntityWithData.asModel() = AmAccountWithBalance(
         creatorUserID = accountEntity.creatorUserID,
         name = accountEntity.name,
         imageUrl = accountEntity.imageUrl,
-        defaultTransactionType = enumValueOf(accountEntity.defaultTransactionType),
+        defaultTransactionType = enumValueOf(accountEntity.defaultTransactionTypeID),
         pending = accountEntity.pending,
         alreadyOnNetwork = accountEntity.alreadyOnNetwork,
         createdAt = accountEntity.createdAt,
         updatedAt = accountEntity.updatedAt,
         updatePermission = updatePermission,
-        currency = currencyEntity.asModel()
+        currency = AmCurrency.returnCurrency(accountEntity.currencyID)
     ),
     balanceDetails = BalanceDetails(
         income = income,
         expenses = expenses,
         debtor = debtor,
         creditor = creditor,
-        currency = currencyEntity.asModel()
+        currency = AmCurrency.returnCurrency(accountEntity.currencyID)
     ),
 )
 
@@ -36,8 +37,8 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     id = id,
     name = name,
     imageUrl = imageUrl,
-    currencyId = currencyId,
-    defaultTransactionType = defaultTransactionType,
+    currencyID = currencyId,
+    defaultTransactionTypeID = defaultTransactionType,
     creatorUserID = creatorUserId,
     pending = false,
     createdAt = createdAt.asTimestamp(),
@@ -50,8 +51,8 @@ fun AmAccount.asEntity() = AccountEntity(
     creatorUserID = creatorUserID,
     name = name,
     imageUrl = imageUrl,
-    currencyId = currency.id,
-    defaultTransactionType = defaultTransactionType.id,
+    currencyID = currency.id,
+    defaultTransactionTypeID = defaultTransactionType.id,
     pending = true,
     alreadyOnNetwork = alreadyOnNetwork,
     createdAt = createdAt,
@@ -63,6 +64,6 @@ fun AccountEntity.asNetwork() = AccountNetworkRequest(
     creatorUserId = creatorUserID,
     name = name,
     imageUrl = imageUrl,
-    currencyId = currencyId,
-    defaultTransactionType = defaultTransactionType,
+    currencyId = currencyID,
+    defaultTransactionType = defaultTransactionTypeID,
 )

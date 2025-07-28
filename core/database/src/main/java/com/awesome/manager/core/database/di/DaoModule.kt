@@ -16,9 +16,6 @@ object DaoModule {
     fun provideUserDao(amDatabase: AmDatabase) = amDatabase.userDao()
 
     @Provides
-    fun provideCurrencyDao(amDatabase: AmDatabase) = amDatabase.currencyDao()
-
-    @Provides
     fun provideAccountDao(amDatabase: AmDatabase) = amDatabase.accountDao()
 
     @Provides

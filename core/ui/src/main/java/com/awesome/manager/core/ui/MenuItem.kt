@@ -13,12 +13,12 @@ import com.awesome.manager.core.designsystem.component.AmIcon
 import com.awesome.manager.core.designsystem.component.AmImage
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIconsType
-import com.awesome.manager.core.designsystem.text.AmTextManager
+import com.awesome.manager.core.designsystem.text.AmText
 
 @Composable
 fun MenuItem(
-    title: AmTextManager,
-    subTitle: AmTextManager,
+    title: AmText,
+    subTitle: AmText,
     amIconsType: AmIconsType.ImageVictorAmIconsType?,
     imageUrl: String?,
     loading: Boolean, onClick: () -> Unit

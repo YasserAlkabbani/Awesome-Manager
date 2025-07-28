@@ -32,7 +32,7 @@ data class AmAccountWithBalance(
                 updatePermission = listOf(true, false).random(),
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis(),
-                currency = AmCurrency.createDemo()
+                currency = AmCurrency.returnCurrencies().first()
             ),
             balanceDetails = BalanceDetails.createDemo(),
         )

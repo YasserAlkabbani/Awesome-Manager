@@ -75,7 +75,7 @@ fun TransactionCard(
                 )
             }
         },
-        isPositive = isPay,
+//        isPositive = isPay,
         isLoading = isPending,
         onClick = onClick
     )

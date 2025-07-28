@@ -118,6 +118,7 @@ internal fun TransactionEditorScreen(
                                 isPositiveIncome = balanceDetails.isPositiveIncome,
                             ),
                             currencySymbol = balanceDetails.currency.currencySymbol,
+                            lastTransactionAt = "12-11-2025 15:08"
                         )
                     }
 

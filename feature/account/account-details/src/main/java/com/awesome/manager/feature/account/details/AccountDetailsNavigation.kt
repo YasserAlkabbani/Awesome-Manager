@@ -20,8 +20,16 @@ fun NavController.navigateToAccountDetails(
     )
 }
 
-fun NavGraphBuilder.accountDetailsScreen() {
+fun NavGraphBuilder.accountDetailsScreen(
+    navigateToCreateTransaction: (accountID: String) -> Unit,
+    navigateToEditAccount: (accountID: String) -> Unit,
+    navigateBack: () -> Unit
+) {
     composable<AccountDetailsRoute> {
-        AccountDetailsScreen()
+        AccountDetails(
+            navigateToCreateTransaction = navigateToCreateTransaction,
+            navigateToEditAccount = navigateToEditAccount,
+            navigateBack = navigateBack,
+        )
     }
 }

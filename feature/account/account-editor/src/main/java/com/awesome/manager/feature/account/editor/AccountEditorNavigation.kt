@@ -11,7 +11,7 @@ data class AccountEditorRoute(val accountID: String?)
 
 fun NavController.navigateToAccountEditor(
     accountID: String,
-    navOptions: NavOptions
+    navOptions: NavOptions? = null
 ) {
     navigate(
         route = AccountEditorRoute(accountID = accountID),

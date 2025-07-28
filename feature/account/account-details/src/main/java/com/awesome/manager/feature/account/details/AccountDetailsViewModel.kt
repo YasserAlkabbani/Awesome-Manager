@@ -4,47 +4,73 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.asAmState
+import androidx.paging.PagingData
+import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
+import com.awesome.manager.core.model.AmTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountDetailsViewModel @Inject constructor(
+internal class AccountDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val accountRepository: AccountRepository,
+    accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository,
 ) : ViewModel() {
 
     private val accountDetailsArg: AccountDetailsRoute = savedStateHandle.toRoute()
     private val accountID: String = accountDetailsArg.accountID
 
-    private val accountUIState = accountRepository
+    internal val accountDetailsState: StateFlow<AccountDetailsState> = accountRepository
         .getAccountByID(accountID = accountID)
-        .filterNotNull()
-        .asAmState(viewModelScope)
+        .onStart { refreshTransactions() }
+        .map { AccountDetailsState.Success(it) }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = AccountDetailsState.Loading,
+            started = SharingStarted.Eagerly
+        )
 
-    val accountDetailsState: AccountDetailsState = AccountDetailsState(
-        setString = { savedStateHandle[this] = it },
-        getString = { savedStateHandle.getStateFlow(this, it) },
-        refreshTransactions = ::refreshTransactions,
-        account = accountUIState,
-        transactions = transactionRepository.getTransactionsByAccountID(accountID, ""),
-    )
+    val accountTransactionsPaging: Flow<PagingData<AmTransaction>> = transactionRepository
+        .getTransactionsByAccountID(accountID, "")
 
-    private fun refreshTransactions() {
+    private val _accountTransactionsState: MutableStateFlow<AccountTransactionsState> =
+        MutableStateFlow(AccountTransactionsState.Loading)
+    val accountTransactionsState: StateFlow<AccountTransactionsState> =
+        _accountTransactionsState
+
+
+    private val _navigation: MutableStateFlow<AccountDetailsNavigation?> = MutableStateFlow(null)
+    val navigation: StateFlow<AccountDetailsNavigation?> = _navigation
+    fun navigateToCreateTransaction() =
+        _navigation.update { AccountDetailsNavigation.CreateTransaction(accountID) }
+
+    fun navigateToEditAccount() =
+        _navigation.update { AccountDetailsNavigation.EditAccount(accountID) }
+
+    fun navigateToPopup() = _navigation.update { AccountDetailsNavigation.Popup }
+    fun navigationDone() = _navigation.update { null }
+
+    fun refreshTransactions() {
         viewModelScope.launch {
-            accountDetailsState.apply {
-                transactionRepository.refreshTransactions().collectLatest {
-//                    when (it) {
-//                        is AmUIState.Error -> accountDetailsState.endRefreshing()
-//                        is AmUIState.Loading -> accountDetailsState.startRefreshing()
-//                        is AmUIState.Success -> accountDetailsState.endRefreshing()
-//                    }
+            transactionRepository.refreshTransactions().collectLatest { refreshingState ->
+                _accountTransactionsState.update {
+                    when (refreshingState) {
+                        is AmState.Error -> AccountTransactionsState.Error
+                        is AmState.Loading -> AccountTransactionsState.Loading
+                        is AmState.Success<*> -> AccountTransactionsState.Success
+                    }
                 }
             }
         }

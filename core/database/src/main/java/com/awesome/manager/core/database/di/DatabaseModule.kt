@@ -20,7 +20,7 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ) = Room
         .databaseBuilder(context, AmDatabase::class.java, "am_database")
-        .fallbackToDestructiveMigration()
+        .fallbackToDestructiveMigration(true)
         .build()
 
 }

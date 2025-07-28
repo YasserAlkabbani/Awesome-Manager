@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
+import com.awesome.manager.core.designsystem.getColors
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.ui.AmTextWithIcon
 import com.awesome.manager.core.ui.R
@@ -98,11 +101,12 @@ private fun BalanceDetailsRow(
     Column(modifier = modifier) {
         AmText(
             text = "${cardBalanceDetails.positiveLabel()}/${cardBalanceDetails.negativeLabel()}",
-            textStyle = MaterialTheme.typography.titleMedium
+            textStyle = MaterialTheme.typography.titleMedium,
+            amTextPadding = AmPadding.ZERO
         )
-        AmSurface(
+        Surface(
             modifier=Modifier.fillMaxWidth(),
-            isPositive = true
+            contentColor = true.getColors().first
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
@@ -110,9 +114,9 @@ private fun BalanceDetailsRow(
                 amIconsType = AmIcons.Input,
             )
         }
-        AmSurface(
+        Surface(
             modifier=Modifier.fillMaxWidth(),
-            isPositive = false
+            contentColor = false.getColors().first
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),
@@ -120,9 +124,9 @@ private fun BalanceDetailsRow(
                 amIconsType = AmIcons.Output,
             )
         }
-        AmSurface(
+        Surface(
             modifier=Modifier.fillMaxWidth(),
-            isPositive = cardBalanceDetails.isPositiveBalance
+            contentColor = cardBalanceDetails.isPositiveBalance.getColors().first
         ) {
             AmTextWithIcon(
                 modifier = Modifier.fillMaxWidth(),

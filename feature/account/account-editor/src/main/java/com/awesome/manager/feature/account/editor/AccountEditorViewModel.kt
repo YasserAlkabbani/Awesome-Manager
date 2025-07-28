@@ -7,15 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
-import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.common.currentTime
-import com.awesome.manager.core.common.dataOrNull
-import com.awesome.manager.core.common.filterSuccess
 import com.awesome.manager.core.designsystem.component.asFlow
 import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
@@ -24,10 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -45,7 +37,6 @@ class AccountEditorViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
     private val savedStateHandle: SavedStateHandle,
-    currencyRepository: CurrencyRepository,
 ) : ViewModel() {
 
     private fun String.setState(value: String): Unit = savedStateHandle.set(this, value)
@@ -72,7 +63,7 @@ class AccountEditorViewModel @Inject constructor(
     fun setImageURL(imageURL: String) = IMAGE_URL.setState(imageURL)
 
     val currencyID: StateFlow<String?> = CURRENCY_ID.getState()
-    fun setCurrencyID(currencyID: String) = CURRENCY_ID.setState(currencyID)
+    fun setCurrencyCode(currencyID: String) = CURRENCY_ID.setState(currencyID)
 
     val transactionTypeID: StateFlow<String?> = TRANSACTION_TYPE.getState()
     fun setTransactionTypeID(transactionType: String) = TRANSACTION_TYPE.setState(transactionType)
@@ -82,10 +73,8 @@ class AccountEditorViewModel @Inject constructor(
     fun requestPopup() = _popup.update { true }
     fun donePopup() = _popup.update { false }
 
-    val transactionTypes: List<AmTransactionType> = AmTransactionType.getTypes()
-    val currencies: StateFlow<AmState<List<AmCurrency>>> = currencyRepository
-        .returnCurrencies()
-        .asAmState(viewModelScope)
+    val transactionTypes: List<AmTransactionType> by lazy { AmTransactionType.returnTransactionsTypes() }
+    val currencies: List<AmCurrency> by lazy { AmCurrency.returnCurrencies() }
 
     init {
         syncAccountEditorState()
@@ -97,14 +86,14 @@ class AccountEditorViewModel @Inject constructor(
             null -> {
                 accountNameTextFieldState.setTextAndPlaceCursorAtEnd("")
                 setTransactionTypeID(transactionTypes.first().id)
-                setCurrencyID(currencies.filterSuccess().first().first().id)
+                setCurrencyCode(currencies.first().id)
                 setImageURL(images.random())
             }
 
             else -> {
                 accountNameTextFieldState.setTextAndPlaceCursorAtEnd(account.name)
                 setTransactionTypeID(account.defaultTransactionType.id)
-                setCurrencyID(account.currency.id)
+                setCurrencyCode(account.currency.id)
                 setImageURL(account.imageUrl)
             }
         }
@@ -112,9 +101,7 @@ class AccountEditorViewModel @Inject constructor(
         combine(
             accountNameTextFieldState.asFlow(),
             imageURL,
-            currencyID.flatMapLatest { id ->
-                currencies.filterSuccess().map { it.firstOrNull { it.id == id } }
-            },
+            currencyID.map { id -> currencies.firstOrNull { it.id == id } },
             transactionTypeID.map { id -> transactionTypes.firstOrNull { it.id == id } }
         ) { accountName, imageURL, currency, transactionType ->
 

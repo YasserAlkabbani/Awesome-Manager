@@ -1,12 +1,10 @@
 package com.awesome.manager.core.designsystem.component
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarColors
 import androidx.compose.material3.FloatingToolbarDefaults
@@ -15,15 +13,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledIconButton
-import com.awesome.manager.core.designsystem.component.buttons.AmTextButton
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIconsType
+import com.awesome.manager.core.designsystem.text.AmText
 
 sealed interface FloatingToolbarComponent {
 
@@ -45,13 +42,13 @@ sealed interface FloatingToolbarComponent {
     }
 
     data class Text(
-        val textRes: Int
+        val amText: AmText
     ) : FloatingToolbarComponent {
         @Composable
         override fun Content(isError: Boolean) {
             AmText(
                 modifier = Modifier,
-                text = stringResource(textRes),
+                text = amText.asText(),
                 textStyle = MaterialTheme.typography.titleMedium
             )
         }
@@ -73,7 +70,7 @@ sealed interface FloatingToolbarComponent {
     }
 
     data class ActionButton(
-        val textRes: Int,
+        val text: AmText,
         val amIconsType: AmIconsType.ImageVictorAmIconsType,
         val onClick: () -> Unit
     ) : FloatingToolbarComponent {
@@ -81,7 +78,7 @@ sealed interface FloatingToolbarComponent {
         override fun Content(isError: Boolean) {
             AmButton(
                 modifier = Modifier,
-                text = stringResource(textRes),
+                text = text.asText(),
                 amIconsType = amIconsType,
                 onClick = onClick
             )
@@ -93,6 +90,7 @@ sealed interface FloatingToolbarComponent {
 sealed interface FloatingToolBarState {
 
     val leading: FloatingToolbarComponent?
+    val leading2: FloatingToolbarComponent?
     val content: FloatingToolbarComponent
     val trailing: FloatingToolbarComponent?
 
@@ -104,6 +102,7 @@ sealed interface FloatingToolBarState {
 
     data object Loading : FloatingToolBarState {
         override val leading: FloatingToolbarComponent? = null
+        override val leading2: FloatingToolbarComponent? = null
         override val content: FloatingToolbarComponent = FloatingToolbarComponent.Loading
         override val trailing: FloatingToolbarComponent? = null
 
@@ -117,13 +116,15 @@ sealed interface FloatingToolBarState {
     }
 
     data class Error(
-        val errorMessage: Int,
+        val errorMessage: AmText,
         val backButton: FloatingToolbarComponent.IconButton? = null,
         val retryButton: FloatingToolbarComponent.IconButton? = null
     ) : FloatingToolBarState {
 
         override val leading: FloatingToolbarComponent.IconButton? = backButton
-        override val content: FloatingToolbarComponent.Text = FloatingToolbarComponent.Text(errorMessage)
+        override val leading2: FloatingToolbarComponent.IconButton? = null
+        override val content: FloatingToolbarComponent.Text =
+            FloatingToolbarComponent.Text(errorMessage)
         override val trailing: FloatingToolbarComponent.IconButton? = retryButton
 
         override val isExpended = trailing != null || leading != null
@@ -139,30 +140,16 @@ sealed interface FloatingToolBarState {
     }
 
     data class Content(
-        val textMessage: Int,
+        val textMessage: AmText?,
         val backButton: FloatingToolbarComponent.IconButton? = null,
+        val editButton: FloatingToolbarComponent.IconButton? = null,
         val actionButton: FloatingToolbarComponent.ActionButton? = null,
     ) : FloatingToolBarState {
         override val leading: FloatingToolbarComponent? = backButton
-        override val content: FloatingToolbarComponent = FloatingToolbarComponent.Text(textMessage)
-        override val trailing: FloatingToolbarComponent? = actionButton
-
-        override val isExpended = trailing != null || leading != null
-        override val isError = false
-
-        @Composable
-        override fun floatingToolBarColors() =
-            FloatingToolbarDefaults.vibrantFloatingToolbarColors()
-
-    }
-
-
-    data class Action(
-        val backButton: FloatingToolbarComponent.IconButton? = null,
-        val actionButton: FloatingToolbarComponent.ActionButton,
-    ) : FloatingToolBarState {
-        override val leading: FloatingToolbarComponent? = backButton
-        override val content: FloatingToolbarComponent = FloatingToolbarComponent.Empty
+        override val leading2: FloatingToolbarComponent? = editButton
+        override val content: FloatingToolbarComponent = textMessage
+            ?.let { FloatingToolbarComponent.Text(amText = it) }
+            ?: FloatingToolbarComponent.Empty
         override val trailing: FloatingToolbarComponent? = actionButton
 
         override val isExpended = trailing != null || leading != null
@@ -189,6 +176,9 @@ fun BoxScope.AMHorizontalFloatingToolbar(
         leadingContent = {
             AnimatedContent(targetState = floatingToolBarState.leading) { leading ->
                 leading?.Content(floatingToolBarState.isError)
+            }
+            AnimatedContent(targetState = floatingToolBarState.leading2) { leading2 ->
+                leading2?.Content(floatingToolBarState.isError)
             }
         },
         content = {

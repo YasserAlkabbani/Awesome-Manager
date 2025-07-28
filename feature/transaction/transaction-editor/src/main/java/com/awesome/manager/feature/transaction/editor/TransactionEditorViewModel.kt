@@ -68,7 +68,7 @@ class TransactionEditorViewModel @Inject constructor(
             upsertTransaction = { upsertTransaction() },
             accountsSearchResults = { accountRepository.getAccounts(this) },
             transactionEditorData = transactionEditorData,
-            transactionTypes = AmTransactionType.getTypes(),
+            transactionTypes = AmTransactionType.returnTransactionsTypes(),
             getAccountById = {
                 filter { it.isNotBlank() }
                     .flatMapLatest { accountRepository.getAccountByID(it) }
