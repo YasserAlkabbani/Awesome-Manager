@@ -32,34 +32,31 @@ fun AmSurface(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
     padding: AmPadding = AmPadding.CARD_PADDING_MEDIUM,
-    isPositive: Boolean? = null,
     isLoading: Boolean = false,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
-    Box(
-        modifier
-            .height(IntrinsicSize.Max)
-            .width(IntrinsicSize.Max)
-            .clip(shape)
-    ) {
-        Surface(
-            modifier = Modifier.padding(
-                bottom = AmPadding.CARD_SURFACE_INDICATOR.value
-            ),
-            shape = shape,
-            content = {
-                Column(
-                    modifier = Modifier.padding(padding.value),
-                    content = {
-                        content()
-                        AnimatedVisibility(isLoading) {
-                            AmLinearProgressIndicator()
-                        }
-                    }
-                )
+    Surface(
+        modifier = modifier.padding(
+            start = AmPadding.CARD_SURFACE_INDICATOR.value,
+        ),
+        shape = shape,
+        content = {
+            Row(
+                modifier = Modifier.padding(
+                    vertical = padding.value + 4.dp,
+                    horizontal = padding.value
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                content()
+                AnimatedVisibility(isLoading) {
+                    AmCircularProgressIndicator(
+                        modifier = Modifier.size(AmSize.CARD_LOADING_SIZE.value),
+                    )
+                }
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
@@ -108,6 +105,5 @@ fun AmSurfacePreview() {
             }
         },
         isLoading = false,
-        isPositive = true
     )
 }

@@ -28,11 +28,10 @@ import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.model.AmAccountWithBalance
-import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
-import com.awesome.manager.core.ui.card.CardBalanceDetails
+import com.awesome.manager.core.ui.card.BalanceData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -105,20 +104,17 @@ internal fun TransactionEditorScreen(
                             modifier = Modifier,
                             title = account.name, imageUrl = account.imageUrl,
                             loading = account.pending,
-                            creditorDebtor = CardBalanceDetails.CreditorDebtor(
+                            balanceData = BalanceData.generate(
                                 debtor = balanceDetails.formattedDebtor,
                                 creditor = balanceDetails.formattedCreditor,
                                 netDebtorAbs = balanceDetails.formattedNetDebtor,
                                 isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            ),
-                            incomeExpenses = CardBalanceDetails.IncomeExpenses(
                                 income = balanceDetails.formattedIncome,
                                 expenses = balanceDetails.formattedExpenses,
                                 netIncomeAbs = balanceDetails.formattedNetIncome,
                                 isPositiveIncome = balanceDetails.isPositiveIncome,
-                            ),
-                            currencySymbol = balanceDetails.currency.currencySymbol,
-                            lastTransactionAt = "12-11-2025 15:08"
+                                currencyCode = balanceDetails.currency.currencyCode,
+                            )
                         )
                     }
 

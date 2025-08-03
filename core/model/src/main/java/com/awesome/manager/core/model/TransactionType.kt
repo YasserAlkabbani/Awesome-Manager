@@ -17,8 +17,8 @@ enum class AmTransactionType(val positive: Boolean) {
     companion object {
         fun returnTransactionsTypes() = AmTransactionType.entries.toList()
 
-        fun returnTransactionType(transactionsTypeID: String) =
-            returnTransactionsTypes().first { it.id == transactionsTypeID }
+        fun returnTransactionType(transactionsType: String) =
+            enumValueOf<AmTransactionType>(transactionsType)
 
     }
 }

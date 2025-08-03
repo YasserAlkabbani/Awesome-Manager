@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.awesome.manager.core.common
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 fun Long.asDate() =

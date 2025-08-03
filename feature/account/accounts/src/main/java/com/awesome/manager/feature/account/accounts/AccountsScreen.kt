@@ -24,7 +24,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.model.AmAccountWithBalance
 import com.awesome.manager.core.ui.card.AccountCard
-import com.awesome.manager.core.ui.card.CardBalanceDetails
+import com.awesome.manager.core.ui.card.BalanceData
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_ACCOUNT
 import kotlinx.coroutines.flow.Flow
@@ -127,13 +127,22 @@ internal fun AccountsScreen(
                                     val balanceDetails = accountWithBalance.balanceDetails
                                     val account = accountWithBalance.account
                                     AccountCard(
-                                        modifier = Modifier.animateItem(),
+                                        modifier = Modifier,
                                         title = account.name,
                                         imageUrl = account.imageUrl,
-                                        loading = true,
+                                        loading = account.pending,
                                         onClick = { navigateToAccount(account.accountID) },
-                                        currencySymbol = account.currency.currencySymbol,
-                                        lastTransactionAt = "12-11-2025 15:08"
+                                        balanceData = BalanceData.generate(
+                                            debtor = balanceDetails.formattedDebtor,
+                                            creditor = balanceDetails.formattedCreditor,
+                                            netDebtorAbs = balanceDetails.formattedNetDebtor,
+                                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                                            income = balanceDetails.formattedIncome,
+                                            expenses = balanceDetails.formattedExpenses,
+                                            netIncomeAbs = balanceDetails.formattedNetIncome,
+                                            isPositiveIncome = balanceDetails.isPositiveIncome,
+                                            currencyCode = balanceDetails.currency.currencyCode,
+                                        ),
                                     )
                                 }
                             }

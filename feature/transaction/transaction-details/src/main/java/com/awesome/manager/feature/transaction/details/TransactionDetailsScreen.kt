@@ -17,9 +17,8 @@ import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
 import com.awesome.manager.core.designsystem.text.getString
-import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
-import com.awesome.manager.core.ui.card.CardBalanceDetails
+import com.awesome.manager.core.ui.card.BalanceData
 
 @Composable
 fun TransactionDetailsScreen(
@@ -73,20 +72,17 @@ fun TransactionDetailsScreen(
                         title = account.name,
                         imageUrl = account.imageUrl,
                         loading = account.pending,
-                        incomeExpenses = CardBalanceDetails.IncomeExpenses(
+                        balanceData = BalanceData.generate(
                             income = balanceDetails.formattedIncome,
                             expenses = balanceDetails.formattedExpenses,
                             netIncomeAbs = balanceDetails.formattedNetIncome,
                             isPositiveIncome = balanceDetails.isPositiveIncome,
-                        ),
-                        creditorDebtor = CardBalanceDetails.CreditorDebtor(
                             debtor = balanceDetails.formattedDebtor,
                             creditor = balanceDetails.formattedCreditor,
                             netDebtorAbs = balanceDetails.formattedNetDebtor,
-                            isPositiveDebtor = balanceDetails.isPositiveDebtor
-                        ),
-                        currencySymbol = balanceDetails.currency.currencySymbol,
-                        lastTransactionAt = "12-11-2025 15:08"
+                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
+                            currencyCode = balanceDetails.currency.currencyCode,
+                        )
                     )
                 }
             }

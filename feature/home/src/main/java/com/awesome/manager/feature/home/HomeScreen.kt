@@ -33,6 +33,7 @@ import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
 import com.awesome.manager.core.model.BalanceDetails
 import com.awesome.manager.core.ui.NoDataWarning
+import com.awesome.manager.core.ui.card.BalanceData
 import com.awesome.manager.core.ui.card.CardBalanceDetails
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import timber.log.Timber
@@ -164,21 +165,16 @@ fun LoadingDataState(amState: AmState<Any>) {
 
 @Composable
 fun HomeCard(
-    creditorDebtor: CardBalanceDetails.CreditorDebtor,
-    incomeExpenses: CardBalanceDetails.IncomeExpenses,
+    balanceData: BalanceData,
     netCash: String,
-    isPositiveCash: Boolean,
     currencyCode: String,
-    currencySymbol: String,
 ) {
     AmSurface(
         modifier = Modifier.fillMaxWidth(),
-        isPositive = isPositiveCash,
         padding = AmPadding.CARD_PADDING_MEDIUM
     ) {
         AmSurface(
             modifier = Modifier.fillMaxWidth(),
-            isPositive = isPositiveCash,
             padding = AmPadding.CARD_PADDING_MEDIUM
         ) {
             Row(
@@ -193,7 +189,7 @@ fun HomeCard(
                     textStyle = MaterialTheme.typography.titleLarge
                 )
                 AmText(
-                    text = "$netCash $currencySymbol",
+                    text = "$netCash ${balanceData.currencyCode}",
                     textStyle = MaterialTheme.typography.titleLarge
                 )
 
@@ -201,8 +197,7 @@ fun HomeCard(
             }
         }
         AmBalanceDetailsCard(
-            creditorDebtor = creditorDebtor,
-            incomeExpenses = incomeExpenses,
+            balanceData = balanceData
         )
 
     }

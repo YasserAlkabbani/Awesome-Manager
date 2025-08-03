@@ -1,5 +1,6 @@
 package com.awesome.manager.core.model
 
+import timber.log.Timber
 import java.util.Currency
 import java.util.Locale
 
@@ -13,12 +14,11 @@ data class AmCurrency(
     val id: String = currencyCode
 
     companion object {
+        val supportedCountries=listOf("US", "EU", "TR", "SY")
         private val supportedLocals by lazy {
             Locale.getAvailableLocales().filter { locale ->
-                when (locale.country) {
-                    "us", "eu", "tr", "sy" -> true
-                    else -> false
-                }
+                Timber.d("TEST_AM LOCALES ${locale.country}")
+                locale.country in supportedCountries
             }.filterNotNull()
         }
         private val currencies by lazy {

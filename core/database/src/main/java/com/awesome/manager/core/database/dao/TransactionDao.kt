@@ -27,13 +27,13 @@ interface TransactionDao {
                 "WHERE ((transactions.title LIKE '%' || :searchKey || '%') " +
                 "OR (transactions.subtitle LIKE '%' || :searchKey || '%') " +
                 "OR (:searchKey IS NULL)) " +
-                "AND ((transaction_type_id=:transactionTypeID) OR :transactionTypeID IS NULL) " +
+                "AND ((transaction_type=:transactionType) OR :transactionType IS NULL) " +
                 "AND ((transaction_at > :fromDate) OR :fromDate IS NULL) " +
                 "AND ((transaction_at < :toDate) OR :toDate IS NULL) " +
                 "ORDER BY transactions.transaction_at DESC"
     )
     fun returnTransactions(
-        searchKey: String?, transactionTypeID: String?, fromDate: Long?, toDate: Long?,
+        searchKey: String?, transactionType: String?, fromDate: Long?, toDate: Long?,
     ): PagingSource<Int, TransactionEntityWithData>
 
     @Transaction

@@ -10,11 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.awesome.manager.core.designsystem.AmPadding
-import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.getColors
-import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.ui.AmTextWithIcon
 import com.awesome.manager.core.ui.R
 
 sealed interface CardBalanceDetails {
@@ -52,10 +49,10 @@ sealed interface CardBalanceDetails {
     }
 
     data class IncomeExpenses(
-        val income:String,
-        val expenses:String,
-        val netIncomeAbs:String,
-        val isPositiveIncome:Boolean,
+        val income: String,
+        val expenses: String,
+        val netIncomeAbs: String,
+        val isPositiveIncome: Boolean,
     ) : CardBalanceDetails {
 
         override val positiveValue: String = income
@@ -72,23 +69,76 @@ sealed interface CardBalanceDetails {
     }
 }
 
-@Composable
-fun AmBalanceDetailsCard(
-    creditorDebtor: CardBalanceDetails.CreditorDebtor,
-    incomeExpenses: CardBalanceDetails.IncomeExpenses,
+data class BalanceData(
+    val creditorDebtor: CardBalanceDetails.CreditorDebtor,
+    val incomeExpenses: CardBalanceDetails.IncomeExpenses,
+    val currencyCode: String
 ) {
+    companion object {
+        fun generate(
+            debtor: String,
+            creditor: String,
+            netDebtorAbs: String,
+            isPositiveDebtor: Boolean,
+            income: String,
+            expenses: String,
+            netIncomeAbs: String,
+            isPositiveIncome: Boolean,
+            currencyCode: String
+        ): BalanceData = BalanceData(
+            creditorDebtor = CardBalanceDetails.CreditorDebtor(
+                debtor = debtor,
+                creditor = creditor,
+                netDebtorAbs = netDebtorAbs,
+                isPositiveDebtor = isPositiveDebtor,
+            ),
+            incomeExpenses = CardBalanceDetails.IncomeExpenses(
+                income = income,
+                expenses = expenses,
+                netIncomeAbs = netIncomeAbs,
+                isPositiveIncome = isPositiveIncome,
+            ),
+            currencyCode = currencyCode
+        )
+    }
+}
+
+@Composable
+fun AmBalanceDetailsCard(balanceData: BalanceData) {
     Row {
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            cardBalanceDetails = creditorDebtor
+            cardBalanceDetails = balanceData.creditorDebtor,
+            currencyCode = balanceData.currencyCode
         )
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            cardBalanceDetails = incomeExpenses,
+            cardBalanceDetails = balanceData.incomeExpenses,
+            currencyCode = balanceData.currencyCode
+        )
+    }
+}
+
+@Composable
+fun AmBalanceCard(balanceData: BalanceData) {
+    Row {
+        BalanceRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            cardBalanceDetails = balanceData.creditorDebtor,
+            currencyCode = balanceData.currencyCode
+        )
+        BalanceRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            cardBalanceDetails = balanceData.incomeExpenses,
+            currencyCode = balanceData.currencyCode
         )
     }
 }
@@ -96,7 +146,8 @@ fun AmBalanceDetailsCard(
 @Composable
 private fun BalanceDetailsRow(
     modifier: Modifier,
-    cardBalanceDetails: CardBalanceDetails
+    cardBalanceDetails: CardBalanceDetails,
+    currencyCode: String
 ) {
     Column(modifier = modifier) {
         AmText(
@@ -105,33 +156,81 @@ private fun BalanceDetailsRow(
             amTextPadding = AmPadding.ZERO
         )
         Surface(
-            modifier=Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentColor = true.getColors().first
         ) {
-            AmTextWithIcon(
+            AmText(
                 modifier = Modifier.fillMaxWidth(),
-                text = cardBalanceDetails.positiveValue,
-                amIconsType = AmIcons.Input,
+                text = stringResource(
+                    R.string.amount_with_currency,
+                    currencyCode,
+                    cardBalanceDetails.positiveValue
+                ),
+                amTextPadding = AmPadding.ZERO,
+                textStyle = MaterialTheme.typography.bodyLarge
             )
         }
         Surface(
-            modifier=Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentColor = false.getColors().first
         ) {
-            AmTextWithIcon(
+            AmText(
                 modifier = Modifier.fillMaxWidth(),
-                text = cardBalanceDetails.negativeValue,
-                amIconsType = AmIcons.Output,
+                text = stringResource(
+                    R.string.amount_with_currency,
+                    currencyCode,
+                    cardBalanceDetails.negativeValue
+                ),
+                amTextPadding = AmPadding.ZERO,
+                textStyle = MaterialTheme.typography.bodyLarge
             )
         }
         Surface(
-            modifier=Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentColor = cardBalanceDetails.isPositiveBalance.getColors().first
         ) {
-            AmTextWithIcon(
+            AmText(
                 modifier = Modifier.fillMaxWidth(),
-                text = cardBalanceDetails.balance,
-                amIconsType = AmIcons.Balance,
+                text = stringResource(
+                    R.string.amount_with_currency,
+                    currencyCode,
+                    cardBalanceDetails.balance
+                ),
+                amTextPadding = AmPadding.ZERO,
+                textStyle = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+private fun BalanceRow(
+    modifier: Modifier,
+    cardBalanceDetails: CardBalanceDetails,
+    currencyCode: String
+) {
+    Column(modifier = modifier) {
+        AmText(
+            text = when (cardBalanceDetails.isPositiveBalance) {
+                true -> cardBalanceDetails.positiveLabel()
+                false -> cardBalanceDetails.negativeLabel()
+            },
+            textStyle = MaterialTheme.typography.titleMedium,
+            amTextPadding = AmPadding.ZERO
+        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            contentColor = cardBalanceDetails.isPositiveBalance.getColors().first
+        ) {
+            AmText(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(
+                    R.string.amount_with_currency,
+                    currencyCode,
+                    cardBalanceDetails.balance
+                ),
+                amTextPadding = AmPadding.ZERO,
+                textStyle = MaterialTheme.typography.bodyLarge
             )
         }
     }
@@ -142,17 +241,34 @@ private fun BalanceDetailsRow(
 @Composable
 fun AmBalanceDetailsCardPreview() {
     AmBalanceDetailsCard(
-        creditorDebtor = CardBalanceDetails.CreditorDebtor(
+        balanceData = BalanceData.generate(
             creditor = "1000.0",
             debtor = "200.0",
             netDebtorAbs = "500.0",
-            isPositiveDebtor = true
-        ),
-        incomeExpenses = CardBalanceDetails.IncomeExpenses(
+            isPositiveDebtor = true,
             income = "200",
             expenses = "3400.0",
             netIncomeAbs = "100",
-            isPositiveIncome = true
-        )
+            isPositiveIncome = true,
+            currencyCode = "USD"
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AmBalanceCardPreview() {
+    AmBalanceCard(
+        balanceData = BalanceData.generate(
+            creditor = "1000.0",
+            debtor = "200.0",
+            netDebtorAbs = "500.0",
+            isPositiveDebtor = true,
+            income = "200",
+            expenses = "3400.0",
+            netIncomeAbs = "100",
+            isPositiveIncome = true,
+            currencyCode = "USD"
+        ),
     )
 }

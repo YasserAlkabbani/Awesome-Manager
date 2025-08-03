@@ -10,8 +10,8 @@ import androidx.room.Relation
 data class AccountEntity(
     @ColumnInfo("account_id") @PrimaryKey val id: String,
     @ColumnInfo("creator_user_id") val creatorUserID: String,
-    @ColumnInfo("currency_id") val currencyID: String,
-    @ColumnInfo("default_transaction_type_id") val defaultTransactionTypeID: String,
+    @ColumnInfo("currency_code") val currencyCode: String,
+    @ColumnInfo("default_transaction_type") val defaultTransactionType: String,
     @ColumnInfo("name") val name: String,
     @ColumnInfo("image_url") val imageUrl: String,
     @ColumnInfo("created_at") val createdAt: Long,

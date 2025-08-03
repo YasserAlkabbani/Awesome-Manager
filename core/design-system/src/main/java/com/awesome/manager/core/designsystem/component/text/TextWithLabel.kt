@@ -18,7 +18,6 @@ fun AmTextWithLabel(
     AmSurface(
         modifier = modifier,
         padding = AmPadding.CARD_PADDING_MEDIUM,
-        isPositive = positive,
         content = {
             Column {
                 AmText(

@@ -32,8 +32,8 @@ data object Account {
 data class AccountNetworkRequest(
     @SerialName("id") val id: String,
     @SerialName("creator_user_id") val creatorUserId: String,
-    @SerialName("currency_id") val currencyId: String,
-    @SerialName("default_transaction_type") val defaultTransactionType: String,
     @SerialName("name") val name: String,
     @SerialName("image_url") val imageUrl: String,
+    @SerialName("currency_code") val currencyCode: String,
+    @SerialName("default_transaction_type") val defaultTransactionType: String,
 )

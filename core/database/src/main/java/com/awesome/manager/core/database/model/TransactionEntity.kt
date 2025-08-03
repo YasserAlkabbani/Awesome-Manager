@@ -11,7 +11,7 @@ data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
     @ColumnInfo("creator_user_id") val creatorUserId: String,
     @ColumnInfo("account_id") val accountId: String,
-    @ColumnInfo("transaction_type_id") val transactionTypeID: String,
+    @ColumnInfo("transaction_type") val transactionType: String,
     @ColumnInfo("title") val title: String,
     @ColumnInfo("subtitle") val subtitle: String,
     @ColumnInfo("amount") val amount: Double,

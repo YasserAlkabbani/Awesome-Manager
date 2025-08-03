@@ -25,7 +25,7 @@ import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.core.designsystem.text.getString
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
-import com.awesome.manager.core.ui.card.CardBalanceDetails
+import com.awesome.manager.core.ui.card.BalanceData
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
@@ -102,20 +102,17 @@ internal fun AccountDetailsScreen(
                             modifier = Modifier,
                             title = account.name,
                             imageUrl = account.imageUrl, loading = account.pending,
-                            creditorDebtor = CardBalanceDetails.CreditorDebtor(
+                            balanceData = BalanceData.generate(
                                 debtor = balanceDetails.formattedDebtor,
                                 creditor = balanceDetails.formattedCreditor,
                                 netDebtorAbs = balanceDetails.formattedNetDebtor,
                                 isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            ),
-                            incomeExpenses = CardBalanceDetails.IncomeExpenses(
                                 income = balanceDetails.formattedIncome,
                                 expenses = balanceDetails.formattedExpenses,
                                 netIncomeAbs = balanceDetails.formattedNetIncome,
                                 isPositiveIncome = balanceDetails.isPositiveIncome,
-                            ),
-                            currencySymbol = balanceDetails.currency.currencySymbol,
-                            lastTransactionAt = "12-11-2025 15:08"
+                                currencyCode = balanceDetails.currency.currencyCode,
+                            )
                         )
                         AmLazyColumn(
                             isRefreshing = accountTransactionsState is AccountTransactionsState.Loading,
