@@ -81,7 +81,7 @@ fun TransactionDetailsScreen(
                             creditor = balanceDetails.formattedCreditor,
                             netDebtorAbs = balanceDetails.formattedNetDebtor,
                             isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            currencyCode = balanceDetails.currency.currencyCode,
+                            currencySymbol = balanceDetails.currency.currencySymbol,
                         )
                     )
                 }

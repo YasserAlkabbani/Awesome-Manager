@@ -30,26 +30,6 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val flagIcon="https://flagicons.lipis.dev/flags/4x3/tr.svg"
-
-        fun Currency.printValues(){
-            Timber.d("TEST_CURRENCY VALUE:$this symbol:${this.symbol} currencyCode:${this.currencyCode} displayName:${this.displayName} numericCode:${this.numericCode}")
-        }
-        fun Locale.printValues(){
-            Timber.d("TEST_CURRENCY VALUE:$this displayName:${this.displayName} name:${this.country} country:${this.displayCountry} language:${this.displayLanguage}")
-        }
-        val local= Locale.getDefault()
-        val locals= Locale.getAvailableLocales()
-        local.printValues()
-
-        NumberFormat.getInstance().currency?.printValues()
-        NumberFormat.getInstance(local).currency?.printValues()
-        NumberFormat.getCurrencyInstance(local).currency?.printValues()
-        NumberFormat.getCurrencyInstance().currency?.printValues()
-        Currency.getInstance(local).printValues()
-//        Currency.getAvailableCurrencies().map { it.printValues() }
-
-
         setContent {
             AwesomeManagerTheme {
                 AmApp()

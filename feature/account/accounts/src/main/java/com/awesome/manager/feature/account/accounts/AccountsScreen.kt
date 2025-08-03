@@ -141,7 +141,7 @@ internal fun AccountsScreen(
                                             expenses = balanceDetails.formattedExpenses,
                                             netIncomeAbs = balanceDetails.formattedNetIncome,
                                             isPositiveIncome = balanceDetails.isPositiveIncome,
-                                            currencyCode = balanceDetails.currency.currencyCode,
+                                            currencySymbol = balanceDetails.currency.currencySymbol,
                                         ),
                                     )
                                 }

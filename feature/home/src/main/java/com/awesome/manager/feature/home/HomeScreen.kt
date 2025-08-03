@@ -189,7 +189,7 @@ fun HomeCard(
                     textStyle = MaterialTheme.typography.titleLarge
                 )
                 AmText(
-                    text = "$netCash ${balanceData.currencyCode}",
+                    text = "$netCash ${balanceData.currencySymbol}",
                     textStyle = MaterialTheme.typography.titleLarge
                 )
 

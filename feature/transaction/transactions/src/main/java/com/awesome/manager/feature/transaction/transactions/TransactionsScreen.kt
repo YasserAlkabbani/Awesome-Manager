@@ -96,7 +96,7 @@ internal fun TransactionsScreen(transactionsState: TransactionsState) {
                                         date = transaction.transactionAtDate,
                                         transactionType = transaction.transactionType.getString(),
                                         isPay = transaction.transactionType.positive,
-                                        currency = transaction.currency.currencyCode,
+                                        currency = transaction.currency.currencySymbol,
                                         onClick = {
 //                                            transactionsState.navigateToTransactionDetails(
 //                                                accountID = transaction.accountID,

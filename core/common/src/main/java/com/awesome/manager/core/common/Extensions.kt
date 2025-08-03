@@ -2,17 +2,30 @@
 
 package com.awesome.manager.core.common
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
+val formatDateTime = LocalDateTime.Format {
+    date(LocalDate.Formats.ISO)
+    char(' ')
+    char(' ')
+    char(' ')
+    hour()
+    char(':')
+    minute()
+}
 
 fun Long.asDate() =
     Instant.fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
-        .run { "$date" }
+        .format(formatDateTime)
 
 fun Long.asShortDate() =
     Instant.fromEpochMilliseconds(this)

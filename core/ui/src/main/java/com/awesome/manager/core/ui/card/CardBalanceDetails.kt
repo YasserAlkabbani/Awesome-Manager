@@ -72,7 +72,7 @@ sealed interface CardBalanceDetails {
 data class BalanceData(
     val creditorDebtor: CardBalanceDetails.CreditorDebtor,
     val incomeExpenses: CardBalanceDetails.IncomeExpenses,
-    val currencyCode: String
+    val currencySymbol: String
 ) {
     companion object {
         fun generate(
@@ -84,7 +84,7 @@ data class BalanceData(
             expenses: String,
             netIncomeAbs: String,
             isPositiveIncome: Boolean,
-            currencyCode: String
+            currencySymbol: String
         ): BalanceData = BalanceData(
             creditorDebtor = CardBalanceDetails.CreditorDebtor(
                 debtor = debtor,
@@ -98,7 +98,7 @@ data class BalanceData(
                 netIncomeAbs = netIncomeAbs,
                 isPositiveIncome = isPositiveIncome,
             ),
-            currencyCode = currencyCode
+            currencySymbol = currencySymbol
         )
     }
 }
@@ -111,14 +111,14 @@ fun AmBalanceDetailsCard(balanceData: BalanceData) {
                 .fillMaxWidth()
                 .weight(1f),
             cardBalanceDetails = balanceData.creditorDebtor,
-            currencyCode = balanceData.currencyCode
+            currencySymbol = balanceData.currencySymbol
         )
         BalanceDetailsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             cardBalanceDetails = balanceData.incomeExpenses,
-            currencyCode = balanceData.currencyCode
+            currencySymbol = balanceData.currencySymbol
         )
     }
 }
@@ -131,14 +131,14 @@ fun AmBalanceCard(balanceData: BalanceData) {
                 .fillMaxWidth()
                 .weight(1f),
             cardBalanceDetails = balanceData.creditorDebtor,
-            currencyCode = balanceData.currencyCode
+            currencyCode = balanceData.currencySymbol
         )
         BalanceRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             cardBalanceDetails = balanceData.incomeExpenses,
-            currencyCode = balanceData.currencyCode
+            currencyCode = balanceData.currencySymbol
         )
     }
 }
@@ -147,59 +147,36 @@ fun AmBalanceCard(balanceData: BalanceData) {
 private fun BalanceDetailsRow(
     modifier: Modifier,
     cardBalanceDetails: CardBalanceDetails,
-    currencyCode: String
+    currencySymbol: String
 ) {
     Column(modifier = modifier) {
-        AmText(
-            text = "${cardBalanceDetails.positiveLabel()}/${cardBalanceDetails.negativeLabel()}",
-            textStyle = MaterialTheme.typography.titleMedium,
-            amTextPadding = AmPadding.ZERO
+        AmTitle(
+            text = "${cardBalanceDetails.positiveLabel()}/${cardBalanceDetails.negativeLabel()}"
         )
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            contentColor = true.getColors().first
-        ) {
-            AmText(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(
-                    R.string.amount_with_currency,
-                    currencyCode,
-                    cardBalanceDetails.positiveValue
-                ),
-                amTextPadding = AmPadding.ZERO,
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            contentColor = false.getColors().first
-        ) {
-            AmText(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(
-                    R.string.amount_with_currency,
-                    currencyCode,
-                    cardBalanceDetails.negativeValue
-                ),
-                amTextPadding = AmPadding.ZERO,
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            contentColor = cardBalanceDetails.isPositiveBalance.getColors().first
-        ) {
-            AmText(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(
-                    R.string.amount_with_currency,
-                    currencyCode,
-                    cardBalanceDetails.balance
-                ),
-                amTextPadding = AmPadding.ZERO,
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
-        }
+        AmData(
+            text = stringResource(
+                R.string.amount_with_currency,
+                currencySymbol,
+                cardBalanceDetails.positiveValue
+            ),
+            isPositive = true
+        )
+        AmData(
+            text = stringResource(
+                R.string.amount_with_currency,
+                currencySymbol,
+                cardBalanceDetails.negativeValue
+            ),
+            isPositive = false
+        )
+        AmData(
+            text = stringResource(
+                R.string.amount_with_currency,
+                currencySymbol,
+                cardBalanceDetails.balance
+            ),
+            isPositive = cardBalanceDetails.isPositiveBalance
+        )
     }
 }
 
@@ -210,32 +187,48 @@ private fun BalanceRow(
     currencyCode: String
 ) {
     Column(modifier = modifier) {
-        AmText(
+        AmTitle(
             text = when (cardBalanceDetails.isPositiveBalance) {
                 true -> cardBalanceDetails.positiveLabel()
                 false -> cardBalanceDetails.negativeLabel()
             },
-            textStyle = MaterialTheme.typography.titleMedium,
-            amTextPadding = AmPadding.ZERO
         )
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            contentColor = cardBalanceDetails.isPositiveBalance.getColors().first
-        ) {
-            AmText(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(
-                    R.string.amount_with_currency,
-                    currencyCode,
-                    cardBalanceDetails.balance
-                ),
-                amTextPadding = AmPadding.ZERO,
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
-        }
+        AmData(
+            text = stringResource(
+                R.string.amount_with_currency,
+                currencyCode,
+                cardBalanceDetails.balance
+            ),
+            isPositive = cardBalanceDetails.isPositiveBalance,
+        )
     }
 }
 
+
+
+@Composable
+private fun AmTitle(text: String){
+    AmText(
+        modifier = Modifier.fillMaxWidth(),
+        text = text,
+        amTextPadding = AmPadding.ZERO,
+        textStyle = MaterialTheme.typography.bodyLarge
+    )
+}
+@Composable
+private fun AmData(text: String, isPositive: Boolean){
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        contentColor = isPositive.getColors().first
+    ) {
+        AmText(
+            modifier = Modifier.fillMaxWidth(),
+            text = text,
+            amTextPadding = AmPadding.ZERO,
+            textStyle = MaterialTheme.typography.titleLarge
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -250,7 +243,7 @@ fun AmBalanceDetailsCardPreview() {
             expenses = "3400.0",
             netIncomeAbs = "100",
             isPositiveIncome = true,
-            currencyCode = "USD"
+            currencySymbol = "$"
         ),
     )
 }
@@ -268,7 +261,7 @@ fun AmBalanceCardPreview() {
             expenses = "3400.0",
             netIncomeAbs = "100",
             isPositiveIncome = true,
-            currencyCode = "USD"
+            currencySymbol = "$"
         ),
     )
 }

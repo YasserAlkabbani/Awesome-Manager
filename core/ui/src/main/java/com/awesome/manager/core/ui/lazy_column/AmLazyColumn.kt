@@ -37,7 +37,7 @@ fun AmLazyColumn(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = AmLazyColumnPadding.PADDING_BOTTOM.value),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+//            verticalArrangement = Arrangement.spacedBy(1.dp),
             content = content
         )
     }

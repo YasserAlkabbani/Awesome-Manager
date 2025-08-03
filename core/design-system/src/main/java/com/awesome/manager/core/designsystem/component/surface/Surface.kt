@@ -36,9 +36,7 @@ fun AmSurface(
     content: @Composable () -> Unit
 ) {
     Surface(
-        modifier = modifier.padding(
-            start = AmPadding.CARD_SURFACE_INDICATOR.value,
-        ),
+        modifier = modifier,
         shape = shape,
         content = {
             Row(
@@ -69,9 +67,7 @@ fun AmSurface(
     content: @Composable () -> Unit
 ) {
     Surface(
-        modifier = modifier.padding(
-            start = AmPadding.CARD_SURFACE_INDICATOR.value,
-        ),
+        modifier = modifier,
         shape = shape,
         onClick = onClick,
         content = {

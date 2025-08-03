@@ -27,7 +27,7 @@ fun AccountCardWithDetails(
                 AmText(
                     modifier = Modifier.fillMaxWidth(),
                     text = title,
-                    textStyle = MaterialTheme.typography.displaySmall,
+                    textStyle = MaterialTheme.typography.headlineLarge,
                     amTextPadding = AmPadding.ZERO
                 )
                 AmBalanceDetailsCard(balanceData = balanceData)
@@ -54,7 +54,7 @@ fun AccountCard(
                 AmText(
                     modifier = Modifier.fillMaxWidth(),
                     text = title,
-                    textStyle = MaterialTheme.typography.displaySmall,
+                    textStyle = MaterialTheme.typography.headlineLarge,
                     amTextPadding = AmPadding.ZERO
                 )
                 AmBalanceCard(balanceData = balanceData)
@@ -103,7 +103,7 @@ fun AccountCardPreview() {
             expenses = "300.0",
             netIncomeAbs = "5000.0",
             isPositiveIncome = false,
-            currencyCode = "USD",
+            currencySymbol = "$",
         ),
         onClick = {},
     )
@@ -126,7 +126,7 @@ fun AccountCardWithDetailsPreview() {
             expenses = "300.0",
             netIncomeAbs = "5000.0",
             isPositiveIncome = false,
-            currencyCode = "USD",
+            currencySymbol = "$",
         ),
     )
 }
