@@ -2,7 +2,6 @@ package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.datasource.AuthNetworkDataSource
-import com.awesome.manager.core.network.model.request.Authorization
 import com.awesome.manager.core.network.model.request.LoginRequest
 import com.awesome.manager.core.network.model.request.RefreshTokenBody
 import com.awesome.manager.core.network.model.request.SignupRequest
@@ -19,10 +18,14 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.setBody
+import io.ktor.resources.Resource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.SerialName
 import timber.log.Timber
 import javax.inject.Inject
+
+
 
 class KtorAuthNetworkDataSource @Inject constructor(
     private val httpClient: HttpClient,
@@ -62,5 +65,35 @@ class KtorAuthNetworkDataSource @Inject constructor(
         httpClient
             .get(Authorization.Recover())
             .body()
+
+}
+
+
+
+
+@Resource("auth/v1")
+object Authorization {
+
+    @Resource("token")
+    class Login(
+        @SerialName("grant_type") val grantType: String = "password",
+        val parent: Authorization = Authorization
+    )
+
+    @Resource("signup")
+    class SignUp(val parent: Authorization = Authorization)
+
+    @Resource("logout")
+    class Logout(val parent: Authorization = Authorization)
+
+    @Resource("recover")
+    class Recover(val parent: Authorization = Authorization)
+
+
+    @Resource("token")
+    class RefreshToken(
+        val parent: Authorization = Authorization,
+        @SerialName("grant_type") val grantType: String = "refresh_token"
+    )
 
 }

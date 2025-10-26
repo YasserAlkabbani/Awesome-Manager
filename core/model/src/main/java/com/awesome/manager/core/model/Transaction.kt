@@ -1,5 +1,6 @@
 package com.awesome.manager.core.model
 
+import com.awesome.manager.core.common.asDate
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -7,33 +8,24 @@ data class AmTransaction(
     val transactionID: String,
     val accountID: String,
     val creatorUserID: String,
-    val transactionType: AmTransactionType,
+    val transactionTypeID: String,
     val title: String,
     val subtitle: String,
     val amount: Double,
     val pending: Boolean,
-    val alreadyOnNetwork: Boolean,
-    val accountName: String,
-    val currency: AmCurrency,
-    val updatePermission: Boolean,
     val createdAt: Long,
     val updatedAt: Long,
     val transactionAt: Long,
-    val transactionAtDate: String,
 ) {
     val formattedAmount: String = NumberFormat.getNumberInstance(Locale.US).format(amount)
+    val transactionAtDate: String = transactionAt.asDate()
 }
 
-data class UpsertTransaction(
-    val transactionID: String,
-    val accountId: String,
-    val creatorUserId: String,
-    val title: String,
-    val subtitle: String,
-    val amount: Double,
+data class AmTransactionWithDetails(
+    val transaction: AmTransaction,
+    val accountName: String,
+    val currencyCode: String,
+    val currencySymbol: String,
+    val isPositive: Boolean,
     val transactionType: String,
-    val transactionAt: Long,
-    val alreadyOnNetwork: Boolean,
-) {
-    fun isValidAccount() = accountId.isNotBlank()
-}
+)

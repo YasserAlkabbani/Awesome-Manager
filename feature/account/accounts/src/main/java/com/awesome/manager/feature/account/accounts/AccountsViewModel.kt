@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
-import com.awesome.manager.core.model.AmAccountWithBalance
+import com.awesome.manager.core.model.AmAccountWithDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,7 @@ class AccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val pagingAccounts: Flow<PagingData<AmAccountWithBalance>> = accountRepository.getAccounts()
+    val pagingAccounts: Flow<PagingData<AmAccountWithDetails>> = accountRepository.getAccounts()
 
     private val _accountsState: MutableStateFlow<AccountsState> =
         MutableStateFlow(AccountsState.IDLE)

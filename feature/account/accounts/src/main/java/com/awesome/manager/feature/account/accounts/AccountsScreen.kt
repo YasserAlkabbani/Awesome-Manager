@@ -22,7 +22,7 @@ import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
-import com.awesome.manager.core.model.AmAccountWithBalance
+import com.awesome.manager.core.model.AmAccountWithDetails
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.BalanceData
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -77,7 +77,7 @@ internal fun AccountsRoute(
 @Composable
 internal fun AccountsScreen(
     accountsState: AccountsState,
-    pagingAccounts: Flow<PagingData<AmAccountWithBalance>>,
+    pagingAccounts: Flow<PagingData<AmAccountWithDetails>>,
     refreshAccounts: () -> Unit,
     navigateToCreateAccount: () -> Unit,
     navigateToCreateTransaction: (String) -> Unit,
@@ -123,9 +123,9 @@ internal fun AccountsScreen(
                             contentType = { LAZY_ITEM_ACCOUNT },
                             key = accountsLazyPaging.itemKey { it.account.accountID },
                             itemContent = { index ->
-                                accountsLazyPaging[index]?.let { accountWithBalance ->
-                                    val balanceDetails = accountWithBalance.balanceDetails
-                                    val account = accountWithBalance.account
+                                accountsLazyPaging[index]?.let { accountWithDetails ->
+                                    val balanceDetails = accountWithDetails
+                                    val account = accountWithDetails.account
                                     AccountCard(
                                         modifier = Modifier,
                                         title = account.name,
@@ -141,7 +141,7 @@ internal fun AccountsScreen(
                                             expenses = balanceDetails.formattedExpenses,
                                             netIncomeAbs = balanceDetails.formattedNetIncome,
                                             isPositiveIncome = balanceDetails.isPositiveIncome,
-                                            currencySymbol = balanceDetails.currency.currencySymbol,
+                                            currencySymbol = balanceDetails.currencySymbol,
                                         ),
                                     )
                                 }
@@ -159,7 +159,7 @@ internal fun AccountsScreen(
 fun AccountsScreenPreview() {
     val accountsList = buildList {
         repeat(20) {
-            add(AmAccountWithBalance.createDemo(it))
+            add(AmAccountWithDetails.createDemo(it))
         }
     }
     AccountsScreen(

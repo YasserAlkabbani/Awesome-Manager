@@ -22,8 +22,8 @@ import com.awesome.manager.core.designsystem.component.FloatingToolBarState
 import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent.*
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.asAmText
-import com.awesome.manager.core.designsystem.text.getString
-import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.designsystem.text.asString
+import com.awesome.manager.core.model.AmTransactionWithDetails
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.BalanceData
 import com.awesome.manager.core.ui.card.TransactionCard
@@ -44,7 +44,7 @@ internal fun AccountDetails(
     val accountTransactionsState: AccountTransactionsState =
         accountDetailsViewModel.accountTransactionsState.collectAsStateWithLifecycle().value
 
-    val accountTransactionsPaging: LazyPagingItems<AmTransaction> =
+    val accountTransactionsPaging: LazyPagingItems<AmTransactionWithDetails> =
         accountDetailsViewModel.accountTransactionsPaging.collectAsLazyPagingItems()
 
     val navigation: AccountDetailsNavigation? =
@@ -75,7 +75,7 @@ internal fun AccountDetails(
 internal fun AccountDetailsScreen(
     accountDetailsState: AccountDetailsState,
     accountTransactionsState: AccountTransactionsState,
-    accountTransactionsPaging: LazyPagingItems<AmTransaction>,
+    accountTransactionsPaging: LazyPagingItems<AmTransactionWithDetails>,
     refresh: () -> Unit,
     navigateToCreateTransaction: () -> Unit,
     navigateToEditAccount: () -> Unit,
@@ -96,22 +96,23 @@ internal fun AccountDetailsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(AmPadding.Details.value),
                     ) {
-                        val account = accountDetailsState.amAccountWithBalance.account
-                        val balanceDetails = accountDetailsState.amAccountWithBalance.balanceDetails
+                        val accountWithDetails = accountDetailsState.amAccountWithDetails
+                        val account = accountWithDetails.account
                         AccountCardWithDetails(
                             modifier = Modifier,
                             title = account.name,
-                            imageUrl = account.imageUrl, loading = account.pending,
+                            imageUrl = account.imageUrl,
+                            loading = account.pending,
                             balanceData = BalanceData.generate(
-                                debtor = balanceDetails.formattedDebtor,
-                                creditor = balanceDetails.formattedCreditor,
-                                netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                                income = balanceDetails.formattedIncome,
-                                expenses = balanceDetails.formattedExpenses,
-                                netIncomeAbs = balanceDetails.formattedNetIncome,
-                                isPositiveIncome = balanceDetails.isPositiveIncome,
-                                currencySymbol = balanceDetails.currency.currencySymbol,
+                                debtor = accountWithDetails.formattedDebtor,
+                                creditor = accountWithDetails.formattedCreditor,
+                                netDebtorAbs = accountWithDetails.formattedNetDebtor,
+                                isPositiveDebtor = accountWithDetails.isPositiveDebtor,
+                                income = accountWithDetails.formattedIncome,
+                                expenses = accountWithDetails.formattedExpenses,
+                                netIncomeAbs = accountWithDetails.formattedNetIncome,
+                                isPositiveIncome = accountWithDetails.isPositiveIncome,
+                                currencySymbol = accountWithDetails.currencySymbol,
                             )
                         )
                         AmLazyColumn(
@@ -121,19 +122,19 @@ internal fun AccountDetailsScreen(
                                 items(
                                     count = accountTransactionsPaging.itemCount,
                                     contentType = { LAZY_ITEM_TRANSACTION },
-                                    key = accountTransactionsPaging.itemKey { transaction -> transaction.transactionID },
+                                    key = accountTransactionsPaging.itemKey { transaction -> transaction.transaction.transactionID },
                                     itemContent = { index ->
                                         accountTransactionsPaging[index]?.let { transaction ->
                                             TransactionCard(
                                                 modifier = Modifier.animateItem(),
                                                 account = transaction.accountName,
-                                                title = transaction.title,
-                                                amount = transaction.formattedAmount,
-                                                isPending = transaction.pending,
-                                                date = transaction.transactionAtDate,
-                                                transactionType = transaction.transactionType.getString(),
-                                                isPay = transaction.transactionType.positive,
-                                                currency = transaction.currency.currencySymbol,
+                                                title = transaction.transaction.title,
+                                                amount = transaction.transaction.formattedAmount,
+                                                isPending = transaction.transaction.pending,
+                                                date = transaction.transaction.transactionAtDate,
+                                                transactionType = transaction.transactionType.asString(),
+                                                isPay = transaction.isPositive,
+                                                currency = transaction.currencySymbol,
                                                 onClick = { navigateToCreateTransaction() }
                                             )
                                         }

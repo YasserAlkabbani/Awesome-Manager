@@ -7,8 +7,6 @@ interface TransactionNetworkDataSource {
 
     suspend fun returnUpdatedTransactions(updatedAt: String): List<TransactionNetworkResponse>
 
-    suspend fun insertTransaction(transactionNetworkRequest: TransactionNetworkRequest): List<TransactionNetworkResponse>
-
-    suspend fun updateTransaction(transactionNetworkRequest: TransactionNetworkRequest): List<TransactionNetworkResponse>
+    suspend fun upsertTransaction(transactionNetworkRequest: TransactionNetworkRequest)
 
 }

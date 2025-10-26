@@ -8,11 +8,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountNetworkResponse(
     @SerialName("id") val id: String,
-    @SerialName("creator_user_id") val creatorUserId: String,
+    @SerialName("creator_user_id") val creatorUserID: String,
+    @SerialName("currency_id") val currencyID: String,
+    @SerialName("default_transaction_type_id") val defaultTransactionTypeID: String,
     @SerialName("name") val name: String,
     @SerialName("image_url") val imageUrl: String,
-    @SerialName("currency_code") val currencyCode: String,
-    @SerialName("default_transaction_type") val defaultTransactionType: String,
     @SerialName("created_at") val createdAt: String?,
     @SerialName("updated_at") val updatedAt: String?,
 )

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.asAmState
+import com.awesome.manager.core.common.asAmStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,10 +27,10 @@ class TransactionDetailsViewModel @Inject constructor(
         getString = { savedStateHandle.getStateFlow(this, it) },
         account = accountRepository.getAccountByID(accountID)
             .filterNotNull()
-            .asAmState(viewModelScope),
-        transaction = transactionRepository.getTransactionById(transactionID)
+            .asAmStateFlow(viewModelScope),
+        transaction = transactionRepository.returnTransactionByID(transactionID)
             .filterNotNull()
-            .asAmState(viewModelScope)
+            .asAmStateFlow(viewModelScope)
     )
 
 }

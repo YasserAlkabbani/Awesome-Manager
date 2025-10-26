@@ -15,7 +15,7 @@ import com.awesome.manager.core.designsystem.component.text.AmText
 fun AccountCardWithDetails(
     modifier: Modifier,
     title: String,
-    imageUrl: String,
+    imageUrl: String?,
     loading: Boolean,
     balanceData: BalanceData,
 ) {
@@ -40,7 +40,7 @@ fun AccountCardWithDetails(
 fun AccountCard(
     modifier: Modifier,
     title: String,
-    imageUrl: String,
+    imageUrl: String?,
     loading: Boolean,
     balanceData: BalanceData,
     onClick: () -> Unit

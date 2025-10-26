@@ -3,23 +3,21 @@ package com.awesome.manager.core.data.repository.accounts
 import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.extention.amInsert
-import com.awesome.manager.core.data.extention.requestUIState
+import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.extention.asUIState
 import com.awesome.manager.core.common.asDateTimeString
-import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asNetwork
 import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.AccountDao
-import com.awesome.manager.core.database.model.AccountEntity
 import com.awesome.manager.core.model.AmAccount
-import com.awesome.manager.core.model.AmAccountWithBalance
+import com.awesome.manager.core.model.AmAccountWithDetails
 import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -29,41 +27,32 @@ class OfflineFirstAccountRepository @Inject constructor(
 ) : AccountRepository {
 
     override suspend fun upsertAccount(account: AmAccount) = amInsert {
-        account.asEntity().upsert()
+        accountDao.upsertAccount(account.asEntity())
     }
 
-    override fun getAccounts(searchKey: String?): Flow<PagingData<AmAccountWithBalance>> =
-        { accountDao.getAccounts(searchKey) }.asPagingDataFlow { asModel() }
+    override fun getAccounts(searchKey: String?): Flow<PagingData<AmAccountWithDetails>> =flowOf()
+//        { accountDao.getAccounts(searchKey) }.asPagingDataFlow { asModel() }
 
-    override fun getAccountByID(accountID: String): Flow<AmAccountWithBalance> =
-        accountDao.getAccountByID(accountID).map { it.asModel() }
+    override fun getAccountByID(accountID: String): Flow<AmAccountWithDetails> = flowOf()
+//        accountDao.getAccountByID(accountID).map { it.asModel() }
 
-    override fun refreshAccounts(): Flow<AmState<List<AmAccountWithBalance>>> = requestUIState {
+    override fun refreshAccounts(): Flow<AmState<Unit>> = amRequest {
         val lastUpdateAccountTime = (accountDao.getLastUpdatedAccount()?.updatedAt ?: 0) + 1
         val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTimeString()
         val accountsNetwork = accountNetworkDataSource
-            .getUpdatedAccount(lastUpdatedAccountDateTime)
-        accountsNetwork.map { it.asEntity().upsert() }
+            .returnUpdatedAccounts(lastUpdatedAccountDateTime)
+        accountsNetwork.map { accountDao.upsertAccount(it.asEntity())}
     }
 
-    override fun syncPendingAccounts(): Flow<AmState<List<AmAccountWithBalance>>> =
+    override fun syncPendingAccounts(): Flow<AmState<Unit>> =
         accountDao.getPendingAccounts()
             .filterNotNull()
             .distinctUntilChanged()
             .asUIState { pendingAccountEntity ->
                 val pendingAccountNetworkRequest = pendingAccountEntity.asNetwork()
-                val accountNetworkResponse = when (pendingAccountEntity.alreadyOnNetwork) {
-                    true -> accountNetworkDataSource.updateAccount(pendingAccountNetworkRequest)
-                    false -> accountNetworkDataSource.insertAccount(pendingAccountNetworkRequest)
-                }
-                accountNetworkResponse.map { it.asEntity().upsert() }
+                accountNetworkDataSource.upsertAccount(pendingAccountNetworkRequest)
             }
 
     override suspend fun deleteAllAccounts() = accountDao.deleteAccounts()
-
-    private suspend fun AccountEntity.upsert(): AmAccountWithBalance {
-        accountDao.upsertAccount(this)
-        return accountDao.getAccountByID(id).first().asModel()
-    }
 
 }

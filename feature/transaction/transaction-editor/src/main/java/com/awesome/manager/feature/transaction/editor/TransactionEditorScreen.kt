@@ -1,6 +1,5 @@
 package com.awesome.manager.feature.transaction.editor
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,24 +10,17 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.AmState
-import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.enumToRes
-import com.awesome.manager.core.model.AmAccountWithBalance
-import com.awesome.manager.core.ui.AmChipsContainer
+import com.awesome.manager.core.model.AmAccountWithDetails
+import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.BalanceData
@@ -40,108 +32,98 @@ internal fun TransactionEditorScreen(
     transactionEditorViewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
 
-    val context = LocalContext.current
     val transactionEditorState: TransactionEditorState =
-        transactionEditorViewModel.transactionEditorState
+        transactionEditorViewModel.transactionEditorState.collectAsStateWithLifecycle().value
+    val accountWithBalance: AmAccountWithDetails? =
+        transactionEditorViewModel.accountWithDetails.collectAsStateWithLifecycle().value
+
+
+    val titleTextFieldState = transactionEditorViewModel.titleTextFieldState
+    val subTitleTextFieldState = transactionEditorViewModel.subTitleTextFieldState
+    val amountTextFieldState = transactionEditorViewModel.amountTextFieldState
 
 //    val mainAction = transactionEditorState.mainAction.collectAsState().value
 //    LaunchedEffect(key1 = mainAction) {
 //        mainAction?.sendMainAction(sendMainAction, transactionEditorState::doneMainAction)
 //    }
 
-    transactionEditorState.transactionEditorUI.collectAsStateWithLifecycle(null)
-
-    TransactionEditorScreen(transactionEditorState = transactionEditorState)
+    TransactionEditorScreen(
+        transactionEditorState = transactionEditorState,
+        accountWithBalance = accountWithBalance,
+        titleTextFieldState = titleTextFieldState,
+        subTitleTextFieldState = subTitleTextFieldState,
+        amountTextFieldState = amountTextFieldState
+    )
 }
 
 @Composable
 internal fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
+    accountWithBalance: AmAccountWithDetails?,
+    titleTextFieldState: TextFieldState,
+    subTitleTextFieldState: TextFieldState,
+    amountTextFieldState: TextFieldState
 ) {
-    val context = LocalContext.current
 
-    val transactionEditorData: AmState<TransactionEditorData> =
-        transactionEditorState.transactionEditorData.collectAsState().value
-    val selectedAccount: AmAccountWithBalance? =
-        transactionEditorState.account.collectAsStateWithLifecycle().value
+    val transactionEditorData: TransactionEditorState = transactionEditorState
 
-    val title: String = transactionEditorState.title.collectAsStateWithLifecycle().value
-    val subtitle: String = transactionEditorState.subtitle.collectAsStateWithLifecycle().value
-    val amount: String = transactionEditorState.amount.collectAsStateWithLifecycle().value
-    val transactionAt: Long =
-        transactionEditorState.transactionAt.collectAsStateWithLifecycle().value
-    val formattedTransactionAt: String = remember(transactionAt) { transactionAt.asDate() }
-    val selectedTransactionTypeID =
-        transactionEditorState.selectedTransactionTypeID.collectAsStateWithLifecycle().value
+//    val transactionTypeChipData = remember {
+//        AmTransactionType.entries.map {
+//            ChipData(id = it.id, titleRes = it.enumToRes(), title = it.name)
+//        }
+//    }
 
-
-    val transactionTypeChipData = remember {
-        transactionEditorState.transactionTypes.map {
-            ChipData(id = it.id, titleRes = it.enumToRes(), title = it.name)
-        }
-    }
-
-    AnimatedContent(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter,
-        targetState = transactionEditorData,
-        label = "TRANSACTION_EDITOR"
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        when (it) {
-            is AmState.Error -> Unit
-            is AmState.Loading -> Unit
-            is AmState.Success -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    selectedAccount?.let { accountWithBalance ->
-                        val account = accountWithBalance.account
-                        val balanceDetails = accountWithBalance.balanceDetails
-                        AccountCardWithDetails(
-                            modifier = Modifier,
-                            title = account.name, imageUrl = account.imageUrl,
-                            loading = account.pending,
-                            balanceData = BalanceData.generate(
-                                debtor = balanceDetails.formattedDebtor,
-                                creditor = balanceDetails.formattedCreditor,
-                                netDebtorAbs = balanceDetails.formattedNetDebtor,
-                                isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                                income = balanceDetails.formattedIncome,
-                                expenses = balanceDetails.formattedExpenses,
-                                netIncomeAbs = balanceDetails.formattedNetIncome,
-                                isPositiveIncome = balanceDetails.isPositiveIncome,
-                                currencySymbol = balanceDetails.currency.currencySymbol,
-                            )
-                        )
-                    }
+        accountWithBalance?.let { accountWithDetails ->
+            val account = accountWithDetails.account
+            AccountCardWithDetails(
+                modifier = Modifier,
+                title = account.name, imageUrl = account.imageUrl,
+                loading = account.pending,
+                balanceData = BalanceData.generate(
+                    debtor = accountWithDetails.formattedDebtor,
+                    creditor = accountWithDetails.formattedCreditor,
+                    netDebtorAbs = accountWithDetails.formattedNetDebtor,
+                    isPositiveDebtor = accountWithDetails.isPositiveDebtor,
+                    income = accountWithDetails.formattedIncome,
+                    expenses = accountWithDetails.formattedExpenses,
+                    netIncomeAbs = accountWithDetails.formattedNetIncome,
+                    isPositiveIncome = accountWithDetails.isPositiveIncome,
+                    currencySymbol = accountWithDetails.currencySymbol,
+                )
+            )
+        }
 
-                    AmTextField(
-                        modifier = Modifier,
-                        placeHolder = "Title",
-                        icon = AmIcons.Title,
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                        textFieldState = TextFieldState(),
-                        isValidateInput = true
-                    )
-                    AmTextField(
-                        icon = AmIcons.Money,
-                        placeHolder = "Amount",
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done, keyboardType = KeyboardType.Number,
-                        ),
-                        textFieldState = TextFieldState(),
-                        isValidateInput = true
-                    )
-                    AmTextField(
-                        placeHolder = "Transaction Description",
-                        icon = AmIcons.SubTitle,
-                        lineLimits = TextFieldLineLimits.Default,
-                        textFieldState = TextFieldState(),
-                        isValidateInput = true
-                    )
+        AmTextField(
+            modifier = Modifier,
+            placeHolder = "Title",
+            icon = AmIcons.Title,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            textFieldState = titleTextFieldState,
+            isValidateInput = true
+        )
+        AmTextField(
+            icon = AmIcons.Money,
+            placeHolder = "Amount",
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number,
+            ),
+            textFieldState = amountTextFieldState,
+            isValidateInput = true
+        )
+        AmTextField(
+            placeHolder = "Transaction Description",
+            icon = AmIcons.SubTitle,
+            lineLimits = TextFieldLineLimits.Default,
+            textFieldState = subTitleTextFieldState,
+            isValidateInput = true
+        )
 
 //                    AmFilledTonalIconWithTextButton(
 //                        modifier = Modifier.fillMaxWidth(),
@@ -156,16 +138,13 @@ internal fun TransactionEditorScreen(
 //                        }
 //                    )
 
-                    AmChipsContainer(
-                        title = stringResource(R.string.transaction_type),
-                        chipDataList = transactionTypeChipData,
-                        onSelect = { transactionEditorState.updateTransactionType(it.id) },
-                        selectedItemID = selectedTransactionTypeID,
-                        content = null
-                    )
-                }
-            }
-        }
+//        AmChipsContainer(
+//            title = stringResource(R.string.transaction_type),
+//            chipDataList = transactionTypeChipData,
+//            onSelect = { transactionEditorState.updateTransactionType(it.id) },
+//            selectedItemID = selectedTransactionTypeID,
+//            content = null
+//        )
     }
 
 }

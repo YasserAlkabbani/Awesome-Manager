@@ -30,7 +30,7 @@ inline fun <T, R> Flow<T>.asUIState(
     }
     .flowOn(Dispatchers.Default)
 
-inline fun <T> requestUIState(
+inline fun <T> amRequest(
     crossinline requestData: suspend () -> T
 ): Flow<AmState<T>> = flow<AmState<T>> {
     Timber.d("TEST_AM REQUEST_UI_STATE BEFORE_TASK")

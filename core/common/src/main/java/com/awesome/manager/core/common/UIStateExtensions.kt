@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 //            initialValue = AmUIState.Loading()
 //        )
 
-fun <T> Flow<T>.asAmState(scope: CoroutineScope): StateFlow<AmState<T>> =
+fun <T> Flow<T>.asAmStateFlow(scope: CoroutineScope): StateFlow<AmState<T>> =
     map { it -> AmState.Success(it) }
         .flowOn(Dispatchers.Default)
         .stateIn(

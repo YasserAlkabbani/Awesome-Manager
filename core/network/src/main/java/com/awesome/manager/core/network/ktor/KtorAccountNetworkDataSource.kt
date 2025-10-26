@@ -1,7 +1,6 @@
 package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.datasource.AccountNetworkDataSource
-import com.awesome.manager.core.network.model.request.Account
 import com.awesome.manager.core.network.model.request.AccountNetworkRequest
 import com.awesome.manager.core.network.model.response.AccountNetworkResponse
 import io.ktor.client.HttpClient
@@ -12,24 +11,38 @@ import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
+import io.ktor.resources.Resource
+import kotlinx.serialization.SerialName
 import javax.inject.Inject
+
 
 class KtorAccountNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
     AccountNetworkDataSource {
 
-    override suspend fun getUpdatedAccount(updatedAt: String): List<AccountNetworkResponse> =
+    override suspend fun returnUpdatedAccounts(updatedAt: String): List<AccountNetworkResponse> =
         httpClient.get(Account.Get(updatedAt = "gt.$updatedAt")).body()
 
-    override suspend fun insertAccount(accountNetworkRequest: AccountNetworkRequest): List<AccountNetworkResponse> =
-        httpClient.post(Account.Insert()) {
-            header(HttpHeaders.Prefer, "return=representation")
+    override suspend fun upsertAccount(accountNetworkRequest: AccountNetworkRequest): Unit =
+        httpClient.post(Account.Upsert) {
+            header(HttpHeaders.Prefer, "resolution=merge-duplicates")
             setBody(accountNetworkRequest)
         }.body()
 
-    override suspend fun updateAccount(accountNetworkRequest: AccountNetworkRequest): List<AccountNetworkResponse> =
-        httpClient.patch(Account.Update(accountID = "eq.${accountNetworkRequest.id}")) {
-            header(HttpHeaders.Prefer, "return=representation")
-            setBody(accountNetworkRequest)
-        }.body()
+}
+
+@Resource("rest/v1/accounts")
+private data object Account {
+
+    @Resource("")
+    class Get(
+        @SerialName("updated_at") val updatedAt: String,
+        @SerialName("parent") val parent: Account = Account,
+        @SerialName("select") val select: String = "*",
+    )
+
+    @Resource("")
+    data class Upsert(
+        @SerialName("parent") val parent: Account = Account
+    )
 
 }

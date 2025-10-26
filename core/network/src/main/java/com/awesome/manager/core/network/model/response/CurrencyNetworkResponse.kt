@@ -1,6 +1,5 @@
 package com.awesome.manager.core.network.model.response
 
-import com.awesome.manager.core.network.model.request.Currency
 import io.ktor.resources.Resource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -8,11 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CurrencyNetwork(
     @SerialName("id") val id: String,
-    @SerialName("country_name") val countryName: String,
-    @SerialName("image_url") val imageUrl: String,
-    @SerialName("currency_code") val currencyCode: String,
-    @SerialName("currency_name") val currencyName: String,
-    @SerialName("currency_symbol") val currencySymbol: String,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("updated_at") val updatedAt: String,
+    @SerialName("name") val name: String,
+    @SerialName("code") val code: String,
+    @SerialName("symbol") val symbol: String,
+    @SerialName("created_at") val createdAt: String
 )

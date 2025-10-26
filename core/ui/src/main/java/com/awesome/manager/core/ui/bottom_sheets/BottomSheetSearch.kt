@@ -14,7 +14,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.designsystem.text.enumToRes
 import com.awesome.manager.core.ui.AmChipsContainer
 import com.awesome.manager.core.ui.ChipData
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -44,7 +43,7 @@ fun BottomSheetSearch(
     items: LazyListScope.() -> Unit
 ) {
     val searchTypeChipData = remember {
-        searchTypes.map { ChipData(id = it.id, titleRes = it.enumToRes(), title = it.name) }
+        searchTypes.map { ChipData(id = it.id, title = it.name) }
     }
     val focusRequester: FocusRequester = FocusRequester()
 

@@ -1,6 +1,6 @@
 package com.awesome.manager.feature.account.details
 
-import com.awesome.manager.core.model.AmAccountWithBalance
+import com.awesome.manager.core.model.AmAccountWithDetails
 
 internal sealed interface AccountDetailsState {
 
@@ -9,7 +9,7 @@ internal sealed interface AccountDetailsState {
     data object Error : AccountDetailsState
 
     data class Success(
-        val amAccountWithBalance: AmAccountWithBalance
+        val amAccountWithDetails: AmAccountWithDetails
     ) : AccountDetailsState
 
 }

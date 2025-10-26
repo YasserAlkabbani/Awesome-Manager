@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.dataOrNull
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
@@ -26,7 +26,7 @@ import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent
 import com.awesome.manager.core.designsystem.component.text.AmTextField
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.asAmText
-import com.awesome.manager.core.designsystem.text.enumToRes
+import com.awesome.manager.core.designsystem.text.asStringRes
 import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.ui.AmChipsContainer
@@ -40,8 +40,9 @@ internal fun AccountEditorRoute(
 ) {
 
     val accountNameTextFieldState = accountEditorViewModel.accountNameTextFieldState
-    val transactionTypes = accountEditorViewModel.transactionTypes
-    val currencies = accountEditorViewModel.currencies
+    val transactionTypes =
+        accountEditorViewModel.transactionTypes.collectAsStateWithLifecycle().value
+    val currencies = accountEditorViewModel.currencies.collectAsStateWithLifecycle().value
 
     val accountEditorState =
         accountEditorViewModel.accountEditorState.collectAsStateWithLifecycle().value
@@ -56,26 +57,30 @@ internal fun AccountEditorRoute(
         accountEditorViewModel.transactionTypeID.collectAsStateWithLifecycle().value
 
 
-    val popupStateValue = accountEditorViewModel.popup.collectAsStateWithLifecycle().value
-    LaunchedEffect(popupStateValue) {
-        if (popupStateValue) {
-            accountEditorViewModel.donePopup()
-            popup()
+    val accountEditorNavigation =
+        accountEditorViewModel.accountEditorNavigation.collectAsStateWithLifecycle().value
+    LaunchedEffect(accountEditorNavigation) {
+        accountEditorNavigation?.let {
+            accountEditorViewModel.doneAccountEditorNavigation()
+            when (accountEditorNavigation) {
+                AccountEditorNavigation.Popup -> popup()
+            }
         }
     }
 
     AccountEditorScreen(
         accountNameTextFieldState = accountNameTextFieldState,
         accountEditorState = accountEditorState,
+        createNewAccount = accountEditorViewModel.createNewAccount,
         currencies = currencies,
         transactionTypes = transactionTypes,
         accountImageUrl = accountImageUrl,
         selectedCurrencyID = selectedCurrencyID,
-        setCurrencyID = accountEditorViewModel::setCurrencyCode,
+        setCurrencyID = accountEditorViewModel::setCurrencyID,
         selectedTransactionTypeID = selectedTransactionTypeID,
         setTransactionTypeID = accountEditorViewModel::setTransactionTypeID,
         saveAccount = accountEditorViewModel::saveAccount,
-        requestPopup = accountEditorViewModel::requestPopup
+        requestPopup = accountEditorViewModel::popup
     )
 
 }
@@ -84,6 +89,7 @@ internal fun AccountEditorRoute(
 internal fun AccountEditorScreen(
     accountNameTextFieldState: TextFieldState,
     accountEditorState: AccountEditorState,
+    createNewAccount: Boolean,
     currencies: List<AmCurrency>?,
     transactionTypes: List<AmTransactionType>,
     accountImageUrl: String?,
@@ -100,7 +106,7 @@ internal fun AccountEditorScreen(
             Timber.d("TEST_CURRENCY $it")
             ChipData(
                 id = it.id,
-                title = it.currencyName
+                title = it.name
             )
         }
     }
@@ -108,14 +114,15 @@ internal fun AccountEditorScreen(
         transactionTypes.map {
             ChipData(
                 id = it.id,
-                titleRes = it.enumToRes(),
-                title = it.name
+                titleRes = it.type.asStringRes(),
+                title = it.type
             )
         }
     }
 
     val floatingToolBarState = rememberAccountEditorFloatingToolbar(
         accountEditorState = accountEditorState,
+        createNewAccount = createNewAccount,
         popup = requestPopup,
         saveAccount = saveAccount
     )
@@ -163,8 +170,9 @@ internal fun AccountEditorScreen(
 }
 
 @Composable
-fun rememberAccountEditorFloatingToolbar(
+private fun rememberAccountEditorFloatingToolbar(
     accountEditorState: AccountEditorState,
+    createNewAccount: Boolean,
     popup: () -> Unit,
     saveAccount: () -> Unit,
 ): FloatingToolBarState =
@@ -193,13 +201,13 @@ fun rememberAccountEditorFloatingToolbar(
                     onClick = popup
                 ),
                 actionButton = FloatingToolbarComponent.ActionButton(
-                    text = when (accountEditorState.editorState) {
-                        EditorState.CREATE -> R.string.create_account
-                        EditorState.EDIT -> R.string.update_account
+                    text = when (createNewAccount) {
+                        true -> R.string.create_account
+                        false -> R.string.update_account
                     }.asAmText(),
-                    amIconsType = when (accountEditorState.editorState) {
-                        EditorState.CREATE -> AmIcons.ArrowForward
-                        EditorState.EDIT -> AmIcons.ArrowForward
+                    amIconsType = when (createNewAccount) {
+                        true -> AmIcons.ArrowForward
+                        false -> AmIcons.ArrowForward
                     },
                     onClick = saveAccount,
                 ),

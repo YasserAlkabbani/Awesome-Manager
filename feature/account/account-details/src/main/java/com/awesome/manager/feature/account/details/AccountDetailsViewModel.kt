@@ -8,7 +8,7 @@ import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.model.AmTransaction
+import com.awesome.manager.core.model.AmTransactionWithDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +42,7 @@ internal class AccountDetailsViewModel @Inject constructor(
             started = SharingStarted.Eagerly
         )
 
-    val accountTransactionsPaging: Flow<PagingData<AmTransaction>> = transactionRepository
+    val accountTransactionsPaging: Flow<PagingData<AmTransactionWithDetails>> = transactionRepository
         .getTransactionsByAccountID(accountID, "")
 
     private val _accountTransactionsState: MutableStateFlow<AccountTransactionsState> =

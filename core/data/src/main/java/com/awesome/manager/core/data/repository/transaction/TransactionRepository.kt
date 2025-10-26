@@ -4,29 +4,29 @@ import androidx.paging.PagingData
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.model.UpsertTransaction
+import com.awesome.manager.core.model.AmTransactionWithDetails
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
 
-    suspend fun upsertTransaction(upsertTransaction: UpsertTransaction)
+    suspend fun upsertTransaction(transaction: AmTransaction)
 
     fun getTransactions(
         searchKey: String? = "",
         transactionType: AmTransactionType? = null,
         fromDate: Long? = null,
         toDate: Long? = null,
-    ): Flow<PagingData<AmTransaction>>
+    ): Flow<PagingData<AmTransactionWithDetails>>
 
     fun getTransactionsByAccountID(
         accountId: String, searchKey: String,
-    ): Flow<PagingData<AmTransaction>>
+    ): Flow<PagingData<AmTransactionWithDetails>>
 
-    fun getTransactionById(transactionId: String): Flow<AmTransaction>
+    fun returnTransactionByID(transactionId: String): Flow<AmTransactionWithDetails>
 
-    fun refreshTransactions(): Flow<AmState<List<AmTransaction>>>
+    fun refreshTransactions(): Flow<AmState<Unit>>
 
-    fun synTransactions(): Flow<AmState<List<AmTransaction>>>
+    fun synTransactions(): Flow<AmState<Unit>>
 
     suspend fun getTransactionCount(accountId: String): Int
 

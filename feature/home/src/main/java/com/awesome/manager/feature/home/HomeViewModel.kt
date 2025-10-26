@@ -5,17 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.AmState.Loading
-import com.awesome.manager.core.common.asAmState
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
-import com.awesome.manager.core.model.AmAccountWithBalance
-import com.awesome.manager.core.model.AmCurrency
-import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.model.BalanceDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,16 +27,16 @@ class HomeViewModel @Inject constructor(
 //        .returnBalanceDetails()
 //        .asAmState(viewModelScope)
 
-    private val _currencies: MutableStateFlow<AmState<List<AmCurrency>>> =
+    private val _currencies: MutableStateFlow<AmState<Unit>> =
         MutableStateFlow(Loading())
-    val currencies: StateFlow<AmState<List<AmCurrency>>> = _currencies.asStateFlow()
+    val currencies: StateFlow<AmState<Unit>> = _currencies.asStateFlow()
 
-    private val _accounts: MutableStateFlow<AmState<List<AmAccountWithBalance>>> = MutableStateFlow(Loading())
-    val accounts: StateFlow<AmState<List<AmAccountWithBalance>>> = _accounts.asStateFlow()
+    private val _accounts: MutableStateFlow<AmState<Unit>> = MutableStateFlow(Loading())
+    val accounts: StateFlow<AmState<Unit>> = _accounts.asStateFlow()
 
-    private val _transactions: MutableStateFlow<AmState<List<AmTransaction>>> =
+    private val _transactions: MutableStateFlow<AmState<Unit>> =
         MutableStateFlow(Loading())
-    val transactions: StateFlow<AmState<List<AmTransaction>>> = _transactions.asStateFlow()
+    val transactions: StateFlow<AmState<Unit>> = _transactions.asStateFlow()
 
     init {
         refreshData()
@@ -58,9 +54,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun refreshTransactions() = viewModelScope.launch {
-        transactionRepository.refreshTransactions().collect { transactions ->
-            _transactions.update { transactions }
-        }
+        transactionRepository.refreshTransactions().collect()
     }
 
 }

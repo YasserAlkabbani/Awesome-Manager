@@ -3,18 +3,14 @@ package com.awesome.manager.feature.home
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,15 +23,8 @@ import com.awesome.manager.core.designsystem.component.buttons.AmButton
 import com.awesome.manager.core.designsystem.component.surface.AmSurface
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.icon.AmIcons
-import com.awesome.manager.core.model.AmAccountWithBalance
-import com.awesome.manager.core.model.AmCurrency
-import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.ui.card.AmBalanceDetailsCard
-import com.awesome.manager.core.model.BalanceDetails
-import com.awesome.manager.core.ui.NoDataWarning
 import com.awesome.manager.core.ui.card.BalanceData
-import com.awesome.manager.core.ui.card.CardBalanceDetails
-import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_HOME
 import timber.log.Timber
 
 @Composable
@@ -43,11 +32,11 @@ internal fun HomeScreenRoute(
     navigateToCreateAccount: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val currencies: AmState<List<AmCurrency>> =
+    val currencies: AmState<Unit> =
         homeViewModel.currencies.collectAsStateWithLifecycle().value
-    val accounts: AmState<List<AmAccountWithBalance>> =
+    val accounts: AmState<Unit> =
         homeViewModel.accounts.collectAsStateWithLifecycle().value
-    val transactions: AmState<List<AmTransaction>> =
+    val transactions: AmState<Unit> =
         homeViewModel.transactions.collectAsStateWithLifecycle().value
 
     HomeScreen(
@@ -63,9 +52,9 @@ internal fun HomeScreenRoute(
 @Composable
 internal fun HomeScreen(
 //    balanceDetailsState: AmState<List<BalanceDetails>>,
-    currencies: AmState<List<AmCurrency>>,
-    accounts: AmState<List<AmAccountWithBalance>>,
-    transactions: AmState<List<AmTransaction>>,
+    currencies: AmState<Unit>,
+    accounts: AmState<Unit>,
+    transactions: AmState<Unit>,
     navigateToCreateAccount: () -> Unit
 ) {
 
@@ -216,7 +205,7 @@ private fun HomeScreenPreview() {
 //        ),
         currencies = AmState.Loading(),
         accounts = AmState.Error(amUIError = AmUIError.NoDataError),
-        transactions = AmState.Success(listOf()),
+        transactions = AmState.Loading(),
         navigateToCreateAccount={}
     )
 }

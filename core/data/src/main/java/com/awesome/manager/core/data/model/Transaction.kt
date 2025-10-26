@@ -1,23 +1,19 @@
 package com.awesome.manager.core.data.model
 
-import com.awesome.manager.core.common.asDate
 import com.awesome.manager.core.common.asTimestamp
-import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.common.asStringDateTime
 import com.awesome.manager.core.database.model.TransactionEntity
 import com.awesome.manager.core.database.model.TransactionEntityWithData
-import com.awesome.manager.core.model.AmCurrency
 import com.awesome.manager.core.model.AmTransaction
-import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.model.UpsertTransaction
+import com.awesome.manager.core.model.AmTransactionWithDetails
 import com.awesome.manager.core.network.model.request.TransactionNetworkRequest
 import com.awesome.manager.core.network.model.response.TransactionNetworkResponse
 
 fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     id = id,
-    creatorUserId = creatorUserId,
-    accountId = accountId,
-    transactionType = transactionType,
+    creatorUserId = creatorUserID,
+    accountID = accountID,
+    transactionTypeID = transactionTypeID,
     title = title,
     subtitle = subtitle,
     amount = amount,
@@ -25,50 +21,51 @@ fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     updatedAt = updatedAt.asTimestamp(),
     transactionAt = transactionAt.asTimestamp(),
     pending = false,
-    alreadyOnNetwork = true
 )
 
-fun TransactionEntityWithData.asModel() = AmTransaction(
-    transactionID = transactionEntity.id,
-    accountID = transactionEntity.accountId,
-    creatorUserID = transactionEntity.creatorUserId,
-    transactionType = AmTransactionType.returnTransactionType(transactionEntity.transactionType),
-    title = transactionEntity.title,
-    pending = transactionEntity.pending,
-    alreadyOnNetwork = transactionEntity.alreadyOnNetwork,
-    subtitle = transactionEntity.subtitle,
-    amount = transactionEntity.amount,
-    createdAt = transactionEntity.createdAt,
-    updatedAt = transactionEntity.updatedAt,
-    transactionAt = transactionEntity.transactionAt,
-    accountName = accountEntity.name,
-    currency = AmCurrency.returnCurrency(accountEntity.currencyCode),
-    updatePermission = updatePermission,
-    transactionAtDate = transactionEntity.transactionAt.asDate()
+fun TransactionEntityWithData.asModel() = AmTransactionWithDetails(
+    transaction = AmTransaction(
+        transactionID = transactionEntity.id,
+        accountID = transactionEntity.accountID,
+        creatorUserID = transactionEntity.creatorUserId,
+        transactionTypeID = transactionEntity.transactionTypeID,
+        title = transactionEntity.title,
+        pending = transactionEntity.pending,
+        subtitle = transactionEntity.subtitle,
+        amount = transactionEntity.amount,
+        createdAt = transactionEntity.createdAt,
+        updatedAt = transactionEntity.updatedAt,
+        transactionAt = transactionEntity.transactionAt,
+//        updatePermission = updatePermission
+    ),
+    accountName = "accountName",
+    currencyCode = "currencyCode",
+    currencySymbol = "currencySymbol",
+    transactionType = "transactionType",
+    isPositive = true
 )
 
 fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     id = id,
-    creatorUserId = creatorUserId,
-    accountId = accountId,
-    transactionType = transactionType,
+    creatorUserID = creatorUserId,
+    accountID = accountID,
+    transactionTypeID = transactionTypeID,
     title = title,
     subtitle = subtitle,
     amount = amount,
     transactionAt = transactionAt.asStringDateTime()
 )
 
-fun UpsertTransaction.asEntity() = TransactionEntity(
+fun AmTransaction.asEntity() = TransactionEntity(
     id = transactionID,
-    creatorUserId = creatorUserId,
-    accountId = accountId,
-    transactionType = transactionType,
+    creatorUserId = creatorUserID,
+    accountID = accountID,
     title = title,
     subtitle = subtitle,
     amount = amount,
-    createdAt = currentTime(),
-    updatedAt = currentTime(),
+    transactionTypeID = transactionTypeID,
     transactionAt = transactionAt,
-    pending = true,
-    alreadyOnNetwork = alreadyOnNetwork
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    pending = pending,
 )

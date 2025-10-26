@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.repository.auth
 
-import com.awesome.manager.core.data.extention.requestUIState
+import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.database.dao.UserDao
@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 
@@ -22,7 +21,7 @@ class OfflineFirstAuthRepository @Inject constructor(
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String) =
-        requestUIState {
+        amRequest {
             val authNetwork = authNetworkDataSource.login(
                 LoginRequest(email = email, password = password)
             )
@@ -31,14 +30,14 @@ class OfflineFirstAuthRepository @Inject constructor(
         }
 
     override suspend fun signUp(email: String, password: String) =
-        requestUIState {
+        amRequest {
             val authUserNetwork = authNetworkDataSource.signUp(
                 SignupRequest(email = email, password = password)
             )
 //            response.identities.isEmpty()
         }
 
-    override suspend fun logout() = requestUIState {
+    override suspend fun logout() = amRequest {
         authNetworkDataSource.logout()
     }
 

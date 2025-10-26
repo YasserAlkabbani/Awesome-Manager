@@ -12,11 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel
-import com.awesome.manager.core.designsystem.text.getString
+import com.awesome.manager.core.designsystem.text.asString
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.BalanceData
 
@@ -27,7 +26,7 @@ fun TransactionDetailsScreen(
     val transactionDetailsState: TransactionDetailsState =
         transactionDetailsViewModel.transactionDetailsState
 
-    transactionDetailsState.transactionDetailsUI.collectAsStateWithLifecycle(null)
+//    transactionDetailsState.transactionDetailsUI.collectAsStateWithLifecycle(null)
 
 //    val mainAction = transactionDetailsState.mainAction.collectAsStateWithLifecycle().value
 //    LaunchedEffect(key1 = mainAction) {
@@ -65,23 +64,23 @@ fun TransactionDetailsScreen(
                 is AmState.Error -> Unit
                 is AmState.Loading -> Unit
                 is AmState.Success -> {
-                    val account = it.data.account
-                    val balanceDetails = it.data.balanceDetails
+                    val accountWithDetails = it.data
+                    val account = accountWithDetails.account
                     AccountCardWithDetails(
                         modifier = Modifier.fillMaxWidth(),
                         title = account.name,
                         imageUrl = account.imageUrl,
                         loading = account.pending,
                         balanceData = BalanceData.generate(
-                            income = balanceDetails.formattedIncome,
-                            expenses = balanceDetails.formattedExpenses,
-                            netIncomeAbs = balanceDetails.formattedNetIncome,
-                            isPositiveIncome = balanceDetails.isPositiveIncome,
-                            debtor = balanceDetails.formattedDebtor,
-                            creditor = balanceDetails.formattedCreditor,
-                            netDebtorAbs = balanceDetails.formattedNetDebtor,
-                            isPositiveDebtor = balanceDetails.isPositiveDebtor,
-                            currencySymbol = balanceDetails.currency.currencySymbol,
+                            income = accountWithDetails.formattedIncome,
+                            expenses = accountWithDetails.formattedExpenses,
+                            netIncomeAbs = accountWithDetails.formattedNetIncome,
+                            isPositiveIncome = accountWithDetails.isPositiveIncome,
+                            debtor = accountWithDetails.formattedDebtor,
+                            creditor = accountWithDetails.formattedCreditor,
+                            netDebtorAbs = accountWithDetails.formattedNetDebtor,
+                            isPositiveDebtor = accountWithDetails.isPositiveDebtor,
+                            currencySymbol = accountWithDetails.currencySymbol,
                         )
                     )
                 }
@@ -96,7 +95,7 @@ fun TransactionDetailsScreen(
         ) {
             when (it) {
                 is AmState.Success -> {
-                    val transaction = it.data
+                    val transactionWithDetails = it.data
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -104,32 +103,32 @@ fun TransactionDetailsScreen(
                         AmTextWithLabel(
                             modifier = Modifier.fillMaxWidth(),
                             label = "Title",
-                            text = transaction.title.ifBlank { stringResource(R.string.no_title) },
-                            positive = transaction.transactionType.positive
+                            text = transactionWithDetails.transaction.title.ifBlank { stringResource(R.string.no_title) },
+                            positive = transactionWithDetails.isPositive
                         )
                         AmTextWithLabel(
                             modifier = Modifier.fillMaxWidth(),
                             label = "Description",
-                            text = transaction.subtitle.ifBlank { stringResource(R.string.no_description) },
-                            positive = transaction.transactionType.positive
+                            text = transactionWithDetails.transaction.subtitle.ifBlank { stringResource(R.string.no_description) },
+                            positive = transactionWithDetails.isPositive
                         )
                         AmTextWithLabel(
                             modifier = Modifier.fillMaxWidth(),
                             label = stringResource(R.string.amount),
-                            text = (transaction.amount).toString(),
-                            positive = transaction.transactionType.positive
+                            text = (transactionWithDetails.transaction.amount).toString(),
+                            positive = transactionWithDetails.isPositive
                         )
                         AmTextWithLabel(
                             modifier = Modifier.fillMaxWidth(),
                             label = stringResource(R.string.date),
-                            text = transaction.transactionAtDate,
-                            positive = transaction.transactionType.positive
+                            text = transactionWithDetails.transaction.transactionAtDate,
+                            positive = transactionWithDetails.isPositive
                         )
                         AmTextWithLabel(
                             modifier = Modifier.fillMaxWidth(),
                             label = stringResource(R.string.payment_type),
-                            text = transaction.transactionType.getString(),
-                            positive = transaction.transactionType.positive
+                            text = transactionWithDetails.transactionType.asString(),
+                            positive = transactionWithDetails.isPositive
                         )
                     }
                 }

@@ -1,7 +1,6 @@
 package com.awesome.manager.core.network.ktor
 
 import com.awesome.manager.core.network.datasource.TransactionNetworkDataSource
-import com.awesome.manager.core.network.model.request.Transaction
 import com.awesome.manager.core.network.model.request.TransactionNetworkRequest
 import com.awesome.manager.core.network.model.response.TransactionNetworkResponse
 import io.ktor.client.HttpClient
@@ -12,6 +11,8 @@ import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
+import io.ktor.resources.Resource
+import kotlinx.serialization.SerialName
 import javax.inject.Inject
 
 class KtorTransactionNetworkDataSource @Inject constructor(private val httpClient: HttpClient) :
@@ -20,16 +21,28 @@ class KtorTransactionNetworkDataSource @Inject constructor(private val httpClien
     override suspend fun returnUpdatedTransactions(updatedAt: String): List<TransactionNetworkResponse> =
         httpClient.get(Transaction.Get(updatedAt = "gt.$updatedAt")).body()
 
-    override suspend fun insertTransaction(transactionNetworkRequest: TransactionNetworkRequest): List<TransactionNetworkResponse> =
-        httpClient.post(Transaction.Insert()) {
-            header(HttpHeaders.Prefer, "return=representation")
+    override suspend fun upsertTransaction(transactionNetworkRequest: TransactionNetworkRequest): Unit =
+        httpClient.post(Transaction.Upsert()) {
+            header(HttpHeaders.Prefer, "resolution=merge-duplicates")
             setBody(transactionNetworkRequest)
         }.body()
 
-    override suspend fun updateTransaction(transactionNetworkRequest: TransactionNetworkRequest): List<TransactionNetworkResponse> =
-        httpClient.patch(Transaction.Update(transactionID = "eq.${transactionNetworkRequest.id}")) {
-            header(HttpHeaders.Prefer, "return=representation")
-            setBody(transactionNetworkRequest)
-        }.body()
+}
+
+
+@Resource("rest/v1/transactions")
+data object Transaction {
+
+    @Resource("")
+    class Get(
+        @SerialName("updated_at") val updatedAt: String,
+        @SerialName("parent") val parent: Transaction = Transaction,
+        @SerialName("select") val select: String = "*",
+    )
+
+    @Resource("")
+    class Upsert(
+        @SerialName("parent") val parent: Transaction = Transaction,
+    )
 
 }

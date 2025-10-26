@@ -2,6 +2,8 @@ package com.awesome.manager.core.database.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.SQLiteConnection
 import com.awesome.manager.core.database.AmDatabase
 import dagger.Module
 import dagger.Provides
@@ -21,6 +23,11 @@ object DatabaseModule {
     ) = Room
         .databaseBuilder(context, AmDatabase::class.java, "am_database")
         .fallbackToDestructiveMigration(true)
+        .addCallback(object : RoomDatabase.Callback() {
+            override fun onCreate(connection: SQLiteConnection) {
+                super.onCreate(connection)
+            }
+        })
         .build()
 
 }

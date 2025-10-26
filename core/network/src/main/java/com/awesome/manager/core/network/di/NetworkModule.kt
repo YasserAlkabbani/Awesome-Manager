@@ -5,7 +5,7 @@ import com.awesome.manager.core.datastore.AuthPreferencesDataStore
 import com.awesome.manager.core.network.BuildConfig
 import com.awesome.manager.core.network.ErrorResponse
 import com.awesome.manager.core.network.NetworkError
-import com.awesome.manager.core.network.model.request.Authorization
+import com.awesome.manager.core.network.ktor.Authorization
 import com.awesome.manager.core.network.model.request.RefreshTokenBody
 import com.awesome.manager.core.network.model.response.AuthNetwork
 import com.chuckerteam.chucker.api.ChuckerCollector
