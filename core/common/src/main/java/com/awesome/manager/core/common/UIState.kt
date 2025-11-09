@@ -22,3 +22,8 @@ sealed interface AmState<out T> {
     fun isLoading() = this is Loading
 
 }
+
+sealed interface EditorType {
+    data object Create : EditorType
+    data class Update(val accountID: String) : EditorType
+}

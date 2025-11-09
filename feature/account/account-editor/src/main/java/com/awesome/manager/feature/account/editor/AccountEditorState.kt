@@ -1,10 +1,15 @@
 package com.awesome.manager.feature.account.editor
 
-internal sealed interface AccountEditorState {
+sealed interface AccountEditorState {
 
     data object Init : AccountEditorState
 
-    data object ValidateInput : AccountEditorState
+    data class ValidateInput(
+        val accountName: String,
+        val imageURL: String?,
+        val defaultTransactionTypeID: String,
+        val currencyID: String
+    ) : AccountEditorState
 
     data class InvalidateInput(
         val invalidAccountName: Boolean,
@@ -14,6 +19,7 @@ internal sealed interface AccountEditorState {
 
 }
 
-internal sealed interface AccountEditorNavigation{
-    data object Popup:AccountEditorNavigation
+sealed interface AccountEditorEvent{
+    data object Idle:AccountEditorEvent
+    data object Popup:AccountEditorEvent
 }

@@ -7,18 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
+import com.awesome.manager.core.common.EditorType
 import com.awesome.manager.core.common.asStateFlow
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.model.AmTransactionType
-import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.data.repository.currency.CurrencyRepository
 import com.awesome.manager.core.data.repository.transaction_type.TransactionTypeRepository
 import com.awesome.manager.core.designsystem.component.asFlow
-import com.awesome.manager.core.designsystem.component.asString
-import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmCurrency
-import com.awesome.manager.core.model.AmUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +26,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 private const val ACCOUNT_NAME: String = "ACCOUNT_NAME"
 private const val IMAGE_URL: String = "IMAGE_URL"
@@ -49,8 +44,13 @@ class AccountEditorViewModel @Inject constructor(
     private fun String.setState(value: String?): Unit = savedStateHandle.set(this, value)
     private fun String.getState(): StateFlow<String?> = savedStateHandle.getStateFlow(this, null)
 
-    private val accountID: String? = savedStateHandle.toRoute<AccountEditorRoute>().accountID
-    val createNewAccount: Boolean = accountID == null
+    val editorType: EditorType =
+        savedStateHandle.toRoute<AccountEditorRoute>().accountID.let { accountID ->
+            when (accountID) {
+                null -> EditorType.Create
+                else -> EditorType.Update(accountID)
+            }
+        }
 
     val accountNameTextFieldState: TextFieldState = savedStateHandle.saveable(
         key = ACCOUNT_NAME,
@@ -60,15 +60,14 @@ class AccountEditorViewModel @Inject constructor(
 
     private val _accountEditorState: MutableStateFlow<AccountEditorState> =
         MutableStateFlow(AccountEditorState.Init)
-    internal val accountEditorState: StateFlow<AccountEditorState> = _accountEditorState
+    val accountEditorState: StateFlow<AccountEditorState> = _accountEditorState
+    fun AccountEditorState.update() = _accountEditorState.update { this }
 
-    private val _accountEditorNavigation: MutableStateFlow<AccountEditorNavigation?> =
-        MutableStateFlow(null)
-    internal val accountEditorNavigation: StateFlow<AccountEditorNavigation?> =
-        _accountEditorNavigation
-
-    fun doneAccountEditorNavigation() = _accountEditorNavigation.update { null }
-    fun popup() = _accountEditorNavigation.update { AccountEditorNavigation.Popup }
+    private val _accountEditorEvent: MutableStateFlow<AccountEditorEvent> =
+        MutableStateFlow(AccountEditorEvent.Idle)
+    internal val accountEditorEvent: StateFlow<AccountEditorEvent> = _accountEditorEvent
+    fun doneAccountEditorEvent() = _accountEditorEvent.update { AccountEditorEvent.Idle }
+    fun navigateBack() = _accountEditorEvent.update { AccountEditorEvent.Popup }
 
     val imageURL: StateFlow<String?> = IMAGE_URL.getState()
     fun setImageURL(imageURL: String?) = IMAGE_URL.setState(imageURL)
@@ -92,15 +91,15 @@ class AccountEditorViewModel @Inject constructor(
 
     fun syncAccountEditorState() = viewModelScope.launch {
 
-
-        when (accountID) {
-            null -> {
+        when (editorType) {
+            is EditorType.Create -> {
                 setTransactionTypeID(transactionTypes.first().first().id)
                 setCurrencyID(currencies.first().first().id)
             }
 
-            else -> {
-                val account = accountRepository.getAccountByID(accountID).first().account
+            is EditorType.Update -> {
+                val account =
+                    accountRepository.getAccountByID(editorType.accountID).first().account
                 accountNameTextFieldState.setTextAndPlaceCursorAtEnd(account.name)
                 setTransactionTypeID(account.defaultTransactionTypeID)
                 setCurrencyID(account.currencyID)
@@ -113,17 +112,23 @@ class AccountEditorViewModel @Inject constructor(
             imageURL,
             currencyID,
             transactionTypeID,
-        ) { accountName, imageURL, currency, transactionType ->
+        ) { accountName, imageURL, currencyID, transactionTypeID ->
 
             val validAccountName: Boolean = !accountName.isBlank()
-            val validCurrency: Boolean = currency != null
-            val validTransactionType: Boolean = transactionType != null
+            val validCurrency: Boolean = currencyID != null
+            val validTransactionType: Boolean = transactionTypeID != null
 
             val validateInput = validAccountName && validCurrency && validTransactionType
 
             when {
                 accountName.isBlank() -> AccountEditorState.Init
-                validateInput -> AccountEditorState.ValidateInput
+                validateInput -> AccountEditorState.ValidateInput(
+                    accountName = accountName,
+                    imageURL = imageURL,
+                    defaultTransactionTypeID = transactionTypeID,
+                    currencyID = currencyID,
+                )
+
                 else -> AccountEditorState.InvalidateInput(
                     invalidAccountName = !validAccountName,
                     invalidTransactionType = !validTransactionType,
@@ -136,86 +141,26 @@ class AccountEditorViewModel @Inject constructor(
             .collect { newAccountEditeState -> _accountEditorState.update { newAccountEditeState } }
     }
 
-    fun saveAccount() {
+    fun saveAccount(accountEditorState: AccountEditorState.ValidateInput) {
         viewModelScope.launch(Dispatchers.Default) {
-            returnUpdatedAccount()?.let { account ->
-                accountRepository.upsertAccount(account)
-            }
-        }
-    }
+            when (editorType) {
+                is EditorType.Create -> accountRepository.createAccount(
+                    name = accountEditorState.accountName,
+                    creatorUserID = authRepository.currentUser().first().id,
+                    currencyID = accountEditorState.currencyID,
+                    defaultTransactionTypeID = accountEditorState.defaultTransactionTypeID,
+                    imageUrl = accountEditorState.imageURL,
+                )
 
-
-    @OptIn(ExperimentalUuidApi::class)
-    private suspend fun returnUpdatedAccount(): AmAccount? {
-        data class AccountData(
-            val accountID: String,
-            val creatorUserID: String,
-            val createdAt: Long,
-        )
-
-        val currentTime: Long = currentTime()
-        val currentUser: AmUser = authRepository.currentUser().first()
-        val updatedAt = currentTime
-        val accountName: String = accountNameTextFieldState.asString()
-        val imageURL: String? = imageURL.value
-        val transactionTypeID: String? = transactionTypeID.value
-        val currencyID: String? = currencyID.value
-        val (accountID, creatorUserID, createdAt) = when (accountID) {
-            null -> AccountData(
-                accountID = Uuid.random().toString(),
-                creatorUserID = currentUser.id,
-                createdAt = currentTime,
-            )
-
-            else -> accountRepository.getAccountByID(accountID).first().account.let { account ->
-                AccountData(
-                    accountID = account.accountID,
-                    creatorUserID = account.creatorUserID,
-                    createdAt = account.createdAt,
+                is EditorType.Update -> accountRepository.updateAccount(
+                    accountID = editorType.accountID,
+                    name = accountEditorState.accountName,
+                    currencyID = accountEditorState.currencyID,
+                    defaultTransactionTypeID = accountEditorState.defaultTransactionTypeID,
+                    imageUrl = accountEditorState.imageURL,
                 )
             }
+            navigateBack()
         }
-
-
-        val isValidInput =
-            accountName.isNotBlank() && transactionTypeID != null &&
-                    currencyID != null && currentUser.id == creatorUserID
-
-        return when (isValidInput) {
-            false -> null
-            true -> AmAccount(
-                accountID = accountID,
-                creatorUserID = creatorUserID,
-                name = accountName,
-                imageUrl = imageURL,
-                defaultTransactionTypeID = transactionTypeID,
-                pending = true,
-                currencyID = currencyID,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-            )
-        }
-
     }
-
 }
-
-
-/// TEMP LIST
-private val images: List<String> = listOf(
-    "https://cdn.pixabay.com/photo/2023/06/11/13/14/boathouse-8055954_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/28/09/24/south-tyrol-8023224_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/26/08/18/dandelion-8018952_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/06/07/12/51/insect-8047159_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/04/11/12/58/berries-7917173_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/17/08/55/tree-7999477_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/06/01/03/41/landscape-8032549_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/19/18/07/bee-8005091_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/29/10/29/cobweb-8025639_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/04/03/18/37/nature-7897683_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/30/15/33/silver-gull-8028943_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/28/12/12/sanderling-8023532_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/04/22/20/29/needles-7944391_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/05/22/22/18/common-blue-butterfly-8011569_1280.jpg",
-    "https://cdn.pixabay.com/photo/2023/04/18/15/52/flower-7935433_1280.jpg",
-)

@@ -29,10 +29,10 @@ class AccountsViewModel @Inject constructor(
         MutableStateFlow(AccountsState.IDLE)
     val accountsState: StateFlow<AccountsState> = _accountsState.asStateFlow()
 
-    private val _accountNavigation: MutableStateFlow<AccountsNavigation?> = MutableStateFlow(null)
-    val accountNavigation: StateFlow<AccountsNavigation?> = _accountNavigation
-    fun navigateTo(navigation: AccountsNavigation) = _accountNavigation.update { navigation }
-    fun doneNavigation() = _accountNavigation.update { null }
+    private val _accountNavigation: MutableStateFlow<AccountsEvent> = MutableStateFlow(AccountsEvent.Idle)
+    val accountNavigation: StateFlow<AccountsEvent> = _accountNavigation
+    fun navigateTo(navigation: AccountsEvent) = _accountNavigation.update { navigation }
+    fun doneNavigation() = _accountNavigation.update { AccountsEvent.Idle }
 
     init {
         refreshAccounts()

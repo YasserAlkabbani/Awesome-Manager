@@ -1,12 +1,13 @@
 package com.awesome.manager.feature.auth
 
+
 sealed interface AuthState {
 
     data object InitState : AuthState
 
     data class ValidatedInput(
-        val email: String,
-        val password: String
+        val email:String,
+        val password:String
     ) : AuthState
 
     data object Loading : AuthState
@@ -22,4 +23,8 @@ sealed interface AuthState {
     data object ErrorRequestConnection : AuthState
     data object ErrorRequestUnknown : AuthState
 
+}
+
+sealed interface AuthEvent{
+    data object Idle:AuthEvent
 }

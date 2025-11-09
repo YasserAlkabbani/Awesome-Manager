@@ -7,8 +7,9 @@ enum class AccountsState{
     ERROR
 }
 
-sealed interface AccountsNavigation{
-    data object CreateAccount:AccountsNavigation
-    data class Account(val accountID: String):AccountsNavigation
-    data class CreateTransaction(val accountID: String):AccountsNavigation
+sealed interface AccountsEvent{
+    data object Idle:AccountsEvent
+    data object CreateAccount:AccountsEvent
+    data class Account(val accountID: String):AccountsEvent
+    data class CreateTransaction(val accountID: String):AccountsEvent
 }

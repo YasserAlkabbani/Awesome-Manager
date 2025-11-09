@@ -3,7 +3,6 @@ plugins {
     id("awesomemanager.android.application.compose")
 }
 
-@Suppress("UnstableApiUsage")
 android {
 
     namespace = "com.awesome.manager"
@@ -34,6 +33,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    kotlinOptions {
+        freeCompilerArgs += "-XXLanguage:+ExplicitBackingFields"
     }
 }
 

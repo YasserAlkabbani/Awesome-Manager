@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.common.AmUIError

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -40,36 +40,36 @@ internal fun AccountsRoute(
 
     val accountsState =
         accountsViewModel.accountsState.collectAsStateWithLifecycle().value
-    val accountNavigation =
+    val accountsEvent =
         accountsViewModel.accountNavigation.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(accountNavigation) {
-        accountNavigation?.let {
-            accountsViewModel.doneNavigation()
-            when (accountNavigation) {
-                AccountsNavigation.CreateAccount -> navigateToCreateAccount()
-                is AccountsNavigation.CreateTransaction -> navigateToCreateTransaction(
-                    accountNavigation.accountID
-                )
+    LaunchedEffect(accountsEvent) {
+        when (accountsEvent) {
+            AccountsEvent.Idle -> Unit
+            AccountsEvent.CreateAccount -> navigateToCreateAccount()
+            is AccountsEvent.CreateTransaction -> navigateToCreateTransaction(
+                accountsEvent.accountID
+            )
 
-                is AccountsNavigation.Account -> navigateToAccount(accountNavigation.accountID)
-            }
+            is AccountsEvent.Account -> navigateToAccount(accountsEvent.accountID)
         }
+        if (accountsEvent !is AccountsEvent.Idle) accountsViewModel.doneNavigation()
+
     }
 
     AccountsScreen(
         accountsState = accountsState,
         pagingAccounts = accountsViewModel.pagingAccounts,
         refreshAccounts = accountsViewModel::refreshAccounts,
-        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsNavigation.CreateAccount) },
+        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsEvent.CreateAccount) },
         navigateToCreateTransaction = {
             accountsViewModel.navigateTo(
-                AccountsNavigation.CreateTransaction(
+                AccountsEvent.CreateTransaction(
                     it
                 )
             )
         },
-        navigateToAccount = { accountsViewModel.navigateTo(AccountsNavigation.Account(it)) }
+        navigateToAccount = { accountsViewModel.navigateTo(AccountsEvent.Account(it)) }
     )
 }
 

@@ -13,68 +13,60 @@ import kotlinx.coroutines.flow.Flow
 interface AccountDao {
 
     @Upsert
-    suspend fun upsertAccount(accountEntity: List<AccountEntity>)
+    suspend fun upsertAccounts(accountEntity: List<AccountEntity>)
 
     @Upsert
     suspend fun upsertAccount(accountEntity: AccountEntity)
 
-//    @Transaction
-//    @Query(
-//        "SELECT accounts.* ," +
-//                "(accounts.creator_user_id == users.user_id) AS update_permission, " +
-//                "currencies.code AS currency_code, " +
-//                "transaction_types.type AS default_transaction_type, " +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='income')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS income," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='expenses')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS expenses," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='debtor')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS debtor," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='creditor')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS creditor " +
-//                "FROM accounts " +
-//                "LEFT JOIN " +
-//                "users ON accounts.creator_user_id = users.user_id, " +
-//                "currencies ON accounts.currency_id = currencies.currency_id, " +
-//                "transactions ON accounts.account_id = transactions.account_id, " +
-//                "transaction_types ON accounts.default_transaction_type_id = transaction_types.transaction_type_id " +
-//                "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
-//                "GROUP BY accounts.name "
-//    )
-//    fun getAccounts(searchKey: String?): PagingSource<Int, AccountEntityWithData>
+    @Transaction
+    @Query(
+        "WITH " +
+                "income_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
+                "expenses_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
+                "debtor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
+                "creditor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
+                "SELECT accounts.* ," +
+                "(accounts.creator_user_id == users.user_id) AS update_permission, " +
+                "currencies.code AS currency_code, " +
+                "currencies.symbol AS currency_symbol, " +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM income_type) THEN transactions.amount ELSE 0 END) AS income," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM expenses_type) THEN transactions.amount ELSE 0 END) AS expenses," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM debtor_type) THEN transactions.amount ELSE 0 END) AS debtor," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM creditor_type) THEN transactions.amount ELSE 0 END) AS creditor " +
+                "FROM accounts " +
+                "LEFT JOIN " +
+                "users ON accounts.creator_user_id = users.user_id, " +
+                "currencies ON accounts.currency_id = currencies.currency_id, " +
+                "transactions ON accounts.account_id = transactions.account_id " +
+                "WHERE ((accounts.name LIKE '%' || :searchKey || '%') OR :searchKey is NULL) " +
+                "GROUP BY accounts.account_id"
+    )
+    fun getAccounts(searchKey: String?): PagingSource<Int, AccountEntityWithData>
 
-//    @Transaction
-//    @Query(
-//        "SELECT accounts.* ," +
-//                "(accounts.creator_user_id == users.user_id) AS update_permission ," +
-//                "currencies.code AS currency_code, " +
-//                "transaction_types.type AS default_transaction_type, " +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='income')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS income," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='expenses')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS expenses," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='debtor')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS debtor," +
-//                "IFNULL(SUM( CASE WHEN transactions.transaction_type_id ==" +
-//                "(SELECT transaction_types.transaction_type_id FROM transaction_types WHERE transaction_types.type='creditor')" +
-//                "THEN transactions.amount ELSE 0 END ),0) AS creditor " +
-//                "FROM accounts " +
-//                "LEFT JOIN " +
-//                "users ON accounts.creator_user_id = users.user_id, " +
-//                "currencies ON accounts.currency_id = currencies.currency_id, " +
-//                "transactions ON accounts.account_id = transactions.account_id, " +
-//                "transaction_types ON accounts.default_transaction_type_id = transaction_types.transaction_type_id " +
-//                "WHERE accounts.account_id=:accountId " +
-//                "GROUP BY accounts.name "
-//    )
-//    fun getAccountByID(accountId: String): Flow<AccountEntityWithData>
+    @Transaction
+    @Query(
+        "WITH " +
+                "income_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
+                "expenses_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
+                "debtor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
+                "creditor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
+                "SELECT accounts.* ," +
+                "(accounts.creator_user_id == users.user_id) AS update_permission, " +
+                "currencies.code AS currency_code, " +
+                "currencies.symbol AS currency_symbol, " +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM income_type) THEN transactions.amount ELSE 0 END) AS income," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM expenses_type) THEN transactions.amount ELSE 0 END) AS expenses," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM debtor_type) THEN transactions.amount ELSE 0 END) AS debtor," +
+                "SUM(CASE WHEN transactions.transaction_type_id == (SELECT id FROM creditor_type) THEN transactions.amount ELSE 0 END) AS creditor " +
+                "FROM accounts " +
+                "LEFT JOIN " +
+                "users ON accounts.creator_user_id = users.user_id, " +
+                "currencies ON accounts.currency_id = currencies.currency_id, " +
+                "transactions ON accounts.account_id = transactions.account_id " +
+                "WHERE accounts.account_id=:accountId " +
+                "GROUP BY accounts.account_id"
+    )
+    fun getAccountByID(accountId: String): Flow<AccountEntityWithData>
 
 
     @Query("SELECT * FROM accounts WHERE pending=1")
@@ -87,17 +79,3 @@ interface AccountDao {
     suspend fun deleteAccounts()
 
 }
-
-//@Transaction
-//@Query(
-//    "SELECT currencies.* ," +
-//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='INCOME' THEN transactions.amount ELSE 0 END ),0) AS income," +
-//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='EXPENSES' THEN transactions.amount ELSE 0 END),0) AS expenses," +
-//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='DEBTOR' THEN transactions.amount ELSE 0 END),0) AS debtor," +
-//            "IFNULL(SUM( CASE WHEN transactions.transaction_type=='CREDITOR' THEN transactions.amount ELSE 0 END ),0) AS creditor " +
-//            "FROM currencies " +
-//            "JOIN accounts on currencies.currency_id=accounts.currency_id " +
-//            "LEFT JOIN transactions on accounts.account_id=transactions.account_id " +
-//            "GROUP BY currencies.currency_id"
-//)
-//fun returnCurrenciesBalance(): Flow<List<CurrencyEntityWithData>>

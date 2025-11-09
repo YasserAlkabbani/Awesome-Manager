@@ -8,7 +8,21 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
 
-    suspend fun upsertAccount(account: AmAccount)
+    suspend fun createAccount(
+        creatorUserID: String,
+        currencyID: String,
+        defaultTransactionTypeID: String,
+        name: String,
+        imageUrl: String?
+    )
+
+    suspend fun updateAccount(
+        accountID: String,
+        currencyID: String,
+        defaultTransactionTypeID: String,
+        name: String,
+        imageUrl: String?
+    )
 
     fun getAccounts(searchKey: String? = null): Flow<PagingData<AmAccountWithDetails>>
 

@@ -11,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.awesome.manager.core.common.AmState
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmTextWithLabel

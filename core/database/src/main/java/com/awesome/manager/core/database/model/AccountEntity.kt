@@ -27,4 +27,7 @@ data class AccountEntityWithData(
     @ColumnInfo("expenses") val expenses: Double,
     @ColumnInfo("debtor") val debtor: Double,
     @ColumnInfo("creditor") val creditor: Double,
+    @ColumnInfo("currency_code") val currencyCode: String,
+    @ColumnInfo("currency_symbol") val currencySymbol: String,
+    @ColumnInfo("update_permission") val updatePermission: Boolean,
 )

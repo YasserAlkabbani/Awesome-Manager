@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.awesome.manager.core.common.EditorType
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.AmSize
 import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
@@ -40,38 +40,39 @@ internal fun AccountEditorRoute(
 ) {
 
     val accountNameTextFieldState = accountEditorViewModel.accountNameTextFieldState
-    val transactionTypes =
-        accountEditorViewModel.transactionTypes.collectAsStateWithLifecycle().value
-    val currencies = accountEditorViewModel.currencies.collectAsStateWithLifecycle().value
+
+    val editorType = accountEditorViewModel.editorType
 
     val accountEditorState =
         accountEditorViewModel.accountEditorState.collectAsStateWithLifecycle().value
 
+    val transactionTypes =
+        accountEditorViewModel.transactionTypes.collectAsStateWithLifecycle().value
+    val currencies =
+        accountEditorViewModel.currencies.collectAsStateWithLifecycle().value
+
     val accountImageUrl =
         accountEditorViewModel.imageURL.collectAsStateWithLifecycle().value
-
     val selectedCurrencyID =
         accountEditorViewModel.currencyID.collectAsStateWithLifecycle().value
-
     val selectedTransactionTypeID =
         accountEditorViewModel.transactionTypeID.collectAsStateWithLifecycle().value
 
-
     val accountEditorNavigation =
-        accountEditorViewModel.accountEditorNavigation.collectAsStateWithLifecycle().value
+        accountEditorViewModel.accountEditorEvent.collectAsStateWithLifecycle().value
     LaunchedEffect(accountEditorNavigation) {
-        accountEditorNavigation?.let {
-            accountEditorViewModel.doneAccountEditorNavigation()
-            when (accountEditorNavigation) {
-                AccountEditorNavigation.Popup -> popup()
-            }
+        accountEditorViewModel.doneAccountEditorEvent()
+        when (accountEditorNavigation) {
+            AccountEditorEvent.Popup -> popup()
+            AccountEditorEvent.Idle -> Unit
         }
+        if (accountEditorNavigation != AccountEditorEvent.Idle) accountEditorViewModel.doneAccountEditorEvent()
     }
 
     AccountEditorScreen(
         accountNameTextFieldState = accountNameTextFieldState,
         accountEditorState = accountEditorState,
-        createNewAccount = accountEditorViewModel.createNewAccount,
+        editorType = editorType,
         currencies = currencies,
         transactionTypes = transactionTypes,
         accountImageUrl = accountImageUrl,
@@ -80,7 +81,7 @@ internal fun AccountEditorRoute(
         selectedTransactionTypeID = selectedTransactionTypeID,
         setTransactionTypeID = accountEditorViewModel::setTransactionTypeID,
         saveAccount = accountEditorViewModel::saveAccount,
-        requestPopup = accountEditorViewModel::popup
+        requestPopup = accountEditorViewModel::navigateBack
     )
 
 }
@@ -89,7 +90,7 @@ internal fun AccountEditorRoute(
 internal fun AccountEditorScreen(
     accountNameTextFieldState: TextFieldState,
     accountEditorState: AccountEditorState,
-    createNewAccount: Boolean,
+    editorType: EditorType,
     currencies: List<AmCurrency>?,
     transactionTypes: List<AmTransactionType>,
     accountImageUrl: String?,
@@ -97,7 +98,7 @@ internal fun AccountEditorScreen(
     setCurrencyID: (String) -> Unit,
     selectedTransactionTypeID: String?,
     setTransactionTypeID: (String) -> Unit,
-    saveAccount: () -> Unit,
+    saveAccount: (AccountEditorState.ValidateInput) -> Unit,
     requestPopup: () -> Unit
 ) {
 
@@ -122,7 +123,7 @@ internal fun AccountEditorScreen(
 
     val floatingToolBarState = rememberAccountEditorFloatingToolbar(
         accountEditorState = accountEditorState,
-        createNewAccount = createNewAccount,
+        editorType = editorType,
         popup = requestPopup,
         saveAccount = saveAccount
     )
@@ -172,9 +173,9 @@ internal fun AccountEditorScreen(
 @Composable
 private fun rememberAccountEditorFloatingToolbar(
     accountEditorState: AccountEditorState,
-    createNewAccount: Boolean,
+    editorType: EditorType,
     popup: () -> Unit,
-    saveAccount: () -> Unit,
+    saveAccount: (AccountEditorState.ValidateInput) -> Unit,
 ): FloatingToolBarState =
     remember(accountEditorState) {
         when (accountEditorState) {
@@ -201,15 +202,15 @@ private fun rememberAccountEditorFloatingToolbar(
                     onClick = popup
                 ),
                 actionButton = FloatingToolbarComponent.ActionButton(
-                    text = when (createNewAccount) {
-                        true -> R.string.create_account
-                        false -> R.string.update_account
+                    text = when (editorType) {
+                        is EditorType.Create -> R.string.create_account
+                        is EditorType.Update -> R.string.update_account
                     }.asAmText(),
-                    amIconsType = when (createNewAccount) {
-                        true -> AmIcons.ArrowForward
-                        false -> AmIcons.ArrowForward
+                    amIconsType = when (editorType) {
+                        is EditorType.Create -> AmIcons.ArrowForward
+                        is EditorType.Update -> AmIcons.ArrowForward
                     },
-                    onClick = saveAccount,
+                    onClick = { saveAccount(accountEditorState) },
                 ),
             )
         }

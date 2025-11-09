@@ -18,15 +18,15 @@ fun AccountEntityWithData.asModel() = AmAccountWithDetails(
         pending = accountEntity.pending,
         createdAt = accountEntity.createdAt,
         updatedAt = accountEntity.updatedAt,
-//        updatePermission = updatePermission,
         currencyID = accountEntity.currencyID
     ),
     income = income,
     expenses = expenses,
     debtor = debtor,
     creditor = creditor,
-    currencyCode = "currencyCode",
-    currencySymbol = "currencySymbol",
+    currencyCode = currencyCode,
+    currencySymbol = currencySymbol,
+    updatePermission = updatePermission,
 )
 
 fun AccountNetworkResponse.asEntity() = AccountEntity(
