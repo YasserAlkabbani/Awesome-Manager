@@ -1,16 +1,14 @@
 package com.awesome.manager.feature.transaction.transactions
 
-import androidx.paging.PagingData
-import com.awesome.manager.core.model.AmTransactionWithDetails
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
+sealed interface TransactionsState {
+    data object Idle : TransactionsState
+    data object Loading : TransactionsState
+    data object Error : TransactionsState
+}
 
-class TransactionsState(
-    val setString: String.(String) -> Unit,
-    val getString: String.(String) -> StateFlow<String>,
-    val refreshTransactions: () -> Unit,
-    val pagingTransactions: Flow<PagingData<AmTransactionWithDetails>>,
-){
-
+sealed interface TransactionsEvents {
+    data object Idle : TransactionsEvents
+    data object NavigationCreateTransaction : TransactionsEvents
+    data class NavigationTransactionDetails(val accountID:String, val transactionID:String) : TransactionsEvents
 }

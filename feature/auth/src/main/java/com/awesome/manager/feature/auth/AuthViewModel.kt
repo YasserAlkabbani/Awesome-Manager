@@ -36,9 +36,9 @@ class AuthViewModel @Inject constructor(
     val authState: StateFlow<AuthState> = _authState
     fun AuthState.update() = _authState.update { this }
 
-    private val _authEvent: MutableStateFlow<AuthEvent> = MutableStateFlow(AuthEvent.Idle)
-    val authEvent: StateFlow<AuthEvent> = _authEvent
-    fun resetAuthEvent() = _authEvent.update { AuthEvent.Idle }
+    private val _authEvent: MutableStateFlow<AuthEvents> = MutableStateFlow(AuthEvents.Idle)
+    val authEvent: StateFlow<AuthEvents> = _authEvent
+    fun resetAuthEvent() = _authEvent.update { AuthEvents.Idle }
 
     val emailTextFieldState: TextFieldState = savedStateHandle.saveable(
         key = EMAIL_TEXT,

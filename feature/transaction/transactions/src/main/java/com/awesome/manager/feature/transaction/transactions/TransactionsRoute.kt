@@ -17,8 +17,14 @@ fun NavController.navigateToTransactions(navOptions: NavOptions?) {
     )
 }
 
-fun NavGraphBuilder.transactionsScreen() {
+fun NavGraphBuilder.transactionsScreen(
+    navigateToCreateTransaction: () -> Unit,
+    navigateToTransactionDetails: (accountID: String, transactionID: String) -> Unit,
+) {
     composable<TransactionRoute> {
-        TransactionsScreen()
+        TransactionsRoute(
+            navigateToCreateTransaction = navigateToCreateTransaction,
+            navigateToTransactionDetails = navigateToTransactionDetails
+        )
     }
 }

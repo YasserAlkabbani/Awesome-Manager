@@ -63,11 +63,11 @@ class AccountEditorViewModel @Inject constructor(
     val accountEditorState: StateFlow<AccountEditorState> = _accountEditorState
     fun AccountEditorState.update() = _accountEditorState.update { this }
 
-    private val _accountEditorEvent: MutableStateFlow<AccountEditorEvent> =
-        MutableStateFlow(AccountEditorEvent.Idle)
-    internal val accountEditorEvent: StateFlow<AccountEditorEvent> = _accountEditorEvent
-    fun doneAccountEditorEvent() = _accountEditorEvent.update { AccountEditorEvent.Idle }
-    fun navigateBack() = _accountEditorEvent.update { AccountEditorEvent.Popup }
+    private val _accountEditorEvent: MutableStateFlow<AccountEditorEvents> =
+        MutableStateFlow(AccountEditorEvents.Idle)
+    internal val accountEditorEvent: StateFlow<AccountEditorEvents> = _accountEditorEvent
+    fun doneAccountEditorEvent() = _accountEditorEvent.update { AccountEditorEvents.Idle }
+    fun navigateBack() = _accountEditorEvent.update { AccountEditorEvents.Popup }
 
     val imageURL: StateFlow<String?> = IMAGE_URL.getState()
     fun setImageURL(imageURL: String?) = IMAGE_URL.setState(imageURL)

@@ -63,10 +63,10 @@ internal fun AccountEditorRoute(
     LaunchedEffect(accountEditorNavigation) {
         accountEditorViewModel.doneAccountEditorEvent()
         when (accountEditorNavigation) {
-            AccountEditorEvent.Popup -> popup()
-            AccountEditorEvent.Idle -> Unit
+            AccountEditorEvents.Popup -> popup()
+            AccountEditorEvents.Idle -> Unit
         }
-        if (accountEditorNavigation != AccountEditorEvent.Idle) accountEditorViewModel.doneAccountEditorEvent()
+        if (accountEditorNavigation != AccountEditorEvents.Idle) accountEditorViewModel.doneAccountEditorEvent()
     }
 
     AccountEditorScreen(

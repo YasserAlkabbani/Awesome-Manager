@@ -41,19 +41,19 @@ internal fun AccountsRoute(
     val accountsState =
         accountsViewModel.accountsState.collectAsStateWithLifecycle().value
     val accountsEvent =
-        accountsViewModel.accountNavigation.collectAsStateWithLifecycle().value
+        accountsViewModel.accountsEvent.collectAsStateWithLifecycle().value
 
     LaunchedEffect(accountsEvent) {
         when (accountsEvent) {
-            AccountsEvent.Idle -> Unit
-            AccountsEvent.CreateAccount -> navigateToCreateAccount()
-            is AccountsEvent.CreateTransaction -> navigateToCreateTransaction(
+            AccountsEvents.Idle -> Unit
+            AccountsEvents.NavigationCreateAccount -> navigateToCreateAccount()
+            is AccountsEvents.NavigationCreateTransaction -> navigateToCreateTransaction(
                 accountsEvent.accountID
             )
 
-            is AccountsEvent.Account -> navigateToAccount(accountsEvent.accountID)
+            is AccountsEvents.NavigationAccountDetails -> navigateToAccount(accountsEvent.accountID)
         }
-        if (accountsEvent !is AccountsEvent.Idle) accountsViewModel.doneNavigation()
+        if (accountsEvent !is AccountsEvents.Idle) accountsViewModel.doneNavigation()
 
     }
 
@@ -61,15 +61,15 @@ internal fun AccountsRoute(
         accountsState = accountsState,
         pagingAccounts = accountsViewModel.pagingAccounts,
         refreshAccounts = accountsViewModel::refreshAccounts,
-        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsEvent.CreateAccount) },
+        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsEvents.NavigationCreateAccount) },
         navigateToCreateTransaction = {
             accountsViewModel.navigateTo(
-                AccountsEvent.CreateTransaction(
+                AccountsEvents.NavigationCreateTransaction(
                     it
                 )
             )
         },
-        navigateToAccount = { accountsViewModel.navigateTo(AccountsEvent.Account(it)) }
+        navigateToAccount = { accountsViewModel.navigateTo(AccountsEvents.NavigationAccountDetails(it)) }
     )
 }
 
@@ -115,7 +115,7 @@ internal fun AccountsScreen(
 
             false -> {
                 AmLazyColumn(
-                    isRefreshing = accountsState == AccountsState.LOADING,
+                    isRefreshing = accountsState == AccountsState.Loading,
                     onRefresh = refreshAccounts,
                     content = {
                         items(
@@ -163,7 +163,7 @@ fun AccountsScreenPreview() {
         }
     }
     AccountsScreen(
-        accountsState = AccountsState.IDLE,
+        accountsState = AccountsState.Idle,
         pagingAccounts = flowOf(),
         refreshAccounts = {},
         navigateToCreateAccount = { },

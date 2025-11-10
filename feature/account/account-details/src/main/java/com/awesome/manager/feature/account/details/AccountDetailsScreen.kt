@@ -47,17 +47,21 @@ internal fun AccountDetails(
     val accountTransactionsPaging: LazyPagingItems<AmTransactionWithDetails> =
         accountDetailsViewModel.accountTransactionsPaging.collectAsLazyPagingItems()
 
-    val navigation: AccountDetailsNavigation? =
-        accountDetailsViewModel.navigation.collectAsStateWithLifecycle().value
-    LaunchedEffect(navigation) {
-        navigation?.let {
-            accountDetailsViewModel.navigationDone()
-            when (navigation) {
-                is AccountDetailsNavigation.CreateTransaction -> navigateToCreateTransaction(navigation.accountID)
-                is AccountDetailsNavigation.EditAccount -> navigateToEditAccount(navigation.accountID)
-                AccountDetailsNavigation.Popup -> navigateBack()
-            }
+    val accountDetailsEvent: AccountDetailsEvent =
+        accountDetailsViewModel.accountDetailsEvent.collectAsStateWithLifecycle().value
+    LaunchedEffect(accountDetailsEvent) {
+
+        accountDetailsViewModel.accountDetailsEventDone()
+        when (accountDetailsEvent) {
+            AccountDetailsEvent.Idle -> Unit
+            is AccountDetailsEvent.CreateTransaction ->
+                navigateToCreateTransaction(accountDetailsEvent.accountID)
+
+            is AccountDetailsEvent.EditAccount ->
+                navigateToEditAccount(accountDetailsEvent.accountID)
+            AccountDetailsEvent.Popup -> navigateBack()
         }
+        if (accountDetailsEvent !is AccountDetailsEvent.Idle) accountDetailsViewModel.accountDetailsEventDone()
     }
 
     AccountDetailsScreen(
@@ -67,7 +71,7 @@ internal fun AccountDetails(
         refresh = accountDetailsViewModel::refreshTransactions,
         navigateToCreateTransaction = accountDetailsViewModel::navigateToCreateTransaction,
         navigateToEditAccount = accountDetailsViewModel::navigateToEditAccount,
-        navigateBack = accountDetailsViewModel::navigateToPopup,
+        navigateBack = accountDetailsViewModel::navigateBack,
     )
 }
 

@@ -6,43 +6,77 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.text.asString
+import com.awesome.manager.core.model.AmTransactionWithDetails
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
+import kotlinx.coroutines.flow.Flow
 
 
 @Composable
-internal fun TransactionsScreen(
+internal fun TransactionsRoute(
+    navigateToCreateTransaction: () -> Unit,
+    navigateToTransactionDetails: (accountID: String, transactionID: String) -> Unit,
     transactionsViewModel: TransactionsViewModel = hiltViewModel(),
 ) {
 
-    val transactionsState = transactionsViewModel.transactionsState
+    val transactionsState =
+        transactionsViewModel.transactionsState.collectAsStateWithLifecycle().value
+
+    val transactionsEvent =
+        transactionsViewModel.transactionsEvent.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = transactionsEvent) {
+        when (transactionsEvent) {
+            is TransactionsEvents.Idle -> Unit
+            is TransactionsEvents.NavigationCreateTransaction -> navigateToCreateTransaction()
+            is TransactionsEvents.NavigationTransactionDetails -> navigateToTransactionDetails(
+                transactionsEvent.accountID,
+                transactionsEvent.transactionID
+            )
+        }
+        if (transactionsEvent !is TransactionsEvents.Idle) transactionsViewModel.doneTransactionEvent()
+    }
+
 
 //    val mainAction = transactionsState.mainAction.collectAsStateWithLifecycle().value
 //    LaunchedEffect(key1 = mainAction) {
 //        mainAction?.sendMainAction(sendMainAction, transactionsState::doneMainAction)
 //    }
 
-    TransactionsScreen(transactionsState)
+    TransactionsScreen(
+        transactionsState = transactionsState,
+        transactionsPaging = transactionsViewModel.pagingTransactions,
+        refreshTransactions = transactionsViewModel::refreshTransactions,
+        navigateToCreateTransaction = transactionsViewModel::navigateToCreateTransaction,
+        navigateToTransactionDetails = transactionsViewModel::navigateToTransactionDetails,
+    )
 }
 
 @Composable
-internal fun TransactionsScreen(transactionsState: TransactionsState) {
+internal fun TransactionsScreen(
+    transactionsState: TransactionsState,
+    transactionsPaging: Flow<PagingData<AmTransactionWithDetails>>,
+    refreshTransactions: () -> Unit,
+    navigateToCreateTransaction: () -> Unit,
+    navigateToTransactionDetails: (accountID: String, transactionID: String) -> Unit,
+) {
 
-//    val isLoading = transactionsState.refreshing.collectAsStateWithLifecycle().value
-    val transactionsLazyPaging = transactionsState.pagingTransactions.collectAsLazyPagingItems()
+    val transactionsLazyPaging = transactionsPaging.collectAsLazyPagingItems()
 
     val isEmptyList = remember(transactionsLazyPaging.itemCount) {
         transactionsLazyPaging.itemCount == 0
@@ -69,7 +103,7 @@ internal fun TransactionsScreen(transactionsState: TransactionsState) {
                     )
                     AmFilledTonalButton(
                         text = stringResource(R.string.create_a_transaction),
-                        onClick = {/* transactionsState.navigateToCreateTransaction(null) */ },
+                        onClick = navigateToCreateTransaction,
                     )
                 }
             }
@@ -77,29 +111,29 @@ internal fun TransactionsScreen(transactionsState: TransactionsState) {
             false -> {
                 AmLazyColumn(
                     isRefreshing = false,
-                    onRefresh = transactionsState.refreshTransactions,
+                    onRefresh = refreshTransactions,
                     content = {
                         items(
                             count = transactionsLazyPaging.itemCount,
                             key = transactionsLazyPaging.itemKey { transaction -> transaction.transaction.transactionID },
                             contentType = { LAZY_ITEM_TRANSACTION },
                             itemContent = { index ->
-                                transactionsLazyPaging[index]?.let { transaction ->
+                                transactionsLazyPaging[index]?.let { transactionWithDetails ->
                                     TransactionCard(
                                         modifier = Modifier.animateItem(),
-                                        account = transaction.accountName,
-                                        title = transaction.transaction.title,
-                                        amount = transaction.transaction.formattedAmount,
-                                        isPending = transaction.transaction.pending,
-                                        date = transaction.transaction.transactionAtDate,
-                                        transactionType = transaction.transactionType.asString(),
-                                        isPay = transaction.isPositive,
-                                        currency = transaction.currencyCode,
+                                        account = transactionWithDetails.accountName,
+                                        title = transactionWithDetails.transaction.title,
+                                        amount = transactionWithDetails.transaction.formattedAmount,
+                                        isPending = transactionWithDetails.transaction.pending,
+                                        date = transactionWithDetails.transaction.transactionAtDate,
+                                        transactionType = transactionWithDetails.transactionType.asString(),
+                                        isPay = transactionWithDetails.isPositive,
+                                        currency = transactionWithDetails.currencyCode,
                                         onClick = {
-//                                            transactionsState.navigateToTransactionDetails(
-//                                                accountID = transaction.accountID,
-//                                                transactionID = transaction.transactionID
-//                                            )
+                                            navigateToTransactionDetails(
+                                                transactionWithDetails.transaction.accountID,
+                                                transactionWithDetails.transaction.transactionID
+                                            )
                                         }
                                     )
                                 }

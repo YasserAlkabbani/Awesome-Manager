@@ -19,7 +19,7 @@ sealed interface AccountEditorState {
 
 }
 
-sealed interface AccountEditorEvent{
-    data object Idle:AccountEditorEvent
-    data object Popup:AccountEditorEvent
+sealed interface AccountEditorEvents{
+    data object Idle:AccountEditorEvents
+    data object Popup:AccountEditorEvents
 }

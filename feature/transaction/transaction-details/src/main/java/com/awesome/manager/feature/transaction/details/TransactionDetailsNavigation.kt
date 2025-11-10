@@ -12,7 +12,7 @@ data class TransactionDetailsRoute(val accountID: String, val transactionID: Str
 fun NavController.navigateToTransactionDetails(
     accountID: String,
     transactionID: String,
-    navOptions: NavOptions
+    navOptions: NavOptions?=null
 ) {
     navigate(
         route = TransactionDetailsRoute(

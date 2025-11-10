@@ -26,13 +26,13 @@ class AccountsViewModel @Inject constructor(
     val pagingAccounts: Flow<PagingData<AmAccountWithDetails>> = accountRepository.getAccounts()
 
     private val _accountsState: MutableStateFlow<AccountsState> =
-        MutableStateFlow(AccountsState.IDLE)
+        MutableStateFlow(AccountsState.Idle)
     val accountsState: StateFlow<AccountsState> = _accountsState.asStateFlow()
 
-    private val _accountNavigation: MutableStateFlow<AccountsEvent> = MutableStateFlow(AccountsEvent.Idle)
-    val accountNavigation: StateFlow<AccountsEvent> = _accountNavigation
-    fun navigateTo(navigation: AccountsEvent) = _accountNavigation.update { navigation }
-    fun doneNavigation() = _accountNavigation.update { AccountsEvent.Idle }
+    private val _accountsEvent: MutableStateFlow<AccountsEvents> = MutableStateFlow(AccountsEvents.Idle)
+    val accountsEvent: StateFlow<AccountsEvents> = _accountsEvent
+    fun doneNavigation() = _accountsEvent.update { AccountsEvents.Idle }
+    fun navigateTo(navigation: AccountsEvents) = _accountsEvent.update { navigation }
 
     init {
         refreshAccounts()
@@ -42,9 +42,9 @@ class AccountsViewModel @Inject constructor(
         viewModelScope.launch {
             accountRepository.refreshAccounts().collectLatest {
                 when (it) {
-                    is AmState.Error -> _accountsState.update { AccountsState.ERROR }
-                    is AmState.Loading -> _accountsState.update { AccountsState.LOADING }
-                    is AmState.Success -> _accountsState.update { AccountsState.IDLE }
+                    is AmState.Error -> _accountsState.update { AccountsState.Error }
+                    is AmState.Loading -> _accountsState.update { AccountsState.Loading }
+                    is AmState.Success -> _accountsState.update { AccountsState.Idle }
                 }
             }
         }

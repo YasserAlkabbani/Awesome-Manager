@@ -25,6 +25,6 @@ sealed interface AuthState {
 
 }
 
-sealed interface AuthEvent{
-    data object Idle:AuthEvent
+sealed interface AuthEvents{
+    data object Idle:AuthEvents
 }

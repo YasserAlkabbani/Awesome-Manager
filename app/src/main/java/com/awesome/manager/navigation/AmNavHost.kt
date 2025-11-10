@@ -17,6 +17,7 @@ import com.awesome.manager.feature.account.editor.navigateToAccountEditor
 import com.awesome.manager.feature.auth.AuthRoute
 import com.awesome.manager.feature.auth.authScreen
 import com.awesome.manager.feature.home.homeScreen
+import com.awesome.manager.feature.transaction.details.navigateToTransactionDetails
 import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
 import com.awesome.manager.feature.transaction.editor.navigateToTransactionCreator
 import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
@@ -67,7 +68,10 @@ fun AmNavHost(
             accountEditorScreen(navHostController::popBackStack)
 
 
-            transactionsScreen()
+            transactionsScreen(
+                navigateToCreateTransaction = navHostController::navigateToTransactionCreator,
+                navigateToTransactionDetails = navHostController::navigateToTransactionDetails,
+            )
             transactionDetailsScreen()
             transactionEditorScreen()
 

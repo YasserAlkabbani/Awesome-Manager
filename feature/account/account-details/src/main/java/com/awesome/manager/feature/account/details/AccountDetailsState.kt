@@ -24,8 +24,9 @@ internal sealed interface AccountTransactionsState {
 
 }
 
-internal sealed interface AccountDetailsNavigation  {
-    data class CreateTransaction(val accountID: String) : AccountDetailsNavigation
-    data class EditAccount(val accountID: String) : AccountDetailsNavigation
-    data object Popup : AccountDetailsNavigation
+internal sealed interface AccountDetailsEvent  {
+    data class CreateTransaction(val accountID: String) : AccountDetailsEvent
+    data class EditAccount(val accountID: String) : AccountDetailsEvent
+    data object Popup : AccountDetailsEvent
+    data object Idle : AccountDetailsEvent
 }

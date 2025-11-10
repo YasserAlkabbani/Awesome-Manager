@@ -42,25 +42,30 @@ internal class AccountDetailsViewModel @Inject constructor(
             started = SharingStarted.Eagerly
         )
 
-    val accountTransactionsPaging: Flow<PagingData<AmTransactionWithDetails>> = transactionRepository
-        .getTransactionsByAccountID(accountID, "")
-
     private val _accountTransactionsState: MutableStateFlow<AccountTransactionsState> =
         MutableStateFlow(AccountTransactionsState.Loading)
     val accountTransactionsState: StateFlow<AccountTransactionsState> =
         _accountTransactionsState
 
+    val accountTransactionsPaging: Flow<PagingData<AmTransactionWithDetails>> =
+        transactionRepository
+            .getTransactionsByAccountID(accountID, "")
 
-    private val _navigation: MutableStateFlow<AccountDetailsNavigation?> = MutableStateFlow(null)
-    val navigation: StateFlow<AccountDetailsNavigation?> = _navigation
+    private val _accountDetailsEvent: MutableStateFlow<AccountDetailsEvent> =
+        MutableStateFlow(AccountDetailsEvent.Idle)
+    val accountDetailsEvent: StateFlow<AccountDetailsEvent> = _accountDetailsEvent
+
     fun navigateToCreateTransaction() =
-        _navigation.update { AccountDetailsNavigation.CreateTransaction(accountID) }
+        _accountDetailsEvent.update { AccountDetailsEvent.CreateTransaction(accountID) }
 
     fun navigateToEditAccount() =
-        _navigation.update { AccountDetailsNavigation.EditAccount(accountID) }
+        _accountDetailsEvent.update { AccountDetailsEvent.EditAccount(accountID) }
 
-    fun navigateToPopup() = _navigation.update { AccountDetailsNavigation.Popup }
-    fun navigationDone() = _navigation.update { null }
+    fun navigateBack() =
+        _accountDetailsEvent.update { AccountDetailsEvent.Popup }
+
+    fun accountDetailsEventDone() =
+        _accountDetailsEvent.update { AccountDetailsEvent.Idle }
 
     fun refreshTransactions() {
         viewModelScope.launch {
