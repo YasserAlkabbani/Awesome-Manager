@@ -19,13 +19,13 @@ fun NavController.navigateToAccounts(navOptions: NavOptions?) {
 fun NavGraphBuilder.accountsScreen(
     navigateToCreateAccount: () -> Unit,
     navigateToCreateTransaction: (String) -> Unit,
-    navigateToAccount: (String) -> Unit,
+    navigateToAccountDetails: (String) -> Unit,
 ) {
     composable<AccountsRoute> {
         AccountsRoute(
             navigateToCreateAccount = navigateToCreateAccount,
             navigateToCreateTransaction = navigateToCreateTransaction,
-            navigateToAccount = navigateToAccount,
+            navigateToAccountDetails = navigateToAccountDetails,
         )
     }
 }

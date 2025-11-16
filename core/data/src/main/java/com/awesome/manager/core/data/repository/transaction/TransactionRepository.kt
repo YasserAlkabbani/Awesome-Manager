@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.transaction
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
 import com.awesome.manager.core.model.AmTransactionWithDetails
@@ -24,9 +24,9 @@ interface TransactionRepository {
 
     fun returnTransactionByID(transactionId: String): Flow<AmTransactionWithDetails>
 
-    fun refreshTransactions(): Flow<AmState<Unit>>
+    fun refreshTransactions(): Flow<ProcessStates<Unit>>
 
-    fun synTransactions(): Flow<AmState<Unit>>
+    fun synTransactions(): Flow<ProcessStates<Unit>>
 
     suspend fun getTransactionCount(accountId: String): Int
 

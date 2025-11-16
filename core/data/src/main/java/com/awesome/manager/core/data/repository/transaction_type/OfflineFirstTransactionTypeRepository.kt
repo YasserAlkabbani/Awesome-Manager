@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.repository.transaction_type
 
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.common.asDateTimeString
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.model.asEntity
@@ -17,7 +17,7 @@ class OfflineFirstTransactionTypeRepository @Inject constructor(
     private val transactionTypeDao: TransactionTypeDao
 ) : TransactionTypeRepository {
 
-    override suspend fun refreshTransactionsTypes(): Flow<AmState<Unit>> = amRequest {
+    override suspend fun refreshTransactionsTypes(): Flow<ProcessStates<Unit>> = amRequest {
         val transactionsTypesEntity =
             transactionTypeNetworkDataSource
                 .returnUpdatedTransactionsTypes(0L.asDateTimeString())

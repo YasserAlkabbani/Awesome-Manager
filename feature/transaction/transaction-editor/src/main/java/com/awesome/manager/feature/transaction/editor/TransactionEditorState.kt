@@ -1,11 +1,18 @@
 package com.awesome.manager.feature.transaction.editor
 
 
-internal sealed interface TransactionEditorState {
+sealed interface TransactionEditorState {
 
     data object Init : TransactionEditorState
 
-    data object Validated : TransactionEditorState
+    data class Validated(
+        val title: String,
+        val subtitle: String,
+        val amount: String,
+        val accountID: String,
+        val transactionTypeID: String,
+        val transactionAt: Long,
+    ) : TransactionEditorState
 
     data class InvalidatedInput(
         val isValidTitle: Boolean,
@@ -14,7 +21,8 @@ internal sealed interface TransactionEditorState {
 
 }
 
-internal sealed interface TransactionEditorNavigation{
-    data object Popup:TransactionEditorNavigation
-    data class TransactionDetails(val transactionID: String):TransactionEditorNavigation
+internal sealed interface TransactionEditorEvents {
+    data object Idle : TransactionEditorEvents
+    data object PopupNavigation : TransactionEditorEvents
+    data class TransactionDetailsNavigation(val transactionID: String) : TransactionEditorEvents
 }

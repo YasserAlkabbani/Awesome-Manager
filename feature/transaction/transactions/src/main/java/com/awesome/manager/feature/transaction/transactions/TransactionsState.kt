@@ -1,14 +1,13 @@
 package com.awesome.manager.feature.transaction.transactions
 
+import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmTransaction
 
-sealed interface TransactionsState {
-    data object Idle : TransactionsState
-    data object Loading : TransactionsState
-    data object Error : TransactionsState
-}
+
+sealed interface TransactionsState
 
 sealed interface TransactionsEvents {
     data object Idle : TransactionsEvents
-    data object NavigationCreateTransaction : TransactionsEvents
-    data class NavigationTransactionDetails(val accountID:String, val transactionID:String) : TransactionsEvents
+    data object CreateTransactionNavigation : TransactionsEvents
+    data class TransactionDetailsNavigation(val transaction: AmTransaction) : TransactionsEvents
 }

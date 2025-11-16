@@ -3,8 +3,8 @@ package com.awesome.manager.feature.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awesome.manager.core.common.AmState
-import com.awesome.manager.core.common.AmState.Loading
+import com.awesome.manager.core.common.ProcessStates
+import com.awesome.manager.core.common.ProcessStates.Loading
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.transaction.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,16 +27,16 @@ class HomeViewModel @Inject constructor(
 //        .returnBalanceDetails()
 //        .asAmState(viewModelScope)
 
-    private val _currencies: MutableStateFlow<AmState<Unit>> =
+    private val _currencies: MutableStateFlow<ProcessStates<Unit>> =
         MutableStateFlow(Loading())
-    val currencies: StateFlow<AmState<Unit>> = _currencies.asStateFlow()
+    val currencies: StateFlow<ProcessStates<Unit>> = _currencies.asStateFlow()
 
-    private val _accounts: MutableStateFlow<AmState<Unit>> = MutableStateFlow(Loading())
-    val accounts: StateFlow<AmState<Unit>> = _accounts.asStateFlow()
+    private val _accounts: MutableStateFlow<ProcessStates<Unit>> = MutableStateFlow(Loading())
+    val accounts: StateFlow<ProcessStates<Unit>> = _accounts.asStateFlow()
 
-    private val _transactions: MutableStateFlow<AmState<Unit>> =
+    private val _transactions: MutableStateFlow<ProcessStates<Unit>> =
         MutableStateFlow(Loading())
-    val transactions: StateFlow<AmState<Unit>> = _transactions.asStateFlow()
+    val transactions: StateFlow<ProcessStates<Unit>> = _transactions.asStateFlow()
 
     init {
         refreshData()

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
 import com.awesome.manager.core.common.EditorType
-import com.awesome.manager.core.common.asStateFlow
+import com.awesome.manager.core.common.asStateFlowList
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.model.AmTransactionType
@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -61,11 +62,11 @@ class AccountEditorViewModel @Inject constructor(
     private val _accountEditorState: MutableStateFlow<AccountEditorState> =
         MutableStateFlow(AccountEditorState.Init)
     val accountEditorState: StateFlow<AccountEditorState> = _accountEditorState
-    fun AccountEditorState.update() = _accountEditorState.update { this }
 
     private val _accountEditorEvent: MutableStateFlow<AccountEditorEvents> =
         MutableStateFlow(AccountEditorEvents.Idle)
-    internal val accountEditorEvent: StateFlow<AccountEditorEvents> = _accountEditorEvent
+    internal val accountEditorEvent: StateFlow<AccountEditorEvents> =
+        _accountEditorEvent.asStateFlow()
     fun doneAccountEditorEvent() = _accountEditorEvent.update { AccountEditorEvents.Idle }
     fun navigateBack() = _accountEditorEvent.update { AccountEditorEvents.Popup }
 
@@ -80,10 +81,10 @@ class AccountEditorViewModel @Inject constructor(
         TRANSACTION_TYPE_ID.setState(transactionTypeID)
 
     val transactionTypes: StateFlow<List<AmTransactionType>> =
-        transactionTypeRepository.returnTransactionsTypes().asStateFlow(viewModelScope, listOf())
+        transactionTypeRepository.returnTransactionsTypes().asStateFlowList(viewModelScope)
 
     val currencies: StateFlow<List<AmCurrency>> =
-        currencyRepository.returnCurrencies().asStateFlow(viewModelScope, listOf())
+        currencyRepository.returnCurrencies().asStateFlowList(viewModelScope)
 
     init {
         syncAccountEditorState()

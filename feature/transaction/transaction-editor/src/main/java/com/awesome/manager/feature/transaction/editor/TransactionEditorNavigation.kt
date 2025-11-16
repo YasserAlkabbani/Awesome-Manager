@@ -13,7 +13,7 @@ data class TransactionEditorRoute(val accountID: String?, val transactionID: Str
 fun NavController.navigateToTransactionEditor(
     accountID: String,
     transactionID: String,
-    navOptions: NavOptions?
+    navOptions: NavOptions?=null
 ) {
     navigate(
         route = TransactionEditorRoute(

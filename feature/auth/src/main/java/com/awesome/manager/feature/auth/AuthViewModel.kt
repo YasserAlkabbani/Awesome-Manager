@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.data.repository.auth.AuthRepository
 import com.awesome.manager.core.designsystem.component.asFlow
@@ -14,6 +14,7 @@ import com.awesome.manager.core.designsystem.component.text.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -37,7 +38,7 @@ class AuthViewModel @Inject constructor(
     fun AuthState.update() = _authState.update { this }
 
     private val _authEvent: MutableStateFlow<AuthEvents> = MutableStateFlow(AuthEvents.Idle)
-    val authEvent: StateFlow<AuthEvents> = _authEvent
+    val authEvent: StateFlow<AuthEvents> = _authEvent.asStateFlow()
     fun resetAuthEvent() = _authEvent.update { AuthEvents.Idle }
 
     val emailTextFieldState: TextFieldState = savedStateHandle.saveable(
@@ -92,9 +93,9 @@ class AuthViewModel @Inject constructor(
                 )
                 .collectLatest { requestState ->
                     val newAuthState = when (requestState) {
-                        is AmState.Loading -> AuthState.Loading
-                        is AmState.Success<*> -> AuthState.LoggedInSuccessfully
-                        is AmState.Error -> when (requestState.amUIError) {
+                        is ProcessStates.Loading -> AuthState.Loading
+                        is ProcessStates.Success<*> -> AuthState.LoggedInSuccessfully
+                        is ProcessStates.Error -> when (requestState.amUIError) {
                             is AmUIError.BadRequest -> AuthState.ErrorRequestCertification
                             is AmUIError.ConnectionUIError -> AuthState.ErrorRequestConnection
                             else -> AuthState.ErrorRequestUnknown

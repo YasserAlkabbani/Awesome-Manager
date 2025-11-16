@@ -1,7 +1,7 @@
 package com.awesome.manager.core.data.repository.accounts
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.data.extention.amInsert
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.extention.asUIState
@@ -79,7 +79,7 @@ class OfflineFirstAccountRepository @Inject constructor(
     override fun getAccountByID(accountID: String): Flow<AmAccountWithDetails> =
         accountDao.getAccountByID(accountID).map { it.asModel() }
 
-    override fun refreshAccounts(): Flow<AmState<Unit>> = amRequest {
+    override fun refreshAccounts(): Flow<ProcessStates<Unit>> = amRequest {
         val lastUpdateAccountTime = (accountDao.getLastUpdatedAccount()?.updatedAt ?: 0) + 1
         val lastUpdatedAccountDateTime = lastUpdateAccountTime.asDateTimeString()
         val accountsNetwork = accountNetworkDataSource
@@ -87,7 +87,7 @@ class OfflineFirstAccountRepository @Inject constructor(
         accountsNetwork.map { accountDao.upsertAccount(it.asEntity()) }
     }
 
-    override fun syncPendingAccounts(): Flow<AmState<Unit>> =
+    override fun syncPendingAccounts(): Flow<ProcessStates<Unit>> =
         accountDao.getPendingAccounts()
             .filterNotNull()
             .distinctUntilChanged()

@@ -12,7 +12,7 @@ data class TransactionDetailsRoute(val accountID: String, val transactionID: Str
 fun NavController.navigateToTransactionDetails(
     accountID: String,
     transactionID: String,
-    navOptions: NavOptions?=null
+    navOptions: NavOptions? = null
 ) {
     navigate(
         route = TransactionDetailsRoute(
@@ -23,8 +23,14 @@ fun NavController.navigateToTransactionDetails(
     )
 }
 
-fun NavGraphBuilder.transactionDetailsScreen() {
+fun NavGraphBuilder.transactionDetailsScreen(
+    navigateToAccountDetails: (accountID: String) -> Unit,
+    navigateToTransactionEditor: (accountID:String,transactionID: String) -> Unit,
+) {
     composable<TransactionDetailsRoute> {
-        TransactionDetailsScreen()
+        TransactionDetailsRoute(
+            navigateToAccountDetails = navigateToAccountDetails,
+            navigateToTransactionEditor = navigateToTransactionEditor,
+        )
     }
 }

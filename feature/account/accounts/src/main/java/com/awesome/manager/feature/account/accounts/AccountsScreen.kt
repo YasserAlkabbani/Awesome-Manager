@@ -19,9 +19,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.UIStates
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
+import com.awesome.manager.core.model.AmAccount
 import com.awesome.manager.core.model.AmAccountWithDetails
 import com.awesome.manager.core.ui.card.AccountCard
 import com.awesome.manager.core.ui.card.BalanceData
@@ -35,53 +37,46 @@ internal fun AccountsRoute(
     accountsViewModel: AccountsViewModel = hiltViewModel(),
     navigateToCreateAccount: () -> Unit,
     navigateToCreateTransaction: (String) -> Unit,
-    navigateToAccount: (String) -> Unit,
+    navigateToAccountDetails: (String) -> Unit,
 ) {
 
-    val accountsState =
-        accountsViewModel.accountsState.collectAsStateWithLifecycle().value
+    val accountsUIStates =
+        accountsViewModel.accountsUIStates.collectAsStateWithLifecycle().value
+
     val accountsEvent =
         accountsViewModel.accountsEvent.collectAsStateWithLifecycle().value
-
     LaunchedEffect(accountsEvent) {
         when (accountsEvent) {
             AccountsEvents.Idle -> Unit
-            AccountsEvents.NavigationCreateAccount -> navigateToCreateAccount()
-            is AccountsEvents.NavigationCreateTransaction -> navigateToCreateTransaction(
-                accountsEvent.accountID
-            )
-
-            is AccountsEvents.NavigationAccountDetails -> navigateToAccount(accountsEvent.accountID)
+            AccountsEvents.CreateAccountNavigation -> navigateToCreateAccount()
+            is AccountsEvents.CreateTransactionNavigation ->
+                navigateToCreateTransaction(accountsEvent.account.accountID)
+            is AccountsEvents.AccountDetailsNavigation ->
+                navigateToAccountDetails(accountsEvent.account.accountID)
         }
-        if (accountsEvent !is AccountsEvents.Idle) accountsViewModel.doneNavigation()
+        if (accountsEvent !is AccountsEvents.Idle) accountsViewModel.doneAccountsEvents()
 
     }
 
     AccountsScreen(
-        accountsState = accountsState,
+        accountsUIStates = accountsUIStates,
         pagingAccounts = accountsViewModel.pagingAccounts,
         refreshAccounts = accountsViewModel::refreshAccounts,
-        navigateToCreateAccount = { accountsViewModel.navigateTo(AccountsEvents.NavigationCreateAccount) },
-        navigateToCreateTransaction = {
-            accountsViewModel.navigateTo(
-                AccountsEvents.NavigationCreateTransaction(
-                    it
-                )
-            )
-        },
-        navigateToAccount = { accountsViewModel.navigateTo(AccountsEvents.NavigationAccountDetails(it)) }
+        navigateToCreateAccount = accountsViewModel::navigateToCreateAccount,
+        navigateToCreateTransaction = accountsViewModel::navigateToCreateTransaction,
+        navigateToAccountDetails = accountsViewModel::navigateToAccountDetails
     )
 }
 
 
 @Composable
 internal fun AccountsScreen(
-    accountsState: AccountsState,
+    accountsUIStates: UIStates,
     pagingAccounts: Flow<PagingData<AmAccountWithDetails>>,
     refreshAccounts: () -> Unit,
     navigateToCreateAccount: () -> Unit,
-    navigateToCreateTransaction: (String) -> Unit,
-    navigateToAccount: (String) -> Unit,
+    navigateToCreateTransaction: (AmAccount) -> Unit,
+    navigateToAccountDetails: (AmAccount) -> Unit,
 ) {
     val accountsLazyPaging = pagingAccounts.collectAsLazyPagingItems()
     val isEmptyList = remember(accountsLazyPaging.itemCount) { accountsLazyPaging.itemCount == 0 }
@@ -115,7 +110,7 @@ internal fun AccountsScreen(
 
             false -> {
                 AmLazyColumn(
-                    isRefreshing = accountsState == AccountsState.Loading,
+                    isRefreshing = accountsUIStates == UIStates.Loading,
                     onRefresh = refreshAccounts,
                     content = {
                         items(
@@ -131,7 +126,7 @@ internal fun AccountsScreen(
                                         title = account.name,
                                         imageUrl = account.imageUrl,
                                         loading = account.pending,
-                                        onClick = { navigateToAccount(account.accountID) },
+                                        onClick = { navigateToAccountDetails(account) },
                                         balanceData = BalanceData.generate(
                                             debtor = balanceDetails.formattedDebtor,
                                             creditor = balanceDetails.formattedCreditor,
@@ -163,11 +158,11 @@ fun AccountsScreenPreview() {
         }
     }
     AccountsScreen(
-        accountsState = AccountsState.Idle,
+        accountsUIStates = UIStates.Loading,
         pagingAccounts = flowOf(),
         refreshAccounts = {},
         navigateToCreateAccount = { },
         navigateToCreateTransaction = { },
-        navigateToAccount = { },
+        navigateToAccountDetails = { },
     )
 }

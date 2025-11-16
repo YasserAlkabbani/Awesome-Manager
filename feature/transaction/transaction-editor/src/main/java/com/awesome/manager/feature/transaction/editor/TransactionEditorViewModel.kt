@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
+import com.awesome.manager.core.common.EditorType
+import com.awesome.manager.core.common.asStateFlowValue
 import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
@@ -52,14 +54,19 @@ class TransactionEditorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val transactionEditorRouteArg: TransactionEditorRoute = savedStateHandle.toRoute()
-    private val accountID: String? = transactionEditorRouteArg.accountID
-    private val transactionID: String? = transactionEditorRouteArg.transactionID
-
     private fun <T> String.setValue(value: T): Unit = savedStateHandle.set(this, value)
     private fun <T> String.getValue(init: T): StateFlow<T> =
         savedStateHandle.getStateFlow(this, init)
 
+    private val editorType: EditorType =
+        savedStateHandle.toRoute<TransactionEditorRoute>().let { (accountID, transactionID) ->
+            when {
+                accountID != null && transactionID != null ->
+                    EditorType.Update(accountID, transactionID)
+
+                else -> EditorType.Create(accountID)
+            }
+        }
 
     val titleTextFieldState: TextFieldState = savedStateHandle.saveable(
         key = TRANSACTION_TITLE,
@@ -82,16 +89,6 @@ class TransactionEditorViewModel @Inject constructor(
         saver = TextFieldState.Saver
     )
 
-    private val _transactionEditorState: MutableStateFlow<TransactionEditorState> =
-        MutableStateFlow(TransactionEditorState.Init)
-    internal val transactionEditorState: StateFlow<TransactionEditorState> =
-        _transactionEditorState.asStateFlow()
-
-    private val _transactionEditorNavigation: MutableStateFlow<TransactionEditorNavigation?> =
-        MutableStateFlow(null)
-    internal val transactionEditorNavigation: StateFlow<TransactionEditorNavigation?> =
-        _transactionEditorNavigation
-
     val transactionAt: StateFlow<Long> = TRANSACTION_AT.getValue(currentTime())
     fun updateTransactionAt(transactionAt: Long) = TRANSACTION_AT.setValue(transactionAt)
 
@@ -101,29 +98,36 @@ class TransactionEditorViewModel @Inject constructor(
         .filterNotNull()
         .flatMapLatest { accountID -> accountRepository.getAccountByID(accountID) }
         .onEach { if (transactionTypeID.value == null) setTransactionTypeID(it.account.defaultTransactionTypeID) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(6000),
-            initialValue = null
-        )
+        .asStateFlowValue(viewModelScope)
 
     val transactionTypeID: StateFlow<String?> = TRANSACTION_TYPE_ID.getValue(null)
     fun setTransactionTypeID(transactionTypeID: String) =
         TRANSACTION_TYPE_ID.setValue(transactionTypeID)
 
+    private val _transactionEditorState: MutableStateFlow<TransactionEditorState> =
+        MutableStateFlow(TransactionEditorState.Init)
+    internal val transactionEditorState: StateFlow<TransactionEditorState> =
+        _transactionEditorState.asStateFlow()
+
+    private val _transactionEditorEvents: MutableStateFlow<TransactionEditorEvents> =
+        MutableStateFlow(TransactionEditorEvents.Idle)
+    internal val transactionEditorEvents: StateFlow<TransactionEditorEvents> =
+        _transactionEditorEvents.asStateFlow()
 
     init {
         syncTransactionsEditorState()
     }
 
     fun syncTransactionsEditorState() {
-
         viewModelScope.launch {
 
-            when {
-                transactionID != null -> {
+            editorType.accountID?.let { updateAccountID(it) }
+            when (editorType) {
+                is EditorType.Create -> Unit
+                is EditorType.Update -> {
+
                     val transaction = transactionRepository
-                        .returnTransactionByID(transactionID)
+                        .returnTransactionByID(editorType.transactionID)
                         .first().transaction
 
                     titleTextFieldState.setTextAndPlaceCursorAtEnd(transaction.title)
@@ -131,30 +135,37 @@ class TransactionEditorViewModel @Inject constructor(
                     amountTextFieldState.setTextAndPlaceCursorAtEnd(transaction.amount.toString())
 
                     updateTransactionAt(transaction.transactionAt)
-                    updateAccountID(transaction.accountID)
                     setTransactionTypeID(transaction.transactionTypeID)
-                }
-
-                accountID != null -> {
-                    updateAccountID(accountID)
-                }
-
-                else -> {
 
                 }
             }
             combine(
                 titleTextFieldState.asFlow(),
+                subTitleTextFieldState.asFlow(),
+                amountTextFieldState.asFlow(),
                 selectedAccountID,
-            ) { title, accountID ->
+                transactionTypeID
+            ) { it }.combine(transactionAt) { (title, subtitle, amount, accountID, transactionTypeID), transactionAt ->
 
-                val isValidTitle: Boolean = title.isNotBlank()
+                val isValidTitle: Boolean = !title.isNullOrBlank()
+                val isValidAmount: Boolean = !amount.isNullOrBlank()
                 val isValidAccountID: Boolean = !accountID.isNullOrBlank()
-                val isValidInput = isValidTitle && isValidAccountID
+                val isValidTransactionType: Boolean = !transactionTypeID.isNullOrBlank()
+
+                val isValidInput =
+                    isValidTitle && isValidAmount && isValidAccountID && isValidTransactionType
 
                 when {
-                    title.isBlank() -> TransactionEditorState.Init
-                    isValidInput -> TransactionEditorState.Validated
+                    title.isNullOrBlank() -> TransactionEditorState.Init
+                    isValidInput -> TransactionEditorState.Validated(
+                        accountID = accountID,
+                        title = title,
+                        subtitle = subtitle.orEmpty(),
+                        amount = amount,
+                        transactionTypeID = transactionTypeID,
+                        transactionAt = transactionAt,
+                    )
+
                     else -> TransactionEditorState.InvalidatedInput(
                         isValidTitle = isValidTitle,
                         isValidAccountID = isValidAccountID
@@ -165,6 +176,21 @@ class TransactionEditorViewModel @Inject constructor(
                 .collect()
 
         }
+    }
+
+    fun saveTransaction(transactionEditorState: TransactionEditorState.Validated) {
+        viewModelScope.launch(Dispatchers.Default) {
+            when (editorType) {
+                is EditorType.Create -> {
+
+                }
+
+                is EditorType.Update -> {
+
+                }
+            }
+        }
+
     }
 
     fun upsertTransaction() {
@@ -188,15 +214,15 @@ class TransactionEditorViewModel @Inject constructor(
         val accountID: String? = selectedAccountID.value
         val transactionTypeID: String? = transactionTypeID.value
 
-        val (transactionID, creatorUserID, createdAt) = when (transactionID) {
-            null -> TransactionData(
+        val (transactionID, creatorUserID, createdAt) = when (editorType) {
+            is EditorType.Create -> TransactionData(
                 transactionID = Uuid.random().toString(),
                 creatorUserID = currentUser.id,
                 createdAt = currentTime
 
             )
 
-            else -> transactionRepository.returnTransactionByID(transactionID)
+            is EditorType.Update -> transactionRepository.returnTransactionByID(editorType.transactionID)
                 .first().transaction.let { transaction ->
                     TransactionData(
                         transactionID = transaction.transactionID,

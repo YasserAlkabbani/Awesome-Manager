@@ -12,18 +12,32 @@ sealed interface AmUIError {
     data class OtherUIError(val errorMessage: String) : AmUIError
 }
 
-sealed interface AmState<out T> {
-    data class Success<T>(val data: T) : AmState<T>
-    data class Error(val amUIError: AmUIError) : AmState<Nothing>
-    data class Loading(val progress: Int = 0) : AmState<Nothing>
+sealed interface ProcessStates<out T> {
+    data class Success<T>(val data: T) : ProcessStates<T>
+    data class Error(val amUIError: AmUIError) : ProcessStates<Nothing>
+    data class Loading(val progress: Int = 0) : ProcessStates<Nothing>
 
     fun isSuccess() = this is Success
     fun isError() = this is Error
     fun isLoading() = this is Loading
 
+    fun asUIState() = when (this) {
+        is Error -> UIStates.Error(amUIError)
+        is Loading -> UIStates.Loading
+        is Success<*> -> UIStates.Success
+    }
+
 }
 
 sealed interface EditorType {
-    data object Create : EditorType
-    data class Update(val accountID: String) : EditorType
+    abstract val accountID: String?
+    data class Create(override val accountID: String?) : EditorType
+    data class Update(override val accountID: String, val transactionID: String) : EditorType
 }
+
+sealed interface UIStates {
+    data object Success : UIStates
+    data class Error(val amUIError: AmUIError) : UIStates
+    data object Loading : UIStates
+}
+

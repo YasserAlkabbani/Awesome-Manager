@@ -12,7 +12,7 @@ data class AccountDetailsRoute(val accountID: String)
 
 fun NavController.navigateToAccountDetails(
     accountID: String,
-    navOptions: NavOptions
+    navOptions: NavOptions?=null
 ) {
     navigate(
         route = AccountDetailsRoute(accountID = accountID),
@@ -26,7 +26,7 @@ fun NavGraphBuilder.accountDetailsScreen(
     navigateBack: () -> Unit
 ) {
     composable<AccountDetailsRoute> {
-        AccountDetails(
+        AccountDetailsRoute(
             navigateToCreateTransaction = navigateToCreateTransaction,
             navigateToEditAccount = navigateToEditAccount,
             navigateBack = navigateBack,

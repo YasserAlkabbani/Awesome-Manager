@@ -17,10 +17,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.UIStates
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.text.AmText
 import com.awesome.manager.core.designsystem.component.buttons.AmFilledTonalButton
 import com.awesome.manager.core.designsystem.text.asString
+import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionWithDetails
 import com.awesome.manager.core.ui.card.TransactionCard
 import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
@@ -35,31 +37,25 @@ internal fun TransactionsRoute(
     transactionsViewModel: TransactionsViewModel = hiltViewModel(),
 ) {
 
-    val transactionsState =
-        transactionsViewModel.transactionsState.collectAsStateWithLifecycle().value
+    val transactionsUIState =
+        transactionsViewModel.transactionsUIState.collectAsStateWithLifecycle().value
 
     val transactionsEvent =
         transactionsViewModel.transactionsEvent.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = transactionsEvent) {
         when (transactionsEvent) {
             is TransactionsEvents.Idle -> Unit
-            is TransactionsEvents.NavigationCreateTransaction -> navigateToCreateTransaction()
-            is TransactionsEvents.NavigationTransactionDetails -> navigateToTransactionDetails(
-                transactionsEvent.accountID,
-                transactionsEvent.transactionID
+            is TransactionsEvents.CreateTransactionNavigation -> navigateToCreateTransaction()
+            is TransactionsEvents.TransactionDetailsNavigation -> navigateToTransactionDetails(
+                transactionsEvent.transaction.accountID,
+                transactionsEvent.transaction.transactionID
             )
         }
-        if (transactionsEvent !is TransactionsEvents.Idle) transactionsViewModel.doneTransactionEvent()
+        if (transactionsEvent !is TransactionsEvents.Idle) transactionsViewModel.doneTransactionsEvent()
     }
 
-
-//    val mainAction = transactionsState.mainAction.collectAsStateWithLifecycle().value
-//    LaunchedEffect(key1 = mainAction) {
-//        mainAction?.sendMainAction(sendMainAction, transactionsState::doneMainAction)
-//    }
-
     TransactionsScreen(
-        transactionsState = transactionsState,
+        transactionsUIState = transactionsUIState,
         transactionsPaging = transactionsViewModel.pagingTransactions,
         refreshTransactions = transactionsViewModel::refreshTransactions,
         navigateToCreateTransaction = transactionsViewModel::navigateToCreateTransaction,
@@ -69,11 +65,11 @@ internal fun TransactionsRoute(
 
 @Composable
 internal fun TransactionsScreen(
-    transactionsState: TransactionsState,
+    transactionsUIState: UIStates,
     transactionsPaging: Flow<PagingData<AmTransactionWithDetails>>,
     refreshTransactions: () -> Unit,
     navigateToCreateTransaction: () -> Unit,
-    navigateToTransactionDetails: (accountID: String, transactionID: String) -> Unit,
+    navigateToTransactionDetails: (AmTransaction) -> Unit,
 ) {
 
     val transactionsLazyPaging = transactionsPaging.collectAsLazyPagingItems()
@@ -130,10 +126,7 @@ internal fun TransactionsScreen(
                                         isPay = transactionWithDetails.isPositive,
                                         currency = transactionWithDetails.currencyCode,
                                         onClick = {
-                                            navigateToTransactionDetails(
-                                                transactionWithDetails.transaction.accountID,
-                                                transactionWithDetails.transaction.transactionID
-                                            )
+                                            navigateToTransactionDetails(transactionWithDetails.transaction)
                                         }
                                     )
                                 }

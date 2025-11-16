@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.awesome.manager.core.common.UIStates
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AMHorizontalFloatingToolbar
 import com.awesome.manager.core.designsystem.component.FloatingToolBarState
@@ -23,6 +24,8 @@ import com.awesome.manager.core.designsystem.component.FloatingToolbarComponent.
 import com.awesome.manager.core.designsystem.icon.AmIcons
 import com.awesome.manager.core.designsystem.text.asAmText
 import com.awesome.manager.core.designsystem.text.asString
+import com.awesome.manager.core.model.AmAccount
+import com.awesome.manager.core.model.AmAccountWithDetails
 import com.awesome.manager.core.model.AmTransactionWithDetails
 import com.awesome.manager.core.ui.card.AccountCardWithDetails
 import com.awesome.manager.core.ui.card.BalanceData
@@ -31,18 +34,21 @@ import com.awesome.manager.core.ui.lazy_column.AmLazyColumn
 import com.awesome.manager.core.ui.lazy_column.LAZY_ITEM_TRANSACTION
 
 @Composable
-internal fun AccountDetails(
+internal fun AccountDetailsRoute(
     navigateToCreateTransaction: (accountID: String) -> Unit,
     navigateToEditAccount: (accountID: String) -> Unit,
     navigateBack: () -> Unit,
     accountDetailsViewModel: AccountDetailsViewModel = hiltViewModel(),
 ) {
 
-    val accountDetailsState: AccountDetailsState =
-        accountDetailsViewModel.accountDetailsState.collectAsStateWithLifecycle().value
+    val accountWithDetails =
+        accountDetailsViewModel.accountWithDetails.collectAsStateWithLifecycle().value
 
-    val accountTransactionsState: AccountTransactionsState =
-        accountDetailsViewModel.accountTransactionsState.collectAsStateWithLifecycle().value
+    val accountUIState: UIStates =
+        accountDetailsViewModel.accountDetailsUIState.collectAsStateWithLifecycle().value
+
+    val transactionsUIState: UIStates =
+        accountDetailsViewModel.transactionsUIState.collectAsStateWithLifecycle().value
 
     val accountTransactionsPaging: LazyPagingItems<AmTransactionWithDetails> =
         accountDetailsViewModel.accountTransactionsPaging.collectAsLazyPagingItems()
@@ -51,22 +57,24 @@ internal fun AccountDetails(
         accountDetailsViewModel.accountDetailsEvent.collectAsStateWithLifecycle().value
     LaunchedEffect(accountDetailsEvent) {
 
-        accountDetailsViewModel.accountDetailsEventDone()
+        accountDetailsViewModel.doneAccountDetailsEvent()
         when (accountDetailsEvent) {
             AccountDetailsEvent.Idle -> Unit
-            is AccountDetailsEvent.CreateTransaction ->
-                navigateToCreateTransaction(accountDetailsEvent.accountID)
+            is AccountDetailsEvent.CreateTransactionNavigation ->
+                navigateToCreateTransaction(accountDetailsEvent.account.accountID)
 
-            is AccountDetailsEvent.EditAccount ->
-                navigateToEditAccount(accountDetailsEvent.accountID)
-            AccountDetailsEvent.Popup -> navigateBack()
+            is AccountDetailsEvent.EditAccountNavigation ->
+                navigateToEditAccount(accountDetailsEvent.account.accountID)
+
+            AccountDetailsEvent.PopupNavigation -> navigateBack()
         }
-        if (accountDetailsEvent !is AccountDetailsEvent.Idle) accountDetailsViewModel.accountDetailsEventDone()
+        if (accountDetailsEvent !is AccountDetailsEvent.Idle) accountDetailsViewModel.doneAccountDetailsEvent()
     }
 
     AccountDetailsScreen(
-        accountDetailsState = accountDetailsState,
-        accountTransactionsState = accountTransactionsState,
+        accountWithDetails = accountWithDetails,
+        accountUIState = accountUIState,
+        transactionsUIState = transactionsUIState,
         accountTransactionsPaging = accountTransactionsPaging,
         refresh = accountDetailsViewModel::refreshTransactions,
         navigateToCreateTransaction = accountDetailsViewModel::navigateToCreateTransaction,
@@ -77,12 +85,13 @@ internal fun AccountDetails(
 
 @Composable
 internal fun AccountDetailsScreen(
-    accountDetailsState: AccountDetailsState,
-    accountTransactionsState: AccountTransactionsState,
+    accountWithDetails: AmAccountWithDetails?,
+    accountUIState: UIStates,
+    transactionsUIState: UIStates,
     accountTransactionsPaging: LazyPagingItems<AmTransactionWithDetails>,
     refresh: () -> Unit,
-    navigateToCreateTransaction: () -> Unit,
-    navigateToEditAccount: () -> Unit,
+    navigateToCreateTransaction: (AmAccount) -> Unit,
+    navigateToEditAccount: (AmAccount) -> Unit,
     navigateBack: () -> Unit
 ) {
 
@@ -90,75 +99,74 @@ internal fun AccountDetailsScreen(
         AnimatedContent(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.TopCenter,
-            targetState = accountDetailsState,
+            targetState = accountWithDetails,
             label = "ACCOUNT_DETAILS"
-        ) { accountDetailsState ->
-            when (accountDetailsState) {
-                is AccountDetailsState.Success -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(AmPadding.Details.value),
-                    ) {
-                        val accountWithDetails = accountDetailsState.amAccountWithDetails
-                        val account = accountWithDetails.account
-                        AccountCardWithDetails(
-                            modifier = Modifier,
-                            title = account.name,
-                            imageUrl = account.imageUrl,
-                            loading = account.pending,
-                            balanceData = BalanceData.generate(
-                                debtor = accountWithDetails.formattedDebtor,
-                                creditor = accountWithDetails.formattedCreditor,
-                                netDebtorAbs = accountWithDetails.formattedNetDebtor,
-                                isPositiveDebtor = accountWithDetails.isPositiveDebtor,
-                                income = accountWithDetails.formattedIncome,
-                                expenses = accountWithDetails.formattedExpenses,
-                                netIncomeAbs = accountWithDetails.formattedNetIncome,
-                                isPositiveIncome = accountWithDetails.isPositiveIncome,
-                                currencySymbol = accountWithDetails.currencySymbol,
-                            )
+        ) { accountWithDetails ->
+            when (accountWithDetails) {
+                null -> Unit
+                else -> Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(AmPadding.Details.value),
+                ) {
+                    val account = accountWithDetails.account
+                    AccountCardWithDetails(
+                        modifier = Modifier,
+                        title = account.name,
+                        imageUrl = account.imageUrl,
+                        loading = account.pending,
+                        balanceData = BalanceData.generate(
+                            debtor = accountWithDetails.formattedDebtor,
+                            creditor = accountWithDetails.formattedCreditor,
+                            netDebtorAbs = accountWithDetails.formattedNetDebtor,
+                            isPositiveDebtor = accountWithDetails.isPositiveDebtor,
+                            income = accountWithDetails.formattedIncome,
+                            expenses = accountWithDetails.formattedExpenses,
+                            netIncomeAbs = accountWithDetails.formattedNetIncome,
+                            isPositiveIncome = accountWithDetails.isPositiveIncome,
+                            currencySymbol = accountWithDetails.currencySymbol,
                         )
-                        AmLazyColumn(
-                            isRefreshing = accountTransactionsState is AccountTransactionsState.Loading,
-                            onRefresh = refresh,
-                            content = {
-                                items(
-                                    count = accountTransactionsPaging.itemCount,
-                                    contentType = { LAZY_ITEM_TRANSACTION },
-                                    key = accountTransactionsPaging.itemKey { transaction -> transaction.transaction.transactionID },
-                                    itemContent = { index ->
-                                        accountTransactionsPaging[index]?.let { transaction ->
-                                            TransactionCard(
-                                                modifier = Modifier.animateItem(),
-                                                account = transaction.accountName,
-                                                title = transaction.transaction.title,
-                                                amount = transaction.transaction.formattedAmount,
-                                                isPending = transaction.transaction.pending,
-                                                date = transaction.transaction.transactionAtDate,
-                                                transactionType = transaction.transactionType.asString(),
-                                                isPay = transaction.isPositive,
-                                                currency = transaction.currencySymbol,
-                                                onClick = { navigateToCreateTransaction() }
-                                            )
-                                        }
+                    )
+                    AmLazyColumn(
+                        isRefreshing = transactionsUIState is UIStates.Loading,
+                        onRefresh = refresh,
+                        content = {
+                            items(
+                                count = accountTransactionsPaging.itemCount,
+                                contentType = { LAZY_ITEM_TRANSACTION },
+                                key = accountTransactionsPaging.itemKey { transaction -> transaction.transaction.transactionID },
+                                itemContent = { index ->
+                                    accountTransactionsPaging[index]?.let { transactionWithDetails ->
+                                        TransactionCard(
+                                            modifier = Modifier.animateItem(),
+                                            account = transactionWithDetails.accountName,
+                                            title = transactionWithDetails.transaction.title,
+                                            amount = transactionWithDetails.transaction.formattedAmount,
+                                            isPending = transactionWithDetails.transaction.pending,
+                                            date = transactionWithDetails.transaction.transactionAtDate,
+                                            transactionType = transactionWithDetails.transactionType.asString(),
+                                            isPay = transactionWithDetails.isPositive,
+                                            currency = transactionWithDetails.currencySymbol,
+                                            onClick = { navigateToCreateTransaction(account) }
+                                        )
                                     }
-                                )
-                            }
-                        )
-                    }
+                                }
+                            )
+                        }
+                    )
                 }
-
-                is AccountDetailsState.Error -> Unit
-                is AccountDetailsState.Loading -> Unit
             }
         }
 
         val accountDetailsFloatingToolbar = rememberAccountDetailsFloatingToolbar(
-            accountDetailsState = accountDetailsState,
+            accountUIState = accountUIState,
             popup = navigateBack,
-            editAccount = navigateToEditAccount,
-            createTransaction = navigateToCreateTransaction,
+            editAccount = {
+                accountWithDetails?.account?.let { navigateToEditAccount(it) }
+            },
+            createTransaction = {
+                accountWithDetails?.account?.let { navigateToCreateTransaction(it) }
+            },
         )
         AMHorizontalFloatingToolbar(accountDetailsFloatingToolbar)
     }
@@ -169,14 +177,15 @@ internal fun AccountDetailsScreen(
 
 @Composable
 private fun rememberAccountDetailsFloatingToolbar(
-    accountDetailsState: AccountDetailsState,
+    accountUIState: UIStates,
     popup: () -> Unit,
     editAccount: () -> Unit,
     createTransaction: () -> Unit,
 ): FloatingToolBarState =
-    remember(accountDetailsState) {
-        when (accountDetailsState) {
-            AccountDetailsState.Error -> FloatingToolBarState.Error(
+    remember(accountUIState) {
+        when (accountUIState) {
+            is UIStates.Loading -> FloatingToolBarState.Loading
+            is UIStates.Error -> FloatingToolBarState.Error(
                 errorMessage = R.string.something_wrong.asAmText(),
                 backButton = IconButton(
                     amIconsType = AmIcons.ArrowBack,
@@ -184,8 +193,8 @@ private fun rememberAccountDetailsFloatingToolbar(
                 )
             )
 
-            AccountDetailsState.Loading -> FloatingToolBarState.Loading
-            is AccountDetailsState.Success -> FloatingToolBarState.Content(
+
+            is UIStates.Success -> FloatingToolBarState.Content(
                 backButton = IconButton(
                     amIconsType = AmIcons.ArrowBack,
                     onClick = popup

@@ -1,15 +1,13 @@
 package com.awesome.manager.core.data.repository.transaction
 
 import androidx.paging.PagingData
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.data.extention.amInsert
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.extention.asUIState
 import com.awesome.manager.core.common.asDateTimeString
-import com.awesome.manager.core.data.model.asModel
 import com.awesome.manager.core.data.model.asEntity
 import com.awesome.manager.core.data.model.asNetwork
-import com.awesome.manager.core.data.repository.asPagingDataFlow
 import com.awesome.manager.core.database.dao.TransactionDao
 import com.awesome.manager.core.model.AmTransaction
 import com.awesome.manager.core.model.AmTransactionType
@@ -76,7 +74,7 @@ class OfflineFirstTransactionRepository @Inject constructor(
 
     }
 
-    override fun synTransactions(): Flow<AmState<Unit>> =
+    override fun synTransactions(): Flow<ProcessStates<Unit>> =
         transactionDao.returnPendingTransaction()
             .filterNotNull()
             .distinctUntilChanged()

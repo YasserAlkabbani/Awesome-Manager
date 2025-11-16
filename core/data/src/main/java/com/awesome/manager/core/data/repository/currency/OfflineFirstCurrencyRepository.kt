@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.repository.currency
 
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.common.asDateTimeString
 import com.awesome.manager.core.data.extention.amRequest
 import com.awesome.manager.core.data.model.asEntity
@@ -16,7 +16,7 @@ class OfflineFirstCurrencyRepository @Inject constructor(
     private val currencyNetworkDataSource: CurrencyNetworkDataSource,
     private val currencyDao: CurrencyDao
 ): CurrencyRepository{
-    override fun refreshCurrencies(): Flow<AmState<Unit>> = amRequest{
+    override fun refreshCurrencies(): Flow<ProcessStates<Unit>> = amRequest{
         val currenciesEntity=
             currencyNetworkDataSource
             .returnUpdatedCurrencies(0L.asDateTimeString())

@@ -20,6 +20,7 @@ import com.awesome.manager.feature.home.homeScreen
 import com.awesome.manager.feature.transaction.details.navigateToTransactionDetails
 import com.awesome.manager.feature.transaction.details.transactionDetailsScreen
 import com.awesome.manager.feature.transaction.editor.navigateToTransactionCreator
+import com.awesome.manager.feature.transaction.editor.navigateToTransactionEditor
 import com.awesome.manager.feature.transaction.editor.transactionEditorScreen
 import com.awesome.manager.feature.transaction.transactions.transactionsScreen
 
@@ -51,7 +52,7 @@ fun AmNavHost(
                 navigateToCreateAccount = {
                     navHostController.navigateToAccountCreator(null)
                 },
-                navigateToAccount = { accountID ->
+                navigateToAccountDetails = { accountID ->
                     navHostController.navigateToAccountDetails(
                         accountID = accountID,
                         navOptions = navOptions { })
@@ -72,7 +73,10 @@ fun AmNavHost(
                 navigateToCreateTransaction = navHostController::navigateToTransactionCreator,
                 navigateToTransactionDetails = navHostController::navigateToTransactionDetails,
             )
-            transactionDetailsScreen()
+            transactionDetailsScreen(
+                navigateToAccountDetails = navHostController::navigateToAccountDetails,
+                navigateToTransactionEditor = navHostController::navigateToTransactionEditor
+            )
             transactionEditorScreen()
 
 

@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO_XL
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import com.awesome.manager.core.common.AmUIError
 import com.awesome.manager.core.designsystem.AmPadding
 import com.awesome.manager.core.designsystem.component.AmLinearProgressIndicator
@@ -32,11 +32,11 @@ internal fun HomeScreenRoute(
     navigateToCreateAccount: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val currencies: AmState<Unit> =
+    val currencies: ProcessStates<Unit> =
         homeViewModel.currencies.collectAsStateWithLifecycle().value
-    val accounts: AmState<Unit> =
+    val accounts: ProcessStates<Unit> =
         homeViewModel.accounts.collectAsStateWithLifecycle().value
-    val transactions: AmState<Unit> =
+    val transactions: ProcessStates<Unit> =
         homeViewModel.transactions.collectAsStateWithLifecycle().value
 
     HomeScreen(
@@ -52,9 +52,9 @@ internal fun HomeScreenRoute(
 @Composable
 internal fun HomeScreen(
 //    balanceDetailsState: AmState<List<BalanceDetails>>,
-    currencies: AmState<Unit>,
-    accounts: AmState<Unit>,
-    transactions: AmState<Unit>,
+    currencies: ProcessStates<Unit>,
+    accounts: ProcessStates<Unit>,
+    transactions: ProcessStates<Unit>,
     navigateToCreateAccount: () -> Unit
 ) {
 
@@ -130,24 +130,24 @@ internal fun HomeScreen(
 }
 
 @Composable
-fun LoadingDataState(amState: AmState<Any>) {
-    AnimatedContent(amState) { amState ->
+fun LoadingDataState(processStates: ProcessStates<Any>) {
+    AnimatedContent(processStates) { amState ->
         when (amState) {
-            is AmState.Error -> AmButton(
+            is ProcessStates.Error -> AmButton(
                 text = "Retry",
                 enabled = false,
                 amIconsType = AmIcons.Retry,
                 onClick = {}
             )
 
-            is AmState.Loading -> Row {
+            is ProcessStates.Loading -> Row {
                 AmText(text = "Loading")
                 AmLinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            is AmState.Success<*> -> Unit
+            is ProcessStates.Success<*> -> Unit
         }
     }
 }
@@ -203,9 +203,9 @@ private fun HomeScreenPreview() {
 //                BalanceDetails.createDemo()
 //            )
 //        ),
-        currencies = AmState.Loading(),
-        accounts = AmState.Error(amUIError = AmUIError.NoDataError),
-        transactions = AmState.Loading(),
+        currencies = ProcessStates.Loading(),
+        accounts = ProcessStates.Error(amUIError = AmUIError.NoDataError),
+        transactions = ProcessStates.Loading(),
         navigateToCreateAccount={}
     )
 }

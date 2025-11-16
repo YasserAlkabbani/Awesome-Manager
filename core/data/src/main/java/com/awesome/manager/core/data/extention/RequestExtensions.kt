@@ -1,6 +1,6 @@
 package com.awesome.manager.core.data.extention
 
-import com.awesome.manager.core.common.AmState
+import com.awesome.manager.core.common.ProcessStates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -14,15 +14,15 @@ import timber.log.Timber
 
 inline fun <T, R> Flow<T>.asUIState(
     crossinline taskToDo: suspend (T) -> R
-): Flow<AmState<R>> = map<T, AmState<R>> {
+): Flow<ProcessStates<R>> = map<T, ProcessStates<R>> {
     Timber.d("TEST_AM FLOW_TO_UI_STATE BEFORE_TASK")
     val taskResult = taskToDo(it)
     Timber.d("TEST_AM FLOW_TO_UI_STATE AFTER_TASK")
-    AmState.Success(data = taskResult)
+    ProcessStates.Success(data = taskResult)
 }
     .onStart {
         Timber.d("TEST_AM FLOW_TO_UI_STATE START")
-        emit(AmState.Loading())
+        emit(ProcessStates.Loading())
     }
     .catch { throwable ->
         Timber.d("TEST_AM FLOW_TO_UI_STATE ERROR $throwable")
@@ -32,14 +32,14 @@ inline fun <T, R> Flow<T>.asUIState(
 
 inline fun <T> amRequest(
     crossinline requestData: suspend () -> T
-): Flow<AmState<T>> = flow<AmState<T>> {
+): Flow<ProcessStates<T>> = flow<ProcessStates<T>> {
     Timber.d("TEST_AM REQUEST_UI_STATE BEFORE_TASK")
-    emit(AmState.Success(data = requestData()))
+    emit(ProcessStates.Success(data = requestData()))
     Timber.d("TEST_AM REQUEST_UI_STATE AFTER_TASK")
 }
     .onStart {
         Timber.d("TEST_AM REQUEST_UI_STATE START")
-        emit(AmState.Loading())
+        emit(ProcessStates.Loading())
     }
     .catch { throwable ->
         Timber.d("TEST_AM REQUEST_UI_STATE ERROR $throwable")
