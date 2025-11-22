@@ -21,7 +21,6 @@ import com.awesome.manager.core.model.AmUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -31,7 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
@@ -54,7 +53,9 @@ class TransactionEditorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private fun <T> String.setValue(value: T): Unit = savedStateHandle.set(this, value)
+    private fun <T> String.setValue(value: T): Unit =
+        savedStateHandle.set(this, value)
+
     private fun <T> String.getValue(init: T): StateFlow<T> =
         savedStateHandle.getStateFlow(this, init)
 
@@ -93,15 +94,16 @@ class TransactionEditorViewModel @Inject constructor(
     fun updateTransactionAt(transactionAt: Long) = TRANSACTION_AT.setValue(transactionAt)
 
     val selectedAccountID: StateFlow<String?> = TRANSACTION_ACCOUNT_ID.getValue(null)
-    fun updateAccountID(accountID: String) = TRANSACTION_ACCOUNT_ID.setValue(accountID)
     val accountWithDetails: StateFlow<AmAccountWithDetails?> = selectedAccountID
         .filterNotNull()
         .flatMapLatest { accountID -> accountRepository.getAccountByID(accountID) }
-        .onEach { if (transactionTypeID.value == null) setTransactionTypeID(it.account.defaultTransactionTypeID) }
+        .onEach { updateTransactionTypeID(it.account.defaultTransactionTypeID) }
         .asStateFlowValue(viewModelScope)
 
+    fun updateAccountID(accountID: String) = TRANSACTION_ACCOUNT_ID.setValue(accountID)
+
     val transactionTypeID: StateFlow<String?> = TRANSACTION_TYPE_ID.getValue(null)
-    fun setTransactionTypeID(transactionTypeID: String) =
+    fun updateTransactionTypeID(transactionTypeID: String) =
         TRANSACTION_TYPE_ID.setValue(transactionTypeID)
 
     private val _transactionEditorState: MutableStateFlow<TransactionEditorState> =
@@ -114,6 +116,10 @@ class TransactionEditorViewModel @Inject constructor(
     internal val transactionEditorEvents: StateFlow<TransactionEditorEvents> =
         _transactionEditorEvents.asStateFlow()
 
+    fun navigateBack() = _transactionEditorEvents.update { TransactionEditorEvents.PopupNavigation }
+    fun doneTransactionEditorAction() =
+        _transactionEditorEvents.update { TransactionEditorEvents.Idle }
+
     init {
         syncTransactionsEditorState()
     }
@@ -121,11 +127,11 @@ class TransactionEditorViewModel @Inject constructor(
     fun syncTransactionsEditorState() {
         viewModelScope.launch {
 
-            editorType.accountID?.let { updateAccountID(it) }
             when (editorType) {
-                is EditorType.Create -> Unit
+                is EditorType.Create -> editorType.accountID?.let { updateAccountID(it) }
                 is EditorType.Update -> {
 
+                    updateAccountID(editorType.accountID)
                     val transaction = transactionRepository
                         .returnTransactionByID(editorType.transactionID)
                         .first().transaction
@@ -135,7 +141,7 @@ class TransactionEditorViewModel @Inject constructor(
                     amountTextFieldState.setTextAndPlaceCursorAtEnd(transaction.amount.toString())
 
                     updateTransactionAt(transaction.transactionAt)
-                    setTransactionTypeID(transaction.transactionTypeID)
+                    updateTransactionTypeID(transaction.transactionTypeID)
 
                 }
             }
@@ -168,12 +174,16 @@ class TransactionEditorViewModel @Inject constructor(
 
                     else -> TransactionEditorState.InvalidatedInput(
                         isValidTitle = isValidTitle,
-                        isValidAccountID = isValidAccountID
+                        isValidAmount = isValidAmount,
+                        isValidAccountID = isValidAccountID,
+                        isValidTransactionType = isValidTransactionType
                     )
                 }
             }
                 .flowOn(Dispatchers.Default)
-                .collect()
+                .collect { transactionEditorState ->
+                    _transactionEditorState.update { transactionEditorState }
+                }
 
         }
     }
@@ -181,76 +191,25 @@ class TransactionEditorViewModel @Inject constructor(
     fun saveTransaction(transactionEditorState: TransactionEditorState.Validated) {
         viewModelScope.launch(Dispatchers.Default) {
             when (editorType) {
-                is EditorType.Create -> {
+                is EditorType.Create -> transactionRepository.createTransaction(
+                    creatorUserID = authRepository.currentUser().first().id,
+                    accountID = transactionEditorState.accountID,
+                    transactionTypeID = transactionEditorState.transactionTypeID,
+                    title = transactionEditorState.title,
+                    subtitle = transactionEditorState.subtitle,
+                    amount = transactionEditorState.amount.toDouble(),
+                    transactionAt = transactionEditorState.transactionAt,
+                )
 
-                }
-
-                is EditorType.Update -> {
-
-                }
+                is EditorType.Update -> transactionRepository.updateTransaction(
+                    transactionID = editorType.transactionID,
+                    transactionTypeID = transactionEditorState.transactionTypeID,
+                    title = transactionEditorState.title,
+                    subtitle = transactionEditorState.subtitle,
+                    amount = transactionEditorState.amount.toDouble(),
+                    transactionAt = transactionEditorState.transactionAt,
+                )
             }
-        }
-
-    }
-
-    fun upsertTransaction() {
-        viewModelScope.launch {
-            returnUpdatedTransaction()?.let { transaction ->
-                transactionRepository.upsertTransaction(transaction)
-            }
-        }
-    }
-
-
-    suspend fun returnUpdatedTransaction(): AmTransaction? {
-        data class TransactionData(
-            val transactionID: String,
-            val creatorUserID: String,
-            val createdAt: Long,
-        )
-
-        val currentTime: Long = currentTime()
-        val currentUser: AmUser = authRepository.currentUser().first()
-        val accountID: String? = selectedAccountID.value
-        val transactionTypeID: String? = transactionTypeID.value
-
-        val (transactionID, creatorUserID, createdAt) = when (editorType) {
-            is EditorType.Create -> TransactionData(
-                transactionID = Uuid.random().toString(),
-                creatorUserID = currentUser.id,
-                createdAt = currentTime
-
-            )
-
-            is EditorType.Update -> transactionRepository.returnTransactionByID(editorType.transactionID)
-                .first().transaction.let { transaction ->
-                    TransactionData(
-                        transactionID = transaction.transactionID,
-                        creatorUserID = transaction.creatorUserID,
-                        createdAt = transaction.createdAt
-
-                    )
-                }
-
-        }
-
-        val isValidInput = accountID != null && transactionTypeID != null
-        return when (isValidInput) {
-            true -> AmTransaction(
-                transactionID = transactionID,
-                accountID = accountID,
-                creatorUserID = creatorUserID,
-                transactionTypeID = transactionTypeID,
-                title = titleTextFieldState.asString(),
-                subtitle = subTitleTextFieldState.asString(),
-                amount = amountTextFieldState.asString().toDouble(),
-                pending = true,
-                createdAt = createdAt,
-                updatedAt = currentTime,
-                transactionAt = transactionAt.value,
-            )
-
-            false -> null
         }
     }
 

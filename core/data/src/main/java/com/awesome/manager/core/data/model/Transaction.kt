@@ -11,7 +11,7 @@ import com.awesome.manager.core.network.model.response.TransactionNetworkRespons
 
 fun TransactionNetworkResponse.asEntity() = TransactionEntity(
     id = id,
-    creatorUserId = creatorUserID,
+    creatorUserID = creatorUserID,
     accountID = accountID,
     transactionTypeID = transactionTypeID,
     title = title,
@@ -27,7 +27,7 @@ fun TransactionEntityWithData.asModel() = AmTransactionWithDetails(
     transaction = AmTransaction(
         transactionID = transactionEntity.id,
         accountID = transactionEntity.accountID,
-        creatorUserID = transactionEntity.creatorUserId,
+        creatorUserID = transactionEntity.creatorUserID,
         transactionTypeID = transactionEntity.transactionTypeID,
         title = transactionEntity.title,
         pending = transactionEntity.pending,
@@ -36,36 +36,21 @@ fun TransactionEntityWithData.asModel() = AmTransactionWithDetails(
         createdAt = transactionEntity.createdAt,
         updatedAt = transactionEntity.updatedAt,
         transactionAt = transactionEntity.transactionAt,
-//        updatePermission = updatePermission
+        updatePermission = updatePermission
     ),
-    accountName = "accountName",
-    currencyCode = "currencyCode",
-    currencySymbol = "currencySymbol",
-    transactionType = "transactionType",
-    isPositive = true
+    accountName = accountName,
+    currencyCode = currencyCode,
+    currencySymbol = currencySymbol,
+    isPositive = isPositive,
 )
 
 fun TransactionEntity.asNetwork() = TransactionNetworkRequest(
     id = id,
-    creatorUserID = creatorUserId,
+    creatorUserID = creatorUserID,
     accountID = accountID,
     transactionTypeID = transactionTypeID,
     title = title,
     subtitle = subtitle,
     amount = amount,
     transactionAt = transactionAt.asStringDateTime()
-)
-
-fun AmTransaction.asEntity() = TransactionEntity(
-    id = transactionID,
-    creatorUserId = creatorUserID,
-    accountID = accountID,
-    title = title,
-    subtitle = subtitle,
-    amount = amount,
-    transactionTypeID = transactionTypeID,
-    transactionAt = transactionAt,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    pending = pending,
 )

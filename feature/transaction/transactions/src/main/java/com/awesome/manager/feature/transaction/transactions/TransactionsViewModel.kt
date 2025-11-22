@@ -25,7 +25,7 @@ class TransactionsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val pagingTransactions =
-        transactionRepository.getTransactions().onStart { refreshTransactions() }
+        transactionRepository.returnTransactions().onStart { refreshTransactions() }
 
     private val _transactionsState: MutableStateFlow<UIStates> = MutableStateFlow(UIStates.Loading)
     val transactionsUIState: StateFlow<UIStates> = _transactionsState.asStateFlow()

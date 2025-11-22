@@ -16,6 +16,7 @@ data class AmTransaction(
     val createdAt: Long,
     val updatedAt: Long,
     val transactionAt: Long,
+    val updatePermission: Boolean
 ) {
     val formattedAmount: String = NumberFormat.getNumberInstance(Locale.US).format(amount)
     val transactionAtDate: String = transactionAt.asDate()
@@ -27,5 +28,4 @@ data class AmTransactionWithDetails(
     val currencyCode: String,
     val currencySymbol: String,
     val isPositive: Boolean,
-    val transactionType: String,
 )

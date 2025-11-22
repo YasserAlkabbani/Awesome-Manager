@@ -16,7 +16,9 @@ sealed interface TransactionEditorState {
 
     data class InvalidatedInput(
         val isValidTitle: Boolean,
-        val isValidAccountID: Boolean
+        val isValidAccountID: Boolean,
+        val isValidAmount: Boolean,
+        val isValidTransactionType: Boolean
     ) : TransactionEditorState
 
 }

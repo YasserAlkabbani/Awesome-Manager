@@ -122,7 +122,7 @@ internal fun TransactionsScreen(
                                         amount = transactionWithDetails.transaction.formattedAmount,
                                         isPending = transactionWithDetails.transaction.pending,
                                         date = transactionWithDetails.transaction.transactionAtDate,
-                                        transactionType = transactionWithDetails.transactionType.asString(),
+                                        transactionType = transactionWithDetails.transactionTypeID.asString(),
                                         isPay = transactionWithDetails.isPositive,
                                         currency = transactionWithDetails.currencyCode,
                                         onClick = {

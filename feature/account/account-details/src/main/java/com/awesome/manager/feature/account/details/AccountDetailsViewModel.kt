@@ -35,7 +35,7 @@ internal class AccountDetailsViewModel @Inject constructor(
     private val accountID: String = accountDetailsArg.accountID
 
     val accountTransactionsPaging: Flow<PagingData<AmTransactionWithDetails>> =
-        transactionRepository.getTransactionsByAccountID(accountID, "")
+        transactionRepository.returnTransactionsByAccountID(accountID, "")
             .onStart { refreshTransactions() }
 
     internal val accountWithDetails: StateFlow<AmAccountWithDetails?> = accountRepository

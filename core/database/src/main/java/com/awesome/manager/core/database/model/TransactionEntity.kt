@@ -9,7 +9,7 @@ import androidx.room.Relation
 @Entity(tableName = "transactions")
 data class TransactionEntity(
     @ColumnInfo("transaction_id") @PrimaryKey val id: String,
-    @ColumnInfo("creator_user_id") val creatorUserId: String,
+    @ColumnInfo("creator_user_id") val creatorUserID: String,
     @ColumnInfo("account_id") val accountID: String,
     @ColumnInfo("transaction_type_id") val transactionTypeID: String,
     @ColumnInfo("title") val title: String,
@@ -23,10 +23,9 @@ data class TransactionEntity(
 
 data class TransactionEntityWithData(
     @Embedded val transactionEntity: TransactionEntity,
-    @Relation(
-        parentColumn = "account_id", entityColumn = "account_id",
-        entity = AccountEntity::class
-    )
-    val accountEntity: AccountEntity,
     @ColumnInfo("update_permission") val updatePermission: Boolean,
+    @ColumnInfo("account_name") val accountName: String,
+    @ColumnInfo("currency_code") val currencyCode: String,
+    @ColumnInfo("currency_symbol") val currencySymbol: String,
+    @ColumnInfo("is_positive") val isPositive: Boolean,
 )

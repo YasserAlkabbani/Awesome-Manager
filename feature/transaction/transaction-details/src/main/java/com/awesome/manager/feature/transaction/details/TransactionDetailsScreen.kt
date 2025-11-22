@@ -156,7 +156,7 @@ fun TransactionDetailsScreen(
                     AmTextWithLabel(
                         modifier = Modifier.fillMaxWidth(),
                         label = stringResource(R.string.payment_type),
-                        text = transactionWithDetails.transactionType.asString(),
+                        text = transactionWithDetails.transactionTypeID.asString(),
                         positive = transactionWithDetails.isPositive
                     )
                 }

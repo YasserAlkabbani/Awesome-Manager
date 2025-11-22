@@ -73,11 +73,11 @@ class OfflineFirstAccountRepository @Inject constructor(
         accountDao.upsertAccount(updatedAccount)
     }
 
-    override fun getAccounts(searchKey: String?): Flow<PagingData<AmAccountWithDetails>> =
-        { accountDao.getAccounts(searchKey) }.asPagingDataFlow { asModel() }
-
     override fun getAccountByID(accountID: String): Flow<AmAccountWithDetails> =
         accountDao.getAccountByID(accountID).map { it.asModel() }
+
+    override fun getAccounts(searchKey: String?): Flow<PagingData<AmAccountWithDetails>> =
+        { accountDao.getAccounts(searchKey) }.asPagingDataFlow { asModel() }
 
     override fun refreshAccounts(): Flow<ProcessStates<Unit>> = amRequest {
         val lastUpdateAccountTime = (accountDao.getLastUpdatedAccount()?.updatedAt ?: 0) + 1

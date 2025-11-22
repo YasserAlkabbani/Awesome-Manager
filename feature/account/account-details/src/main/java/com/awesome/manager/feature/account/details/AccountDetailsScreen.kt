@@ -144,7 +144,7 @@ internal fun AccountDetailsScreen(
                                             amount = transactionWithDetails.transaction.formattedAmount,
                                             isPending = transactionWithDetails.transaction.pending,
                                             date = transactionWithDetails.transaction.transactionAtDate,
-                                            transactionType = transactionWithDetails.transactionType.asString(),
+                                            transactionType = transactionWithDetails.transactionTypeID.asString(),
                                             isPay = transactionWithDetails.isPositive,
                                             currency = transactionWithDetails.currencySymbol,
                                             onClick = { navigateToCreateTransaction(account) }

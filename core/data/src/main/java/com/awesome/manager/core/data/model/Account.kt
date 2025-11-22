@@ -41,18 +41,6 @@ fun AccountNetworkResponse.asEntity() = AccountEntity(
     updatedAt = updatedAt.asTimestamp(),
 )
 
-fun AmAccount.asEntity() = AccountEntity(
-    id = accountID,
-    creatorUserID = creatorUserID,
-    name = name,
-    imageUrl = imageUrl,
-    currencyID = currencyID,
-    defaultTransactionTypeID = defaultTransactionTypeID,
-    pending = true,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-)
-
 fun AccountEntity.asNetwork() = AccountNetworkRequest(
     id = id,
     creatorUserId = creatorUserID,
