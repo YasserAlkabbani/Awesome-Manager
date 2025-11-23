@@ -19,7 +19,12 @@ sealed interface AccountEditorState {
 
 }
 
-sealed interface AccountEditorEvents{
-    data object Idle:AccountEditorEvents
-    data object Popup:AccountEditorEvents
+sealed interface AccountEditorEvents {
+    data object Idle : AccountEditorEvents
+    data object Popup : AccountEditorEvents
+}
+
+sealed interface EditorType {
+    data object Create : EditorType
+    data class Update(val accountID: String) : EditorType
 }

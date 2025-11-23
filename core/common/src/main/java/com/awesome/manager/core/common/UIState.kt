@@ -29,12 +29,6 @@ sealed interface ProcessStates<out T> {
 
 }
 
-sealed interface EditorType {
-    abstract val accountID: String?
-    data class Create(override val accountID: String?) : EditorType
-    data class Update(override val accountID: String, val transactionID: String) : EditorType
-}
-
 sealed interface UIStates {
     data object Success : UIStates
     data class Error(val amUIError: AmUIError) : UIStates

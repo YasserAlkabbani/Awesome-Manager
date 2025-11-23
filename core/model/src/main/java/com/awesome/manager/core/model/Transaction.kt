@@ -24,6 +24,7 @@ data class AmTransaction(
 
 data class AmTransactionWithDetails(
     val transaction: AmTransaction,
+    val transactionType: String,
     val accountName: String,
     val currencyCode: String,
     val currencySymbol: String,

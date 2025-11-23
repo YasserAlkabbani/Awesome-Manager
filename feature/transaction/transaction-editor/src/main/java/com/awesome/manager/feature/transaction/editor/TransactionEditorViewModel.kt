@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.EditorType
 import com.awesome.manager.core.common.asStateFlowValue
 import com.awesome.manager.core.common.currentTime
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
@@ -59,13 +58,13 @@ class TransactionEditorViewModel @Inject constructor(
     private fun <T> String.getValue(init: T): StateFlow<T> =
         savedStateHandle.getStateFlow(this, init)
 
-    private val editorType: EditorType =
+    private val editorType: TransactionEditorType =
         savedStateHandle.toRoute<TransactionEditorRoute>().let { (accountID, transactionID) ->
             when {
                 accountID != null && transactionID != null ->
-                    EditorType.Update(accountID, transactionID)
+                    TransactionEditorType.Update(accountID, transactionID)
 
-                else -> EditorType.Create(accountID)
+                else -> TransactionEditorType.Create(accountID)
             }
         }
 
@@ -128,8 +127,8 @@ class TransactionEditorViewModel @Inject constructor(
         viewModelScope.launch {
 
             when (editorType) {
-                is EditorType.Create -> editorType.accountID?.let { updateAccountID(it) }
-                is EditorType.Update -> {
+                is TransactionEditorType.Create -> editorType.accountID?.let { updateAccountID(it) }
+                is TransactionEditorType.Update -> {
 
                     updateAccountID(editorType.accountID)
                     val transaction = transactionRepository
@@ -191,7 +190,7 @@ class TransactionEditorViewModel @Inject constructor(
     fun saveTransaction(transactionEditorState: TransactionEditorState.Validated) {
         viewModelScope.launch(Dispatchers.Default) {
             when (editorType) {
-                is EditorType.Create -> transactionRepository.createTransaction(
+                is TransactionEditorType.Create -> transactionRepository.createTransaction(
                     creatorUserID = authRepository.currentUser().first().id,
                     accountID = transactionEditorState.accountID,
                     transactionTypeID = transactionEditorState.transactionTypeID,
@@ -201,7 +200,7 @@ class TransactionEditorViewModel @Inject constructor(
                     transactionAt = transactionEditorState.transactionAt,
                 )
 
-                is EditorType.Update -> transactionRepository.updateTransaction(
+                is TransactionEditorType.Update -> transactionRepository.updateTransaction(
                     transactionID = editorType.transactionID,
                     transactionTypeID = transactionEditorState.transactionTypeID,
                     title = transactionEditorState.title,

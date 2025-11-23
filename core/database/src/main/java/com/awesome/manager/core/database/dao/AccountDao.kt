@@ -21,10 +21,10 @@ interface AccountDao {
     @Transaction
     @Query(
         "WITH " +
-                "income_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
-                "expenses_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
-                "debtor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
-                "creditor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
+                "income_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
+                "expenses_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
+                "debtor_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
+                "creditor_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
                 "SELECT accounts.* ," +
                 "(accounts.creator_user_id == users.user_id) AS update_permission, " +
                 "currencies.code AS currency_code, " +
@@ -46,10 +46,10 @@ interface AccountDao {
     @Transaction
     @Query(
         "WITH " +
-                "income_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
-                "expenses_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
-                "debtor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
-                "creditor_type AS (SELECT transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
+                "income_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='income'), " +
+                "expenses_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='expenses'), " +
+                "debtor_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='debtor'), " +
+                "creditor_type AS (SELECT transaction_types.transaction_type_id AS id FROM transaction_types WHERE type='creditor') " +
                 "SELECT accounts.* ," +
                 "(accounts.creator_user_id == users.user_id) AS update_permission, " +
                 "currencies.code AS currency_code, " +

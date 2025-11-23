@@ -28,3 +28,9 @@ internal sealed interface TransactionEditorEvents {
     data object PopupNavigation : TransactionEditorEvents
     data class TransactionDetailsNavigation(val transactionID: String) : TransactionEditorEvents
 }
+
+sealed interface TransactionEditorType {
+    abstract val accountID: String?
+    data class Create(override val accountID: String?) : TransactionEditorType
+    data class Update(override val accountID: String, val transactionID: String) : TransactionEditorType
+}

@@ -87,16 +87,15 @@ class OfflineFirstTransactionRepository @Inject constructor(
     override fun returnTransactionsByAccountID(
         accountId: String,
         searchKey: String,
-    ): Flow<PagingData<AmTransactionWithDetails>> = flowOf()
-//        {
-//        transactionDao.returnTransactionsByAccountId(
-//            accountId = accountId, searchKey = searchKey
-//        )
-//    }.asPagingDataFlow(asModel = { asModel() })
+    ): Flow<PagingData<AmTransactionWithDetails>> =         {
+        transactionDao.returnTransactionsByAccountId(
+            accountId = accountId, searchKey = searchKey
+        )
+    }.asPagingDataFlow(asModel = { asModel() })
+
 
     override fun returnTransactionByID(transactionId: String): Flow<AmTransactionWithDetails> =
-        flowOf()
-//        transactionDao.getTransactionByID(transactionId).map { it.asModel() }
+        transactionDao.returnTransactionByID(transactionId).map { it.asModel() }
 
     override fun refreshTransactions() = amRequest {
 

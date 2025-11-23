@@ -41,6 +41,7 @@ fun TransactionEntityWithData.asModel() = AmTransactionWithDetails(
     accountName = accountName,
     currencyCode = currencyCode,
     currencySymbol = currencySymbol,
+    transactionType = transactionType,
     isPositive = isPositive,
 )
 

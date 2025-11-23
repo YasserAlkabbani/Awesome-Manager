@@ -27,5 +27,6 @@ data class TransactionEntityWithData(
     @ColumnInfo("account_name") val accountName: String,
     @ColumnInfo("currency_code") val currencyCode: String,
     @ColumnInfo("currency_symbol") val currencySymbol: String,
+    @ColumnInfo("transaction_type") val transactionType: String,
     @ColumnInfo("is_positive") val isPositive: Boolean,
 )

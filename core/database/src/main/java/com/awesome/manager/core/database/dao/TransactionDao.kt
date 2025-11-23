@@ -25,7 +25,8 @@ interface TransactionDao {
                 "(SELECT accounts.name FROM accounts WHERE transactions.account_id ==  accounts.account_id" + ") AS account_name ," +
                 "(SELECT currencies.code FROM currencies WHERE accounts.currency_id == currencies.currency_id" + ") AS currency_code ," +
                 "(SELECT currencies.symbol FROM currencies WHERE accounts.currency_id == currencies.currency_id) AS currency_symbol ," +
-                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive " +
+                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive, " +
+                "(SELECT transaction_types.type FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS transaction_type " +
                 "FROM transactions " +
                 "LEFT JOIN " +
                 "accounts ON transactions.account_id==accounts.account_id, " +
@@ -35,7 +36,7 @@ interface TransactionDao {
                 "WHERE ((transactions.title LIKE '%' || :searchKey || '%') " +
                 "OR (transactions.subtitle LIKE '%' || :searchKey || '%') " +
                 "OR (:searchKey IS NULL)) " +
-                "AND ((transaction_type_id=:transactionTypeID) OR :transactionTypeID IS NULL) " +
+                "AND ((transactions.transaction_type_id=:transactionTypeID) OR :transactionTypeID IS NULL) " +
                 "AND ((transaction_at > :fromDate) OR :fromDate IS NULL) " +
                 "AND ((transaction_at < :toDate) OR :toDate IS NULL) " +
                 "ORDER BY transactions.transaction_at DESC"
@@ -51,7 +52,8 @@ interface TransactionDao {
                 "(SELECT accounts.name FROM accounts WHERE transactions.account_id ==  accounts.account_id" + ") AS account_name ," +
                 "(SELECT currencies.code FROM currencies WHERE accounts.currency_id == currencies.currency_id" + ") AS currency_code ," +
                 "(SELECT currencies.symbol FROM currencies WHERE accounts.currency_id == currencies.currency_id) AS currency_symbol ," +
-                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive " +
+                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive, " +
+                "(SELECT transaction_types.type FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS transaction_type " +
                 "FROM transactions " +
                 "LEFT JOIN " +
                 "accounts ON transactions.account_id==accounts.account_id, " +
@@ -73,7 +75,8 @@ interface TransactionDao {
                 "(SELECT accounts.name FROM accounts WHERE transactions.account_id ==  accounts.account_id" + ") AS account_name ," +
                 "(SELECT currencies.code FROM currencies WHERE accounts.currency_id == currencies.currency_id" + ") AS currency_code ," +
                 "(SELECT currencies.symbol FROM currencies WHERE accounts.currency_id == currencies.currency_id) AS currency_symbol ," +
-                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive " +
+                "(SELECT transaction_types.is_positive FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS is_positive, " +
+                "(SELECT transaction_types.type FROM transaction_types WHERE transactions.transaction_type_id == transaction_types.transaction_type_id) AS transaction_type " +
                 "FROM transactions " +
                 "LEFT JOIN " +
                 "accounts ON transactions.account_id==accounts.account_id, " +

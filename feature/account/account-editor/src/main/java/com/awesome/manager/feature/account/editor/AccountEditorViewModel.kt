@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.navigation.toRoute
-import com.awesome.manager.core.common.EditorType
 import com.awesome.manager.core.common.asStateFlowList
 import com.awesome.manager.core.data.repository.accounts.AccountRepository
 import com.awesome.manager.core.data.repository.auth.AuthRepository
@@ -46,7 +45,8 @@ class AccountEditorViewModel @Inject constructor(
     private fun String.getState(): StateFlow<String?> = savedStateHandle.getStateFlow(this, null)
 
     val editorType: EditorType =
-        savedStateHandle.toRoute<AccountEditorRoute>().accountID.let { accountID ->
+        savedStateHandle.toRoute<AccountEditorRoute>().let { accountEditor ->
+            val accountID: String? = accountEditor.accountID
             when (accountID) {
                 null -> EditorType.Create
                 else -> EditorType.Update(accountID)
@@ -67,6 +67,7 @@ class AccountEditorViewModel @Inject constructor(
         MutableStateFlow(AccountEditorEvents.Idle)
     internal val accountEditorEvent: StateFlow<AccountEditorEvents> =
         _accountEditorEvent.asStateFlow()
+
     fun doneAccountEditorEvent() = _accountEditorEvent.update { AccountEditorEvents.Idle }
     fun navigateBack() = _accountEditorEvent.update { AccountEditorEvents.Popup }
 
